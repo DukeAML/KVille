@@ -1,7 +1,4 @@
-// In App.js in a new project
-//import * as React from "react";
-//import { createStackNavigator } from "@react-navigation/stack";
-import coachk from "./assets/coachk.png";
+
 import zion from "./assets/zion.png";
 import {
   StyleSheet,
@@ -10,16 +7,14 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Dropdown,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
+import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
+import AppLoading from "expo-app-loading";
 
 import firebase from "firebase/compat/app";
-//import { initializeApp } from "firebase/app";
 
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -39,6 +34,7 @@ if (firebase.apps.length === 0) {
 
 import LandingScreen from "./component/auth/Landing";
 import RegisterScreen from "./component/auth/Register";
+import StartScreen from "./component/auth/Start";
 
 const Stack = createNativeStackNavigator();
 
@@ -68,11 +64,7 @@ export class App extends Component {
   render() {
     const { loggedIn, loaded } = this.state;
     if (!loaded) {
-      return (
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text>Loading</Text>
-        </View>
-      );
+      return <AppLoading />;
     }
     if (!loggedIn) {
       return (
@@ -88,11 +80,7 @@ export class App extends Component {
         </NavigationContainer>
       );
     }
-    return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Text>User is logged in</Text>
-      </View>
-    );
+    return <StartScreen />;
   }
 }
 
