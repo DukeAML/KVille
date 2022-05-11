@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
-import coachk from "../../assets/coachk.png";
+import coachk from "../assets/coachk.png";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
