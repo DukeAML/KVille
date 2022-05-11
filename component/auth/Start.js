@@ -10,6 +10,8 @@ import {
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
 import coachk from "../../assets/coachk.png";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const styles = StyleSheet.create({
   startContainer: {
@@ -59,12 +61,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Start() {
+export default function Start({navigation}) {
   let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
   });
 
-  const [text, onChangeText] = React.useState(null);
+  const [text, onChangeText] = React.useState("");
 
   if (!fontsLoaded) {
     return <AppLoading />;

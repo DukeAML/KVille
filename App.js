@@ -1,17 +1,6 @@
-
-import zion from "./assets/zion.png";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  TextInput,
-} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { Component } from "react";
-import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
 
 import firebase from "firebase/compat/app";
@@ -35,6 +24,7 @@ if (firebase.apps.length === 0) {
 import LandingScreen from "./component/auth/Landing";
 import RegisterScreen from "./component/auth/Register";
 import StartScreen from "./component/auth/Start";
+import GroupScreen from "./component/auth/Group";
 
 const Stack = createNativeStackNavigator();
 
@@ -80,7 +70,22 @@ export class App extends Component {
         </NavigationContainer>
       );
     }
-    return <StartScreen />;
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Start">
+          <Stack.Screen
+            name="Start"
+            component={StartScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Group"
+            component={GroupScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
   }
 }
 
