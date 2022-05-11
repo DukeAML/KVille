@@ -7,3 +7,7 @@ To-Do:
     -Create a splash screen
     -implement push notifications - expo api
     -discord community??
+    -for now code everything under black tent; later add options with picker in CreateGroup.js (reminder can't use directly since hooks not allowed in class component, create separate component file and import in)
+
+Packages Installed
+    -

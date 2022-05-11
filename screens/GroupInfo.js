@@ -1,19 +1,19 @@
-import "react-native-gesture-handler";
 import React, { Component } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
   Text,
   View,
-  TouchableOpacity,
   StyleSheet,
-  TextInput,
 } from "react-native";
-
-const Drawer = createDrawerNavigator();
+import { IconButton, Colors } from "react-native-paper";
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
+  header: {
+    height: "20%",
+    width: "100%"
+  }
 });
 
 export class GroupInfo extends Component {
@@ -24,8 +24,15 @@ export class GroupInfo extends Component {
 
   render() {
     return (
-      <View style={{ backgroundColor: "#C2C6D0" }}>
-        <Text>Group Name:</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <IconButton
+            icon="hamburger-menu"
+            size={25}
+            onPress={() => this.props.navigation.openDrawer()}
+          ></IconButton>
+          <Text>Black Tent</Text>
+        </View>
       </View>
     );
   }

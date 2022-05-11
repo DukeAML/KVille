@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 import zion from "../assets/zion.png";
+import { Picker } from "@react-native-picker/picker";
 
 const styles = StyleSheet.create({
   groupContainer: {
@@ -98,20 +99,28 @@ export class Group extends Component {
             />
 
             <Text style={styles.centerText}>Group Code</Text>
-            <View style= {{backgroundColor: "#FFFAFA90", height: "10%"}}>
-              <Text style = {{textAlign: "center", fontSize: "48px", fontWeight: "bold"}}>FKD31F</Text>
+            <View style={{ backgroundColor: "#FFFAFA90", height: "10%" }}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: "48px",
+                  fontWeight: "bold",
+                }}
+              >
+                FKD31F
+              </Text>
             </View>
           </View>
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.cancelBtn}
-              onPress={() => navigation.navigate("Start")}
+              onPress={() => this.props.navigation.goBack()}
             >
               <Text style={styles.btnTxt}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.createBtn}
-              onPress={() => navigation.navigate("GroupInfo")}
+              onPress={() => this.props.navigation.navigate("GroupNavigator")}
             >
               <Text style={styles.btnTxt}>Create</Text>
             </TouchableOpacity>
