@@ -1,6 +1,8 @@
+import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { IconButton, Colors } from "react-native-paper";
 
 import React, { Component } from "react";
 import AppLoading from "expo-app-loading";
@@ -27,8 +29,7 @@ import LandingScreen from "./component/auth/Landing";
 import RegisterScreen from "./component/auth/Register";
 import LoginScreen from "./component/auth/Login";
 import StartScreen from "./screens/Start";
-import GroupScreen from "./screens/CreateGroup";
-//import GroupNavigatorScreen from "./screens/GroupNavigator";
+import CreateGroupScreen from "./screens/CreateGroup";
 import GroupInfoScreen from "./screens/GroupInfo";
 import DrawerContent from "./screens/DrawerContent";
 import AvailabilityScreen from "./screens/Availability";
@@ -89,7 +90,7 @@ export class App extends Component {
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Start" component={StartScreen} />
-          <Stack.Screen name="Group" component={GroupScreen} />
+          <Stack.Screen name="CreateGroup" component={CreateGroupScreen} />
           <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -103,9 +104,22 @@ const Drawer = createDrawerNavigator();
 
 function GroupNavigator() {
   return (
-    <NavigationContainer independent={true} >
+    <NavigationContainer independent={true}>
       <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-        <Drawer.Screen name="GroupInfo" component={GroupInfoScreen} />
+        <Drawer.Screen
+          name="GroupInfo"
+          component={GroupInfoScreen}
+          options={({navigation})=> ({
+            title: "Overview",
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
         {/* <Drawer.Screen name="Availability" component={AvailabilityScreen} />
         <Drawer.Screen name="ScheduleScreen" component={ScheduleScreen} />
         <Drawer.Screen name="MonitorScreen" component={MonitorScreen} />

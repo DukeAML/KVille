@@ -4,7 +4,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import { IconButton, Colors } from "react-native-paper";
+
 
 const styles = StyleSheet.create({
   container: {
@@ -26,11 +26,6 @@ export class GroupInfo extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <IconButton
-            icon="hamburger-menu"
-            size={25}
-            onPress={() => this.props.navigation.openDrawer()}
-          ></IconButton>
           <Text>Black Tent</Text>
         </View>
       </View>

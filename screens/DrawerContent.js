@@ -48,7 +48,7 @@ export default function DrawerContent(props) {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="user-group-outline" color={color} size={size} />
+                <Icon name="account-group-outline" color={color} size={size} />
               )}
               label="Group Information"
               onPress={() => {
@@ -57,7 +57,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="event-text-outline" color={color} size={size} />
+                <Icon name="calendar-text-outline" color={color} size={size} />
               )}
               label="Your Availability"
               onPress={() => {
@@ -66,7 +66,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="event-outline" color={color} size={size} />
+                <Icon name="calendar-outline" color={color} size={size} />
               )}
               label="Schedule"
               onPress={() => {
@@ -75,7 +75,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="warning-outline" color={color} size={size} />
+                <Icon name="alert-outline" color={color} size={size} />
               )}
               label="Line Monitoring"
               onPress={() => {
@@ -84,7 +84,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="info-outline" color={color} size={size} />
+                <Icon name="information-outline" color={color} size={size} />
               )}
               label="Information"
               onPress={() => {
@@ -93,7 +93,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="settings-outline" color={color} size={size} />
+                <Icon name="cog-outline" color={color} size={size} />
               )}
               label="Settings"
               onPress={() => {

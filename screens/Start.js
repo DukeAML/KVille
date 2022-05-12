@@ -86,7 +86,7 @@ export default function Start({navigation}) {
           />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Group")}
+            onPress={() => navigation.navigate("CreateGroup")}
           >
             <Text style={styles.buttonText}>Create New Group</Text>
           </TouchableOpacity>
