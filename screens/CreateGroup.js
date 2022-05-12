@@ -33,14 +33,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
-    fontFamily: "Open Sans",
-    fontSize: "22px",
+    //fontFamily: "Open Sans",
+    fontSize: 22,
     fontWeight: "700",
   },
   centerText: {
     color: "#fff",
-    fontFamily: "Open Sans",
-    fontSize: "36px",
+    //fontFamily: "Open Sans",
+    fontSize: 36,
     fontWeight: "700",
     textAlign: "center",
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontWeight: "700",
     color: "#fff",
-    fontSize: "36px",
+    fontSize: 36,
     textAlign: "center",
   },
 });
@@ -103,7 +103,7 @@ export class Group extends Component {
               <Text
                 style={{
                   textAlign: "center",
-                  fontSize: "48px",
+                  fontSize: 48,
                   fontWeight: "bold",
                 }}
               >
