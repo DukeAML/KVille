@@ -5,14 +5,15 @@ import {
   StyleSheet,
 } from "react-native";
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   header: {
     height: "20%",
-    width: "100%"
+    width: "100%",
+    fontSize: 28,
+    fontWeight: "bold"
   }
 });
 
@@ -26,7 +27,7 @@ export class GroupInfo extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text>Black Tent</Text>
+          <Text style = {styles.header}>Black Tent</Text>
         </View>
       </View>
     );
