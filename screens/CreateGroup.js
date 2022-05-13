@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -9,6 +9,12 @@ import {
 } from "react-native";
 import zion from "../assets/zion.png";
 import { Picker } from "@react-native-picker/picker";
+
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+
+require("firebase/firestore");
 
 const styles = StyleSheet.create({
   groupContainer: {
@@ -76,59 +82,56 @@ const styles = StyleSheet.create({
   },
 });
 
-export class Group extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      tentType: "",
-      groupCode: "",
-    };
-  }
-  render() {
-    return (
-      <View style={styles.groupContainer}>
-        <ImageBackground source={zion} style={styles.backgroundImage}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Group Name:</Text>
+export default function CreateGroup() {
+  const [name, setName] = useState("");
+  const [tentType, setTentType] = useState("");
+  const [groupCode, setGroupCode] = useState("");
+  return (
+    <View style={styles.groupContainer}>
+      <ImageBackground source={zion} style={styles.backgroundImage}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>Group Name:</Text>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter Group Name"
-              onChangeText={(name) => this.setState({ name })}
-            />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter Group Name"
+            onChangeText={(name) => this.setState({ name })}
+          />
 
-            <Text style={styles.centerText}>Group Code</Text>
-            <View style={{ backgroundColor: "#FFFAFA90", height: "15%", alignContent: "center" }}>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 48,
-                  fontWeight: "bold",
-                }}
-              >
-                FKD31F
-              </Text>
-            </View>
-          </View>
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.cancelBtn}
-              onPress={() => this.props.navigation.goBack()}
+          <Text style={styles.centerText}>Group Code</Text>
+          <View
+            style={{
+              backgroundColor: "#FFFAFA90",
+              height: "15%",
+              alignContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 48,
+                fontWeight: "bold",
+              }}
             >
-              <Text style={styles.btnTxt}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.createBtn}
-              onPress={() => this.props.navigation.navigate("GroupNavigator")}
-            >
-              <Text style={styles.btnTxt}>Create</Text>
-            </TouchableOpacity>
+              FKD31F
+            </Text>
           </View>
-        </ImageBackground>
-      </View>
-    );
-  }
+        </View>
+        <View style={styles.btnContainer}>
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={() => this.props.navigation.goBack()}
+          >
+            <Text style={styles.btnTxt}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.createBtn}
+            onPress={() => this.props.navigation.navigate("GroupNavigator")}
+          >
+            <Text style={styles.btnTxt}>Create</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </View>
+  );
 }
-
-export default Group;
