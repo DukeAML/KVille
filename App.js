@@ -3,9 +3,16 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { IconButton, Colors } from "react-native-paper";
-
+import * as Font from "expo-font";
 import React, { Component } from "react";
 import AppLoading from "expo-app-loading";
+
+// import { Provider } from "react-redux";
+// import { createStore, applyMiddleware } from "redux";
+// import rootREducer from "./redux/reducers";
+// import thunk from "redux-thunk";
+
+// const store = createStore(rootReducer, applyMiddleware(thunk));
 
 import firebase from "firebase/compat/app";
 
@@ -25,7 +32,6 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-import LandingScreen from "./component/auth/Landing";
 import RegisterScreen from "./component/auth/Register";
 import LoginScreen from "./component/auth/Login";
 import StartScreen from "./screens/Start";
@@ -45,7 +51,15 @@ export class App extends Component {
     super(props);
     this.state = {
       loaded: false,
+      fontsLoaded: false,
     };
+  }
+
+  async LoadFonts() {
+    await Font.loadAsync({
+      NovaCut: require("./assets/fonts/NovaCut-Regular.ttf"),
+    });
+    this.setState({ fontsLoaded: true });
   }
 
   componentDidMount() {
@@ -62,6 +76,7 @@ export class App extends Component {
         });
       }
     });
+    this.LoadFonts();
   }
   render() {
     const { loggedIn, loaded } = this.state;
@@ -71,14 +86,19 @@ export class App extends Component {
     if (!loggedIn) {
       return (
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Landing">
+          <Stack.Navigator initialRouteName="Login">
             <Stack.Screen
-              name="Landing"
-              component={LandingScreen}
+              name="Register"
+              component={RegisterScreen}
+              navigation={this.props.navigation}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen
+              name="Login"
+              navigation={this.props.navigation}
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       );
@@ -89,7 +109,23 @@ export class App extends Component {
           initialRouteName="Start"
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="Start" component={StartScreen} />
+          <Stack.Screen
+            name="Start"
+            component={StartScreen}
+            options={{
+              headerShown: true,
+              title: "Krzyzewskiville",
+              headerStyle: {
+                backgroundColor: "#1f509a",
+              },
+              headerTitleStyle: {
+                fontFamily: "NovaCut",
+                color: "#fff",
+                fontSize: 30,
+                left: "0%",
+              },
+            }}
+          />
           <Stack.Screen name="CreateGroup" component={CreateGroupScreen} />
           <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
         </Stack.Navigator>
@@ -105,12 +141,22 @@ const Drawer = createDrawerNavigator();
 function GroupNavigator() {
   return (
     <NavigationContainer independent={true}>
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+      <Drawer.Navigator
+        initialRouteName="GroupInfo"
+        drawerContent={(props) => <DrawerContent {...props} />}
+      >
         <Drawer.Screen
           name="GroupInfo"
           component={GroupInfoScreen}
-          options={({navigation})=> ({
-            title: "Overview",
+          options={({ navigation }) => ({
+            title: "Black Tent",
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+            },
+            headerTitleStyle: {
+              right: "0%",
+              fontSize: 28,
+            },
             headerLeft: () => (
               <IconButton
                 icon="menu"

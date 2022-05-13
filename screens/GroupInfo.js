@@ -9,11 +9,12 @@ import {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#C2C6D0",
   },
   header: {
     height: "20%",
-    width: "100%"
-  }
+    width: "100%",
+  },
 });
 
 export class GroupInfo extends Component {

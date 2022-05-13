@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1f509a",
     alignItems: "center",
+    marginTop: "0%"
   },
   header: {
     left: "0%",
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "70%",
+    height: "80%",
     resizeMode: "cover",
   },
   textInput: {
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
     width: "65%",
     textAlign: "center",
     borderRadius: 15,
+    //height: "7%",
   },
   button: {
     backgroundColor: "#000",
@@ -73,9 +75,9 @@ export default function Start({navigation}) {
   } else {
     return (
       <View style={styles.startContainer}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <Text style={styles.banner}>Krzyzewskiville</Text>
-        </View>
+        </View> */}
         <Image source={coachk} style={styles.image} />
         <View style={styles.textContainer}>
           <TextInput
