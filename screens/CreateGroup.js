@@ -82,10 +82,30 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function CreateGroup() {
+export default function CreateGroup({ navigation }) {
   const [name, setName] = useState("");
   const [tentType, setTentType] = useState("");
   const [groupCode, setGroupCode] = useState("");
+
+  const onCreateGroup = () => {
+    setGroupCode(Date.now());
+    firebase
+      .firestore()
+      .collection("groups")
+      .doc(groupCode)
+      .set({
+        name,
+        tentType,
+      });
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .set({
+        groupCode,
+      });
+  }
+
   return (
     <View style={styles.groupContainer}>
       <ImageBackground source={zion} style={styles.backgroundImage}>
@@ -95,7 +115,7 @@ export default function CreateGroup() {
           <TextInput
             style={styles.textInput}
             placeholder="Enter Group Name"
-            onChangeText={(name) => this.setState({ name })}
+            onChangeText={(name) => setName(name)}
           />
 
           <Text style={styles.centerText}>Group Code</Text>
@@ -120,13 +140,13 @@ export default function CreateGroup() {
         <View style={styles.btnContainer}>
           <TouchableOpacity
             style={styles.cancelBtn}
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() => navigation.goBack()}
           >
             <Text style={styles.btnTxt}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createBtn}
-            onPress={() => this.props.navigation.navigate("GroupNavigator")}
+            onPress={() => navigation.navigate("GroupNavigator")}
           >
             <Text style={styles.btnTxt}>Create</Text>
           </TouchableOpacity>
