@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   textContainer: {
-    height: "75%",
+    height: "70%",
     width: "80%",
     marginVertical: 50,
     //justifyContent: "space-between"
@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
   textInput: {
     height: "5%",
     textAlign: "center",
-    backgroundColor: "#FFFAFA80",
+    backgroundColor: "#FFFAFACC",
     borderRadius: 15,
-    placeholderTextColor: "#897F7F80",
+    placeholderTextColor: "#897F7FCC",
   },
   btnContainer: {
     flexDirection: "row",
@@ -99,7 +99,7 @@ export class Group extends Component {
             />
 
             <Text style={styles.centerText}>Group Code</Text>
-            <View style={{ backgroundColor: "#FFFAFA90", height: "10%" }}>
+            <View style={{ backgroundColor: "#FFFAFA90", height: "15%", alignContent: "center" }}>
               <Text
                 style={{
                   textAlign: "center",
