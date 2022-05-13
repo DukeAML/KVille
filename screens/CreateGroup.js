@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     backgroundColor: "#FFFAFACC",
     borderRadius: 15,
-    placeholderTextColor: "#897F7FCC",
+    //placeholderTextColor: "#897F7FCC",
   },
   btnContainer: {
     flexDirection: "row",
@@ -89,14 +89,10 @@ export default function CreateGroup({ navigation }) {
 
   const onCreateGroup = () => {
     setGroupCode(Date.now());
-    firebase
-      .firestore()
-      .collection("groups")
-      .doc(groupCode)
-      .set({
-        name,
-        tentType,
-      });
+    firebase.firestore().collection("groups").doc(groupCode).set({
+      name,
+      tentType,
+    });
     firebase
       .firestore()
       .collection("users")
@@ -104,7 +100,7 @@ export default function CreateGroup({ navigation }) {
       .set({
         groupCode,
       });
-  }
+  };
 
   return (
     <View style={styles.groupContainer}>
@@ -122,15 +118,18 @@ export default function CreateGroup({ navigation }) {
           <View
             style={{
               backgroundColor: "#FFFAFA90",
-              height: "15%",
+              //height: "15%",
               alignContent: "center",
+              flexDirection: "row",
+              flex: 0.2,
             }}
           >
             <Text
               style={{
                 textAlign: "center",
-                fontSize: 48,
+                fontSize: 30,
                 fontWeight: "bold",
+                flex: 1,
               }}
             >
               FKD31F
