@@ -14,9 +14,11 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-import {generateGroupCode} from "../backend/GroupCode";
+import { generateGroupCode } from "../backend/GroupCode";
 
 require("firebase/firestore");
+
+const GROUP_CODE_LENGTH = 8;
 
 const styles = StyleSheet.create({
   groupContainer: {
@@ -60,8 +62,7 @@ const styles = StyleSheet.create({
     //placeholderTextColor: "#897F7FCC",
   },
   btnContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
     width: "90%",
   },
   cancelBtn: {
@@ -87,7 +88,9 @@ const styles = StyleSheet.create({
 export default function CreateGroup({ navigation }) {
   const [name, setName] = useState("");
   const [tentType, setTentType] = useState("");
-  const [groupCode, setGroupCode] = useState(generateGroupCode(8));
+  const [groupCode, setGroupCode] = useState(
+    generateGroupCode(GROUP_CODE_LENGTH)
+  );
   const [groupRole, setGroupRole] = useState("");
 
   const onCreateGroup = () => {
@@ -151,12 +154,12 @@ export default function CreateGroup({ navigation }) {
           </View>
         </View>
         <View style={styles.btnContainer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.cancelBtn}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.btnTxt}>Cancel</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
