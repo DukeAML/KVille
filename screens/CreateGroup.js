@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
     //placeholderTextColor: "#897F7FCC",
   },
   btnContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
     width: "90%",
   },
   cancelBtn: {
@@ -155,12 +154,12 @@ export default function CreateGroup({ navigation }) {
           </View>
         </View>
         <View style={styles.btnContainer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.cancelBtn}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.btnTxt}>Cancel</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {

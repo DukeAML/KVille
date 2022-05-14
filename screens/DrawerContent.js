@@ -14,11 +14,17 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = React.useState(false);
   
   const onToggleSwitch = () => setStatus(!status);
+
+  const onLogout = () => {
+    firebase.auth().signOut();
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -99,6 +105,10 @@ export default function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate("SettingScreen");
               }}
+            />
+            <DrawerItem 
+              label = "Log out" 
+              onPress={() => onLogout()}
             />
           </Drawer.Section>
           <Drawer.Section title="Preferences">

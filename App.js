@@ -6,6 +6,7 @@ import { IconButton, Colors } from "react-native-paper";
 import * as Font from "expo-font";
 import React, { Component } from "react";
 import AppLoading from "expo-app-loading";
+import { Text, Button } from "react-native";
 
 // import { Provider } from "react-redux";
 // import { createStore, applyMiddleware } from "redux";
@@ -53,7 +54,7 @@ export class App extends Component {
     this.state = {
       loaded: false,
       fontsLoaded: false,
-      //inGroup: false,
+      inGroup: false,
     };
   }
 
@@ -72,6 +73,10 @@ export class App extends Component {
           loaded: true,
         });
       } else {
+        // this.setState({
+        //   loggedIn: true,
+        //   loaded: true,
+        // })
         const docRef = firebase
           .firestore()
           .collection("users")
@@ -94,7 +99,7 @@ export class App extends Component {
     this.LoadFonts();
   }
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (this.state.inGroup !== prevState.inGroup) {
       const user = firebase.auth().currentUser;
       if (user) {
@@ -139,6 +144,7 @@ export class App extends Component {
 
     //if curr user not in group display start and createGroup screens
     if (!inGroup) {
+      console.log(inGroup);
       return (
         <NavigationContainer>
           <Stack.Navigator
@@ -164,7 +170,21 @@ export class App extends Component {
                 },
               }}
             />
-            <Stack.Screen name="CreateGroup" component={CreateGroupScreen} />
+            <Stack.Screen
+              name="CreateGroup"
+              component={CreateGroupScreen}
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "#1f509a",
+                  borderBottomWidth: 0,
+                  shadowColor: "transparent",
+                },
+                headerLeft: () => (
+                  <Text style={{color: "#fff", marginLeft: 10}} onPress={() => navigation.goBack()}>Cancel</Text>
+                ),
+              })}
+            />
             {/* <Stack.Screen name="GroupNavigator" component={GroupNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>
