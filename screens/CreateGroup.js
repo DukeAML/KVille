@@ -14,7 +14,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-import { generateGroupCode } from "../backend/GroupCode";
+import {generateGroupCode} from "../backend/GroupCode";
 
 require("firebase/firestore");
 
@@ -163,18 +163,6 @@ export default function CreateGroup({ navigation }) {
               //setGroupCode(generateGroupCode(10));
               onCreateGroup();
               console.log(groupCode);
-              // firebase
-              //   .firestore()
-              //   .collection("groups")
-              //   .doc(groupCode)
-              //   .get()
-              //   .then((doc) => {
-              //     if (doc.exists) {
-              //       console.log(doc.data());
-              //     } else {
-              //       console.log("No such document!");
-              //     }
-              //   });
               console.log();
               //console.log(generateGroupCode(8));
               //navigation.navigate("GroupNavigator");

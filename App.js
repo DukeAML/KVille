@@ -45,6 +45,7 @@ import InfoScreen from "./screens/Info";
 import SettingScreen from "./screens/Settings";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 export class App extends Component {
   constructor(props) {
@@ -64,21 +65,6 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    // const docRef = firebase
-    //   .firestore()
-    //   .collection("users")
-    //   .doc(firebase.auth().currentUser.uid);
-    // docRef.get().then((doc) => {
-    //   if (doc.exists) {
-    //     this.setState({
-    //       inGroup: doc,
-    //     });
-    //     console.log("Document data:", doc.data());
-    //   } else {
-    //     // doc.data() will be undefined in this case
-    //     console.log("No such document!");
-    //   }
-    // });
     firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         this.setState({
@@ -86,10 +72,6 @@ export class App extends Component {
           loaded: true,
         });
       } else {
-        // this.setState({
-        //   loggedIn: true,
-        //   loaded: true,
-        // });
         const docRef = firebase
           .firestore()
           .collection("users")
@@ -105,6 +87,24 @@ export class App extends Component {
     });
     this.LoadFonts();
   }
+
+  componentDidUpdate(prevState) {
+    if (this.state.inGroup !== prevState.inGroup) {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        const docRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid);
+        docRef.get().then((doc) => {
+          this.setState({
+            inGroup: doc.data().inGroup,
+          });
+        });
+      }
+    }
+  }
+
   render() {
     const { loggedIn, loaded, inGroup } = this.state;
     if (!loaded) {
@@ -131,6 +131,7 @@ export class App extends Component {
       );
     }
 
+    //if curr user not in group display start and createGroup screens
     if (!inGroup) {
       console.log(inGroup);
       return (
@@ -162,46 +163,6 @@ export class App extends Component {
         </NavigationContainer>
       );
     }
-    //checks if current signed in user is in group, if not display start and createGroup screens
-    // const docRef = firebase
-    //     .firestore()
-    //     .collection("users")
-    //     .doc(firebase.auth().currentUser.uid);
-    // docRef.get().then((db) => {
-    //   console.log(db.data().inGroup);
-    //   if (db.data().inGroup) {
-    //     console.log(db.data().inGroup);
-    //     return (
-    //       <NavigationContainer>
-    //         <Stack.Navigator
-    //           initialRouteName="Start"
-    //           screenOptions={{ headerShown: false }}
-    //         >
-    //           <Stack.Screen
-    //             name="Start"
-    //             component={StartScreen}
-    //             options={{
-    //               headerShown: true,
-    //               title: "Krzyzewskiville",
-    //               headerStyle: {
-    //                 backgroundColor: "#1f509a",
-    //               },
-    //               headerTitleStyle: {
-    //                 fontFamily: "NovaCut",
-    //                 color: "#fff",
-    //                 fontSize: 30,
-    //                 left: "0%",
-    //               },
-    //             }}
-    //           />
-    //           <Stack.Screen name="CreateGroup" component={CreateGroupScreen} />
-    //           {/* <Stack.Screen name="GroupNavigator" component={GroupNavigator} /> */}
-    //         </Stack.Navigator>
-    //       </NavigationContainer>
-    //     );
-    //   }
-
-    // });
 
     //current user already in group, display group info screen
     return (
@@ -244,42 +205,5 @@ export class App extends Component {
 
 export default App;
 
-const Drawer = createDrawerNavigator();
 
-function GroupNavigator() {
-  return (
-    <NavigationContainer independent={true}>
-      <Drawer.Navigator
-        initialRouteName="GroupInfo"
-        drawerContent={(props) => <DrawerContent {...props} />}
-      >
-        <Drawer.Screen
-          name="GroupInfo"
-          component={GroupInfoScreen}
-          options={({ navigation }) => ({
-            title: "Black Tent",
-            headerStyle: {
-              backgroundColor: "#C2C6D0",
-            },
-            headerTitleStyle: {
-              right: "0%",
-              fontSize: 28,
-            },
-            headerLeft: () => (
-              <IconButton
-                icon="menu"
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
-          })}
-        />
-        {/* <Drawer.Screen name="Availability" component={AvailabilityScreen} />
-        <Drawer.Screen name="ScheduleScreen" component={ScheduleScreen} />
-        <Drawer.Screen name="MonitorScreen" component={MonitorScreen} />
-        <Drawer.Screen name="InfoScreen" component={InfoScreen} />
-        <Drawer.Screen name="SettingScreen" component={SettingScreen} /> */}
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-}
+
