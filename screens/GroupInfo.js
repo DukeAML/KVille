@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, FlatList } from "react-native";
+import { divide } from "react-native-reanimated";
 
 const styles = StyleSheet.create({
   container: {
@@ -13,6 +14,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+let members = [
+  {
+    id: '',
+    name: User1,
+  },
+  {
+    id: '',
+    name: User2,
+  },
+  {
+    id: '',
+    name: User3,
+  },
+  {
+    id: '',
+    name: User4,
+  },
+  {
+    id: '',
+    name: User5,
+  },
+  {
+    id: '',
+    name: User6,
+  },
+  {
+    id: '',
+    name: User7,
+  },
+];
+
+const GroupList = () =>{
+  
+}
 
 export default function GroupInfo() {
   return (
