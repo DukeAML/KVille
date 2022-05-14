@@ -14,6 +14,8 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
+import { generateGroupCode } from "../backend/GroupCode";
+
 require("firebase/firestore");
 
 const styles = StyleSheet.create({
@@ -85,20 +87,32 @@ const styles = StyleSheet.create({
 export default function CreateGroup({ navigation }) {
   const [name, setName] = useState("");
   const [tentType, setTentType] = useState("");
-  const [groupCode, setGroupCode] = useState("");
+  const [groupCode, setGroupCode] = useState(generateGroupCode(8));
+  const [groupRole, setGroupRole] = useState("");
 
   const onCreateGroup = () => {
-    setGroupCode(Date.now());
+    //setGroupCode(generateGroupCode(10));
+
     firebase.firestore().collection("groups").doc(groupCode).set({
       name,
       tentType,
     });
     firebase
       .firestore()
-      .collection("users")
+      .collection("groups")
+      .doc(groupCode)
+      .collection("members")
       .doc(firebase.auth().currentUser.uid)
       .set({
-        groupCode,
+        groupRole,
+      });
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        groupCode: groupCode,
+        inGroup: true,
       });
   };
 
@@ -132,7 +146,7 @@ export default function CreateGroup({ navigation }) {
                 flex: 1,
               }}
             >
-              FKD31F
+              {groupCode}
             </Text>
           </View>
         </View>
@@ -145,7 +159,26 @@ export default function CreateGroup({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createBtn}
-            onPress={() => navigation.navigate("GroupNavigator")}
+            onPress={() => {
+              //setGroupCode(generateGroupCode(10));
+              onCreateGroup();
+              console.log(groupCode);
+              // firebase
+              //   .firestore()
+              //   .collection("groups")
+              //   .doc(groupCode)
+              //   .get()
+              //   .then((doc) => {
+              //     if (doc.exists) {
+              //       console.log(doc.data());
+              //     } else {
+              //       console.log("No such document!");
+              //     }
+              //   });
+              console.log();
+              //console.log(generateGroupCode(8));
+              //navigation.navigate("GroupNavigator");
+            }}
           >
             <Text style={styles.btnTxt}>Create</Text>
           </TouchableOpacity>

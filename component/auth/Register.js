@@ -40,6 +40,8 @@ export default function Register(props) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
+  const [groupCode, setGroupCode] = useState("");
+  const [inGroup, setInGroup] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
   const onRegister = () => {
@@ -86,6 +88,7 @@ export default function Register(props) {
               if (snapshot.exist) {
                 return;
               }
+              firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
               firebase
                 .firestore()
                 .collection("users")
@@ -94,6 +97,8 @@ export default function Register(props) {
                   name,
                   email,
                   username,
+                  groupCode,
+                  inGroup
                 });
             })
             .catch(() => {
