@@ -1,3 +1,5 @@
+//UUID generator, used for group codes
+
 const groupCodeArr = [];
 
 export function generateGroupCode(digits) {

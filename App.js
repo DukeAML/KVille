@@ -54,6 +54,7 @@ export class App extends Component {
     this.state = {
       loaded: false,
       fontsLoaded: false,
+      //used to track if current user is in a group
       inGroup: false,
     };
   }
@@ -77,6 +78,8 @@ export class App extends Component {
         //   loggedIn: true,
         //   loaded: true,
         // })
+        
+        //if user logged in, update loggedIn to true
         const docRef = firebase
           .firestore()
           .collection("users")
@@ -88,6 +91,8 @@ export class App extends Component {
             inGroup: doc.data().inGroup,
           });
         });
+
+        //set persistence so user stays logged in; currently(5/14) not working
         firebase
           .auth()
           .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
@@ -100,6 +105,7 @@ export class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    //checks if inGroup status is updated after each component update
     if (this.state.inGroup !== prevState.inGroup) {
       const user = firebase.auth().currentUser;
       if (user) {

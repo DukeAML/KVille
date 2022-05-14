@@ -93,13 +93,14 @@ export default function CreateGroup({ navigation }) {
   );
   const [groupRole, setGroupRole] = useState("");
 
+  //Create group function
   const onCreateGroup = () => {
-    //setGroupCode(generateGroupCode(10));
-
+    //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     firebase.firestore().collection("groups").doc(groupCode).set({
       name,
       tentType,
     });
+    //adds current user to collection of members in the group
     firebase
       .firestore()
       .collection("groups")
@@ -109,6 +110,7 @@ export default function CreateGroup({ navigation }) {
       .set({
         groupRole,
       });
+    //updates current user's inGroup and groupCode states
     firebase
       .firestore()
       .collection("users")
@@ -163,12 +165,9 @@ export default function CreateGroup({ navigation }) {
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
-              //setGroupCode(generateGroupCode(10));
               onCreateGroup();
               console.log(groupCode);
               console.log();
-              //console.log(generateGroupCode(8));
-              //navigation.navigate("GroupNavigator");
             }}
           >
             <Text style={styles.btnTxt}>Create</Text>
