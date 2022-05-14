@@ -83,6 +83,12 @@ export class App extends Component {
             inGroup: doc.data().inGroup,
           });
         });
+        firebase
+          .auth()
+          .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+          .then(() => {
+            console.log("persistence set");
+          });
       }
     });
     this.LoadFonts();
@@ -133,7 +139,6 @@ export class App extends Component {
 
     //if curr user not in group display start and createGroup screens
     if (!inGroup) {
-      console.log(inGroup);
       return (
         <NavigationContainer>
           <Stack.Navigator
@@ -148,6 +153,8 @@ export class App extends Component {
                 title: "Krzyzewskiville",
                 headerStyle: {
                   backgroundColor: "#1f509a",
+                  borderBottomWidth: 0,
+                  shadowColor: "transparent",
                 },
                 headerTitleStyle: {
                   fontFamily: "NovaCut",
@@ -178,6 +185,8 @@ export class App extends Component {
               title: "Black Tent",
               headerStyle: {
                 backgroundColor: "#C2C6D0",
+                borderBottomWidth: 0,
+                shadowColor: "transparent",
               },
               headerTitleStyle: {
                 right: "0%",
@@ -204,6 +213,3 @@ export class App extends Component {
 }
 
 export default App;
-
-
-

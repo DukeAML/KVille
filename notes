@@ -4,7 +4,7 @@ Group Code - use Data.now; subtract a set date to make code shorter
 
 
 To-Do: 
-    -Create a splash screen
+    -Create a splash screen: https://docs.expo.dev/guides/splash-screens/
     -implement push notifications - expo api
     -discord community??
     -for now code everything under black tent; later add options with picker in CreateGroup.js (reminder can't use directly since hooks not allowed in class component, create separate component file and import in, or figure out how to use without hooks)
@@ -15,5 +15,9 @@ Packages Installed:
 
 Database: 
     -users: userID -> name, email, group code, availability
-    -groups: groupCode -> name, users, group schedule (backend)
+    -groups: groupCode -> name, members, group schedule (backend)
     -
+
+
+Bugs: 
+    -5/14 - persistence is not working on mobile device, having to sign-in everytime app is loaded

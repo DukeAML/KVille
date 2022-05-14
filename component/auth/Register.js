@@ -88,7 +88,10 @@ export default function Register(props) {
               if (snapshot.exist) {
                 return;
               }
-              firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+              firebase
+                .auth()
+                .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .then(function () {});
               firebase
                 .firestore()
                 .collection("users")
@@ -98,7 +101,7 @@ export default function Register(props) {
                   email,
                   username,
                   groupCode,
-                  inGroup
+                  inGroup,
                 });
             })
             .catch(() => {

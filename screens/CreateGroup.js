@@ -14,9 +14,11 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-import {generateGroupCode} from "../backend/GroupCode";
+import { generateGroupCode } from "../backend/GroupCode";
 
 require("firebase/firestore");
+
+const GROUP_CODE_LENGTH = 8;
 
 const styles = StyleSheet.create({
   groupContainer: {
@@ -87,7 +89,9 @@ const styles = StyleSheet.create({
 export default function CreateGroup({ navigation }) {
   const [name, setName] = useState("");
   const [tentType, setTentType] = useState("");
-  const [groupCode, setGroupCode] = useState(generateGroupCode(8));
+  const [groupCode, setGroupCode] = useState(
+    generateGroupCode(GROUP_CODE_LENGTH)
+  );
   const [groupRole, setGroupRole] = useState("");
 
   const onCreateGroup = () => {
