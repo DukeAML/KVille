@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { divide } from "react-native-reanimated";
 
 const styles = StyleSheet.create({
@@ -13,49 +14,72 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
   },
+  listItem:{
+    backgroundColor: '#1f509a',
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  listText: {
+    font: 20,
+  }
 });
 
-// let members = [
-//   {
-//     id: '',
-//     name: User1,
-//   },
-//   {
-//     id: '',
-//     name: User2,
-//   },
-//   {
-//     id: '',
-//     name: User3,
-//   },
-//   {
-//     id: '',
-//     name: User4,
-//   },
-//   {
-//     id: '',
-//     name: User5,
-//   },
-//   {
-//     id: '',
-//     name: User6,
-//   },
-//   {
-//     id: '',
-//     name: User7,
-//   },
-// ];
+let members = [
+  {
+    id: '1',
+    name: 'User1',
+  },
+  {
+    id: '2',
+    name: 'User2',
+  },
+  {
+    id: '3',
+    name: 'User3',
+  },
+  {
+    id: '4',
+    name: 'User4',
+  },
+  {
+    id: '5',
+    name: 'User5',
+  },
+  {
+    id: '6',
+    name: 'User6',
+  },
+  {
+    id: '7',
+    name: 'User7',
+  },
+];
 
-// const GroupList = () =>{
+const Member = ({name}) => (
+  <View style={styles.listItem}>
+    <Text style={styles.listText}>{name}</Text>
+  </View>
+);
   
-// }
 
 export default function GroupInfo() {
+  state = {selectedId: null};
+
+  const renderMember = ({item}) => (
+    <Member name={item.name}/>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.header}>Black Tent</Text>
       </View>
+      <FlatList
+        data = {members}
+        renderItem={renderMember}
+        keyExtractor={item=>item.id}
+      />
     </View>
   );
 }
