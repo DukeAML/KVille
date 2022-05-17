@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -15,6 +15,9 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { generateGroupCode } from "../backend/GroupCode";
+import { useStateValue } from "./State";
+import {useSelector, useDispatch} from 'react-redux';
+import {inGroup} from "../redux/actions/index"
 
 require("firebase/firestore");
 
@@ -85,30 +88,66 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function CreateGroup({ navigation }) {
-  const [name, setName] = useState("");
-  const [tentType, setTentType] = useState("");
-  const [groupCode, setGroupCode] = useState(
-    generateGroupCode(GROUP_CODE_LENGTH)
-  );
-  const [groupRole, setGroupRole] = useState("");
+// function useForceUpdate() {
+//   const [value, setValue] = useState(0); // integer state
+//   return () => setValue((value) => value + 1); // update the state to force render
+// }
 
+export default function CreateGroup(props) {
+  const [group, setGroup] = useState({
+    name: "",
+    tentType: "",
+    groupCode: generateGroupCode(GROUP_CODE_LENGTH),
+    groupRole: "",
+  });
+
+  const inGroup = useSelector(state => state.inGroup);
+  const dispatch = useDispatch();
+
+  // const [{ inGroup }, dispatch] = useStateValue();
+
+  useEffect(() => {
+    if ((group.groupRole = "Creator")) {
+      setGroup({ ...group, groupRole: "Creator" });
+    }
+  }, [group.groupRole]);
+  // const [name, setName] = useState("");
+  // const [tentType, setTentType] = useState("");
+  // const [groupCode, setGroupCode] = useState(
+  //   generateGroupCode(GROUP_CODE_LENGTH)
+  // );
+  // const [groupRole, setGroupRole] = useState("Creator");
+
+  //used to force update this function component
+  // const [, updateState] = React.useState(0);
+  // const forceUpdate = React.useCallback(() => updateState({}), []);
+  // const [value, setValue] = useState(0);
   //Create group function
   const onCreateGroup = () => {
+    // setGroupRole({
+    //   ...groupRole,
+    //   groupRole: "Creator",
+    // });
+    // setGroup({
+    //   ...group,
+    //   groupRole: "Creator",
+    // });
+    // props.parentCallback(true);
+
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
-    firebase.firestore().collection("groups").doc(groupCode).set({
-      name,
-      tentType,
+    firebase.firestore().collection("groups").doc(group.groupCode).set({
+      name: group.name,
+      tentType: group.tentType,
     });
     //adds current user to collection of members in the group
     firebase
       .firestore()
       .collection("groups")
-      .doc(groupCode)
+      .doc(group.groupCode)
       .collection("members")
       .doc(firebase.auth().currentUser.uid)
       .set({
-        groupRole,
+        groupRole: group.groupRole,
       });
     //updates current user's inGroup and groupCode states
     firebase
@@ -116,7 +155,7 @@ export default function CreateGroup({ navigation }) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
-        groupCode: groupCode,
+        groupCode: group.groupCode,
         inGroup: true,
       });
   };
@@ -130,7 +169,7 @@ export default function CreateGroup({ navigation }) {
           <TextInput
             style={styles.textInput}
             placeholder="Enter Group Name"
-            onChangeText={(name) => setName(name)}
+            onChangeText={(name) => setGroup({ ...group, name: name })}
           />
 
           <Text style={styles.centerText}>Group Code</Text>
@@ -151,7 +190,7 @@ export default function CreateGroup({ navigation }) {
                 flex: 1,
               }}
             >
-              {groupCode}
+              {group.groupCode}
             </Text>
           </View>
         </View>
@@ -165,9 +204,19 @@ export default function CreateGroup({ navigation }) {
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
+              dispatch(inGroup());
+              setGroup({
+                ...group,
+                groupRole: "Creator",
+              });
+              // dispatch({
+              //   type: "changeGroupStatus",
+              //   newGroupState: true,
+              // });
               onCreateGroup();
-              console.log(groupCode);
-              console.log();
+              console.log(group.groupCode);
+              console.log(group.groupRole);
+              //forceUpdate();
             }}
           >
             <Text style={styles.btnTxt}>Create</Text>

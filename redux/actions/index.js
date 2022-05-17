@@ -20,3 +20,15 @@ export function fetchUser() {
       });
   };
 }
+
+export const inGroup = () => {
+  return {
+    type: "IN_GROUP",
+  };
+};
+
+export const notInGroup = () => {
+  return {
+    type: "NOT_IN_GROUP",
+  };
+};

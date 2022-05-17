@@ -15,40 +15,40 @@ const styles = StyleSheet.create({
   },
 });
 
-let members = [
-  {
-    id: '',
-    name: User1,
-  },
-  {
-    id: '',
-    name: User2,
-  },
-  {
-    id: '',
-    name: User3,
-  },
-  {
-    id: '',
-    name: User4,
-  },
-  {
-    id: '',
-    name: User5,
-  },
-  {
-    id: '',
-    name: User6,
-  },
-  {
-    id: '',
-    name: User7,
-  },
-];
+// let members = [
+//   {
+//     id: '',
+//     name: User1,
+//   },
+//   {
+//     id: '',
+//     name: User2,
+//   },
+//   {
+//     id: '',
+//     name: User3,
+//   },
+//   {
+//     id: '',
+//     name: User4,
+//   },
+//   {
+//     id: '',
+//     name: User5,
+//   },
+//   {
+//     id: '',
+//     name: User6,
+//   },
+//   {
+//     id: '',
+//     name: User7,
+//   },
+// ];
 
-const GroupList = () =>{
+// const GroupList = () =>{
   
-}
+// }
 
 export default function GroupInfo() {
   return (

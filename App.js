@@ -20,13 +20,13 @@ import firebase from "firebase/compat/app";
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
-  authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
-  projectId: "duke-tenting-app-cc15b",
-  storageBucket: "duke-tenting-app-cc15b.appspot.com",
-  messagingSenderId: "391061238630",
-  appId: "1:391061238630:web:40b3664d20c6a247dc8ea7",
-  measurementId: "G-54X8RY8NHT",
+  apiKey: "AIzaSyBm5sT0wPr_j7iHl--g78b3oDc98GAqkmU",
+  authDomain: "duke-tenting-app-rev2.firebaseapp.com",
+  projectId: "duke-tenting-app-rev2",
+  storageBucket: "duke-tenting-app-rev2.appspot.com",
+  messagingSenderId: "232714285127",
+  appId: "1:232714285127:web:73df8d490f7cfb7b28c162",
+  measurementId: "G-N4GY1GQMD7",
 };
 
 if (firebase.apps.length === 0) {
@@ -45,19 +45,48 @@ import MonitorScreen from "./screens/Monitor";
 import InfoScreen from "./screens/Info";
 import SettingScreen from "./screens/Settings";
 
+import { StateProvider } from "./screens/State";
+
+import { createStore } from "redux";
+import Reducer from "./redux/reducers/index";
+import {useSelector, useDispatch} from 'react-redux';
+ 
+const store = createStore(
+  Reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export class App extends Component {
+  
+
   constructor(props) {
     super(props);
     this.state = {
       loaded: false,
       fontsLoaded: false,
       //used to track if current user is in a group
-      inGroup: false,
+      inGroup:  false,
     };
   }
+
+  // reducer = (state, action) => {
+  //   switch (action.type) {
+  //     case "changeGroupStatus":
+  //       return {
+  //         ...state,
+  //         inGroup: action.newGroupState,
+  //       };
+  //     default:
+  //       return state;
+  //   }
+  // };
+
+  // updateGroupStatus = (bool) => {
+  //   this.setState({ inGroup: bool });
+  // };
 
   async LoadFonts() {
     await Font.loadAsync({
@@ -78,8 +107,9 @@ export class App extends Component {
         //   loggedIn: true,
         //   loaded: true,
         // })
-        
+
         //if user logged in, update loggedIn to true
+        console.log("check");
         const docRef = firebase
           .firestore()
           .collection("users")
@@ -152,6 +182,7 @@ export class App extends Component {
     if (!inGroup) {
       console.log(inGroup);
       return (
+        // <StateProvider initialState={this.state} reducer={reducer}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Start"
@@ -179,6 +210,7 @@ export class App extends Component {
             <Stack.Screen
               name="CreateGroup"
               component={CreateGroupScreen}
+              parentCallback={this.updateGroupStatus}
               options={({ navigation }) => ({
                 headerShown: true,
                 headerStyle: {
@@ -187,13 +219,19 @@ export class App extends Component {
                   shadowColor: "transparent",
                 },
                 headerLeft: () => (
-                  <Text style={{color: "#fff", marginLeft: 10}} onPress={() => navigation.goBack()}>Cancel</Text>
+                  <Text
+                    style={{ color: "#fff", marginLeft: 10 }}
+                    onPress={() => navigation.goBack()}
+                  >
+                    Cancel
+                  </Text>
                 ),
               })}
             />
             {/* <Stack.Screen name="GroupNavigator" component={GroupNavigator} /> */}
           </Stack.Navigator>
         </NavigationContainer>
+        // </StateProvider>
       );
     }
 
