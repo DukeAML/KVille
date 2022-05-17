@@ -20,6 +20,7 @@ Database:
 
 Bugs: 
     -5/14 - persistence is not working on mobile device, having to sign-in everytime app is loaded
+    -5/15 - sharing states between two unrelated components; solutions: custom hook, redux, react context
 
 UI suggestions: 
     -add simple game to start screen; ex: pong, ...
