@@ -8,7 +8,7 @@ import React, { Component } from "react";
 import AppLoading from "expo-app-loading";
 import { Text, Button } from "react-native";
 
-// import { Provider } from "react-redux";
+
 // import { createStore, applyMiddleware } from "redux";
 // import rootREducer from "./redux/reducers";
 // import thunk from "redux-thunk";
@@ -35,21 +35,14 @@ if (firebase.apps.length === 0) {
 
 import RegisterScreen from "./component/auth/Register";
 import LoginScreen from "./component/auth/Login";
-import StartScreen from "./screens/Start";
-import CreateGroupScreen from "./screens/CreateGroup";
-import GroupInfoScreen from "./screens/GroupInfo";
-import DrawerContent from "./screens/DrawerContent";
-import AvailabilityScreen from "./screens/Availability";
-import ScheduleScreen from "./screens/Schedule";
-import MonitorScreen from "./screens/Monitor";
-import InfoScreen from "./screens/Info";
-import SettingScreen from "./screens/Settings";
+import MainScreen from "./screens/Main";
 
 import { StateProvider } from "./screens/State";
 
 import { createStore } from "redux";
 import Reducer from "./redux/reducers/index";
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector, useDispatch, Provider} from 'react-redux';
+
  
 const store = createStore(
   Reducer,
@@ -179,100 +172,11 @@ export class App extends Component {
     }
 
     //if curr user not in group display start and createGroup screens
-    if (!inGroup) {
-      console.log(inGroup);
-      return (
-        // <StateProvider initialState={this.state} reducer={reducer}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Start"
-            screenOptions={{ headerShown: false }}
-          >
-            <Stack.Screen
-              name="Start"
-              component={StartScreen}
-              options={{
-                headerShown: true,
-                title: "Krzyzewskiville",
-                headerStyle: {
-                  backgroundColor: "#1f509a",
-                  borderBottomWidth: 0,
-                  shadowColor: "transparent",
-                },
-                headerTitleStyle: {
-                  fontFamily: "NovaCut",
-                  color: "#fff",
-                  fontSize: 30,
-                  left: "0%",
-                },
-              }}
-            />
-            <Stack.Screen
-              name="CreateGroup"
-              component={CreateGroupScreen}
-              parentCallback={this.updateGroupStatus}
-              options={({ navigation }) => ({
-                headerShown: true,
-                headerStyle: {
-                  backgroundColor: "#1f509a",
-                  borderBottomWidth: 0,
-                  shadowColor: "transparent",
-                },
-                headerLeft: () => (
-                  <Text
-                    style={{ color: "#fff", marginLeft: 10 }}
-                    onPress={() => navigation.goBack()}
-                  >
-                    Cancel
-                  </Text>
-                ),
-              })}
-            />
-            {/* <Stack.Screen name="GroupNavigator" component={GroupNavigator} /> */}
-          </Stack.Navigator>
-        </NavigationContainer>
-        // </StateProvider>
-      );
-    }
-
-    //current user already in group, display group info screen
     return (
-      <NavigationContainer independent={true}>
-        <Drawer.Navigator
-          initialRouteName="GroupInfo"
-          drawerContent={(props) => <DrawerContent {...props} />}
-        >
-          <Drawer.Screen
-            name="GroupInfo"
-            component={GroupInfoScreen}
-            options={({ navigation }) => ({
-              title: "Black Tent",
-              headerStyle: {
-                backgroundColor: "#C2C6D0",
-                borderBottomWidth: 0,
-                shadowColor: "transparent",
-              },
-              headerTitleStyle: {
-                right: "0%",
-                fontSize: 28,
-              },
-              headerLeft: () => (
-                <IconButton
-                  icon="menu"
-                  size={25}
-                  onPress={() => navigation.openDrawer()}
-                ></IconButton>
-              ),
-            })}
-          />
-          {/* <Drawer.Screen name="Availability" component={AvailabilityScreen} />
-        <Drawer.Screen name="ScheduleScreen" component={ScheduleScreen} />
-        <Drawer.Screen name="MonitorScreen" component={MonitorScreen} />
-        <Drawer.Screen name="InfoScreen" component={InfoScreen} />
-        <Drawer.Screen name="SettingScreen" component={SettingScreen} /> */}
-        </Drawer.Navigator>
-      </NavigationContainer>
-    );
+      <Provider store = {store}>
+        <MainScreen />
+      </Provider>
+    )
   }
 }
 
