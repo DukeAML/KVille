@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 //   return () => setValue((value) => value + 1); // update the state to force render
 // }
 
-export default function CreateGroup(props) {
+export default function CreateGroup({navigation}) {
   const [group, setGroup] = useState({
     name: "",
     tentType: "",
@@ -101,8 +101,8 @@ export default function CreateGroup(props) {
     groupRole: "",
   });
 
-  const inGroup = useSelector(state => state.inGroup);
-  const dispatch = useDispatch();
+  // const inGroup = useSelector(state => state.inGroup);
+  // const dispatch = useDispatch();
 
   // const [{ inGroup }, dispatch] = useStateValue();
 
@@ -204,7 +204,7 @@ export default function CreateGroup(props) {
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
-              dispatch(inGroup());
+              // dispatch(inGroup());
               setGroup({
                 ...group,
                 groupRole: "Creator",
@@ -213,7 +213,8 @@ export default function CreateGroup(props) {
               //   type: "changeGroupStatus",
               //   newGroupState: true,
               // });
-              onCreateGroup();
+              // onCreateGroup();
+              navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
               console.log(group.groupRole);
               //forceUpdate();
