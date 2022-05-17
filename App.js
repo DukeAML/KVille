@@ -8,7 +8,6 @@ import React, { Component } from "react";
 import AppLoading from "expo-app-loading";
 import { Text, Button } from "react-native";
 
-
 // import { createStore, applyMiddleware } from "redux";
 // import rootREducer from "./redux/reducers";
 // import thunk from "redux-thunk";
@@ -20,13 +19,14 @@ import firebase from "firebase/compat/app";
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBm5sT0wPr_j7iHl--g78b3oDc98GAqkmU",
-  authDomain: "duke-tenting-app-rev2.firebaseapp.com",
-  projectId: "duke-tenting-app-rev2",
-  storageBucket: "duke-tenting-app-rev2.appspot.com",
-  messagingSenderId: "232714285127",
-  appId: "1:232714285127:web:73df8d490f7cfb7b28c162",
-  measurementId: "G-N4GY1GQMD7",
+  apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
+  authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
+  databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
+  projectId: "duke-tenting-app-cc15b",
+  storageBucket: "duke-tenting-app-cc15b.appspot.com",
+  messagingSenderId: "391061238630",
+  appId: "1:391061238630:web:40b3664d20c6a247dc8ea7",
+  measurementId: "G-54X8RY8NHT",
 };
 
 if (firebase.apps.length === 0) {
@@ -41,9 +41,8 @@ import { StateProvider } from "./screens/State";
 
 import { createStore } from "redux";
 import Reducer from "./redux/reducers/index";
-import {useSelector, useDispatch, Provider} from 'react-redux';
+import { useSelector, useDispatch, Provider } from "react-redux";
 
- 
 const store = createStore(
   Reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -53,15 +52,13 @@ const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export class App extends Component {
-  
-
   constructor(props) {
     super(props);
     this.state = {
       loaded: false,
       fontsLoaded: false,
       //used to track if current user is in a group
-      inGroup:  false,
+      inGroup: false,
     };
   }
 
@@ -173,10 +170,10 @@ export class App extends Component {
 
     //if curr user not in group display start and createGroup screens
     return (
-      <Provider store = {store}>
+      <Provider store={store}>
         <MainScreen />
       </Provider>
-    )
+    );
   }
 }
 
