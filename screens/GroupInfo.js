@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, FlatList} from "react-native";
+import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { divide } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 
 const styles = StyleSheet.create({
   container: {
@@ -65,7 +65,7 @@ const Member = ({name}) => (
   
 
 export default function GroupInfo() {
-  state = {selectedId: null};
+  
 
   const renderMember = ({item}) => (
     <Member name={item.name}/>
@@ -76,7 +76,6 @@ export default function GroupInfo() {
       <View style={styles.header}>
         <Text style={styles.header}>Black Tent</Text>
       </View>
-      <View
       <SafeAreaView>
         <FlatList
           data = {members}
