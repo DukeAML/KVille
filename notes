@@ -1,9 +1,5 @@
-Location Services - expo API: locations.startGeofencingAsyn
-
-Group Code - use Data.now; subtract a set date to make code shorter
-
-
-To-Do: 
+Tasks: 
+    -Location Services - expo API: locations.startGeofencingAsyn
     -Create a splash screen: https://docs.expo.dev/guides/splash-screens/
     -implement push notifications - expo api
     -discord community??

@@ -15,9 +15,6 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { generateGroupCode } from "../backend/GroupCode";
-import { useStateValue } from "./State";
-import {useSelector, useDispatch} from 'react-redux';
-import {inGroup} from "../redux/actions/index"
 
 require("firebase/firestore");
 
@@ -93,18 +90,13 @@ const styles = StyleSheet.create({
 //   return () => setValue((value) => value + 1); // update the state to force render
 // }
 
-export default function CreateGroup({navigation}) {
+export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
     name: "",
     tentType: "",
     groupCode: generateGroupCode(GROUP_CODE_LENGTH),
     groupRole: "",
   });
-
-  // const inGroup = useSelector(state => state.inGroup);
-  // const dispatch = useDispatch();
-
-  // const [{ inGroup }, dispatch] = useStateValue();
 
   useEffect(() => {
     if ((group.groupRole = "Creator")) {
@@ -118,22 +110,8 @@ export default function CreateGroup({navigation}) {
   // );
   // const [groupRole, setGroupRole] = useState("Creator");
 
-  //used to force update this function component
-  // const [, updateState] = React.useState(0);
-  // const forceUpdate = React.useCallback(() => updateState({}), []);
-  // const [value, setValue] = useState(0);
   //Create group function
   const onCreateGroup = () => {
-    // setGroupRole({
-    //   ...groupRole,
-    //   groupRole: "Creator",
-    // });
-    // setGroup({
-    //   ...group,
-    //   groupRole: "Creator",
-    // });
-    // props.parentCallback(true);
-
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     firebase.firestore().collection("groups").doc(group.groupCode).set({
       name: group.name,
@@ -213,11 +191,10 @@ export default function CreateGroup({navigation}) {
               //   type: "changeGroupStatus",
               //   newGroupState: true,
               // });
-              // onCreateGroup();
+              onCreateGroup();
               navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
               console.log(group.groupRole);
-              //forceUpdate();
             }}
           >
             <Text style={styles.btnTxt}>Create</Text>

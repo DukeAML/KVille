@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   listText: {
-    font: 20,
+    // font: 20,
   }
 });
 

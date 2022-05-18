@@ -37,8 +37,6 @@ import RegisterScreen from "./component/auth/Register";
 import LoginScreen from "./component/auth/Login";
 import MainScreen from "./screens/Main";
 
-import { StateProvider } from "./screens/State";
-
 import { createStore } from "redux";
 import Reducer from "./redux/reducers/index";
 import { useSelector, useDispatch, Provider } from "react-redux";
