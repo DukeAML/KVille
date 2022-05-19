@@ -1,7 +1,7 @@
-import React from 'react'
+// import React from 'react'
 
-export default function availability() {
-  return (
-    <div>availability</div>
-  )
-}
+// export default function availability() {
+//   return (
+//     <div>availability</div>
+//   )
+// }

@@ -3,11 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
-import { Text } from 'react-native';
+import { Text } from "react-native";
 import { IconButton, Colors } from "react-native-paper";
 
 import StartScreen from "./Start";
 import CreateGroupScreen from "./CreateGroup";
+import JoinGroupScreen from "./JoinGroup";
 import GroupInfoScreen from "./GroupInfo";
 import DrawerContent from "./DrawerContent";
 import AvailabilityScreen from "./Availability";
@@ -58,6 +59,22 @@ export default function Main() {
             headerLeft: () => (
               <Text
                 style={{ color: "#fff", marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="JoinGroup"
+          component={JoinGroupScreen}
+          options={({ navigation }) => ({
+            headerShown: true,
+            title: "Join Group",
+            headerLeft: () => (
+              <Text
+                style={{ color: "#000", marginLeft: 10 }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel

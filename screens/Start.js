@@ -68,7 +68,7 @@ export default function Start({navigation}) {
     NovaCut_400Regular,
   });
 
-  const [text, onChangeText] = React.useState("");
+  // const [text, onChangeText] = React.useState("");
 
   if (!fontsLoaded) {
     return <AppLoading />;
@@ -80,12 +80,18 @@ export default function Start({navigation}) {
         </View> */}
         <Image source={coachk} style={styles.image} />
         <View style={styles.textContainer}>
-          <TextInput
+          {/* <TextInput
             style={styles.textInput}
             onChangeText={onChangeText}
             value={text}
             placeholder="Enter Group Code"
-          />
+          /> */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("JoinGroup")}
+          >
+            <Text style={styles.buttonText}>Join Group</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate("CreateGroup")}
