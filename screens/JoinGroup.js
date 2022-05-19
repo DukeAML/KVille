@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,6 +11,7 @@ import {
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import { useGestureHandlerRef } from "@react-navigation/stack";
 
 const styles = StyleSheet.create({
   container: {
@@ -40,10 +41,51 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function JoinGroup() {
+export default function JoinGroup({ navigation }) {
   const [groupCode, setGroupCode] = useState("");
+  const [name, setName] = useState("");
 
-  const onJoinGroup = () => {};
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .get()
+    .then((doc) => {
+      setName(doc.data().name);
+      console.log(name, doc.data().name);
+    });
+
+  useEffect(() => {
+    if (name != "") {
+      setName(name);
+    }
+  }, [name]);
+
+  const onJoinGroup = (navigation) => {
+    console.log(groupCode);
+    const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+
+    groupRef.get().then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            groupCode: groupCode,
+            inGroup: true,
+          });
+        groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
+            groupRole: "member",
+            //name: name
+          });
+        navigation.navigate("GroupNavigator");
+      } else {
+        console.log("No group exists");
+        //maybe add snack bar for this
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -55,17 +97,18 @@ export default function JoinGroup() {
       />
       <TextInput
         style={styles.textInput}
-        onChangeText={onChangeText}
-        value={text}
-        placeholder="Enter Group Code"
+        onChangeText={(name) => setName(name)}
+        value={name}
+        placeholder={name}
       />
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          navigation.navigate("GroupNavigator");
+          onJoinGroup(navigation);
+          //navigation.navigate("GroupNavigator");
         }}
       >
-        <Text style={styles.buttonText}>Create New Group</Text>
+        <Text style={styles.buttonText}>Join Group</Text>
       </TouchableOpacity>
     </View>
   );

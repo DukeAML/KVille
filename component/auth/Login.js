@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { View, Button, TextInput, Text, StyleSheet } from "react-native";
+import { View, Button, Text, StyleSheet } from "react-native";
+// import {TextInput} from 'react-native';
+import { TextInput } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -20,6 +23,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 8,
+    height: 20,
+    alignItem: "center",
+    //justifyContent: "center",
+    flexDirection: "row",
   },
   bottomButton: {
     alignContent: "center",
@@ -27,7 +34,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     padding: 10,
     textAlign: "center",
-    marginBottom: 30 
+    marginBottom: 30,
   },
 });
 
@@ -62,15 +69,19 @@ export default function Login(props) {
         <TextInput
           style={styles.textInput}
           placeholder="email"
+          value={email}
           onChangeText={(email) => setEmail(email)}
+          right={<TextInput.Icon name="account-circle-outline" />}
+          activeUnderlineColor="#00f"
         />
         <TextInput
           style={styles.textInput}
           placeholder="password"
           secureTextEntry={true}
+          value={password}
           onChangeText={(password) => setPassword(password)}
+          right={<TextInput.Icon name="lock-outline" style={{margin: 10, padding: 20, color:"#f00"}} />}
         />
-
         <Button
           style={styles.button}
           onPress={() => onSignUp()}
@@ -82,7 +93,7 @@ export default function Login(props) {
         <Text
           title="Register"
           onPress={() => props.navigation.navigate("Register")}
-          style = {{textAlign: "center"}}
+          style={{ textAlign: "center" }}
         >
           Don't have an account? SignUp.
         </Text>
@@ -90,48 +101,3 @@ export default function Login(props) {
     </View>
   );
 }
-// export class Login extends Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       email: "",
-//       password: "",
-//       name: "",
-//     };
-
-//     this.onSignUp = this.onSignUp.bind(this);
-//   }
-
-//   onSignUp() {
-//     const { email, password } = this.state;
-//     firebase
-//       .auth()
-//       .signInWithEmailAndPassword(email, password)
-//       .then((result) => {
-//         console.log(result);
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       });
-//   }
-
-//   render() {
-//     return (
-//       <View>
-//         <TextInput
-//           placeholder="email"
-//           onChangeText={(email) => this.setState({ email })}
-//         />
-//         <TextInput
-//           placeholder="password"
-//           secureTextEntry={true}
-//           onChangeText={(password) => this.setState({ password })}
-//         />
-//         <Button onPress={() => this.onSignUp()} title="Sign in" />
-//       </View>
-//     );
-//   }
-// }
-
-// export default Login;
