@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { divide } from "react-native-reanimated";
+
 
 
 const styles = StyleSheet.create({
@@ -22,7 +22,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   listText: {
-    // font: 20,
+    font: 20,
+  },
+  boxText: {
+    height:20,
+    width: 80,
+    backgroundColor: "#FFFAFACC",
+    textAlign: "center"
   }
 });
 
@@ -75,6 +81,9 @@ export default function GroupInfo() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.header}>Black Tent</Text>
+      </View>
+      <View style={styles.boxText}>
+        <Text style={styles.header}>Group Name</Text>
       </View>
       <SafeAreaView>
         <FlatList
