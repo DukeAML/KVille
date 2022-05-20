@@ -18,6 +18,7 @@ import { generateGroupCode } from "../backend/GroupCode";
 
 require("firebase/firestore");
 
+//length of the group code
 const GROUP_CODE_LENGTH = 8;
 
 const styles = StyleSheet.create({
@@ -92,17 +93,38 @@ const styles = StyleSheet.create({
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
-    name: "",
+    groupName: "",
     tentType: "",
     groupCode: generateGroupCode(GROUP_CODE_LENGTH),
-    groupRole: "",
+    groupRole: "Creator",
+    // userName: name,
   });
 
-  useEffect(() => {
-    if ((group.groupRole = "Creator")) {
-      setGroup({ ...group, groupRole: "Creator" });
-    }
-  }, [group.groupRole]);
+  const userRef = firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid);
+  const groupRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(group.groupCode);
+
+  // userRef.get().then((doc) => {
+  //   setGroup({...group, userName: doc.data().name});
+  //   console.log(userName, doc.data().name);
+  // });
+
+  // useEffect(() => {
+  //   setGroup({ ...group, userName: group.groupName });
+  // }, [group.groupName]);
+
+  // useEffect(() => {
+  //   if ((group.groupRole = "Creator")) {
+  //     setGroup({ ...group, groupRole: "Creator" });
+  //   }
+  // }, [group.groupRole]);
+
+  //states broken up separately
   // const [name, setName] = useState("");
   // const [tentType, setTentType] = useState("");
   // const [groupCode, setGroupCode] = useState(
@@ -113,29 +135,19 @@ export default function CreateGroup({ navigation }) {
   //Create group function
   const onCreateGroup = () => {
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
-    firebase.firestore().collection("groups").doc(group.groupCode).set({
-      name: group.name,
+    groupRef.set({
+      name: group.groupName,
       tentType: group.tentType,
     });
     //adds current user to collection of members in the group
-    firebase
-      .firestore()
-      .collection("groups")
-      .doc(group.groupCode)
-      .collection("members")
-      .doc(firebase.auth().currentUser.uid)
-      .set({
-        groupRole: group.groupRole,
-      });
+    groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
+      groupRole: group.groupRole,
+    });
     //updates current user's inGroup and groupCode states
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        groupCode: group.groupCode,
-        inGroup: true,
-      });
+    userRef.update({
+      groupCode: group.groupCode,
+      inGroup: true,
+    });
   };
 
   return (
@@ -147,8 +159,17 @@ export default function CreateGroup({ navigation }) {
           <TextInput
             style={styles.textInput}
             placeholder="Enter Group Name"
-            onChangeText={(name) => setGroup({ ...group, name: name })}
+            onChangeText={(groupName) =>
+              setGroup({ ...group, groupName: groupName })
+            }
           />
+          {/* <TextInput
+            style={styles.textInput}
+            placeholder={group.groupName}
+            onChangeText={(userName) =>
+              setGroup({ ...group, userName: userName })
+            }
+          /> */}
 
           <Text style={styles.centerText}>Group Code</Text>
           <View
@@ -182,14 +203,9 @@ export default function CreateGroup({ navigation }) {
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
-              // dispatch(inGroup());
-              setGroup({
-                ...group,
-                groupRole: "Creator",
-              });
-              // dispatch({
-              //   type: "changeGroupStatus",
-              //   newGroupState: true,
+              // setGroup({
+              //   ...group,
+              //   groupRole: "Creator",
               // });
               onCreateGroup();
               navigation.navigate("GroupNavigator");

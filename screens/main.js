@@ -2,8 +2,8 @@ import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import React from "react";
-import { Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
 import { IconButton, Colors } from "react-native-paper";
 
 import StartScreen from "./Start";
@@ -17,73 +17,104 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export default function Main() {
+  const [inGroup, setGroupStatus] = useState(false);
+
+  //functions like componentDidMount, sets inGroup to true if current user is in group
+  useEffect(() => {
+    let mounted = true;
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        if (doc.data().inGroup && mounted) {
+          console.log(doc.data().inGroup);
+          setGroupStatus(true);
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting Document:", error);
+      });
+    //cleanup function, makes sure state not updated when component is unmounted
+    return () => (mounted = false);
+  }, []);
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Start"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          name="Start"
-          component={StartScreen}
-          options={{
-            headerShown: true,
-            title: "Krzyzewskiville",
-            headerStyle: {
-              backgroundColor: "#1f509a",
-              borderBottomWidth: 0,
-              shadowColor: "transparent",
-            },
-            headerTitleStyle: {
-              fontFamily: "NovaCut",
-              color: "#fff",
-              fontSize: 30,
-              left: "0%",
-            },
-          }}
-        />
-        <Stack.Screen
-          name="CreateGroup"
-          component={CreateGroupScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "#1f509a",
-              borderBottomWidth: 0,
-              shadowColor: "transparent",
-            },
-            headerLeft: () => (
-              <Text
-                style={{ color: "#fff", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="JoinGroup"
-          component={JoinGroupScreen}
-          options={({ navigation }) => ({
-            headerShown: true,
-            title: "Join Group",
-            headerLeft: () => (
-              <Text
-                style={{ color: "#000", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
-        />
-        <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
-      </Stack.Navigator>
+    <NavigationContainer independent={true}>
+      {inGroup ? (
+        <GroupNavigator />
+      ) : (
+        <Stack.Navigator
+          initialRouteName="Start"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen
+            name="Start"
+            component={StartScreen}
+            options={{
+              headerShown: true,
+              title: "Krzyzewskiville",
+              headerStyle: {
+                backgroundColor: "#1f509a",
+                borderBottomWidth: 0,
+                shadowColor: "transparent",
+              },
+              headerTitleStyle: {
+                fontFamily: "NovaCut",
+                color: "#fff",
+                fontSize: 30,
+                left: "0%",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="CreateGroup"
+            component={CreateGroupScreen}
+            options={({ navigation }) => ({
+              headerShown: true,
+              headerStyle: {
+                backgroundColor: "#1f509a",
+                borderBottomWidth: 0,
+                shadowColor: "transparent",
+              },
+              headerLeft: () => (
+                <Text
+                  style={{ color: "#fff", marginLeft: 10 }}
+                  onPress={() => navigation.goBack()}
+                >
+                  Cancel
+                </Text>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="JoinGroup"
+            component={JoinGroupScreen}
+            options={({ navigation }) => ({
+              headerShown: true,
+              title: "Join Group",
+              headerLeft: () => (
+                <Text
+                  style={{ color: "#000", marginLeft: 10 }}
+                  onPress={() => navigation.goBack()}
+                >
+                  Cancel
+                </Text>
+              ),
+            })}
+          />
+          <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
