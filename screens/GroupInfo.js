@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   listText: {
-<<<<<<< HEAD
     font: 20,
   },
   boxText: {
@@ -30,9 +29,6 @@ const styles = StyleSheet.create({
     width: 80,
     backgroundColor: "#FFFAFACC",
     textAlign: "center"
-=======
-    // font: 20,
->>>>>>> bdb324ab51a12364b11b4646fc1e7459ad61d967
   }
 });
 
