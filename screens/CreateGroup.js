@@ -97,7 +97,7 @@ export default function CreateGroup({ navigation }) {
     tentType: "",
     groupCode: generateGroupCode(GROUP_CODE_LENGTH),
     groupRole: "Creator",
-    // userName: name,
+    userName: "",
   });
 
   const userRef = firebase
@@ -109,28 +109,12 @@ export default function CreateGroup({ navigation }) {
     .collection("groups")
     .doc(group.groupCode);
 
-  // userRef.get().then((doc) => {
-  //   setGroup({...group, userName: doc.data().name});
-  //   console.log(userName, doc.data().name);
-  // });
+  useEffect(() => {
+    userRef.get().then((doc) => {
+      setGroup({ ...group, userName: doc.data().name });
+    });
+  }, []);
 
-  // useEffect(() => {
-  //   setGroup({ ...group, userName: group.groupName });
-  // }, [group.groupName]);
-
-  // useEffect(() => {
-  //   if ((group.groupRole = "Creator")) {
-  //     setGroup({ ...group, groupRole: "Creator" });
-  //   }
-  // }, [group.groupRole]);
-
-  //states broken up separately
-  // const [name, setName] = useState("");
-  // const [tentType, setTentType] = useState("");
-  // const [groupCode, setGroupCode] = useState(
-  //   generateGroupCode(GROUP_CODE_LENGTH)
-  // );
-  // const [groupRole, setGroupRole] = useState("Creator");
 
   //Create group function
   const onCreateGroup = () => {
@@ -142,6 +126,7 @@ export default function CreateGroup({ navigation }) {
     //adds current user to collection of members in the group
     groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
       groupRole: group.groupRole,
+      name: group.userName,
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
@@ -163,13 +148,14 @@ export default function CreateGroup({ navigation }) {
               setGroup({ ...group, groupName: groupName })
             }
           />
-          {/* <TextInput
+          <TextInput
             style={styles.textInput}
-            placeholder={group.groupName}
+            value= {group.userName}
+            placeholder={group.userName}
             onChangeText={(userName) =>
               setGroup({ ...group, userName: userName })
             }
-          /> */}
+          />
 
           <Text style={styles.centerText}>Group Code</Text>
           <View

@@ -43,45 +43,39 @@ const styles = StyleSheet.create({
 
 export default function JoinGroup({ navigation }) {
   const [groupCode, setGroupCode] = useState("");
-  // const [name, setName] = useState(  firebase
-  //   .firestore()
-  //   .collection("users")
-  //   .doc(firebase.auth().currentUser.uid)
-  //   .get().data().name);
-  
-  // console.log(name);
-  // firebase
-  //   .firestore()
-  //   .collection("users")
-  //   .doc(firebase.auth().currentUser.uid)
-  //   .get().data().name;
-    // .then((doc) => {
-    //   setName(doc.data().name);
-    //   console.log(name, doc.data().name);
-    // });
+  const [name, setName] = useState("");
 
-  // useEffect(() => {
-  //   if (name != "") {
-  //     setName(name);
-  //   }
-  // }, [name]);
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        setName(doc.data().name);
+        console.log(doc.data().name);
+      });
+  }, []);
 
   const onJoinGroup = (navigation) => {
     console.log(groupCode);
     const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
     //Max 12 people in a group
-    groupRef.collection("members").get().then(collSnap => {
-      if (collSnap.size > 12) {
-        console.log("Group is full");
-        return;
-      }
-    })
+    groupRef
+      .collection("members")
+      .get()
+      .then((collSnap) => {
+        if (collSnap.size > 12) {
+          console.log("Group is full");
+          return;
+        }
+      });
 
     //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
-        //updates current user's info 
+        //updates current user's info
         firebase
           .firestore()
           .collection("users")
@@ -91,9 +85,12 @@ export default function JoinGroup({ navigation }) {
             inGroup: true,
           });
         //adds current user to member list
-        groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
+        groupRef
+          .collection("members")
+          .doc(firebase.auth().currentUser.uid)
+          .set({
             groupRole: "member",
-            //name: name
+            name: name
           });
         navigation.navigate("GroupNavigator");
       } else {
@@ -113,7 +110,7 @@ export default function JoinGroup({ navigation }) {
       />
       <TextInput
         style={styles.textInput}
-        //value={name}
+        value={name}
         placeholder={name}
         onChangeText={(name) => setName(name)}
       />
