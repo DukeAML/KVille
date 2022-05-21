@@ -17,12 +17,18 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
+import {connect} from 'react-redux';
+import { bindActionCreators} from 'redux'
+import { fetchUser } from '../redux/actions/index';
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+
+const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch);
 
 export default function Main() {
   const [inGroup, setGroupStatus] = useState(false);
@@ -152,8 +158,25 @@ function GroupNavigator() {
         {/* <Drawer.Screen name="Availability" component={AvailabilityScreen} />
         <Drawer.Screen name="ScheduleScreen" component={ScheduleScreen} />
         <Drawer.Screen name="MonitorScreen" component={MonitorScreen} />
-        <Drawer.Screen name="InfoScreen" component={InfoScreen} />
-        <Drawer.Screen name="SettingScreen" component={SettingScreen} /> */}
+        <Drawer.Screen name="InfoScreen" component={InfoScreen} /> */}
+        <Drawer.Screen
+          name="SettingScreen"
+          component={SettingScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );

@@ -21,6 +21,23 @@ export function fetchUser() {
   };
 }
 
+export function fetchGroupCode() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch({ type: GROUP_CODE_STATE_CHANGE, groupCode: snapshot.data().groupCode });
+        } else {
+          console.log("does not exist");
+        }
+      });
+  }
+}
+
 export const inGroup = () => {
   return {
     type: "IN_GROUP",

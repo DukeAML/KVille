@@ -1,5 +1,6 @@
 const initialState = {
-    currentUser: null
+    currentUser: null,
+    groupCode: "",
 }
 
 export const user = (state = initialState, action) => {

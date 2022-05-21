@@ -110,11 +110,14 @@ export default function CreateGroup({ navigation }) {
     .doc(group.groupCode);
 
   useEffect(() => {
+    let mounted = true;
     userRef.get().then((doc) => {
-      setGroup({ ...group, userName: doc.data().name });
+      if (mounted) {
+        setGroup({ ...group, userName: doc.data().name });
+      }
     });
+    return () => (mounted = false);
   }, []);
-
 
   //Create group function
   const onCreateGroup = () => {
@@ -150,7 +153,7 @@ export default function CreateGroup({ navigation }) {
           />
           <TextInput
             style={styles.textInput}
-            value= {group.userName}
+            value={group.userName}
             placeholder={group.userName}
             onChangeText={(userName) =>
               setGroup({ ...group, userName: userName })

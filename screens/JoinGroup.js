@@ -46,15 +46,19 @@ export default function JoinGroup({ navigation }) {
   const [name, setName] = useState("");
 
   useEffect(() => {
+    let mounted = true;
     firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((doc) => {
-        setName(doc.data().name);
-        console.log(doc.data().name);
+        if (mounted) {
+          setName(doc.data().name);
+          console.log(doc.data().name);
+        }
       });
+    return () => (mounted = false);
   }, []);
 
   const onJoinGroup = (navigation) => {
@@ -90,7 +94,7 @@ export default function JoinGroup({ navigation }) {
           .doc(firebase.auth().currentUser.uid)
           .set({
             groupRole: "member",
-            name: name
+            name: name,
           });
         navigation.navigate("GroupNavigator");
       } else {
