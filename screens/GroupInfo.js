@@ -62,6 +62,12 @@ let members = [
     name: 'User7',
   },
 ];
+ 
+const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
+
+
+
+
 
 const Member = ({name}) => (
   <View style={styles.listItem}>
