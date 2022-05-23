@@ -1,3 +1,5 @@
-// let store = createStore(groupStatus);
+import { configureStore } from "@reduxjs/toolkit";
 
-// store.subscribe(() => console.log(store.getState()));
+export default configureStore({
+  reducer: {},
+});

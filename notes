@@ -17,6 +17,12 @@ Database:
 Bugs: 
     -5/14 - persistence is not working on mobile device, having to sign-in everytime app is loaded
     -5/15 - sharing states between two unrelated components; solutions: custom hook, redux, react context
+        -update: no longer need this (5/20)
 
 UI suggestions: 
     -add simple game to start screen; ex: pong, ...
+
+
+Issue log: 
+    -git isn't case sensitive, i.e. changing file name in vscode will not be registered by git, must change from github repo
+    

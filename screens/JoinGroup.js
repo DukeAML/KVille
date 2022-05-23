@@ -45,28 +45,41 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setGroupCode] = useState("");
   const [name, setName] = useState("");
 
-  firebase
-    .firestore()
-    .collection("users")
-    .doc(firebase.auth().currentUser.uid)
-    .get()
-    .then((doc) => {
-      setName(doc.data().name);
-      console.log(name, doc.data().name);
-    });
-
   useEffect(() => {
-    if (name != "") {
-      setName(name);
-    }
-  }, [name]);
+    let mounted = true;
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        if (mounted) {
+          setName(doc.data().name);
+          console.log(doc.data().name);
+        }
+      });
+    return () => (mounted = false);
+  }, []);
 
   const onJoinGroup = (navigation) => {
     console.log(groupCode);
     const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
+    //Max 12 people in a group
+    groupRef
+      .collection("members")
+      .get()
+      .then((collSnap) => {
+        if (collSnap.size > 12) {
+          console.log("Group is full");
+          return;
+        }
+      });
+
+    //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
+        //updates current user's info
         firebase
           .firestore()
           .collection("users")
@@ -75,9 +88,13 @@ export default function JoinGroup({ navigation }) {
             groupCode: groupCode,
             inGroup: true,
           });
-        groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
+        //adds current user to member list
+        groupRef
+          .collection("members")
+          .doc(firebase.auth().currentUser.uid)
+          .set({
             groupRole: "member",
-            //name: name
+            name: name,
           });
         navigation.navigate("GroupNavigator");
       } else {
@@ -97,15 +114,15 @@ export default function JoinGroup({ navigation }) {
       />
       <TextInput
         style={styles.textInput}
-        onChangeText={(name) => setName(name)}
         value={name}
         placeholder={name}
+        onChangeText={(name) => setName(name)}
       />
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
-          //navigation.navigate("GroupNavigator");
+          navigation.navigate("GroupNavigator");
         }}
       >
         <Text style={styles.buttonText}>Join Group</Text>
