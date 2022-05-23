@@ -1,11 +1,11 @@
-const initialState = {
-    currentUser: null,
-    groupCode: "",
-}
+// const initialState = {
+//     currentUser: null,
+//     groupCode: "",
+// }
 
-export const user = (state = initialState, action) => {
-    return {
-        ...state,
-        currentUser: action.currentUser
-    }
-}
+// export const user = (state = initialState, action) => {
+//     return {
+//         ...state,
+//         currentUser: action.currentUser
+//     }
+// }

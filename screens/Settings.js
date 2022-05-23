@@ -14,6 +14,9 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
+import { useSelector, useDispatch } from "react-redux";
+import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
+
 const styles = StyleSheet.create({
   settingsContainer: {
     flexDirection: "column",
@@ -42,36 +45,44 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    alignItems: 'center',
+    alignItems: "center",
   },
 });
 
 export default function Settings() {
-//   const userRef = firebase
-//     .firestore()
-//     .collection("users")
-//     .doc(firebase.auth().currentUser.uid);
-//   const groupRef = firebase
-//     .firestore()
-//     .collection("groups")
-//     .doc();
+  const dispatch = useDispatch();
 
-//   const leaveGroup = () => {
-//     userRef.set({
-//       groupCode: "",
-//       inGroup: false,
-//     });
-//     groupRef
-//       .collection("members")
-//       .doc(firebase.auth().currentUser.uid)
-//       .delete()
-//       .then(() => {
-//         console.log("Document successfully deleted!");
-//       })
-//       .catch((error) => {
-//         console.error("Error removing document: ", error);
-//       });
-//   };
+  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+  console.log("Current group code: ", groupCode);
+
+  const userRef = firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid);
+  const groupRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(groupCode);
+
+  const leaveGroup = () => {
+    userRef.update({
+      groupCode: "",
+      inGroup: false,
+    });
+    groupRef
+      .collection("members")
+      .doc(firebase.auth().currentUser.uid)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+
+    dispatch(notInGroup());
+    dispatch(setGroupInfo({groupCode: ""}));
+  };
 
   return (
     <View style={styles.settingsContainer}>
@@ -82,10 +93,12 @@ export default function Settings() {
         </View>
         <Text style={{ color: "#fff" }}>Name:</Text>
         <TextInput style={styles.textInput} />
-        <TouchableOpacity style={styles.button} onPress={({navigation})=> {
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
             leaveGroup();
-            navigation.navigate("Start");
-        }}>
+          }}
+        >
           <Text style={{ color: "#fff" }}>Leave Group</Text>
         </TouchableOpacity>
       </ImageBackground>

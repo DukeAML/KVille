@@ -4,18 +4,24 @@ export const userSlice = createSlice({
   name: "user",
   initialState: {
     inGroup: false,
-    groupCode: "",
+    groupInfo: {
+      groupCode: "",
+      userName: "",
+    },
   },
   reducers: {
     inGroup: (state) => {
       state.inGroup = true;
     },
-    setGroupCode: (state, action) => {
-      state.groupCode = action.payload;
+    notInGroup: (state) => {
+      state.inGroup = false;
+    },
+    setGroupInfo: (state, action) => {
+      state.groupInfo = action.payload;
     },
   },
 });
 
-export const { inGroup, setGroupCode } = userSlice.actions;
+export const { inGroup, notInGroup, setGroupInfo } = userSlice.actions;
 
 export default userSlice.reducer;

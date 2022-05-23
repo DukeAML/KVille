@@ -17,9 +17,9 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
-import {connect} from 'react-redux';
-import { bindActionCreators} from 'redux'
-import { fetchUser } from '../redux/actions/index';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { fetchUser } from "../redux/actions/index";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -28,31 +28,37 @@ import "firebase/compat/firestore";
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch);
+// const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch);
+
+import { useSelector } from "react-redux";
 
 export default function Main() {
-  const [inGroup, setGroupStatus] = useState(false);
+  const inGroup = useSelector((state) => state.user.inGroup);
 
-  //functions like componentDidMount, sets inGroup to true if current user is in group
-  useEffect(() => {
-    let mounted = true;
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        if (doc.data().inGroup && mounted) {
-          console.log(doc.data().inGroup);
-          setGroupStatus(true);
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting Document:", error);
-      });
-    //cleanup function, makes sure state not updated when component is unmounted
-    return () => (mounted = false);
-  }, []);
+  console.log("Current user is in group: ", inGroup);
+
+  // const [inGroup, setGroupStatus] = useState(false);
+
+  // //functions like componentDidMount, sets inGroup to true if current user is in group
+  // useEffect(() => {
+  //   let mounted = true;
+  //   firebase
+  //     .firestore()
+  //     .collection("users")
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.data().inGroup && mounted) {
+  //         console.log(doc.data().inGroup);
+  //         setGroupStatus(true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error getting Document:", error);
+  //     });
+  //   //cleanup function, makes sure state not updated when component is unmounted
+  //   return () => (mounted = false);
+  // }, []);
 
   return (
     <NavigationContainer independent={true}>

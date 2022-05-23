@@ -32,6 +32,7 @@
     "react-native-web": "0.17.7",
     "react-redux": "^8.0.1",
     "redux": "^4.2.0",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
