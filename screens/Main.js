@@ -161,10 +161,78 @@ function GroupNavigator() {
             ),
           })}
         />
-        {/* <Drawer.Screen name="Availability" component={AvailabilityScreen} />
-        <Drawer.Screen name="ScheduleScreen" component={ScheduleScreen} />
-        <Drawer.Screen name="MonitorScreen" component={MonitorScreen} />
-        <Drawer.Screen name="InfoScreen" component={InfoScreen} /> */}
+        <Drawer.Screen
+          name="Availability"
+          component={AvailabilityScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name="ScheduleScreen"
+          component={ScheduleScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name="MonitorScreen"
+          component={MonitorScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name="InfoScreen"
+          component={InfoScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
         <Drawer.Screen
           name="SettingScreen"
           component={SettingScreen}
