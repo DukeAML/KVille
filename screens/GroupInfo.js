@@ -69,19 +69,16 @@ const Member = ({name}) => (
 );
 
 
-
-  
-
 export default function GroupInfo() {
   const [groupName,setGroupName]= useState('');
-
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
 
-  //Accesses Names of Members from firebase and adds them to the array
   useEffect(() => {
     let mounted = true;
+
+    //Accesses Names of Members from firebase and adds them to the array
     GroupRef.collection("members").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         let currName = doc.data().name;
@@ -103,12 +100,12 @@ export default function GroupInfo() {
         console.log("Error getting documents: ", error);
     }); 
 
+    //Gets GroupName from firebase
     GroupRef.get().then((doc)=> {
       if (mounted) setGroupName(doc.data().name)
     }).catch((error) => {
         console.log("Error getting document:", error);
     });
-
 
       return () => (mounted = false);
   }, []);
