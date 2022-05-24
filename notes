@@ -7,6 +7,7 @@ Tasks:
 
 Packages Installed:
     -react-picker
+    -redux persist
 
 
 Database: 
@@ -26,3 +27,6 @@ UI suggestions:
 Issue log: 
     -git isn't case sensitive, i.e. changing file name in vscode will not be registered by git, must change from github repo
     
+Access groupCode with redux:
+    -import { useSelector } from "react-redux";
+    -const groupCode = useSelector((state) => state.user.groupInfo.groupCode);

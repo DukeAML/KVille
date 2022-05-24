@@ -13,6 +13,9 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useGestureHandlerRef } from "@react-navigation/stack";
 
+import { useSelector, useDispatch } from "react-redux";
+import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
@@ -42,9 +45,12 @@ const styles = StyleSheet.create({
 });
 
 export default function JoinGroup({ navigation }) {
-  const [groupCode, setGroupCode] = useState("");
+  const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
 
+  const dispatch = useDispatch();
+
+  //on first render sets name to user's registered name
   useEffect(() => {
     let mounted = true;
     firebase
@@ -96,7 +102,9 @@ export default function JoinGroup({ navigation }) {
             groupRole: "member",
             name: name,
           });
-        navigation.navigate("GroupNavigator");
+
+        dispatch(inGroup());
+        dispatch(setGroupInfo({ groupCode: groupCode }));
       } else {
         console.log("No group exists");
         //maybe add snack bar for this
@@ -108,7 +116,7 @@ export default function JoinGroup({ navigation }) {
     <View style={styles.container}>
       <TextInput
         style={styles.textInput}
-        onChangeText={(code) => setGroupCode(code)}
+        onChangeText={(code) => setInputGroupCode(code.trim())}
         value={groupCode}
         placeholder="Enter Group Code"
       />
@@ -122,7 +130,7 @@ export default function JoinGroup({ navigation }) {
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
-          navigation.navigate("GroupNavigator");
+          // navigation.navigate("GroupNavigator");
         }}
       >
         <Text style={styles.buttonText}>Join Group</Text>

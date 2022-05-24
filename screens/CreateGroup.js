@@ -86,10 +86,8 @@ const styles = StyleSheet.create({
   },
 });
 
-// function useForceUpdate() {
-//   const [value, setValue] = useState(0); // integer state
-//   return () => setValue((value) => value + 1); // update the state to force render
-// }
+import { useSelector, useDispatch } from "react-redux";
+import {inGroup, setGroupInfo} from '../redux/reducers/userSlice';
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
@@ -100,6 +98,8 @@ export default function CreateGroup({ navigation }) {
     userName: "",
   });
 
+  const dispatch = useDispatch();
+
   const userRef = firebase
     .firestore()
     .collection("users")
@@ -109,6 +109,7 @@ export default function CreateGroup({ navigation }) {
     .collection("groups")
     .doc(group.groupCode);
 
+  //ComponentDidMount, sets local state name to current user's name
   useEffect(() => {
     let mounted = true;
     userRef.get().then((doc) => {
@@ -136,6 +137,9 @@ export default function CreateGroup({ navigation }) {
       groupCode: group.groupCode,
       inGroup: true,
     });
+
+    dispatch(inGroup());
+    dispatch(setGroupInfo({groupCode: group.groupCode}));
   };
 
   return (
@@ -183,21 +187,11 @@ export default function CreateGroup({ navigation }) {
           </View>
         </View>
         <View style={styles.btnContainer}>
-          {/* <TouchableOpacity
-            style={styles.cancelBtn}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.btnTxt}>Cancel</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => {
-              // setGroup({
-              //   ...group,
-              //   groupRole: "Creator",
-              // });
               onCreateGroup();
-              navigation.navigate("GroupNavigator");
+              // navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
               console.log(group.groupRole);
             }}
