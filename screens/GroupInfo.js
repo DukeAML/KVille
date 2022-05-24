@@ -57,9 +57,9 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
   console.log("Error getting document:", error);
 });*/
 
-let members = [{id:'filler', name: 'filler'}]; 
+//let members = [{id:'filler', name: 'filler'}]; 
 
-//let members = new Array();
+let members = new Array();
 
 
 const Member = ({name}) => (
@@ -70,10 +70,10 @@ const Member = ({name}) => (
 
 
 
-let groupName = "hello";
   
 
 export default function GroupInfo() {
+  const [groupName,setGroupName]= useState('');
 
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
@@ -102,20 +102,26 @@ export default function GroupInfo() {
     }).catch((error) => {
         console.log("Error getting documents: ", error);
     }); 
+
+    GroupRef.get().then((doc)=> {
+      if (mounted) setGroupName(doc.data().name)
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+
+
       return () => (mounted = false);
-  }, [members]);
+  }, []);
 
 
-  //trying to access groupName
+/*   //trying to access groupName
   useEffect(() => {
     let mounted = true;
     GroupRef.get().then((doc) => {
       if (doc.exist && mounted) groupName = doc.data().name;
-    }).catch((error) => {
-        console.log("Error getting document:", error);
-    });
+    })
     return () => (mounted = false);
-  }, []);
+  }, []); */
 
 
   //variable for each name box
