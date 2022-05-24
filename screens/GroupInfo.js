@@ -10,25 +10,35 @@ const styles = StyleSheet.create({
     backgroundColor: "#C2C6D0",
   },
   header: {
-    height: "20%",
-    width: "100%",
+    marginVertical: 10,
+    marginHorizontal: 15,    
+    fontSize: 32,
+    fontWeight: "700",
+  },
+  contentText:{
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "700",
+    textAlign:"center"
   },
   listItem:{
     backgroundColor: '#1f509a',
-    padding: 10,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    padding: 8,
+    marginVertical: 4,
+    marginLeft: 30,
+    width: "20%",
+    alignItems: "center"
   },
   listText: {
-    font: 20,
+    fontSize: "auto",
+    fontFamily: "sans-serif",
+    fontWeight: "600",
+    color: "white"
   },
   boxText: {
-    height:20,
-    width: 80,
+    marginBottom: 10,
+    width: "90%",
     backgroundColor: "#FFFAFACC",
-    textAlign: "center"
+    alignSelf:"center"  
   }
 });
 
@@ -62,12 +72,30 @@ let members = [
     name: 'User7',
   },
 ];
+ 
+const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
+
+/* membersRef.collection("cities").where("capital", "==", true)
+    .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+    })
+    .catch((error) => {
+        console.log("Error getting documents: ", error);
+    }); */
+
+
 
 const Member = ({name}) => (
   <View style={styles.listItem}>
     <Text style={styles.listText}>{name}</Text>
   </View>
 );
+
+let groupName = "Poopers";
   
 
 export default function GroupInfo() {
@@ -79,11 +107,13 @@ export default function GroupInfo() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.header}>Black Tent</Text>
-      </View>
+      <Text style={styles.header}>Group Name:</Text>
       <View style={styles.boxText}>
-        <Text style={styles.header}>Group Name</Text>
+        <Text style={styles.contentText}>{groupName}</Text>
+      </View>
+      <Text style={styles.header}>Group Code</Text>
+      <View style={styles.boxText}>
+        <Text style={styles.contentText}>F65E78</Text>
       </View>
       <SafeAreaView>
         <FlatList
