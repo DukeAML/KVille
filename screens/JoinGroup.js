@@ -104,7 +104,7 @@ export default function JoinGroup({ navigation }) {
           });
 
         dispatch(inGroup());
-        dispatch(setGroupInfo({ groupCode: groupCode }));
+        dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
         console.log("No group exists");
         //maybe add snack bar for this

@@ -26,7 +26,7 @@ export default function DrawerContent(props) {
 
   const onLogout = () => {
     dispatch(notInGroup());
-    dispatch(setGroupInfo({ groupCode: "" }));
+    dispatch(setGroupInfo({ groupCode: "", userName: "" }));
     firebase.auth().signOut();
   };
 
