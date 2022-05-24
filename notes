@@ -30,3 +30,9 @@ Issue log:
 Access groupCode with redux:
     -import { useSelector } from "react-redux";
     -const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+
+    firebase.firestore().collection("groups").doc(groupCode).collection("members").get().then((snap)) => {
+        snap.forEach((doc) => {
+            
+        })
+    }

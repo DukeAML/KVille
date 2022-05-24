@@ -52,36 +52,47 @@ const styles = StyleSheet.create({
 export default function Settings() {
   const dispatch = useDispatch();
 
+  //gets current user's group code from redux store
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
   console.log("Current group code: ", groupCode);
+  //gets current user's group role from redux store
+  const isCreator = useSelector((state) => state.user.isCreator);
 
   const userRef = firebase
     .firestore()
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase
-    .firestore()
-    .collection("groups")
-    .doc(groupCode);
+  const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
   const leaveGroup = () => {
     userRef.update({
       groupCode: "",
       inGroup: false,
     });
-    groupRef
-      .collection("members")
-      .doc(firebase.auth().currentUser.uid)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted!");
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
-      });
+    if (isCreator) {
+      groupRef
+        .delete()
+        .then(() => {
+          console.log("Group successfully deleted!");
+        })
+        .catch((error) => {
+          console.error("Error removing group: ", error);
+        });
+    } else {
+      groupRef
+        .collection("members")
+        .doc(firebase.auth().currentUser.uid)
+        .delete()
+        .then(() => {
+          console.log("Current user successfully removed from group!");
+        })
+        .catch((error) => {
+          console.error("Error removing user: ", error);
+        });
+    }
 
     dispatch(notInGroup());
-    dispatch(setGroupInfo({groupCode: ""}));
+    dispatch(setGroupInfo({ groupCode: "", userName: "" }));
   };
 
   return (
@@ -99,7 +110,11 @@ export default function Settings() {
             leaveGroup();
           }}
         >
-          <Text style={{ color: "#fff" }}>Leave Group</Text>
+          {isCreator ? (
+            <Text style={{ color: "#fff" }}>Delete Group</Text>
+          ) : (
+            <Text style={{ color: "#fff" }}>Leave Group</Text>
+          )}
         </TouchableOpacity>
       </ImageBackground>
     </View>
