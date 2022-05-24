@@ -75,7 +75,7 @@ let members = [
  
 const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
 
-membersRef.collection("cities").where("capital", "==", true)
+/* membersRef.collection("cities").where("capital", "==", true)
     .get()
     .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -85,7 +85,7 @@ membersRef.collection("cities").where("capital", "==", true)
     })
     .catch((error) => {
         console.log("Error getting documents: ", error);
-    });
+    }); */
 
 
 
