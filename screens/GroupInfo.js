@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSelector, useDispatch } from "react-redux";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
-
+require("firebase/firestore");
 
 const styles = StyleSheet.create({
   container: {
@@ -43,53 +46,20 @@ const styles = StyleSheet.create({
   }
 });
 
-let members = [
-  {
-    id: '1',
-    name: 'User1',
-  },
-  {
-    id: '2',
-    name: 'User2',
-  },
-  {
-    id: '3',
-    name: 'User3',
-  },
-  {
-    id: '4',
-    name: 'User4',
-  },
-  {
-    id: '5',
-    name: 'User5',
-  },
-  {
-    id: '6',
-    name: 'User6',
-  },
-  {
-    id: '7',
-    name: 'User7',
-  },
-];
- 
-//const groupCode = useSelector(state) =>
 
-//const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
 
-/* membersRef.collection("members").where("name", "!=", null)
-    .get()
-    .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
-    })
-    .catch((error) => {
-        console.log("Error getting documents: ", error);
-    }); */
+/* let currentUserName;
 
+firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
+.get().then((doc) => {
+  if (doc.exists) currentUserName = doc.data().username;
+}).catch((error) => {
+  console.log("Error getting document:", error);
+});*/
+
+let members = [{id:'filler', name: 'filler'}]; 
+
+//let members = new Array();
 
 
 const Member = ({name}) => (
@@ -98,26 +68,75 @@ const Member = ({name}) => (
   </View>
 );
 
-let groupName = "Poopers";
+
+
+let groupName = "hello";
   
 
 export default function GroupInfo() {
-  
 
+  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+
+  const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
+
+  //Accesses Names of Members from firebase and adds them to the array
+  useEffect(() => {
+    let mounted = true;
+    GroupRef.collection("members").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        let currName = doc.data().name;
+        let current = {
+          id: currName,
+          name: currName
+        };
+
+        let nameExists;
+        if (members.length === 0) nameExists = false;
+        else {nameExists = (members.some(e => e.name === currName));}
+
+        if (mounted && !nameExists){
+          members.push(current);
+        }
+          // doc.data() is never undefined for query doc snapshots
+      });
+    }).catch((error) => {
+        console.log("Error getting documents: ", error);
+    }); 
+      return () => (mounted = false);
+  }, [members]);
+
+
+  //trying to access groupName
+  useEffect(() => {
+    let mounted = true;
+    GroupRef.get().then((doc) => {
+      if (doc.exist && mounted) groupName = doc.data().name;
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+    return () => (mounted = false);
+  }, []);
+
+
+  //variable for each name box
   const renderMember = ({item}) => (
     <Member name={item.name}/>
   );
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.header}>Group Name:</Text>
+
       <View style={styles.boxText}>
         <Text style={styles.contentText}>{groupName}</Text>
       </View>
+
       <Text style={styles.header}>Group Code</Text>
       <View style={styles.boxText}>
-        <Text style={styles.contentText}>F65E78</Text>
+        <Text style={styles.contentText}>{groupCode}</Text>
       </View>
+
       <SafeAreaView>
         <FlatList
           data = {members}
@@ -125,7 +144,6 @@ export default function GroupInfo() {
           keyExtractor={item => item.id}
         />
       </SafeAreaView>
-      
         
     </View>
   );
