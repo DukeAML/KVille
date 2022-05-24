@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useSelector, useDispatch } from "react-redux";
 
 
 
@@ -73,9 +74,11 @@ let members = [
   },
 ];
  
-const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
+//const groupCode = useSelector(state) =>
 
-/* membersRef.collection("cities").where("capital", "==", true)
+//const membersRef = firebase.firestore().collection("groups").doc(firebase.auth().currentUser.uid).collection("members");
+
+/* membersRef.collection("members").where("name", "!=", null)
     .get()
     .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
