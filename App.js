@@ -1,8 +1,6 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { IconButton, Colors } from "react-native-paper";
 import * as Font from "expo-font";
 import React, { Component } from "react";
 import AppLoading from "expo-app-loading";

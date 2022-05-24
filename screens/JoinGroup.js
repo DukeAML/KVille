@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TextInput,
 } from "react-native";
 
@@ -13,7 +12,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useGestureHandlerRef } from "@react-navigation/stack";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({

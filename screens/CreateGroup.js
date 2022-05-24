@@ -87,7 +87,11 @@ const styles = StyleSheet.create({
 });
 
 import { useSelector, useDispatch } from "react-redux";
-import {inGroup, setGroupInfo, setCreatorRole} from '../redux/reducers/userSlice';
+import {
+  inGroup,
+  setGroupInfo,
+  setCreatorRole,
+} from "../redux/reducers/userSlice";
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
@@ -139,7 +143,9 @@ export default function CreateGroup({ navigation }) {
     });
 
     dispatch(inGroup());
-    dispatch(setGroupInfo({groupCode: group.groupCode, userName: group.userName}));
+    dispatch(
+      setGroupInfo({ groupCode: group.groupCode, userName: group.userName })
+    );
     dispatch(setCreatorRole());
   };
 

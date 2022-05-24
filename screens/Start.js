@@ -5,13 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  TextInput,
 } from "react-native";
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
 import coachk from "../assets/coachk.png";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const styles = StyleSheet.create({
   startContainer: {
@@ -68,8 +65,6 @@ export default function Start({navigation}) {
     NovaCut_400Regular,
   });
 
-  // const [text, onChangeText] = React.useState("");
-
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
@@ -80,12 +75,6 @@ export default function Start({navigation}) {
         </View> */}
         <Image source={coachk} style={styles.image} />
         <View style={styles.textContainer}>
-          {/* <TextInput
-            style={styles.textInput}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Enter Group Code"
-          /> */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate("JoinGroup")}

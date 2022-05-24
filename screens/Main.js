@@ -3,8 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React, { useState, useEffect } from "react";
-import { Text, View } from "react-native";
-import { IconButton, Colors } from "react-native-paper";
+import { Text} from "react-native";
+import { IconButton } from "react-native-paper";
 
 import StartScreen from "./Start";
 import CreateGroupScreen from "./CreateGroup";
@@ -17,13 +17,9 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { fetchUser } from "../redux/actions/index";
-
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+// import firebase from "firebase/compat/app";
+// import "firebase/compat/auth";
+// import "firebase/compat/firestore";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
