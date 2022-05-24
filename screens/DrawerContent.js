@@ -14,14 +14,21 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
+import { useDispatch } from "react-redux";
+import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
+
 export default function DrawerContent(props) {
   const [status, setStatus] = React.useState(false);
-  
+
   const onToggleSwitch = () => setStatus(!status);
 
+  const dispatch = useDispatch();
+
   const onLogout = () => {
+    dispatch(notInGroup());
+    dispatch(setGroupInfo({ groupCode: "" }));
     firebase.auth().signOut();
-  }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -103,10 +110,7 @@ export default function DrawerContent(props) {
                 props.navigation.navigate("SettingScreen");
               }}
             />
-            <DrawerItem 
-              label = "Log out" 
-              onPress={() => onLogout()}
-            />
+            <DrawerItem label="Log out" onPress={() => onLogout()} />
           </Drawer.Section>
           <Drawer.Section title="Preferences">
             <TouchableRipple>

@@ -30,8 +30,12 @@ import RegisterScreen from "./component/auth/Register";
 import LoginScreen from "./component/auth/Login";
 import MainScreen from "./screens/Main";
 
-import store from './redux/store/index'
+import store from "./redux/store/index";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+
+let persistor = persistStore(store);
 
 // import { createStore } from "redux";
 // import Reducer from "./redux/reducers/index";
@@ -41,7 +45,6 @@ import { Provider } from "react-redux";
 // import thunk from "redux-thunk";
 
 // const store = createStore(rootReducer, applyMiddleware(thunk));
-
 
 // const store = createStore(
 //   Reducer,
@@ -138,9 +141,13 @@ export class App extends Component {
 
     //Main screen, after landing
     return (
-      <Provider store={store}>
-        <MainScreen />
-      </Provider>
+      <React.StrictMode>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <MainScreen />
+          </PersistGate>
+        </Provider>
+      </React.StrictMode>
     );
   }
 }

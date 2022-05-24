@@ -116,7 +116,7 @@ export default function JoinGroup({ navigation }) {
     <View style={styles.container}>
       <TextInput
         style={styles.textInput}
-        onChangeText={(code) => setInputGroupCode(code)}
+        onChangeText={(code) => setInputGroupCode(code.trim())}
         value={groupCode}
         placeholder="Enter Group Code"
       />
