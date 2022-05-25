@@ -28,14 +28,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#1f509a',
     padding: 8,
     marginVertical: 4,
-    marginLeft: 30,
-    width: "20%",
+    width: "80%",
+    alignSelf: "center",
     alignItems: "center"
   },
   listText: {
-    fontSize: "auto",
+    fontSize: 16,
     fontFamily: "sans-serif",
-    fontWeight: "600",
+    fontWeight: "550",
     color: "white"
   },
   boxText: {
@@ -57,7 +57,7 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
   console.log("Error getting document:", error);
 });*/
 
-//let members = [{id:'filler', name: 'filler'}]; 
+//let members = [{id:'filler', name: 'filler', inTent: null}]; 
 
 let members = new Array();
 
@@ -82,9 +82,12 @@ export default function GroupInfo() {
     GroupRef.collection("members").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         let currName = doc.data().name;
+        //add condition here: 
+        let tentCondition = doc.data().inTent 
         let current = {
           id: currName,
-          name: currName
+          name: currName,
+          inTent: tentCondition
         };
 
         let nameExists;
@@ -122,9 +125,16 @@ export default function GroupInfo() {
 
 
   //variable for each name box
-  const renderMember = ({item}) => (
-    <Member name={item.name}/>
-  );
+  const renderMember = ({item}) => {
+    const backgroundColor = item.inTent ? "#3eb489" : "#1f509a";
+    return (
+      <Member 
+      name={item.name}
+      backgroundColor = {{backgroundColor}}
+      />
+    );
+  }
+  
 
   return (
     <View style={styles.container}>
