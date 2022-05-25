@@ -139,13 +139,11 @@ export class App extends Component {
 
     //Main screen, after landing
     return (
-      <React.StrictMode>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <MainScreen />
-          </PersistGate>
-        </Provider>
-      </React.StrictMode>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <MainScreen />
+        </PersistGate>
+      </Provider>
     );
   }
 }

@@ -135,6 +135,7 @@ export default function CreateGroup({ navigation }) {
     groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
       groupRole: group.groupRole,
       name: group.userName,
+      inTent: false,
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
