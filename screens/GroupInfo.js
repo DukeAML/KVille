@@ -73,7 +73,7 @@ export default function GroupInfo() {
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
-  //const GroupRef = firebase.firestore().collection("groups").doc('6D33gMVS'); 
+  //const GroupRef = firebase.firestore().collection("groups").doc('OnkQGHMZ'); 
 
 
   useEffect(() => {
@@ -83,8 +83,11 @@ export default function GroupInfo() {
     GroupRef.collection("members").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         let currName = doc.data().name;
+        console.log ("current name:", currName);
         //add condition here: 
         let tentCondition = doc.data().inTent;
+        console.log ("current name:", tentCondition);
+
         let current = {
           id: currName,
           name: currName,
