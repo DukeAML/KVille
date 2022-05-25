@@ -1,6 +1,5 @@
 import React, { useState , useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSelector, useDispatch } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -62,8 +61,8 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 let members = new Array();
 
 
-const Member = ({name}) => (
-  <View style={styles.listItem}>
+const Member = ({name, backgroundColor}) => (
+  <View style={[styles.listItem, backgroundColor]}>
     <Text style={styles.listText}>{name}</Text>
   </View>
 );
@@ -74,6 +73,8 @@ export default function GroupInfo() {
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
+  //const GroupRef = firebase.firestore().collection("groups").doc('6D33gMVS'); 
+
 
   useEffect(() => {
     let mounted = true;
@@ -83,7 +84,7 @@ export default function GroupInfo() {
       querySnapshot.forEach((doc) => {
         let currName = doc.data().name;
         //add condition here: 
-        let tentCondition = doc.data().inTent 
+        let tentCondition = doc.data().inTent;
         let current = {
           id: currName,
           name: currName,
