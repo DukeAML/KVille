@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Title,
@@ -21,15 +21,19 @@ export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
 
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("groups")
-      .doc(groupCode)
-      .collection("members")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        inTent: status,
-      });
+    let mounted = true;
+    if (mounted) {
+      firebase
+        .firestore()
+        .collection("groups")
+        .doc(groupCode)
+        .collection("members")
+        .doc(firebase.auth().currentUser.uid)
+        .update({
+          inTent: status,
+        });
+    }
+    return () => (mounted = false);
   }, [status]);
 
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
@@ -130,12 +134,12 @@ export default function DrawerContent(props) {
           </Drawer.Section>
           <Drawer.Section title="Preferences">
             {/* <TouchableRipple> */}
-              <View style={styles.preference}>
-                <Text>Status</Text>
-                {/* <View pointerEvents="none"> */}
-                  <Switch value={status} onValueChange={onToggleSwitch} />
-                {/* </View> */}
-              </View>
+            <View style={styles.preference}>
+              <Text>Status</Text>
+              {/* <View pointerEvents="none"> */}
+              <Switch value={status} onValueChange={onToggleSwitch} />
+              {/* </View> */}
+            </View>
             {/* </TouchableRipple> */}
           </Drawer.Section>
         </View>
