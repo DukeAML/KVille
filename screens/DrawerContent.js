@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Title,
@@ -18,13 +18,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
-  const [status, setStatus] = React.useState(false);
+  const [status, setStatus] = useState(false);
 
-  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
-
-  const onToggleSwitch = () => {
-    //console.log("status: ", status);
-    setStatus(!status);
+  useEffect(() => {
     firebase
       .firestore()
       .collection("groups")
@@ -34,6 +30,13 @@ export default function DrawerContent(props) {
       .update({
         inTent: status,
       });
+  }, [status]);
+
+  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+
+  const onToggleSwitch = () => {
+    //console.log("status: ", status);
+    setStatus(!status);
   };
 
   const dispatch = useDispatch();
