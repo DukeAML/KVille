@@ -15,7 +15,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
 import { useDispatch } from "react-redux";
-import { notInGroup, setGroupInfo, reset } from "../redux/reducers/userSlice";
+import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = React.useState(false);
