@@ -26,9 +26,14 @@ const Drawer = createDrawerNavigator();
 
 // const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch);
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { reset } from "../redux/reducers/userSlice";
 
 export default function Main() {
+  //uncomment this to reset redux states
+  //const dispatch = useDispatch();
+  //dispatch(reset());
+
   const inGroup = useSelector((state) => state.user.inGroup);
 
   console.log("Current user is in group: ", inGroup);

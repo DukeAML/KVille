@@ -118,22 +118,26 @@ export class App extends Component {
     }
     if (!loggedIn) {
       return (
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              navigation={this.props.navigation}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              navigation={this.props.navigation}
-              component={LoginScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen
+                  name="Register"
+                  component={RegisterScreen}
+                  navigation={this.props.navigation}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Login"
+                  navigation={this.props.navigation}
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </PersistGate>
+        </Provider>
       );
     }
 

@@ -73,8 +73,6 @@ export default function GroupInfo() {
   const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
-  //const GroupRef = firebase.firestore().collection("groups").doc('6D33gMVS'); 
-
 
   useEffect(() => {
     let mounted = true;

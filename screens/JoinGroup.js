@@ -67,7 +67,7 @@ export default function JoinGroup({ navigation }) {
   }, []);
 
   const onJoinGroup = (navigation) => {
-    console.log(groupCode);
+    console.log("group code", groupCode);
     const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
     //Max 12 people in a group

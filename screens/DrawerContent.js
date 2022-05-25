@@ -20,6 +20,8 @@ import { reset } from "../redux/reducers/userSlice";
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
 
+  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+
   useEffect(() => {
     let mounted = true;
     if (mounted) {
@@ -35,8 +37,6 @@ export default function DrawerContent(props) {
     }
     return () => (mounted = false);
   }, [status]);
-
-  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const onToggleSwitch = () => {
     //console.log("status: ", status);
