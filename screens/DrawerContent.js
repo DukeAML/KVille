@@ -15,18 +15,29 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
 import { useDispatch } from "react-redux";
-import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
+import { notInGroup, setGroupInfo, reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = React.useState(false);
 
-  const onToggleSwitch = () => setStatus(!status);
+  const onToggleSwitch = () => {
+    //console.log("status: ", status);
+    setStatus(!status);
+    firebase
+      .firestore()
+      .collection("groups")
+      .doc(groupCode)
+      .collection("members")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        inTent: status,
+      });
+  };
 
   const dispatch = useDispatch();
 
   const onLogout = () => {
-    dispatch(notInGroup());
-    dispatch(setGroupInfo({ groupCode: "", userName: "" }));
+    dispatch(reset());
     firebase.auth().signOut();
   };
 
@@ -113,14 +124,14 @@ export default function DrawerContent(props) {
             <DrawerItem label="Log out" onPress={() => onLogout()} />
           </Drawer.Section>
           <Drawer.Section title="Preferences">
-            <TouchableRipple>
+            {/* <TouchableRipple> */}
               <View style={styles.preference}>
                 <Text>Status</Text>
-                <View pointerEvents="none">
+                {/* <View pointerEvents="none"> */}
                   <Switch value={status} onValueChange={onToggleSwitch} />
-                </View>
+                {/* </View> */}
               </View>
-            </TouchableRipple>
+            {/* </TouchableRipple> */}
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>

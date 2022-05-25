@@ -24,9 +24,17 @@ export const userSlice = createSlice({
     setCreatorRole: (state) => {
       state.isCreator = true;
     },
+    reset: (state) => {
+      state.inGroup = false;
+      state.groupInfo = {
+        groupCode: "",
+        userName: "",
+      };
+      state.isCreator = false;
+    },
   },
 });
 
-export const { inGroup, notInGroup, setGroupInfo, setCreatorRole } = userSlice.actions;
+export const { inGroup, notInGroup, setGroupInfo, setCreatorRole, reset } = userSlice.actions;
 
 export default userSlice.reducer;

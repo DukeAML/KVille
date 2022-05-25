@@ -100,6 +100,7 @@ export default function JoinGroup({ navigation }) {
           .set({
             groupRole: "member",
             name: name,
+            inTent: false,
           });
 
         dispatch(inGroup());
