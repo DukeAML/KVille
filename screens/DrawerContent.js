@@ -14,11 +14,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = React.useState(false);
+
+  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
 
   const onToggleSwitch = () => {
     //console.log("status: ", status);
