@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -70,7 +70,7 @@ const Member = ({name, backgroundColor}) => (
 
 export default function GroupInfo() {
   const [groupName,setGroupName]= useState('');
-  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
   const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
 
