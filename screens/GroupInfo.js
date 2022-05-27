@@ -23,10 +23,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign:"center"
   },
-  listItem:{
-    backgroundColor: '#1f509a',
+  listItem: {
+    backgroundColor: "#1f509a",
     padding: 8,
     marginVertical: 4,
+    borderRadius: 7,
     width: "80%",
     alignSelf: "center",
     alignItems: "center"
@@ -41,7 +42,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: "90%",
     backgroundColor: "#FFFAFACC",
-    alignSelf:"center"  
+    borderRadius: 8,
+    alignSelf: "center"
   }
 });
 
