@@ -47,7 +47,7 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   //on first render sets name to user's registered name
   useEffect(() => {

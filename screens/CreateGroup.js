@@ -102,7 +102,7 @@ export default function CreateGroup({ navigation }) {
     userName: "",
   });
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   const userRef = firebase
     .firestore()

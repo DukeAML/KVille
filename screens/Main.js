@@ -24,17 +24,15 @@ import "firebase/compat/firestore";
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-import {clearData, fetchUser } from "../redux/actions/index";
+//import {clearData, fetchUser } from "../redux/actions/index";
 
 import { useSelector, useDispatch } from "react-redux";
-// import { setCurrentUser, reset } from "../redux/reducers/userSlice";
+import { setCurrentUser, reset } from "../redux/reducers/userSlice";
 
 export default function Main() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());
-
-
 
   // const [groupCode, setGroupCode] = useState("");
   // const [groupStatus, setGroupStatus] = useState(false);
@@ -96,8 +94,21 @@ export default function Main() {
   const dispatch = useDispatch();
   //let inGroup;
   useEffect(() => {
-    clearData(dispatch);
-    fetchUser(dispatch);
+    // clearData(dispatch);
+    // fetchUser(dispatch);
+    dispatch(reset());
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+      });
     console.log("cleared data and fetched user");
     //inGroup = true;
     //inGroup = useSelector((state) => state.user.currentUser.inGroup);
