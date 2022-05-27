@@ -15,10 +15,12 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
 import { useSelector, useDispatch } from "react-redux";
-import { reset } from "../redux/reducers/userSlice";
+// import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
+
+  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
   useEffect(() => {
     let mounted = true;
@@ -36,17 +38,15 @@ export default function DrawerContent(props) {
     return () => (mounted = false);
   }, [status]);
 
-  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
-
   const onToggleSwitch = () => {
     //console.log("status: ", status);
     setStatus(!status);
   };
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   const onLogout = () => {
-    dispatch(reset());
+    //dispatch(reset());
     firebase.auth().signOut();
   };
 

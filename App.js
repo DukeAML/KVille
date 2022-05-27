@@ -30,10 +30,10 @@ import MainScreen from "./screens/Main";
 
 import store from "./redux/store/index";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore } from "redux-persist";
+// import { PersistGate } from "redux-persist/integration/react";
+// import { persistStore } from "redux-persist";
 
-let persistor = persistStore(store);
+// let persistor = persistStore(store);
 
 // import { createStore } from "redux";
 // import Reducer from "./redux/reducers/index";
@@ -118,31 +118,33 @@ export class App extends Component {
     }
     if (!loggedIn) {
       return (
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              navigation={this.props.navigation}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              navigation={this.props.navigation}
-              component={LoginScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <Provider store={store}>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen
+                  name="Register"
+                  component={RegisterScreen}
+                  navigation={this.props.navigation}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Login"
+                  navigation={this.props.navigation}
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+        </Provider>
       );
     }
 
     //Main screen, after landing
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
           <MainScreen />
-        </PersistGate>
+        {/* </PersistGate> */}
       </Provider>
     );
   }

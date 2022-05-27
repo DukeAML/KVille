@@ -12,8 +12,8 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useGestureHandlerRef } from "@react-navigation/stack";
 
-import { useDispatch } from "react-redux";
-import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
+// import { useDispatch } from "react-redux";
+// import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +47,7 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   //on first render sets name to user's registered name
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function JoinGroup({ navigation }) {
   }, []);
 
   const onJoinGroup = (navigation) => {
-    console.log(groupCode);
+    console.log("group code", groupCode);
     const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
     //Max 12 people in a group
@@ -103,8 +103,8 @@ export default function JoinGroup({ navigation }) {
             inTent: false,
           });
 
-        dispatch(inGroup());
-        dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
+        // dispatch(inGroup());
+        // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
         console.log("No group exists");
         //maybe add snack bar for this

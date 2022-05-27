@@ -15,7 +15,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
-import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
+// import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
   settingsContainer: {
@@ -50,13 +50,14 @@ const styles = StyleSheet.create({
 });
 
 export default function Settings() {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   //gets current user's group code from redux store
-  const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
+  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
   console.log("Current group code: ", groupCode);
   //gets current user's group role from redux store
-  const isCreator = useSelector((state) => state.user.isCreator);
+  const isCreator = true;
+  // const isCreator = useSelector((state) => state.user.currentUser.isCreator);
 
   const userRef = firebase
     .firestore()
@@ -91,8 +92,8 @@ export default function Settings() {
         });
     }
 
-    dispatch(notInGroup());
-    dispatch(setGroupInfo({ groupCode: "", userName: "" }));
+    // dispatch(notInGroup());
+    // dispatch(setGroupInfo({ groupCode: "", userName: "" }));
   };
 
   return (
