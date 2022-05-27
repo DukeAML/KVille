@@ -81,8 +81,11 @@ export default function GroupInfo() {
     GroupRef.collection("members").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         let currName = doc.data().name;
+        console.log ("current name:", currName);
         //add condition here: 
         let tentCondition = doc.data().inTent;
+        console.log ("current name:", tentCondition);
+
         let current = {
           id: currName,
           name: currName,
