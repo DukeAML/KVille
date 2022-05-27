@@ -30,10 +30,10 @@ import MainScreen from "./screens/Main";
 
 import store from "./redux/store/index";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore } from "redux-persist";
+// import { PersistGate } from "redux-persist/integration/react";
+// import { persistStore } from "redux-persist";
 
-let persistor = persistStore(store);
+// let persistor = persistStore(store);
 
 // import { createStore } from "redux";
 // import Reducer from "./redux/reducers/index";
@@ -119,7 +119,6 @@ export class App extends Component {
     if (!loggedIn) {
       return (
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Login">
                 <Stack.Screen
@@ -136,7 +135,6 @@ export class App extends Component {
                 />
               </Stack.Navigator>
             </NavigationContainer>
-          </PersistGate>
         </Provider>
       );
     }
@@ -144,9 +142,9 @@ export class App extends Component {
     //Main screen, after landing
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
           <MainScreen />
-        </PersistGate>
+        {/* </PersistGate> */}
       </Provider>
     );
   }

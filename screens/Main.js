@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React, { useState, useEffect } from "react";
-import { Text} from "react-native";
+import { Text } from "react-native";
 import { IconButton } from "react-native-paper";
 
 import StartScreen from "./Start";
@@ -17,49 +17,128 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
-// import firebase from "firebase/compat/app";
-// import "firebase/compat/auth";
-// import "firebase/compat/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-// const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch);
+//import {clearData, fetchUser } from "../redux/actions/index";
 
 import { useSelector, useDispatch } from "react-redux";
-import { reset } from "../redux/reducers/userSlice";
+import { setCurrentUser, reset } from "../redux/reducers/userSlice";
 
 export default function Main() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
-  //dispatch(reset());
+  //dispatch(clearData());
 
-  const inGroup = useSelector((state) => state.user.inGroup);
+  // const [groupCode, setGroupCode] = useState("");
+  // const [groupStatus, setGroupStatus] = useState(false);
+  // const [userName, setName] = useState("");
+  // const [isCreator, setCreator] = useState(false);
 
-  console.log("Current user is in group: ", inGroup);
+  // const dispatch = useDispatch();
 
-  // const [inGroup, setGroupStatus] = useState(false);
+  // const userRef = firebase
+  //   .firestore()
+  //   .collection("users")
+  //   .doc(firebase.auth().currentUser.uid);
 
-  // //functions like componentDidMount, sets inGroup to true if current user is in group
+  // useEffect(() => {
+  //   let mounted = true;
+  //   userRef.get().then((doc) => {
+  //     if (mounted) {
+  //       if (doc.data().inGroup) {
+  //         dispatch(inGroup());
+  //         setGroupStatus(doc.data().inGroup);
+  //       }
+  //       dispatch(
+  //         setGroupInfo({ groupCode: doc.data().groupCode, userName: userName })
+  //       );
+  //       // inGroupStatus = useSelector((state) => state.user.inGroup);
+
+  //       // console.log("Current user is in group: ", inGroupStatus);
+  //       // setGroupCode(doc.data().groupCode);
+  //       // setGroupStatus(doc.data().inGroup);
+  //       // console.log("group code: ", groupCode);
+  //       // console.log("group status: ", groupStatus);
+  //     }
+  //   });
+  //   return () => (mounted = false);
+  // }, []);
   // useEffect(() => {
   //   let mounted = true;
   //   firebase
   //     .firestore()
-  //     .collection("users")
+  //     .collection("groups")
+  //     .doc(groupCode)
+  //     .collection("members")
   //     .doc(firebase.auth().currentUser.uid)
   //     .get()
   //     .then((doc) => {
-  //       if (doc.data().inGroup && mounted) {
-  //         console.log(doc.data().inGroup);
-  //         setGroupStatus(true);
+  //       if (mounted) {
+  //         setName(doc.data().name);
+  //         if (doc.data().groupRole === "Creator") {
+  //           setCreator(true);
+  //         }
   //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error getting Document:", error);
   //     });
-  //   //cleanup function, makes sure state not updated when component is unmounted
   //   return () => (mounted = false);
   // }, []);
+
+  // if (isCreator) {
+  //   dispatch(setCreatorRole());
+  // }
+  const dispatch = useDispatch();
+  //let inGroup;
+  useEffect(() => {
+    // clearData(dispatch);
+    // fetchUser(dispatch);
+    dispatch(reset());
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+      });
+    console.log("cleared data and fetched user");
+    //inGroup = true;
+    //inGroup = useSelector((state) => state.user.currentUser.inGroup);
+  }, []);
+
+  //const inGroup = useSelector((state) => state.user.currentUser.inGroup);
+
+  //console.log("Current user is in group: ", inGroup);
+  //const inGroup = false;
+  const [inGroup, setGroupStatus] = useState(false);
+  //functions like componentDidMount, sets inGroup to true if current user is in group
+  useEffect(() => {
+    let mounted = true;
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        if (doc.data().inGroup && mounted) {
+          console.log(doc.data().inGroup);
+          setGroupStatus(true);
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting Document:", error);
+      });
+    //cleanup function, makes sure state not updated when component is unmounted
+    return () => (mounted = false);
+  }, []);
 
   return (
     <NavigationContainer independent={true}>
