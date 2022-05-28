@@ -140,21 +140,27 @@ export default function CreateGroup({ navigation }) {
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
-      groupCode: group.groupCode,
-      inGroup: true,
+      groupCode: firebase.firestore.FieldValue.arrayUnion({
+        groupCode: group.groupCode,
+        name: group.userName,
+      }),
     });
-    userRef.get().then((snapshot) => {
-      if (snapshot.exists) {
-        dispatch(setCurrentUser(snapshot.data()));
-      } else {
-        console.log("does not exist");
-      }
-      return snapshot;
-    }).then((snapshot) => {
-      navigation.navigate("GroupInfo", {code: group.groupCode, name: group.groupName});
-      
-    });
-
+    userRef
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+        return snapshot;
+      })
+      .then((snapshot) => {
+        navigation.navigate("GroupInfo", {
+          code: group.groupCode,
+          name: group.groupName,
+        });
+      });
   };
 
   return (

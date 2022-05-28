@@ -146,26 +146,25 @@ export default function Main() {
           name="Start"
           component={StartScreen}
           options={{
-            headerShown: true,
-            title: "Krzyzewskiville",
-            headerStyle: {
-              backgroundColor: "#1f509a",
-              borderBottomWidth: 0,
-              shadowColor: "transparent",
-            },
-            headerTitleStyle: {
-              fontFamily: "NovaCut",
-              color: "#fff",
-              fontSize: 30,
-              left: "0%",
-            },
+            headerShown: false,
+            // title: "Krzyzewskiville",
+            // headerStyle: {
+            //   backgroundColor: "#1f509a",
+            //   borderBottomWidth: 0,
+            //   shadowColor: "transparent",
+            // },
+            // headerTitleStyle: {
+            //   fontFamily: "NovaCut",
+            //   color: "#fff",
+            //   fontSize: 30,
+            //   left: "0%",
+            // },
           }}
         />
         <Drawer.Screen
           name="CreateGroup"
           component={CreateGroupScreen}
           options={({ navigation }) => ({
-            headerShown: true,
             headerStyle: {
               backgroundColor: "#1f509a",
               borderBottomWidth: 0,
@@ -185,7 +184,6 @@ export default function Main() {
           name="JoinGroup"
           component={JoinGroupScreen}
           options={({ navigation }) => ({
-            headerShown: true,
             title: "Join Group",
             headerLeft: () => (
               <Text

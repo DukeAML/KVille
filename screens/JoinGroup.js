@@ -79,7 +79,7 @@ export default function JoinGroup({ navigation }) {
           return;
         }
       });
-    
+
     //checks to make sure user isn't already in group
     groupRef
       .collection("members")
@@ -101,8 +101,10 @@ export default function JoinGroup({ navigation }) {
           .collection("users")
           .doc(firebase.auth().currentUser.uid)
           .update({
-            groupCode: groupCode,
-            inGroup: true,
+            groupCode: firebase.firestore.FieldValue.arrayUnion({
+              groupCode: groupCode,
+              name: name,
+            }),
           });
         //adds current user to member list
         groupRef
