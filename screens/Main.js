@@ -26,6 +26,7 @@ const Drawer = createDrawerNavigator();
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";
+import {setGroupCode } from '../redux/reducers/currGroupSlice';
 
 export default function Main() {
   //uncomment this to reset redux states
