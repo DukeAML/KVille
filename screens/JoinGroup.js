@@ -98,6 +98,7 @@ export default function JoinGroup({ navigation }) {
     //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
+        groupName = docSnapshot.data().name;
         //updates current user's info
         firebase
           .firestore()
@@ -134,7 +135,7 @@ export default function JoinGroup({ navigation }) {
       } else {
         console.log("does not exist");
       }
-    });
+    })/* ;
 
 
     groupRef.get().then((docSnapshot) => {
@@ -143,7 +144,7 @@ export default function JoinGroup({ navigation }) {
        
       }
       return docSnapshot;
-    }).then((docSnapshot) => {
+    }) */.then((docSnapshot) => {
       navigation.navigate("GroupInfo", {
         code: groupCode,
         name: groupName

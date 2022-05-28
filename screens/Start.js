@@ -93,7 +93,7 @@ export default function Start({ navigation }) {
           else {
             codeExists = GROUPS.some((e) => e.code === group.code);
           }
-          console.log(GROUPS);
+
 
           if (mounted && !codeExists) {
             GROUPS.push(current);
