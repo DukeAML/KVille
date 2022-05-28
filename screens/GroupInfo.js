@@ -7,47 +7,6 @@ import "firebase/compat/firestore";
 
 require("firebase/firestore");
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#C2C6D0",
-  },
-  header: {
-    marginVertical: 10,
-    marginHorizontal: 15,    
-    fontSize: 32,
-    fontWeight: "700",
-  },
-  contentText:{
-    fontSize: 28,
-    fontWeight: "700",
-    textAlign:"center"
-  },
-  listItem: {
-    backgroundColor: "#1f509a",
-    padding: 8,
-    marginVertical: 4,
-    borderRadius: 7,
-    width: "80%",
-    alignSelf: "center",
-    alignItems: "center"
-  },
-  listText: {
-    fontSize: 16,
-    fontFamily: "sans-serif",
-    fontWeight: "550",
-    color: "white"
-  },
-  boxText: {
-    marginBottom: 10,
-    width: "90%",
-    backgroundColor: "#FFFAFACC",
-    borderRadius: 8,
-    alignSelf: "center"
-  }
-});
-
-
 
 /* let currentUserName;
 
@@ -70,7 +29,9 @@ const Member = ({name, backgroundColor}) => (
 );
 
 
-export default function GroupInfo() {
+export default function GroupInfo({route}) {
+
+  const {code, name} = route.params;
   const [groupName,setGroupName]= useState('');
   const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
@@ -161,12 +122,12 @@ export default function GroupInfo() {
       <Text style={styles.header}>Group Name:</Text>
 
       <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupName}</Text>
+        <Text style={styles.contentText}>{name}</Text>
       </View>
 
       <Text style={styles.header}>Group Code</Text>
       <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupCode}</Text>
+        <Text style={styles.contentText}>{code}</Text>
       </View>
 
       <SafeAreaView>
@@ -180,3 +141,43 @@ export default function GroupInfo() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#C2C6D0",
+  },
+  header: {
+    marginVertical: 10,
+    marginHorizontal: 15,    
+    fontSize: 32,
+    fontWeight: "700",
+  },
+  contentText:{
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign:"center"
+  },
+  listItem: {
+    backgroundColor: "#1f509a",
+    padding: 8,
+    marginVertical: 4,
+    borderRadius: 7,
+    width: "80%",
+    alignSelf: "center",
+    alignItems: "center"
+  },
+  listText: {
+    fontSize: 16,
+    fontFamily: "sans-serif",
+    fontWeight: "550",
+    color: "white"
+  },
+  boxText: {
+    marginBottom: 10,
+    width: "90%",
+    backgroundColor: "#FFFAFACC",
+    borderRadius: 8,
+    alignSelf: "center"
+  }
+});

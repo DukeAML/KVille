@@ -151,7 +151,8 @@ export default function CreateGroup({ navigation }) {
       }
       return snapshot;
     }).then((snapshot) => {
-      navigation.navigate("GroupInfo");
+      navigation.navigate("GroupInfo", {code: group.groupCode, name: group.groupName});
+      
     });
 
   };
