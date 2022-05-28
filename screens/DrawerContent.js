@@ -128,7 +128,7 @@ export default function DrawerContent(props) {
               )}
               label="Settings"
               onPress={() => {
-                props.navigation.navigate("SettingScreen", {code: groupCode});
+                props.navigation.navigate("SettingScreen", {code: groupCode, name: groupName});
               }}
             />
             <DrawerItem label="Log out" onPress={() => onLogout()} />
