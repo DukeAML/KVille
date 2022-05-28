@@ -92,7 +92,6 @@ export default function Settings({route, navigation}) {
   const leaveGroup = () => {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({code: code, name: name}),
-      inGroup: false,
     });
     if (isCreator) {
       groupRef
