@@ -8,7 +8,7 @@ import {
   ImageBackground,
 } from "react-native";
 import zion from "../assets/zion.png";
-import { Picker } from "@react-native-picker/picker";
+//import { Picker } from "@react-native-picker/picker";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -151,13 +151,9 @@ export default function CreateGroup({ navigation }) {
       }
       return snapshot;
     }).then((snapshot) => {
-      navigation.navigate("GroupNavigator");
+      navigation.navigate("GroupInfo");
     });
-    // dispatch(inGroup());
-    // dispatch(
-    //   setGroupInfo({ groupCode: group.groupCode, userName: group.userName })
-    // );
-    // dispatch(setCreatorRole());
+
   };
 
   return (

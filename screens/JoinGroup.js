@@ -79,6 +79,18 @@ export default function JoinGroup({ navigation }) {
           return;
         }
       });
+    
+    //checks to make sure user isn't already in group
+    groupRef
+      .collection("members")
+      .doc()
+      .get(firebase.auth().currentUser.uid)
+      .then((docSnap) => {
+        if (docSnap.exists) {
+          console.log("User already in group");
+          return;
+        }
+      });
 
     //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
@@ -119,7 +131,7 @@ export default function JoinGroup({ navigation }) {
         return snapshot;
       })
       .then((snapshot) => {
-        navigation.navigate("GroupNavigator");
+        navigation.navigate("GroupInfo");
       });
   };
 

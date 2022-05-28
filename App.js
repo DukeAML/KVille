@@ -35,20 +35,6 @@ import { Provider } from "react-redux";
 
 // let persistor = persistStore(store);
 
-// import { createStore } from "redux";
-// import Reducer from "./redux/reducers/index";
-
-// import { createStore, applyMiddleware } from "redux";
-// import rootREducer from "./redux/reducers";
-// import thunk from "redux-thunk";
-
-// const store = createStore(rootReducer, applyMiddleware(thunk));
-
-// const store = createStore(
-//   Reducer,
-//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-// );
-
 const Stack = createNativeStackNavigator();
 
 export class App extends Component {

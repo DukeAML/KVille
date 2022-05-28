@@ -9,8 +9,6 @@ import {
 } from "react-native";
 import background from "../assets/Cameron-Crazies.jpg";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { CommonActions } from "@react-navigation/native";
-
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -53,7 +51,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings({parentNavigation, navigation}) {
+export default function Settings({navigation}) {
   const [isCreator, setCreator] = useState(false);
   const dispatch = useDispatch();
 
@@ -126,7 +124,7 @@ export default function Settings({parentNavigation, navigation}) {
     //     return snapshot;
     //   })
     //   .then((snapshot) => {
-    //     parentNavigation.navigate("Start");
+    //     navigation.navigate("Start");
     //   });
     // dispatch(notInGroup());
     // dispatch(setGroupInfo({ groupCode: "", userName: "" }));
@@ -145,13 +143,7 @@ export default function Settings({parentNavigation, navigation}) {
           style={styles.button}
           onPress={() => {
             leaveGroup();
-            //parentNavigation.navigate("Start");
-            navigation.getParent("Main").dispatch(
-              CommonActions.navigate({
-                name: "Start",
-                params: {},
-              })
-            )
+            navigation.navigate("Start");
           }}
         >
           {isCreator ? (

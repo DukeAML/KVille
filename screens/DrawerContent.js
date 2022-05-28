@@ -20,23 +20,23 @@ import { useSelector, useDispatch } from "react-redux";
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
 
-  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
+  //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      firebase
-        .firestore()
-        .collection("groups")
-        .doc(groupCode)
-        .collection("members")
-        .doc(firebase.auth().currentUser.uid)
-        .update({
-          inTent: status,
-        });
-    }
-    return () => (mounted = false);
-  }, [status]);
+  // useEffect(() => {
+  //   let mounted = true;
+  //   if (mounted) {
+  //     firebase
+  //       .firestore()
+  //       .collection("groups")
+  //       .doc(groupCode)
+  //       .collection("members")
+  //       .doc(firebase.auth().currentUser.uid)
+  //       .update({
+  //         inTent: status,
+  //       });
+  //   }
+  //   return () => (mounted = false);
+  // }, [status]);
 
   const onToggleSwitch = () => {
     //console.log("status: ", status);
@@ -133,14 +133,10 @@ export default function DrawerContent(props) {
             <DrawerItem label="Log out" onPress={() => onLogout()} />
           </Drawer.Section>
           <Drawer.Section title="Preferences">
-            {/* <TouchableRipple> */}
             <View style={styles.preference}>
               <Text>Status</Text>
-              {/* <View pointerEvents="none"> */}
               <Switch value={status} onValueChange={onToggleSwitch} />
-              {/* </View> */}
             </View>
-            {/* </TouchableRipple> */}
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>

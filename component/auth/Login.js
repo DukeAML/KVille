@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { View, Button, Text, StyleSheet } from "react-native";
-// import {TextInput} from 'react-native';
 import { TextInput } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
