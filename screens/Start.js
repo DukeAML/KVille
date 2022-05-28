@@ -81,7 +81,9 @@ export default function Start({ navigation }) {
         let currGroup = doc.data().groupCode; //will eventually probably be an array
         console.log(currGroup);
 
-        currGroup.forEach((group) => {
+
+        if (!(currGroup.length === 0)){
+          currGroup.forEach((group) => {
           let current = {
             code: group.groupCode,
             name: group.name,
@@ -96,7 +98,9 @@ export default function Start({ navigation }) {
           if (mounted && !codeExists) {
             GROUPS.push(current);
           }
-        });
+          });
+        }
+        
         /*  console.log ("current name:", currCode);
         //add condition here:
 
