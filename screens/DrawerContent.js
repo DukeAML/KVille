@@ -20,7 +20,8 @@ import { useSelector, useDispatch } from "react-redux";
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
 
-  //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+  const groupName = useSelector((state) => state.user.currGroupName);
 
   // useEffect(() => {
   //   let mounted = true;
@@ -82,7 +83,7 @@ export default function DrawerContent(props) {
               )}
               label="Group Information"
               onPress={() => {
-                props.navigation.navigate("GroupInfo");
+                props.navigation.navigate("GroupInfo", {code: groupCode, name: groupName});
               }}
             />
             <DrawerItem
@@ -127,7 +128,7 @@ export default function DrawerContent(props) {
               )}
               label="Settings"
               onPress={() => {
-                props.navigation.navigate("SettingScreen");
+                props.navigation.navigate("SettingScreen", {code: groupCode});
               }}
             />
             <DrawerItem label="Log out" onPress={() => onLogout()} />

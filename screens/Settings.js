@@ -51,20 +51,22 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings({navigation}) {
+export default function Settings({route, navigation}) {
   const [isCreator, setCreator] = useState(false);
   const dispatch = useDispatch();
 
   //gets current user's group code from redux store
-  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
-  console.log("Current group code: ", groupCode);
+  //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
+
+  const { code } = route.params;
+  console.log("Current group code: ", code);
   //gets current user's group role from redux store
 
   const userRef = firebase
     .firestore()
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+  const groupRef = firebase.firestore().collection("groups").doc(code);
 
   useEffect(() => {
     let mounted = true;

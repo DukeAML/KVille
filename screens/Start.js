@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
-  FlatList
+  FlatList,
 } from "react-native";
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
@@ -15,8 +15,10 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-require("firebase/firestore");
+import { useDispatch } from "react-redux";
+import { setGroupCode, setGroupName } from "../redux/reducers/userSlice";
 
+require("firebase/firestore");
 
 /* let GROUPS = [
   {
@@ -29,66 +31,73 @@ require("firebase/firestore");
   }
   ]; */
 
-  let GROUPS = new Array();
-
-
-
+let GROUPS = new Array();
 
 //const for list Items of Groups List
-const Group = ({ name, onPress}) => (
+const Group = ({ name, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.listItem}>
     <Text style={styles.listText}>{name}</Text>
   </TouchableOpacity>
 );
 
-export default function Start({navigation}) {
+export default function Start({ navigation }) {
   let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
   });
 
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
 
+  const dispatch = useDispatch();
   //for rendering list items of Groups
-  const renderGroup = ({item}) => {
+  const renderGroup = ({ item }) => {
     return (
       <Group
         name={item.name}
-        onPress = {() => navigation.navigate("GroupInfo", { //pass groupcode and group name parameters
-          code: item.code, 
-          name: item.name
-        })}
+        onPress={() => {
+          navigation.navigate("GroupInfo", {
+            //pass groupcode and group name parameters
+            code: item.code,
+            name: item.name,
+          });
+          dispatch(setGroupCode(item.code));
+          dispatch(setGroupName(item.name));
+        }}
       />
     );
-  }
+  };
 
   //firebase reference to current user
-  const userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid);
+  const userRef = firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid);
 
   useEffect(() => {
     let mounted = true;
     //Accesses Names of Members from firebase and adds them to the array
-    userRef.get().then((doc)=> {
+    userRef
+      .get()
+      .then((doc) => {
         let currGroup = doc.data().groupCode; //will eventually probably be an array
         console.log(currGroup);
 
-        currGroup.forEach(group => {
+        currGroup.forEach((group) => {
           let current = {
             code: group.groupCode,
-            name: group.name
+            name: group.name,
           };
           let codeExists;
           if (GROUPS.length === 0) codeExists = false;
           else {
-            codeExists = (GROUPS.some(e => e.code === group.code));
+            codeExists = GROUPS.some((e) => e.code === group.code);
           }
           console.log(GROUPS);
 
-          if (mounted && !codeExists){
+          if (mounted && !codeExists) {
             GROUPS.push(current);
           }
-
         });
-       /*  console.log ("current name:", currCode);
+        /*  console.log ("current name:", currCode);
         //add condition here:
 
         let current = {
@@ -107,18 +116,16 @@ export default function Start({navigation}) {
           GROUPS.push(current);
         } */
         return doc;
-    }).then((doc) => {
-      setLoaded(true);
-    }).catch((error) => {
-         console.log("Error getting documents: ", error);
-    });
+      })
+      .then((doc) => {
+        setLoaded(true);
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
 
     return () => (mounted = false);
   }, []);
-
-
-
-
 
   if (!fontsLoaded || !loaded) {
     return <AppLoading />;
@@ -131,9 +138,9 @@ export default function Start({navigation}) {
         <Image source={coachk} style={styles.image} />
         <SafeAreaView>
           <FlatList
-            data = {GROUPS}
-            renderItem = {renderGroup}
-            keyExtractor = {item => item.code}
+            data={GROUPS}
+            renderItem={renderGroup}
+            keyExtractor={(item) => item.code}
           />
         </SafeAreaView>
         <View style={styles.textContainer}>
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1f509a",
     alignItems: "center",
-    marginTop: "0%"
+    marginTop: "0%",
   },
   header: {
     left: "0%",
@@ -210,12 +217,12 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     width: 300,
     justifyContent: "flex-start",
-    alignItems: "center"
+    alignItems: "center",
   },
   listText: {
     fontSize: 16,
     fontFamily: "sans-serif",
     fontWeight: "550",
-    color: "white"
-  }
+    color: "white",
+  },
 });

@@ -87,7 +87,11 @@ const styles = StyleSheet.create({
 });
 
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/reducers/userSlice";
+import {
+  setCurrentUser,
+  setGroupCode,
+  setGroupName,
+} from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
 //   setGroupInfo,
@@ -145,6 +149,8 @@ export default function CreateGroup({ navigation }) {
         name: group.groupName,
       }),
     });
+    dispatch(setGroupCode(group.groupCode));
+    dispatch(setGroupName(group.groupName));
     userRef
       .get()
       .then((snapshot) => {
