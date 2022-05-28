@@ -199,7 +199,7 @@ export default function CreateGroup({ navigation }) {
             style={styles.createBtn}
             onPress={() => {
               onCreateGroup();
-              // navigation.navigate("GroupNavigator");
+              navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
               console.log(group.groupRole);
             }}

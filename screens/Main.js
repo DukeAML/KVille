@@ -142,71 +142,67 @@ export default function Main() {
 
   return (
     <NavigationContainer independent={true}>
-      {inGroup ? (
-        <GroupNavigator />
-      ) : (
-        <Stack.Navigator
-          initialRouteName="Start"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen
-            name="Start"
-            component={StartScreen}
-            options={{
-              headerShown: true,
-              title: "Krzyzewskiville",
-              headerStyle: {
-                backgroundColor: "#1f509a",
-                borderBottomWidth: 0,
-                shadowColor: "transparent",
-              },
-              headerTitleStyle: {
-                fontFamily: "NovaCut",
-                color: "#fff",
-                fontSize: 30,
-                left: "0%",
-              },
-            }}
-          />
-          <Stack.Screen
-            name="CreateGroup"
-            component={CreateGroupScreen}
-            options={({ navigation }) => ({
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: "#1f509a",
-                borderBottomWidth: 0,
-                shadowColor: "transparent",
-              },
-              headerLeft: () => (
-                <Text
-                  style={{ color: "#fff", marginLeft: 10 }}
-                  onPress={() => navigation.goBack()}
-                >
-                  Cancel
-                </Text>
-              ),
-            })}
-          />
-          <Stack.Screen
-            name="JoinGroup"
-            component={JoinGroupScreen}
-            options={({ navigation }) => ({
-              headerShown: true,
-              title: "Join Group",
-              headerLeft: () => (
-                <Text
-                  style={{ color: "#000", marginLeft: 10 }}
-                  onPress={() => navigation.goBack()}
-                >
-                  Cancel
-                </Text>
-              ),
-            })}
-          />
-          <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator
+        initialRouteName= {inGroup ? "GroupNavigator" : "Start"} 
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen
+          name="Start"
+          component={StartScreen}
+          options={{
+            headerShown: true,
+            title: "Krzyzewskiville",
+            headerStyle: {
+              backgroundColor: "#1f509a",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerTitleStyle: {
+              fontFamily: "NovaCut",
+              color: "#fff",
+              fontSize: 30,
+              left: "0%",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="CreateGroup"
+          component={CreateGroupScreen}
+          options={({ navigation }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: "#1f509a",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <Text
+                style={{ color: "#fff", marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="JoinGroup"
+          component={JoinGroupScreen}
+          options={({ navigation }) => ({
+            headerShown: true,
+            title: "Join Group",
+            headerLeft: () => (
+              <Text
+                style={{ color: "#000", marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+            ),
+          })}
+        />
+        <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

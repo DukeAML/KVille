@@ -130,7 +130,7 @@ export default function JoinGroup({ navigation }) {
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
-          // navigation.navigate("GroupNavigator");
+          navigation.navigate("GroupNavigator");
         }}
       >
         <Text style={styles.buttonText}>Join Group</Text>

@@ -50,20 +50,40 @@ const styles = StyleSheet.create({
 });
 
 export default function Settings() {
+  const [isCreator, setCreator] = useState(false);
   //const dispatch = useDispatch();
 
   //gets current user's group code from redux store
   const groupCode = useSelector((state) => state.user.currentUser.groupCode);
   console.log("Current group code: ", groupCode);
   //gets current user's group role from redux store
-  const isCreator = true;
-  // const isCreator = useSelector((state) => state.user.currentUser.isCreator);
 
   const userRef = firebase
     .firestore()
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+
+  useEffect(() => {
+    let mounted = true;
+    groupRef
+      .collection("members")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          if (mounted) {
+            if (snapshot.data().groupRole === "Creator") {
+              setCreator(true);
+            }
+          }
+        } else {
+          console.log("does not exist");
+        }
+      });
+    console.log("fetched isCreator from firebase");
+    return () => (mounted = false);
+  }, []);
 
   const leaveGroup = () => {
     userRef.update({
