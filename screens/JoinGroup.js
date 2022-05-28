@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
-  const [groupName, setGroupName] = useState("");
+  const [groupName, setGroupName] = useState('');
 
   const dispatch = useDispatch();
 
@@ -138,7 +138,7 @@ export default function JoinGroup({ navigation }) {
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
         setGroupName(docSnapshot.data().name); 
-        console.log('doc', docSnapshot.data().name);
+        console.log('doc', groupName);
       }
       return docSnapshot;
     }).then((docSnapshot) => {
