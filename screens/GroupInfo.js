@@ -29,7 +29,9 @@ const Member = ({name, backgroundColor}) => (
 );
 
 
-export default function GroupInfo() {
+export default function GroupInfo({route}) {
+
+  const {code, name} = route.params;
   const [groupName,setGroupName]= useState('');
   const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
@@ -120,12 +122,12 @@ export default function GroupInfo() {
       <Text style={styles.header}>Group Name:</Text>
 
       <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupName}</Text>
+        <Text style={styles.contentText}>{name}</Text>
       </View>
 
       <Text style={styles.header}>Group Code</Text>
       <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupCode}</Text>
+        <Text style={styles.contentText}>{code}</Text>
       </View>
 
       <SafeAreaView>

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  SafeAreaView,
   FlatList
 } from "react-native";
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
@@ -45,11 +46,16 @@ export default function Start({navigation}) {
     NovaCut_400Regular,
   });
 
+  const [loaded, setLoaded] = useState(false);
+
   const renderGroup = ({item}) => {
     return (
-      <Group 
+      <Group
         name={item.name}
-        onPress = {() => navigation.navigate("GroupInfo")}
+        onPress = {() => navigation.navigate("GroupInfo", {
+          code: item.code, 
+          name: item.name
+        })}
       />
     );
   }
@@ -63,11 +69,11 @@ export default function Start({navigation}) {
     userRef.get().then((doc)=> {
         let currCode = doc.data().groupCode; //will eventuall probably be an array
         console.log ("current name:", currCode);
-        //add condition here: 
+        //add condition here:
 
         let current = {
           code: currCode,
-          name: currCode
+          name: 'stinkyalvintester'
         };
 
         let codeExists;
@@ -75,21 +81,27 @@ export default function Start({navigation}) {
         else {
           codeExists = (GROUPS.some(e => e.code === currCode));
         }
+        console.log(GROUPS);
 
         if (mounted && !codeExists){
           GROUPS.push(current);
         }
-    }).catch((error) => {
-        console.log("Error getting documents: ", error);
-    });
-      return () => (mounted = false);
+        return doc;
+    }).then((doc) => {
+      setLoaded(true);
+    })
+    // catch((error) => {
+    //     console.log("Error getting documents: ", error);
+    // });
+
+    return () => (mounted = false);
   }, []);
 
 
 
 
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !loaded) {
     return <AppLoading />;
   } else {
     return (
@@ -98,11 +110,13 @@ export default function Start({navigation}) {
           <Text style={styles.banner}>Krzyzewskiville</Text>
         </View> */}
         <Image source={coachk} style={styles.image} />
-        <FlatList
-          data = {GROUPS}
-          renderItem = {renderGroup}
-          keyExtractor = {item => item.code}
-        />
+        <SafeAreaView>
+          <FlatList
+            data = {GROUPS}
+            renderItem = {renderGroup}
+            keyExtractor = {item => item.code}
+          />
+        </SafeAreaView>
         <View style={styles.textContainer}>
           <TouchableOpacity
             style={styles.button}

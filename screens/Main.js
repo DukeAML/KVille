@@ -295,7 +295,6 @@ export default function Main() {
         <Drawer.Screen
           name="SettingScreen"
           component={SettingScreen}
-          initialParams={{ parentNavigation: navigation }}
           options={({ navigation }) => ({
             headerStyle: {
               backgroundColor: "#C2C6D0",
