@@ -60,6 +60,7 @@ export default function Settings({route, navigation}) {
 
   const { code, name } = route.params;
   console.log("Current group code: ", code);
+  console.log("Current group name: ", name);
   //gets current user's group role from redux store
 
   const userRef = firebase
@@ -91,7 +92,7 @@ export default function Settings({route, navigation}) {
 
   const leaveGroup = () => {
     userRef.update({
-      groupCode: firebase.firestore.FieldValue.arrayRemove({code: code, name: name}),
+      groupCode: firebase.firestore.FieldValue.arrayRemove({groupCode: code, name: name}),
     });
     if (isCreator) {
       groupRef
