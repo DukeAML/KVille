@@ -34,7 +34,7 @@ require("firebase/firestore");
 
 
 
-
+//const for list Items of Groups List
 const Group = ({ name, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.listItem}>
     <Text style={styles.listText}>{name}</Text>
@@ -46,13 +46,14 @@ export default function Start({navigation}) {
     NovaCut_400Regular,
   });
 
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
 
+  //for rendering list items of Groups
   const renderGroup = ({item}) => {
     return (
       <Group
         name={item.name}
-        onPress = {() => navigation.navigate("GroupInfo", {
+        onPress = {() => navigation.navigate("GroupInfo", { //pass groupcode and group name parameters
           code: item.code, 
           name: item.name
         })}
@@ -60,11 +61,11 @@ export default function Start({navigation}) {
     );
   }
 
+  //firebase reference to current user
   const userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid);
 
   useEffect(() => {
     let mounted = true;
-
     //Accesses Names of Members from firebase and adds them to the array
     userRef.get().then((doc)=> {
         let currCode = doc.data().groupCode; //will eventuall probably be an array
@@ -89,10 +90,9 @@ export default function Start({navigation}) {
         return doc;
     }).then((doc) => {
       setLoaded(true);
-    })
-    // catch((error) => {
-    //     console.log("Error getting documents: ", error);
-    // });
+    }).catch((error) => {
+         console.log("Error getting documents: ", error);
+    });
 
     return () => (mounted = false);
   }, []);
