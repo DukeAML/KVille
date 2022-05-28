@@ -23,10 +23,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign:"center"
   },
-  listItem:{
-    backgroundColor: '#1f509a',
+  listItem: {
+    backgroundColor: "#1f509a",
     padding: 8,
     marginVertical: 4,
+    borderRadius: 7,
     width: "80%",
     alignSelf: "center",
     alignItems: "center"
@@ -41,7 +42,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: "90%",
     backgroundColor: "#FFFAFACC",
-    alignSelf:"center"  
+    borderRadius: 8,
+    alignSelf: "center"
   }
 });
 
@@ -84,7 +86,7 @@ export default function GroupInfo() {
         console.log ("current name:", currName);
         //add condition here: 
         let tentCondition = doc.data().inTent;
-        console.log ("current name:", tentCondition);
+        console.log ("tentcondition:", tentCondition);
 
         let current = {
           id: currName,
@@ -92,13 +94,28 @@ export default function GroupInfo() {
           inTent: tentCondition
         };
 
-        let nameExists;
+        let nameExists, tentStatusChanged;
         if (members.length === 0) nameExists = false;
-        else {nameExists = (members.some(e => e.name === currName));}
+        else {
+          nameExists = (members.some(e => e.name === currName));
+        }
 
         if (mounted && !nameExists){
           members.push(current);
         }
+
+        let indexOfUser = members.findIndex(member => {return member.id === currName;});
+        //console.log("index: ",indexOfUser); 
+        tentStatusChanged = !(members[indexOfUser].inTent == tentCondition);
+        /* console.log("status1: ",members[indexOfUser].inTent); 
+        console.log("status: ",tentStatusChanged); 
+        console.log("ARRAY: ",members); */ 
+
+        if (mounted && nameExists && tentStatusChanged){ // checks if tent status changed after refresh
+          members.splice(indexOfUser, 1);
+          members.insert(indexOfUser,current);
+        }
+        
           // doc.data() is never undefined for query doc snapshots
       });
     }).catch((error) => {
