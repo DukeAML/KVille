@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings() {
+export default function Settings({navigation}) {
   const [isCreator, setCreator] = useState(false);
   //const dispatch = useDispatch();
 
@@ -129,6 +129,7 @@ export default function Settings() {
           style={styles.button}
           onPress={() => {
             leaveGroup();
+            navigation.getParent("Main").navigate("Start");
           }}
         >
           {isCreator ? (

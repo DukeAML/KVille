@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   },
 });
 
-// import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
 //   setGroupInfo,
@@ -102,7 +103,7 @@ export default function CreateGroup({ navigation }) {
     userName: "",
   });
 
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const userRef = firebase
     .firestore()
@@ -142,7 +143,16 @@ export default function CreateGroup({ navigation }) {
       groupCode: group.groupCode,
       inGroup: true,
     });
-
+    userRef.get().then((snapshot) => {
+      if (snapshot.exists) {
+        dispatch(setCurrentUser(snapshot.data()));
+      } else {
+        console.log("does not exist");
+      }
+      return snapshot;
+    }).then((snapshot) => {
+      navigation.navigate("GroupNavigator");
+    });
     // dispatch(inGroup());
     // dispatch(
     //   setGroupInfo({ groupCode: group.groupCode, userName: group.userName })
@@ -199,7 +209,7 @@ export default function CreateGroup({ navigation }) {
             style={styles.createBtn}
             onPress={() => {
               onCreateGroup();
-              navigation.navigate("GroupNavigator");
+              //navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
               console.log(group.groupRole);
             }}

@@ -143,8 +143,9 @@ export default function Main() {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator
-        initialRouteName= {inGroup ? "GroupNavigator" : "Start"} 
+        initialRouteName= "Start"
         screenOptions={{ headerShown: false }}
+        id = "Main"
       >
         <Stack.Screen
           name="Start"
