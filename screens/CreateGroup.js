@@ -149,6 +149,8 @@ export default function CreateGroup({ navigation }) {
         name: group.groupName,
       }),
     });
+    dispatch(setGroupCode(group.groupCode));
+    dispatch(setGroupName(group.groupName));
     userRef
       .get()
       .then((snapshot) => {

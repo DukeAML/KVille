@@ -13,6 +13,8 @@ export const userSlice = createSlice({
     },
     reset: (state) => {
       state.currentUser = null;
+      state.currGroupCode = "";
+      state.currGroupName = "";
     },
     setGroupCode: (state, action) => {
       state.currGroupCode = action.payload;
