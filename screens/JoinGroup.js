@@ -12,7 +12,8 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useGestureHandlerRef } from "@react-navigation/stack";
 
-// import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/reducers/userSlice";
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
@@ -47,28 +48,26 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
 
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+  const userName = useSelector((state) => state.user.currentUser.name);
 
   //on first render sets name to user's registered name
   useEffect(() => {
     let mounted = true;
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        if (mounted) {
-          setName(doc.data().name);
-          console.log(doc.data().name);
-        }
-      });
+    if (mounted) {
+      setName(userName);
+    }
     return () => (mounted = false);
   }, []);
 
   const onJoinGroup = (navigation) => {
     console.log("group code", groupCode);
     const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+    const userRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid);
 
     //Max 12 people in a group
     groupRef
@@ -77,6 +76,18 @@ export default function JoinGroup({ navigation }) {
       .then((collSnap) => {
         if (collSnap.size > 12) {
           console.log("Group is full");
+          return;
+        }
+      });
+    
+    //checks to make sure user isn't already in group
+    groupRef
+      .collection("members")
+      .doc()
+      .get(firebase.auth().currentUser.uid)
+      .then((docSnap) => {
+        if (docSnap.exists) {
+          console.log("User already in group");
           return;
         }
       });
@@ -102,7 +113,6 @@ export default function JoinGroup({ navigation }) {
             name: name,
             inTent: false,
           });
-
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
@@ -110,6 +120,19 @@ export default function JoinGroup({ navigation }) {
         //maybe add snack bar for this
       }
     });
+    userRef
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+        return snapshot;
+      })
+      .then((snapshot) => {
+        navigation.navigate("GroupInfo");
+      });
   };
 
   return (
@@ -130,7 +153,7 @@ export default function JoinGroup({ navigation }) {
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
-          // navigation.navigate("GroupNavigator");
+          //navigation.navigate("GroupNavigator");
         }}
       >
         <Text style={styles.buttonText}>Join Group</Text>
