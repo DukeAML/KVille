@@ -141,74 +141,250 @@ export default function Main() {
   }, []);
 
   return (
-    <NavigationContainer independent={true}>
-      <Stack.Navigator
-        initialRouteName= "Start"
-        screenOptions={{ headerShown: false }}
-        id = "Main"
+    <NavigationContainer>
+      <Stack.Screen
+        name="Start"
+        component={StartScreen}
+        options={{
+          headerShown: true,
+          title: "Krzyzewskiville",
+          headerStyle: {
+            backgroundColor: "#1f509a",
+            borderBottomWidth: 0,
+            shadowColor: "transparent",
+          },
+          headerTitleStyle: {
+            fontFamily: "NovaCut",
+            color: "#fff",
+            fontSize: 30,
+            left: "0%",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="CreateGroup"
+        component={CreateGroupScreen}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#1f509a",
+            borderBottomWidth: 0,
+            shadowColor: "transparent",
+          },
+          headerLeft: () => (
+            <Text
+              style={{ color: "#fff", marginLeft: 10 }}
+              onPress={() => navigation.goBack()}
+            >
+              Cancel
+            </Text>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="JoinGroup"
+        component={JoinGroupScreen}
+        options={({ navigation }) => ({
+          headerShown: true,
+          title: "Join Group",
+          headerLeft: () => (
+            <Text
+              style={{ color: "#000", marginLeft: 10 }}
+              onPress={() => navigation.goBack()}
+            >
+              Cancel
+            </Text>
+          ),
+        })}
+      />
+      <Drawer.Navigator
+        initialRouteName="GroupInfo"
+        drawerContent={(props) => <DrawerContent {...props} />}
       >
-        <Stack.Screen
-          name="Start"
-          component={StartScreen}
-          options={{
-            headerShown: true,
-            title: "Krzyzewskiville",
+        <Drawer.Screen
+          name="GroupInfo"
+          component={GroupInfoScreen}
+          options={({ navigation }) => ({
+            title: "Black Tent",
             headerStyle: {
-              backgroundColor: "#1f509a",
+              backgroundColor: "#C2C6D0",
               borderBottomWidth: 0,
               shadowColor: "transparent",
             },
             headerTitleStyle: {
-              fontFamily: "NovaCut",
-              color: "#fff",
-              fontSize: 30,
-              left: "0%",
+              right: "0%",
+              fontSize: 28,
             },
-          }}
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
         />
-        <Stack.Screen
-          name="CreateGroup"
-          component={CreateGroupScreen}
+        <Drawer.Screen
+          name="Availability"
+          component={AvailabilityScreen}
           options={({ navigation }) => ({
-            headerShown: true,
             headerStyle: {
-              backgroundColor: "#1f509a",
+              backgroundColor: "#C2C6D0",
               borderBottomWidth: 0,
               shadowColor: "transparent",
             },
             headerLeft: () => (
-              <Text
-                style={{ color: "#fff", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
             ),
           })}
         />
-        <Stack.Screen
-          name="JoinGroup"
-          component={JoinGroupScreen}
+        <Drawer.Screen
+          name="ScheduleScreen"
+          component={ScheduleScreen}
           options={({ navigation }) => ({
-            headerShown: true,
-            title: "Join Group",
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
             headerLeft: () => (
-              <Text
-                style={{ color: "#000", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
             ),
           })}
         />
-        <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
-      </Stack.Navigator>
+        <Drawer.Screen
+          name="MonitorScreen"
+          component={MonitorScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name="InfoScreen"
+          component={InfoScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name="SettingScreen"
+          component={SettingScreen}
+          initialParams={{ parentNavigation: navigation }}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: "#C2C6D0",
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+            },
+            headerLeft: () => (
+              <IconButton
+                icon="menu"
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
+            ),
+          })}
+        />
+      </Drawer.Navigator>
     </NavigationContainer>
+    // <NavigationContainer independent={true}>
+    //   <Stack.Navigator
+    //     initialRouteName= "Start"
+    //     screenOptions={{ headerShown: false }}
+    //     id = "Main"
+    //   >
+    // <Stack.Screen
+    //   name="Start"
+    //   component={StartScreen}
+    //   options={{
+    //     headerShown: true,
+    //     title: "Krzyzewskiville",
+    //     headerStyle: {
+    //       backgroundColor: "#1f509a",
+    //       borderBottomWidth: 0,
+    //       shadowColor: "transparent",
+    //     },
+    //     headerTitleStyle: {
+    //       fontFamily: "NovaCut",
+    //       color: "#fff",
+    //       fontSize: 30,
+    //       left: "0%",
+    //     },
+    //   }}
+    // />
+    // <Stack.Screen
+    //   name="CreateGroup"
+    //   component={CreateGroupScreen}
+    //   options={({ navigation }) => ({
+    //     headerShown: true,
+    //     headerStyle: {
+    //       backgroundColor: "#1f509a",
+    //       borderBottomWidth: 0,
+    //       shadowColor: "transparent",
+    //     },
+    //     headerLeft: () => (
+    //       <Text
+    //         style={{ color: "#fff", marginLeft: 10 }}
+    //         onPress={() => navigation.goBack()}
+    //       >
+    //         Cancel
+    //       </Text>
+    //     ),
+    //   })}
+    // />
+    // <Stack.Screen
+    //   name="JoinGroup"
+    //   component={JoinGroupScreen}
+    //   options={({ navigation }) => ({
+    //     headerShown: true,
+    //     title: "Join Group",
+    //     headerLeft: () => (
+    //       <Text
+    //         style={{ color: "#000", marginLeft: 10 }}
+    //         onPress={() => navigation.goBack()}
+    //       >
+    //         Cancel
+    //       </Text>
+    //     ),
+    //   })}
+    // />
+    //     <Stack.Screen name="GroupNavigator" component={GroupNavigator} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 }
 
-function GroupNavigator({navigation}) {
+function GroupNavigator({ navigation }) {
   return (
     <NavigationContainer independent={true}>
       <Drawer.Navigator
@@ -313,7 +489,7 @@ function GroupNavigator({navigation}) {
         <Drawer.Screen
           name="SettingScreen"
           component={SettingScreen}
-          initialParams = {{parentNavigation: navigation}}
+          initialParams={{ parentNavigation: navigation }}
           options={({ navigation }) => ({
             headerStyle: {
               backgroundColor: "#C2C6D0",
