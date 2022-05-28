@@ -56,10 +56,11 @@ const BulletPoint = ({ data }) => (
   </View>
 );
 
+
 export default function Info() {
   const win = Dimensions.get("window");
   const ratioSignImg = win.width / 1000;
-  const ratioBoundaryImg = win.width / 1650;
+  //const ratioBoundaryImg = win.width / 1450;
   let hourPos, tentCheckPos, missPos, gracePos, tentPos, pCheckPos;
   const ref = React.useRef();
 
@@ -128,10 +129,8 @@ export default function Info() {
 
         <View
           style={{
-            flex: 1,
             width: "100%",
-            marginBottom: 10,
-            alignSelf: "center"
+            marginBottom: 10
           }}
         >
           <Image
@@ -139,6 +138,7 @@ export default function Info() {
               width: win.width,
               height: 568 * ratioSignImg,
               resizeMode: "contain",
+              alignSelf: "center"
             }}
             source={kvillesign}
           />
@@ -237,18 +237,17 @@ export default function Info() {
 
         <View
           style={{
-            flex: 1,
-            width: "80%",
-            marginVertical: 10,
-            marginHorizontal: 15
+            //flex: 1,
+            width: "100%",
+            marginBottom: 10
           }}
         >
           <Image
             style={{
-              alignSelf: "center",
               width: win.width,
-              height: 942 * ratioBoundaryImg,
-              resizeMode: "contain"
+              height: 568 * ratioSignImg,
+              resizeMode: "contain",
+              alignSelf: "center"
             }}
             source={kvilleBoundary}
           />
@@ -321,9 +320,11 @@ export default function Info() {
         <View style={{ marginVertical: 18 }}></View>
 
         <Text
-          style={[styles.header, styles.tentHeaderBox, 
-            {backgroundColor: "black", color: "white"}]}
-
+          style={[
+            styles.header,
+            styles.tentHeaderBox,
+            { backgroundColor: "black", color: "white" }
+          ]}
           onLayout={(event) => {
             const layout = event.nativeEvent.layout;
             tentPos = layout.y;
@@ -352,7 +353,13 @@ export default function Info() {
         </View>
         <View style={{ marginVertical: 18 }}></View>
 
-        <Text style={[styles.header, styles.tentHeaderBox, {backgroundColor: "blue", color: "white"}]}>
+        <Text
+          style={[
+            styles.header,
+            styles.tentHeaderBox,
+            { backgroundColor: "blue", color: "white" }
+          ]}
+        >
           Blue Tent
         </Text>
         <Text style={styles.contentText}>
@@ -375,7 +382,13 @@ export default function Info() {
         </View>
         <View style={{ marginVertical: 18 }}></View>
 
-        <Text style={[styles.header, styles.tentHeaderBox, {backgroundColor: "white"}]}>
+        <Text
+          style={[
+            styles.header,
+            styles.tentHeaderBox,
+            { backgroundColor: "white" }
+          ]}
+        >
           White Tent
         </Text>
         <Text style={styles.contentText}>
@@ -400,7 +413,13 @@ export default function Info() {
         </View>
         <View style={{ marginVertical: 18 }}></View>
 
-        <Text style={[styles.header, styles.tentHeaderBox, {backgroundColor: "#a9a9a9"}]}>
+        <Text
+          style={[
+            styles.header,
+            styles.tentHeaderBox,
+            { backgroundColor: "#a9a9a9" }
+          ]}
+        >
           Flex Tent
         </Text>
         <Text style={styles.contentText}>
@@ -450,7 +469,7 @@ export default function Info() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#C2C6D0" },
+  container: { flex: 1, backgroundColor: "#C2C6D0", flexDirection: "column" },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
@@ -489,12 +508,11 @@ const styles = StyleSheet.create({
     fontWeight: "550",
     color: "white"
   },
-  tentHeaderBox:{
-      backgroundColor: "#a9a9a9",
-      width: "",
-      height: 40,
-      borderRadius: 20,
-      textAlign: "center"
+  tentHeaderBox: {
+    width: "",
+    height: 40,
+    borderRadius: 20,
+    textAlign: "center"
   },
   tableHead: { height: 40, backgroundColor: "lavender" },
   tableWrapper: { flexDirection: "row" },
