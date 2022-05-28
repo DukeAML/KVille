@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
+  const [groupName, setGroupName] = useState("");
 
   const dispatch = useDispatch();
 
@@ -95,6 +96,7 @@ export default function JoinGroup({ navigation }) {
     //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
+        setGroupName(docSnapshot.data().name);
         //updates current user's info
         firebase
           .firestore()
@@ -122,19 +124,31 @@ export default function JoinGroup({ navigation }) {
         //maybe add snack bar for this
       }
     });
+
     userRef
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          dispatch(setCurrentUser(snapshot.data()));
-        } else {
-          console.log("does not exist");
-        }
-        return snapshot;
-      })
-      .then((snapshot) => {
-        navigation.navigate("GroupInfo");
+    .get()
+    .then((snapshot) => {
+      if (snapshot.exists) {
+        dispatch(setCurrentUser(snapshot.data()));
+      } else {
+        console.log("does not exist");
+      }
+    });
+
+    groupRef.get().then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        setGroupName(docSnapshot.data().name); 
+        console.log('doc', docSnapshot.data().name);
+      }
+      return docSnapshot;
+    }).then((docSnapshot) => {
+      navigation.navigate("GroupInfo", {
+        code: groupCode,
+        name: groupName
       });
+    });
+      
+      
   };
 
   return (
