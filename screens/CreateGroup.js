@@ -87,7 +87,11 @@ const styles = StyleSheet.create({
 });
 
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/reducers/userSlice";
+import {
+  setCurrentUser,
+  setGroupCode,
+  setGroupName,
+} from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
 //   setGroupInfo,

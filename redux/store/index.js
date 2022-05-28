@@ -5,11 +5,11 @@ import { persistReducer } from "redux-persist";
 import thunk from "redux-thunk";
 
 import userReducer from "../reducers/userSlice";
-import currGroupReducer from "../reducers/currGroupSlice";
+//import currGroupReducer from "../reducers/currGroupSlice";
 
 const reducers = combineReducers({
   user: userReducer,
-  currGroup: currGroupReducer,
+  //currGroup: currGroupReducer,
 });
 
 const persistConfig = {

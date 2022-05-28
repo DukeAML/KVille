@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Text } from "react-native";
 import { IconButton } from "react-native-paper";
 
@@ -26,7 +26,6 @@ const Drawer = createDrawerNavigator();
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";
-import {setGroupCode } from '../redux/reducers/currGroupSlice';
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -220,7 +219,7 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="Availability"
+          name="AvailabilityScreen"
           component={AvailabilityScreen}
           options={({ navigation }) => ({
             headerStyle: {
