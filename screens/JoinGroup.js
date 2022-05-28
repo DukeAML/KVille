@@ -102,7 +102,8 @@ export default function JoinGroup({ navigation }) {
           .doc(firebase.auth().currentUser.uid)
           .update({
             groupCode: firebase.firestore.FieldValue.arrayUnion({
-              [groupCode]: name,
+              groupCode: groupCode,
+              name: name,
             }),
           });
         //adds current user to member list
