@@ -68,10 +68,27 @@ export default function Start({navigation}) {
     let mounted = true;
     //Accesses Names of Members from firebase and adds them to the array
     userRef.get().then((doc)=> {
-        let currCode = doc.data().groupCode; //will eventuall probably be an array
+        let currGroup = doc.data().groupCode; //will eventually probably be an array
+        console.log(currGroup);
 
-        
-        console.log ("current name:", currCode);
+        currGroup.forEach(group => {
+          let current = {
+            code: group.groupCode,
+            name: group.name
+          };
+          let codeExists;
+          if (GROUPS.length === 0) codeExists = false;
+          else {
+            codeExists = (GROUPS.some(e => e.code === group.code));
+          }
+          console.log(GROUPS);
+
+          if (mounted && !codeExists){
+            GROUPS.push(current);
+          }
+
+        });
+       /*  console.log ("current name:", currCode);
         //add condition here:
 
         let current = {
@@ -88,7 +105,7 @@ export default function Start({navigation}) {
 
         if (mounted && !codeExists){
           GROUPS.push(current);
-        }
+        } */
         return doc;
     }).then((doc) => {
       setLoaded(true);
