@@ -1,6 +1,7 @@
 import React, { useState , useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, SafeAreaView} from "react-native";
 import { useSelector } from "react-redux";
+import AppLoading from "expo-app-loading";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -19,9 +20,9 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 
 //let members = [{id:'filler', name: 'filler', inTent: null}]; 
 
-let members = new Array();
+let members = new Array(); //members array for list
 
-
+//Render Item for Each List Item of group members
 const Member = ({name, backgroundColor}) => (
   <View style={[styles.listItem, backgroundColor]}>
     <Text style={styles.listText}>{name}</Text>
@@ -31,11 +32,17 @@ const Member = ({name, backgroundColor}) => (
 
 export default function GroupInfo({route}) {
 
-  const {code, name} = route.params;
-  const [groupName,setGroupName]= useState('');
-  const groupCode = useSelector((state) => state.user.currentUser.groupCode);
+  const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
+  
+  const {code, name} = route.params; // take in navigation parameters
 
-  const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
+  /* const [groupName,setGroupName]= useState('');
+  const groupCode = useSelector((state) => state.user.currentUser.groupCode); */
+
+  //const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
+  
+  const GroupRef = firebase.firestore().collection("groups").doc(code); 
+  
 
   useEffect(() => {
     let mounted = true;
@@ -55,56 +62,48 @@ export default function GroupInfo({route}) {
           inTent: tentCondition
         };
 
-        let nameExists, tentStatusChanged;
+        let nameExists, tentStatusChanged; //checks if member is already in list array
         if (members.length === 0) nameExists = false;
         else {
           nameExists = (members.some(e => e.name === currName));
         }
 
-        if (mounted && !nameExists){
+        if (mounted && !nameExists){ // if not already in, add to the array
           members.push(current);
         }
 
         let indexOfUser = members.findIndex(member => {return member.id === currName;});
-        //console.log("index: ",indexOfUser); 
         tentStatusChanged = !(members[indexOfUser].inTent == tentCondition);
         /* console.log("status1: ",members[indexOfUser].inTent); 
         console.log("status: ",tentStatusChanged); 
         console.log("ARRAY: ",members); */ 
-
-        if (mounted && nameExists && tentStatusChanged){ // checks if tent status changed after refresh
+        
+        // checks if tent status changed after refresh and updates list
+        if (mounted && nameExists && tentStatusChanged){ 
           members.splice(indexOfUser, 1);
           members.insert(indexOfUser,current);
         }
         
           // doc.data() is never undefined for query doc snapshots
       });
+    }).then((doc) => {
+      setLoaded(true);
     }).catch((error) => {
-        console.log("Error getting documents: ", error);
-    }); 
+         console.log("Error getting documents: ", error);
+    });
 
-    //Gets GroupName from firebase
+    /* //Gets GroupName from firebase
     GroupRef.get().then((doc)=> {
       if (mounted) setGroupName(doc.data().name)
     }).catch((error) => {
         console.log("Error getting document:", error);
-    });
+    }); */
 
       return () => (mounted = false);
   }, []);
 
 
-/*   //trying to access groupName
-  useEffect(() => {
-    let mounted = true;
-    GroupRef.get().then((doc) => {
-      if (doc.exist && mounted) groupName = doc.data().name;
-    })
-    return () => (mounted = false);
-  }, []); */
-
-
-  //variable for each name box
+  //variable for each name box, change color to green if status is inTent
   const renderMember = ({item}) => {
     const backgroundColor = item.inTent ? "#3eb489" : "#1f509a";
     return (
@@ -115,31 +114,34 @@ export default function GroupInfo({route}) {
     );
   }
   
+  if (!loaded) { //if firebase reading done, then render
+    return <AppLoading />;
+  } else {
+    return (
+      <View style={styles.container}>
 
-  return (
-    <View style={styles.container}>
+        <Text style={styles.header}>Group Name:</Text>
 
-      <Text style={styles.header}>Group Name:</Text>
+        <View style={styles.boxText}>
+          <Text style={styles.contentText}>{name}</Text>
+        </View>
 
-      <View style={styles.boxText}>
-        <Text style={styles.contentText}>{name}</Text>
+        <Text style={styles.header}>Group Code</Text>
+        <View style={styles.boxText}>
+          <Text style={styles.contentText}>{code}</Text>
+        </View>
+
+        <SafeAreaView>
+          <FlatList
+            data = {members}
+            renderItem={renderMember}
+            keyExtractor={item => item.id}
+          />
+        </SafeAreaView>
+          
       </View>
-
-      <Text style={styles.header}>Group Code</Text>
-      <View style={styles.boxText}>
-        <Text style={styles.contentText}>{code}</Text>
-      </View>
-
-      <SafeAreaView>
-        <FlatList
-          data = {members}
-          renderItem={renderMember}
-          keyExtractor={item => item.id}
-        />
-      </SafeAreaView>
-        
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({

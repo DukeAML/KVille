@@ -15,6 +15,7 @@ import { Table, TableWrapper, Row, Rows, Col } from "react-native-table-componen
 import kvilleBoundary from "../assets/kVilleBoundary.jpg";
 import kvillesign from "../assets/kvillesign.jpg";
 
+//DATA for The TABLES
 const NIGHTHOURS = {
   tableHead: ["", "Sunday-Thursday", "Friday and Saturday"],
   tableTitle: ["Night"],
@@ -49,6 +50,7 @@ const WHITETENT = {
   ]
 };
 
+//render item for bullet points
 const BulletPoint = ({ data }) => (
   <View style={{ flexDirection: "row" }}>
     <Text style={{ fontSize: 30, paddingLeft: 30 }}>{"\u25CF"}</Text>
@@ -58,13 +60,16 @@ const BulletPoint = ({ data }) => (
 
 
 export default function Info() {
+
+  //Variables for sizing images
   const win = Dimensions.get("window");
   const ratioSignImg = win.width / 1000;
   //const ratioBoundaryImg = win.width / 1450;
+  //variables for geting y-position of headers
   let hourPos, tentCheckPos, missPos, gracePos, tentPos, pCheckPos;
-  const ref = React.useRef();
+  const ref = React.useRef(); //creates reference for scrollView
 
-  function autoScroll(yPos) {
+  function autoScroll(yPos) { //for auto-scolling to certain y-position
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
   }
 
