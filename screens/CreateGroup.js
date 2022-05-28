@@ -140,8 +140,7 @@ export default function CreateGroup({ navigation }) {
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
-      groupCode: group.groupCode,
-      inGroup: true,
+      groupCode: firebase.firestore.FieldValue.arrayUnion({[group.groupCode]: group.userName }),
     });
     userRef.get().then((snapshot) => {
       if (snapshot.exists) {

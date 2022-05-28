@@ -40,7 +40,7 @@ export default function Register(props) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [groupCode, setGroupCode] = useState("");
+  const [groupCode, setGroupCode] = useState([]);
   const [inGroup, setInGroup] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
@@ -101,7 +101,6 @@ export default function Register(props) {
                   email,
                   username,
                   groupCode,
-                  inGroup,
                 });
             })
             .catch(() => {
