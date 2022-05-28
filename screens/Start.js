@@ -69,6 +69,8 @@ export default function Start({navigation}) {
     //Accesses Names of Members from firebase and adds them to the array
     userRef.get().then((doc)=> {
         let currCode = doc.data().groupCode; //will eventuall probably be an array
+
+        
         console.log ("current name:", currCode);
         //add condition here:
 

@@ -40,7 +40,7 @@ export default function GroupInfo({route}) {
   const groupCode = useSelector((state) => state.user.currentUser.groupCode); */
 
   //const GroupRef = firebase.firestore().collection("groups").doc(groupCode); 
-  
+
   const GroupRef = firebase.firestore().collection("groups").doc(code); 
   
 
@@ -50,13 +50,13 @@ export default function GroupInfo({route}) {
     //Accesses Names of Members from firebase and adds them to the array
     GroupRef.collection("members").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        let currName = doc.data().name;
+        let currName = doc.data().name; //gets current name in list
         console.log ("current name:", currName);
-        //add condition here: 
-        let tentCondition = doc.data().inTent;
+        
+        let tentCondition = doc.data().inTent; //gets tent status as well
         console.log ("tentcondition:", tentCondition);
 
-        let current = {
+        let current = { //create new object for the current list item
           id: currName,
           name: currName,
           inTent: tentCondition
@@ -86,7 +86,7 @@ export default function GroupInfo({route}) {
         
           // doc.data() is never undefined for query doc snapshots
       });
-    }).then((doc) => {
+    }).then((doc) => { //for making sure firebase is done reading
       setLoaded(true);
     }).catch((error) => {
          console.log("Error getting documents: ", error);
