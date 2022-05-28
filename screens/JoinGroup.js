@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
-  const [groupName, setGroupName] = useState('');
+  //const [groupName, setGroupName] = useState('');
+  let groupName = '';
 
   const dispatch = useDispatch();
 
@@ -56,6 +57,7 @@ export default function JoinGroup({ navigation }) {
   //on first render sets name to user's registered name
   useEffect(() => {
     let mounted = true;
+
     if (mounted) {
       setName(userName);
     }
@@ -96,7 +98,6 @@ export default function JoinGroup({ navigation }) {
     //checks to make sure entered group code exists
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
-        setGroupName(docSnapshot.data().name);
         //updates current user's info
         firebase
           .firestore()
@@ -135,10 +136,11 @@ export default function JoinGroup({ navigation }) {
       }
     });
 
+
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
-        setGroupName(docSnapshot.data().name); 
-        console.log('doc', groupName);
+        groupName = docSnapshot.data().name;
+       
       }
       return docSnapshot;
     }).then((docSnapshot) => {
