@@ -12,7 +12,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useGestureHandlerRef } from "@react-navigation/stack";
 
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../redux/reducers/userSlice";
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
@@ -50,20 +50,14 @@ export default function JoinGroup({ navigation }) {
 
   const dispatch = useDispatch();
 
+  const userName = useSelector((state) => state.user.currentUser.name);
+
   //on first render sets name to user's registered name
   useEffect(() => {
     let mounted = true;
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        if (mounted) {
-          setName(doc.data().name);
-          console.log(doc.data().name);
-        }
-      });
+    if (mounted) {
+      setName(userName);
+    }
     return () => (mounted = false);
   }, []);
 

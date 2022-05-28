@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
 });
 
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
@@ -114,14 +114,14 @@ export default function CreateGroup({ navigation }) {
     .collection("groups")
     .doc(group.groupCode);
 
-  //ComponentDidMount, sets local state name to current user's name
+  const userName = useSelector((state) => state.user.currentUser.name);
+
+  //on first render sets name to user's registered name
   useEffect(() => {
     let mounted = true;
-    userRef.get().then((doc) => {
-      if (mounted) {
-        setGroup({ ...group, userName: doc.data().name });
-      }
-    });
+    if (mounted) {
+      setGroup({ ...group, userName: userName });
+    }
     return () => (mounted = false);
   }, []);
 

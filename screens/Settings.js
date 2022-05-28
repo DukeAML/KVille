@@ -9,12 +9,16 @@ import {
 } from "react-native";
 import background from "../assets/Cameron-Crazies.jpg";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { CommonActions } from "@react-navigation/native";
+
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/reducers/userSlice";
+
 // import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
@@ -49,9 +53,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings({navigation}) {
+export default function Settings({parentNavigation, navigation}) {
   const [isCreator, setCreator] = useState(false);
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   //gets current user's group code from redux store
   const groupCode = useSelector((state) => state.user.currentUser.groupCode);
@@ -111,7 +115,19 @@ export default function Settings({navigation}) {
           console.error("Error removing user: ", error);
         });
     }
-
+    // userRef
+    //   .get()
+    //   .then((snapshot) => {
+    //     if (snapshot.exists) {
+    //       dispatch(setCurrentUser(snapshot.data()));
+    //     } else {
+    //       console.log("does not exist");
+    //     }
+    //     return snapshot;
+    //   })
+    //   .then((snapshot) => {
+    //     parentNavigation.navigate("Start");
+    //   });
     // dispatch(notInGroup());
     // dispatch(setGroupInfo({ groupCode: "", userName: "" }));
   };
@@ -129,7 +145,13 @@ export default function Settings({navigation}) {
           style={styles.button}
           onPress={() => {
             leaveGroup();
-            navigation.getParent("Main").navigate("Start");
+            //parentNavigation.navigate("Start");
+            navigation.getParent("Main").dispatch(
+              CommonActions.navigate({
+                name: "Start",
+                params: {},
+              })
+            )
           }}
         >
           {isCreator ? (

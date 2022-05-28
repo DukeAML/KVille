@@ -208,7 +208,7 @@ export default function Main() {
   );
 }
 
-function GroupNavigator() {
+function GroupNavigator({navigation}) {
   return (
     <NavigationContainer independent={true}>
       <Drawer.Navigator
@@ -313,6 +313,7 @@ function GroupNavigator() {
         <Drawer.Screen
           name="SettingScreen"
           component={SettingScreen}
+          initialParams = {{parentNavigation: navigation}}
           options={({ navigation }) => ({
             headerStyle: {
               backgroundColor: "#C2C6D0",
