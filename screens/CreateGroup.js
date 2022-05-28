@@ -142,7 +142,7 @@ export default function CreateGroup({ navigation }) {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayUnion({
         groupCode: group.groupCode,
-        name: group.userName,
+        name: group.groupName,
       }),
     });
     userRef
