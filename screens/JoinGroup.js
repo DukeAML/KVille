@@ -10,7 +10,7 @@ import {
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { useGestureHandlerRef } from "@react-navigation/stack";
+import { useGestureHandlerRef } from "@freact-navigation/stack";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../redux/reducers/userSlice";
@@ -103,7 +103,7 @@ export default function JoinGroup({ navigation }) {
           .update({
             groupCode: firebase.firestore.FieldValue.arrayUnion({
               groupCode: groupCode,
-              name: name,
+              name: docSnapshot.data().name,
             }),
           });
         //adds current user to member list
