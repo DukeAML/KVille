@@ -23,21 +23,21 @@ export default function DrawerContent(props) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupName = useSelector((state) => state.user.currGroupName);
 
-  // useEffect(() => {
-  //   let mounted = true;
-  //   if (mounted) {
-  //     firebase
-  //       .firestore()
-  //       .collection("groups")
-  //       .doc(groupCode)
-  //       .collection("members")
-  //       .doc(firebase.auth().currentUser.uid)
-  //       .update({
-  //         inTent: status,
-  //       });
-  //   }
-  //   return () => (mounted = false);
-  // }, [status]);
+  useEffect(() => {
+    let mounted = true;
+    if (mounted && (groupCode !== "")) {
+      firebase
+        .firestore()
+        .collection("groups")
+        .doc(groupCode)
+        .collection("members")
+        .doc(firebase.auth().currentUser.uid)
+        .update({
+          inTent: status,
+        });
+    }
+    return () => (mounted = false);
+  }, [status]);
 
   const onToggleSwitch = () => {
     //console.log("status: ", status);
@@ -79,11 +79,23 @@ export default function DrawerContent(props) {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
+                <Icon name="home-outline" color={color} size={size} />
+              )}
+              label="Home"
+              onPress={() => {
+                props.navigation.navigate("Start");
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
                 <Icon name="account-group-outline" color={color} size={size} />
               )}
               label="Group Information"
               onPress={() => {
-                props.navigation.navigate("GroupInfo", {code: groupCode, name: groupName});
+                props.navigation.navigate("GroupInfo", {
+                  code: groupCode,
+                  name: groupName,
+                });
               }}
             />
             <DrawerItem
@@ -128,7 +140,10 @@ export default function DrawerContent(props) {
               )}
               label="Settings"
               onPress={() => {
-                props.navigation.navigate("SettingScreen", {code: groupCode, name: groupName});
+                props.navigation.navigate("SettingScreen", {
+                  code: groupCode,
+                  name: groupName,
+                });
               }}
             />
             <DrawerItem label="Log out" onPress={() => onLogout()} />

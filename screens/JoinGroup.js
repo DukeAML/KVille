@@ -13,7 +13,11 @@ import "firebase/compat/firestore";
 //import { useGestureHandlerRef } from "@freact-navigation/stack";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/reducers/userSlice";
+import {
+  setCurrentUser,
+  setGroupCode,
+  setGroupName,
+} from "../redux/reducers/userSlice";
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
@@ -48,7 +52,7 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
   //const [groupName, setGroupName] = useState('');
-  let groupName = '';
+  let groupName = "";
 
   const dispatch = useDispatch();
 
@@ -99,6 +103,8 @@ export default function JoinGroup({ navigation }) {
     groupRef.get().then((docSnapshot) => {
       if (docSnapshot.exists) {
         groupName = docSnapshot.data().name;
+        dispatch(setGroupCode(groupCode));
+        dispatch(setGroupName(groupName));
         //updates current user's info
         firebase
           .firestore()
@@ -128,30 +134,21 @@ export default function JoinGroup({ navigation }) {
     });
 
     userRef
-    .get()
-    .then((snapshot) => {
-      if (snapshot.exists) {
-        dispatch(setCurrentUser(snapshot.data()));
-      } else {
-        console.log("does not exist");
-      }
-    })/* ;
-
-
-    groupRef.get().then((docSnapshot) => {
-      if (docSnapshot.exists) {
-        groupName = docSnapshot.data().name;
-       
-      }
-      return docSnapshot;
-    }) */.then((docSnapshot) => {
-      navigation.navigate("GroupInfo", {
-        code: groupCode,
-        name: groupName
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+        return snapshot;
+      })
+      .then((snapshot) => {
+        navigation.navigate("GroupInfo", {
+          code: groupCode,
+          name: groupName,
+        });
       });
-    });
-      
-      
   };
 
   return (

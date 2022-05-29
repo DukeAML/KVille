@@ -1,9 +1,12 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import React, { useEffect } from "react";
+import { Linking, Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState, useEffect } from "react";
 import { Text } from "react-native";
 import { IconButton } from "react-native-paper";
+import AppLoading from "expo-app-loading";
 
 import StartScreen from "./Start";
 import CreateGroupScreen from "./CreateGroup";
@@ -21,76 +24,46 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const Drawer = createDrawerNavigator();
+const PERSISTENCE_KEY = "NAVIGATION_STATE_V1";
 
 //import {clearData, fetchUser } from "../redux/actions/index";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";
 
 export default function Main() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());
+  const [isReady, setIsReady] = useState(false);
+  const [initialState, setInitialState] = useState();
 
-  // const [groupCode, setGroupCode] = useState("");
-  // const [groupStatus, setGroupStatus] = useState(false);
-  // const [userName, setName] = useState("");
-  // const [isCreator, setCreator] = useState(false);
-
-  // const dispatch = useDispatch();
-
-  // const userRef = firebase
-  //   .firestore()
-  //   .collection("users")
-  //   .doc(firebase.auth().currentUser.uid);
-
-  // useEffect(() => {
-  //   let mounted = true;
-  //   userRef.get().then((doc) => {
-  //     if (mounted) {
-  //       if (doc.data().inGroup) {
-  //         dispatch(inGroup());
-  //         setGroupStatus(doc.data().inGroup);
-  //       }
-  //       dispatch(
-  //         setGroupInfo({ groupCode: doc.data().groupCode, userName: userName })
-  //       );
-  //       // inGroupStatus = useSelector((state) => state.user.inGroup);
-
-  //       // console.log("Current user is in group: ", inGroupStatus);
-  //       // setGroupCode(doc.data().groupCode);
-  //       // setGroupStatus(doc.data().inGroup);
-  //       // console.log("group code: ", groupCode);
-  //       // console.log("group status: ", groupStatus);
-  //     }
-  //   });
-  //   return () => (mounted = false);
-  // }, []);
-  // useEffect(() => {
-  //   let mounted = true;
-  //   firebase
-  //     .firestore()
-  //     .collection("groups")
-  //     .doc(groupCode)
-  //     .collection("members")
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((doc) => {
-  //       if (mounted) {
-  //         setName(doc.data().name);
-  //         if (doc.data().groupRole === "Creator") {
-  //           setCreator(true);
-  //         }
-  //       }
-  //     });
-  //   return () => (mounted = false);
-  // }, []);
-
-  // if (isCreator) {
-  //   dispatch(setCreatorRole());
-  // }
   const dispatch = useDispatch();
-  //let inGroup;
+  useEffect(() => {
+    const restoreState = async () => {
+      try {
+        const initialUrl = await Linking.getInitialURL();
+
+        if (initialUrl == null) {
+          // Only restore state if there's no deep link and we're not on web
+          const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+          const state = savedStateString
+            ? JSON.parse(savedStateString)
+            : undefined;
+
+          if (state !== undefined) {
+            setInitialState(state);
+          }
+        }
+      } finally {
+        setIsReady(true);
+      }
+    };
+    if (!isReady) {
+      restoreState();
+    }
+  }, [isReady]);
+
   useEffect(() => {
     // clearData(dispatch);
     // fetchUser(dispatch);
@@ -108,36 +81,19 @@ export default function Main() {
         }
       });
     console.log("cleared data and fetched user");
-    //inGroup = true;
-    //inGroup = useSelector((state) => state.user.currentUser.inGroup);
   }, []);
 
-  //const inGroup = useSelector((state) => state.user.currentUser.inGroup);
-
-  // const [inGroup, setGroupStatus] = useState(false);
-  // //functions like componentDidMount, sets inGroup to true if current user is in group
-  // useEffect(() => {
-  //   let mounted = true;
-  //   firebase
-  //     .firestore()
-  //     .collection("users")
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.data().inGroup && mounted) {
-  //         console.log(doc.data().inGroup);
-  //         setGroupStatus(true);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error getting Document:", error);
-  //     });
-  //   //cleanup function, makes sure state not updated when component is unmounted
-  //   return () => (mounted = false);
-  // }, []);
+  if (!isReady) {
+    return <AppLoading />;
+  }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      initialState={initialState}
+      onStateChange={(state) =>
+        AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+      }
+    >
       <Drawer.Navigator
         initialRouteName="Start"
         drawerContent={(props) => <DrawerContent {...props} />}
@@ -147,18 +103,6 @@ export default function Main() {
           component={StartScreen}
           options={{
             headerShown: false,
-            // title: "Krzyzewskiville",
-            // headerStyle: {
-            //   backgroundColor: "#1f509a",
-            //   borderBottomWidth: 0,
-            //   shadowColor: "transparent",
-            // },
-            // headerTitleStyle: {
-            //   fontFamily: "NovaCut",
-            //   color: "#fff",
-            //   fontSize: 30,
-            //   left: "0%",
-            // },
           }}
         />
         <Drawer.Screen
@@ -312,5 +256,3 @@ export default function Main() {
     </NavigationContainer>
   );
 }
-
-
