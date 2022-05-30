@@ -39,6 +39,8 @@ export default function Main() {
   const [initialState, setInitialState] = useState();
 
   const dispatch = useDispatch();
+
+  //Navigation State persistence, saves user's location in app
   useEffect(() => {
     const restoreState = async () => {
       try {

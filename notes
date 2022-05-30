@@ -5,10 +5,8 @@ Tasks:
     -discord community??
     -for now code everything under black tent; later add options with picker in CreateGroup.js (reminder can't use directly since hooks not allowed in class component, create separate component file and import in, or figure out how to use without hooks)
 
-Packages Installed:
-    -react-picker
-    -redux persist
-
+Notes: 
+    -navigating to screen in drawer navigator doesn't actually unmount, so useEffect will not be effective, instead use useFocusEffect which is called everytime screen is in focus
 
 Database: 
     -users: userID -> name, email, group code, availability
@@ -27,12 +25,3 @@ UI suggestions:
 Issue log: 
     -git isn't case sensitive, i.e. changing file name in vscode will not be registered by git, must change from github repo
     
-Access groupCode with redux:
-    -import { useSelector } from "react-redux";
-    -const groupCode = useSelector((state) => state.user.groupInfo.groupCode);
-
-    firebase.firestore().collection("groups").doc(groupCode).collection("members").get().then((snap)) => {
-        snap.forEach((doc) => {
-            
-        })
-    }

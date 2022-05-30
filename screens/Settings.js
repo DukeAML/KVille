@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings({route, navigation}) {
+export default function Settings({ route, navigation }) {
   const [isCreator, setCreator] = useState(false);
   const dispatch = useDispatch();
 
@@ -69,30 +70,36 @@ export default function Settings({route, navigation}) {
     .doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection("groups").doc(code);
 
-  useEffect(() => {
-    let mounted = true;
-    groupRef
-      .collection("members")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          if (mounted) {
-            if (snapshot.data().groupRole === "Creator") {
-              setCreator(true);
+  //useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      groupRef
+        .collection("members")
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            if (mounted) {
+              if (snapshot.data().groupRole === "Creator") {
+                setCreator(true);
+              }
             }
+          } else {
+            console.log("does not exist");
           }
-        } else {
-          console.log("does not exist");
-        }
-      });
-    console.log("fetched isCreator from firebase");
-    return () => (mounted = false);
-  }, []);
+        });
+      console.log("fetched isCreator from firebase");
+      return () => (mounted = false);
+    }, [])
+  );
 
   const leaveGroup = () => {
     userRef.update({
-      groupCode: firebase.firestore.FieldValue.arrayRemove({groupCode: code, name: name}),
+      groupCode: firebase.firestore.FieldValue.arrayRemove({
+        groupCode: code,
+        name: name,
+      }),
     });
     if (isCreator) {
       groupRef
