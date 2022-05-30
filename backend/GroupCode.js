@@ -1,7 +1,7 @@
 //UUID generator, used for group codes
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+// import firebase from "firebase/compat/app";
+// import "firebase/compat/auth";
+// import "firebase/compat/firestore";
 
 
 export function generateGroupCode(digits) {

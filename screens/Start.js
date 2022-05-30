@@ -8,7 +8,10 @@ import {
   Image,
   SafeAreaView,
   FlatList,
+  Button,
 } from "react-native";
+import { createGroupSchedule } from "../backend/CreateGroupSchedule";
+import { createTestCases } from "../backend/firebaseAdd";
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
 import coachk from "../assets/coachk.png";
@@ -159,6 +162,19 @@ export default function Start({ navigation }) {
           >
             <Text style={styles.buttonText}>Create New Group</Text>
           </TouchableOpacity>
+          <Button
+            title="Create Group Schedule"
+            onPress={() =>
+              console.log(
+                "Group Schedule",
+                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "black")
+              )
+            }
+          />
+          {/* <Button
+            title="Add test case"
+            onPress={() => createTestCases()}
+          /> */}
         </View>
       </View>
     );
