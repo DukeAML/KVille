@@ -507,12 +507,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginVertical: 10
   },
-  listText: {
+  /* listText: {
     fontSize: 16,
     fontFamily: "sans-serif",
-    fontWeight: "550",
+    fontWeight: "500",
     color: "white"
-  },
+  }, */
   tentHeaderBox: {
     width: "",
     height: 40,
