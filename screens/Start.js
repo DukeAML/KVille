@@ -68,6 +68,7 @@ export default function Start({ navigation }) {
     useCallback(() => {
       let mounted = true;
       //Accesses Names of Members from firebase and adds them to the array
+      if (mounted) {
       userRef
         .get()
         .then((doc) => {
@@ -119,7 +120,8 @@ export default function Start({ navigation }) {
         .catch((error) => {
           console.log("Error getting documents: ", error);
         });
-
+      }
+      
       return () => {
         mounted = false
         GROUPS = [];

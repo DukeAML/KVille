@@ -129,8 +129,8 @@ export default function CreateGroup({ navigation }) {
         setGroup({...group, groupCode: generateGroupCode(GROUP_CODE_LENGTH), userName: userName});
       }
       return () => {
+        setGroup({ ...group, groupName: "" });
         mounted = false;
-        setGroup({...group, groupName: ""});
       }
     }, [])
   );

@@ -69,8 +69,8 @@ export default function JoinGroup({ navigation }) {
         setName(userName);
       }
       return () => {
-        mounted = false;
         setInputGroupCode("");
+        mounted = false;
       }
     }, [])
   );

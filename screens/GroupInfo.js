@@ -46,61 +46,63 @@ export default function GroupInfo({ route, navigation }) {
       let mounted = true;
 
       //Accesses Names of Members from firebase and adds them to the array
-      GroupRef
-        .collection("members")
-        .get()
-        .then((querySnapshot) => {
-          setLoaded(false);
-          querySnapshot.forEach((doc) => {
-            let currName = doc.data().name; //gets current name in list
-            console.log("current name:", currName);
+      if (mounted) {
+        GroupRef.collection("members")
+          .get()
+          .then((querySnapshot) => {
+            setLoaded(false);
+            querySnapshot.forEach((doc) => {
+              let currName = doc.data().name; //gets current name in list
+              console.log("current name:", currName);
 
-            let tentCondition = doc.data().inTent; //gets tent status as well
-            console.log("tentcondition:", tentCondition);
+              let tentCondition = doc.data().inTent; //gets tent status as well
+              console.log("tentcondition:", tentCondition);
 
-            let current = {
-              //create new object for the current list item
-              id: currName,
-              name: currName,
-              inTent: tentCondition,
-            };
+              let current = {
+                //create new object for the current list item
+                id: currName,
+                name: currName,
+                inTent: tentCondition,
+              };
 
-            let nameExists, tentStatusChanged; //checks if member is already in list array
-            if (members.length === 0) nameExists = false;
-            else {
-              nameExists = members.some((e) => e.name === currName);
-            }
+              let nameExists, tentStatusChanged; //checks if member is already in list array
+              if (members.length === 0) nameExists = false;
+              else {
+                nameExists = members.some((e) => e.name === currName);
+              }
 
-            if (mounted && !nameExists) {
-              // if not already in, add to the array
-              members.push(current);
-            }
+              if (mounted && !nameExists) {
+                // if not already in, add to the array
+                members.push(current);
+              }
 
-            let indexOfUser = members.findIndex((member) => {
-              return member.id === currName;
-            });
-            tentStatusChanged = !(members[indexOfUser].inTent == tentCondition);
-            /* console.log("status1: ",members[indexOfUser].inTent); 
+              let indexOfUser = members.findIndex((member) => {
+                return member.id === currName;
+              });
+              tentStatusChanged = !(
+                members[indexOfUser].inTent == tentCondition
+              );
+              /* console.log("status1: ",members[indexOfUser].inTent); 
         console.log("status: ",tentStatusChanged); 
         console.log("ARRAY: ",members); */
 
-            // checks if tent status changed after refresh and updates list
-            if (mounted && nameExists && tentStatusChanged) {
-              members.splice(indexOfUser, 1);
-              members.insert(indexOfUser, current);
-            }
+              // checks if tent status changed after refresh and updates list
+              if (mounted && nameExists && tentStatusChanged) {
+                members.splice(indexOfUser, 1);
+                members.insert(indexOfUser, current);
+              }
 
-            // doc.data() is never undefined for query doc snapshots
+              // doc.data() is never undefined for query doc snapshots
+            });
+          })
+          .then((doc) => {
+            //for making sure firebase is done reading
+            setLoaded(true);
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
           });
-        })
-        .then((doc) => {
-          //for making sure firebase is done reading
-          setLoaded(true);
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-
+      }
       return () => {
         members = [];
         //setLoaded(false);

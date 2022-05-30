@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import {
   Title,
@@ -23,21 +24,24 @@ export default function DrawerContent(props) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupName = useSelector((state) => state.user.currGroupName);
 
-  useEffect(() => {
-    let mounted = true;
-    if (mounted && (groupCode !== "")) {
-      firebase
-        .firestore()
-        .collection("groups")
-        .doc(groupCode)
-        .collection("members")
-        .doc(firebase.auth().currentUser.uid)
-        .update({
-          inTent: status,
-        });
-    }
-    return () => (mounted = false);
-  }, [status]);
+  //useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      if (mounted && groupCode !== "") {
+        firebase
+          .firestore()
+          .collection("groups")
+          .doc(groupCode)
+          .collection("members")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            inTent: status,
+          });
+      }
+      return () => (mounted = false);
+    }, [status])
+  );
 
   const onToggleSwitch = () => {
     //console.log("status: ", status);

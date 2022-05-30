@@ -1,19 +1,23 @@
 //UUID generator, used for group codes
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
-const groupCodeArr = [];
 
 export function generateGroupCode(digits) {
-    while (true) {
-        let uuid = generateUUID(digits);
-        for (let i = 0; i < groupCodeArr.length; i++) {
-            if (uuid.localeCompare(groupCodeArr[i] == 0)) {
-                continue;
-            }
-        }
-        groupCodeArr.push(uuid);
-        return uuid;
-    }
-    return; 
+  let uuid = generateUUID(digits);
+  // firebase
+  //   .firestore()
+  //   .collection("groups")
+  //   .doc(uuid)
+  //   .get()
+  //   .then((doc) => {
+  //     console.log(doc.exists);
+  //     if (!doc.exists) {
+  //       return uuid;
+  //     }
+  //   });
+  return uuid;
 }
 
 const generateUUID = (digits) => {
@@ -23,4 +27,4 @@ const generateUUID = (digits) => {
     uuid.push(str[Math.floor(Math.random() * str.length)]);
   }
   return uuid.join("");
-}
+};
