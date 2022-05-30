@@ -103,6 +103,17 @@ export default function Main() {
           component={StartScreen}
           options={{
             headerShown: false,
+            // headerStyle: {
+            //   backgroundColor: "#1f509a",
+            //   borderBottomWidth: 0,
+            //   shadowColor: "transparent",
+            // },
+            // headerTitleStyle: {
+            //   fontFamily: "NovaCut",
+            //   color: "#fff",
+            //   fontSize: 30,
+            //   left: "0%",
+            // },
           }}
         />
         <Drawer.Screen

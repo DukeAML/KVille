@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -102,10 +103,11 @@ export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
     groupName: "",
     tentType: "",
-    groupCode: generateGroupCode(GROUP_CODE_LENGTH),
-    groupRole: "Creator",
+    groupCode: "",
     userName: "",
   });
+
+  const groupRole = "Creator";
 
   const dispatch = useDispatch();
 
@@ -113,24 +115,29 @@ export default function CreateGroup({ navigation }) {
     .firestore()
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase
-    .firestore()
-    .collection("groups")
-    .doc(group.groupCode);
+  let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.name);
 
   //on first render sets name to user's registered name
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      setGroup({ ...group, userName: userName });
-    }
-    return () => (mounted = false);
-  }, []);
+  //useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      if (mounted) {
+        //setGroup({ ...group, userName: userName });
+        setGroup({...group, groupCode: generateGroupCode(GROUP_CODE_LENGTH), userName: userName});
+      }
+      return () => {
+        mounted = false;
+        setGroup({...group, groupName: ""});
+      }
+    }, [])
+  );
 
   //Create group function
   const onCreateGroup = () => {
+    groupRef = firebase.firestore().collection("groups").doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     groupRef.set({
       name: group.groupName,
@@ -138,7 +145,7 @@ export default function CreateGroup({ navigation }) {
     });
     //adds current user to collection of members in the group
     groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
-      groupRole: group.groupRole,
+      groupRole: groupRole,
       name: group.userName,
       inTent: false,
     });
@@ -178,6 +185,7 @@ export default function CreateGroup({ navigation }) {
           <TextInput
             style={styles.textInput}
             placeholder="Enter Group Name"
+            value = {group.groupName}
             onChangeText={(groupName) =>
               setGroup({ ...group, groupName: groupName })
             }
@@ -220,7 +228,7 @@ export default function CreateGroup({ navigation }) {
               onCreateGroup();
               //navigation.navigate("GroupNavigator");
               console.log(group.groupCode);
-              console.log(group.groupRole);
+              console.log(groupRole);
             }}
           >
             <Text style={styles.btnTxt}>Create</Text>

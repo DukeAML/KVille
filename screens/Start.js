@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -20,17 +21,6 @@ import { setGroupCode, setGroupName } from "../redux/reducers/userSlice";
 
 require("firebase/firestore");
 
-/* let GROUPS = [
-  {
-    code: 'r7seg1xy',
-    name: 'stinkyalvintest'
-  },
-  {
-    code: '12345',
-    name: 'testerdude'
-  }
-  ]; */
-
 let GROUPS = new Array();
 
 //const for list Items of Groups List
@@ -46,6 +36,7 @@ export default function Start({ navigation }) {
   });
 
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
+  console.log("Is Start loaded", loaded);
 
   const dispatch = useDispatch();
   //for rendering list items of Groups
@@ -72,64 +63,70 @@ export default function Start({ navigation }) {
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
 
-  useEffect(() => {
-    let mounted = true;
-    //Accesses Names of Members from firebase and adds them to the array
-    userRef
-      .get()
-      .then((doc) => {
-        let currGroup = doc.data().groupCode; //will eventually probably be an array
-        console.log(currGroup);
+  //useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      //Accesses Names of Members from firebase and adds them to the array
+      userRef
+        .get()
+        .then((doc) => {
+          //setLoaded(false);
+          let currGroup = doc.data().groupCode; //will eventually probably be an array
+          console.log("Current user's groups", currGroup);
 
+          if (currGroup.length !== 0) {
+            currGroup.forEach((group) => {
+              let current = {
+                code: group.groupCode,
+                name: group.name,
+              };
+              let codeExists;
+              if (GROUPS.length === 0) codeExists = false;
+              else {
+                codeExists = GROUPS.some((e) => e.code === group.code);
+              }
 
-        if (!(currGroup.length === 0)){
-          currGroup.forEach((group) => {
-          let current = {
-            code: group.groupCode,
-            name: group.name,
-          };
-          let codeExists;
-          if (GROUPS.length === 0) codeExists = false;
-          else {
-            codeExists = GROUPS.some((e) => e.code === group.code);
+              if (mounted && !codeExists) {
+                GROUPS.push(current);
+              }
+            });
           }
 
+        // console.log ("current name:", currCode);
+        // //add condition here:
 
-          if (mounted && !codeExists) {
-            GROUPS.push(current);
-          }
-          });
-        }
-        
-        /*  console.log ("current name:", currCode);
-        //add condition here:
+        // let current = {
+        //   code: currCode,
+        //   name: 'stinkyalvintester'
+        // };
 
-        let current = {
-          code: currCode,
-          name: 'stinkyalvintester'
-        };
+        // let codeExists;
+        // if (GROUPS.length === 0) codeExists = false;
+        // else {
+        //   codeExists = (GROUPS.some(e => e.code === currCode));
+        // }
+        // console.log(GROUPS);
 
-        let codeExists;
-        if (GROUPS.length === 0) codeExists = false;
-        else {
-          codeExists = (GROUPS.some(e => e.code === currCode));
-        }
-        console.log(GROUPS);
+        // if (mounted && !codeExists){
+        //   GROUPS.push(current);
+        // }
+          return doc;
+        })
+        .then((doc) => {
+          setLoaded(true);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
 
-        if (mounted && !codeExists){
-          GROUPS.push(current);
-        } */
-        return doc;
-      })
-      .then((doc) => {
-        setLoaded(true);
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-
-    return () => (mounted = false);
-  }, []);
+      return () => {
+        mounted = false
+        GROUPS = [];
+        setLoaded(false);
+      };
+    }, [GROUPS])
+  );
 
   if (!fontsLoaded || !loaded) {
     return <AppLoading />;
@@ -139,7 +136,7 @@ export default function Start({ navigation }) {
         {/* <View style={styles.header}>
           <Text style={styles.banner}>Krzyzewskiville</Text>
         </View> */}
-        <Image source={coachk} style={styles.image} />
+        {/* <Image source={coachk} style={styles.image} /> */}
         <SafeAreaView>
           <FlatList
             data={GROUPS}

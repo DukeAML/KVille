@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -59,14 +60,20 @@ export default function JoinGroup({ navigation }) {
   const userName = useSelector((state) => state.user.currentUser.name);
 
   //on first render sets name to user's registered name
-  useEffect(() => {
-    let mounted = true;
+  //useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
 
-    if (mounted) {
-      setName(userName);
-    }
-    return () => (mounted = false);
-  }, []);
+      if (mounted) {
+        setName(userName);
+      }
+      return () => {
+        mounted = false;
+        setInputGroupCode("");
+      }
+    }, [])
+  );
 
   const onJoinGroup = (navigation) => {
     console.log("group code", groupCode);
