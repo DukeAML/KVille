@@ -105,6 +105,7 @@ export default function Main() {
           component={StartScreen}
           options={{
             headerShown: false,
+            swipeEnabled: false,
             // headerStyle: {
             //   backgroundColor: "#1f509a",
             //   borderBottomWidth: 0,

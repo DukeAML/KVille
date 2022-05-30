@@ -7,19 +7,25 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from "react-native";
 
-import { Table, TableWrapper, Row, Rows, Col } from "react-native-table-component";
+import {
+  Table,
+  TableWrapper,
+  Row,
+  Rows,
+  Col,
+} from "react-native-table-component";
 
-import kvilleBoundary from "../assets/kVilleBoundary.jpg";
+import kvilleBoundary from "../assets/kvilleBoundary.jpg";
 import kvillesign from "../assets/kvillesign.jpg";
 
 //DATA for The TABLES
 const NIGHTHOURS = {
   tableHead: ["", "Sunday-Thursday", "Friday and Saturday"],
   tableTitle: ["Night"],
-  tableData: [["1 am - 7 am", "2:30 am - 7 am"]]
+  tableData: [["1 am - 7 am", "2:30 am - 7 am"]],
 };
 
 const BLACKTENT = {
@@ -27,27 +33,27 @@ const BLACKTENT = {
     ["Starting Dates", "Jan *, 2023 - Feb *, 2023"],
     [
       "Occupancy Requirements",
-      " \u25CF TWO members of the tent must be on duty during the day.\n\u25CF TEN members during night hours"
-    ]
-  ]
+      " \u25CF TWO members of the tent must be on duty during the day.\n\u25CF TEN members during night hours",
+    ],
+  ],
 };
 const BLUETENT = {
   tableData: [
     ["Starting Dates", "Jan *, 2023 - Feb *, 2023"],
     [
       "Occupancy Requirements",
-      " \u25CF ONE member of the tent must be on duty during the day.\n\u25CF SIX members during night hours"
-    ]
-  ]
+      " \u25CF ONE member of the tent must be on duty during the day.\n\u25CF SIX members during night hours",
+    ],
+  ],
 };
 const WHITETENT = {
   tableData: [
     ["Starting Dates", "Feb *, 2023 - Feb *, 2023"],
     [
       "Occupancy Requirements",
-      " \u25CF ONE member of the tent must be on duty during the day.\n\u25CF TWO members during night hours"
-    ]
-  ]
+      " \u25CF ONE member of the tent must be on duty during the day.\n\u25CF TWO members during night hours",
+    ],
+  ],
 };
 
 //render item for bullet points
@@ -58,9 +64,7 @@ const BulletPoint = ({ data }) => (
   </View>
 );
 
-
 export default function Info() {
-
   //Variables for sizing images
   const win = Dimensions.get("window");
   const ratioSignImg = win.width / 1000;
@@ -69,7 +73,8 @@ export default function Info() {
   let hourPos, tentCheckPos, missPos, gracePos, tentPos, pCheckPos;
   const ref = React.useRef(); //creates reference for scrollView
 
-  function autoScroll(yPos) { //for auto-scolling to certain y-position
+  function autoScroll(yPos) {
+    //for auto-scolling to certain y-position
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
   }
 
@@ -79,7 +84,7 @@ export default function Info() {
         <TouchableOpacity
           style={[
             styles.button,
-            { borderTopLeftRadius: 7, borderBottomLeftRadius: 7 }
+            { borderTopLeftRadius: 7, borderBottomLeftRadius: 7 },
           ]}
           onPress={() => autoScroll(hourPos)}
         >
@@ -117,7 +122,7 @@ export default function Info() {
         <TouchableOpacity
           style={[
             styles.button,
-            { borderTopRightRadius: 7, borderBottomRightRadius: 7 }
+            { borderTopRightRadius: 7, borderBottomRightRadius: 7 },
           ]}
           onPress={() => autoScroll(pCheckPos)}
         >
@@ -135,7 +140,7 @@ export default function Info() {
         <View
           style={{
             width: "100%",
-            marginBottom: 10
+            marginBottom: 10,
           }}
         >
           <Image
@@ -143,7 +148,7 @@ export default function Info() {
               width: win.width,
               height: 568 * ratioSignImg,
               resizeMode: "contain",
-              alignSelf: "center"
+              alignSelf: "center",
             }}
             source={kvillesign}
           />
@@ -244,7 +249,7 @@ export default function Info() {
           style={{
             //flex: 1,
             width: "100%",
-            marginBottom: 10
+            marginBottom: 10,
           }}
         >
           <Image
@@ -252,7 +257,7 @@ export default function Info() {
               width: win.width,
               height: 568 * ratioSignImg,
               resizeMode: "contain",
-              alignSelf: "center"
+              alignSelf: "center",
             }}
             source={kvilleBoundary}
           />
@@ -328,7 +333,7 @@ export default function Info() {
           style={[
             styles.header,
             styles.tentHeaderBox,
-            { backgroundColor: "black", color: "white" }
+            { backgroundColor: "black", color: "white" },
           ]}
           onLayout={(event) => {
             const layout = event.nativeEvent.layout;
@@ -362,7 +367,7 @@ export default function Info() {
           style={[
             styles.header,
             styles.tentHeaderBox,
-            { backgroundColor: "blue", color: "white" }
+            { backgroundColor: "blue", color: "white" },
           ]}
         >
           Blue Tent
@@ -391,7 +396,7 @@ export default function Info() {
           style={[
             styles.header,
             styles.tentHeaderBox,
-            { backgroundColor: "white" }
+            { backgroundColor: "white" },
           ]}
         >
           White Tent
@@ -422,7 +427,7 @@ export default function Info() {
           style={[
             styles.header,
             styles.tentHeaderBox,
-            { backgroundColor: "#a9a9a9" }
+            { backgroundColor: "#a9a9a9" },
           ]}
         >
           Flex Tent
@@ -480,32 +485,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 20,
-    marginTop: 2
+    marginTop: 2,
   },
   button: {
     backgroundColor: "#1f509a",
-    width: "16.66666667%",
+    width: "17%",
     height: 50,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonText: {
     fontSize: "auto",
     fontWeight: "500",
     textAlign: "center",
-    color: "white"
+    color: "white",
   },
   header: {
     marginVertical: 10,
     marginHorizontal: 15,
     fontSize: 28,
-    fontWeight: "700"
+    fontWeight: "700",
   },
   contentText: {
     fontSize: 18,
     fontWeight: "400",
     marginHorizontal: 24,
-    marginVertical: 10
+    marginVertical: 10,
   },
   /* listText: {
     fontSize: 16,
@@ -517,7 +522,7 @@ const styles = StyleSheet.create({
     width: "",
     height: 40,
     borderRadius: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
   tableHead: { height: 40, backgroundColor: "lavender" },
   tableWrapper: { flexDirection: "row" },
@@ -526,7 +531,7 @@ const styles = StyleSheet.create({
   tableText: {
     fontSize: 12,
     fontWeight: "500",
-    textAlign: "center"
+    textAlign: "center",
   },
-  tentTableRow: { height: 95 }
+  tentTableRow: { height: 95 },
 });

@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 16,
-    fontFamily: "sans-serif",
-    fontWeight: "550",
+    //fontFamily: "sans-serif",
+    fontWeight: "500",
     color: "white",
   },
   boxText: {
