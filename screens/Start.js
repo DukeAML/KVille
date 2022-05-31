@@ -167,7 +167,7 @@ export default function Start({ navigation }) {
             onPress={() =>
               console.log(
                 "Group Schedule",
-                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "black")
+                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue")
               )
             }
           />
