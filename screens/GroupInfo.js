@@ -53,10 +53,10 @@ export default function GroupInfo({ route, navigation }) {
             setLoaded(false);
             querySnapshot.forEach((doc) => {
               let currName = doc.data().name; //gets current name in list
-              console.log("current name:", currName);
+              //console.log("current name:", currName);
 
               let tentCondition = doc.data().inTent; //gets tent status as well
-              console.log("tentcondition:", tentCondition);
+              //console.log("tentcondition:", tentCondition);
 
               let current = {
                 //create new object for the current list item
