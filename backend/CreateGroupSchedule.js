@@ -182,11 +182,6 @@ export async function createGroupSchedule(groupCode, tentType) {
       console.log(equalHours);
     });
 
-  // const testArr = new Array(336);
-  // testArr[0] = 1;
-  // testArr[1] = 2;
-  // testArr[2] = 3;
-  // return testArr;
   return groupScheduleArr; //return group schedule array
 
   //FINAL ARRAY TAKES THE FORMAT OF:

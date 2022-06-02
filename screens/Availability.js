@@ -1,5 +1,12 @@
-import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import {
   Table,
   TableWrapper,
@@ -8,6 +15,15 @@ import {
   Col,
   Cols,
 } from "react-native-table-component";
+import { IconButton } from "react-native-paper";
+import Modal from "react-native-modal";
+import { Picker } from "@react-native-picker/picker";
+
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+
+const window = Dimensions.get("window");
 
 const agenda = {
   tableHead: ["", "Sun", "Mon", "Tu", "Wed", "Th", "Fri", "Sat"],
@@ -42,6 +58,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
+    //justifyContent:"center"
   },
   wrapper: {
     flexDirection: "row",
@@ -56,6 +73,21 @@ const styles = StyleSheet.create({
   text: {
     textAlign: "center",
   },
+  modalContainer: {
+    width: "100%",
+    height: "90%",
+    borderRadius: 25,
+    borderWidth: 1,
+    borderStyle: "solid",
+    alignItems: "center",
+    //justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
+  selectTime: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
 });
 
 //const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
@@ -68,9 +100,170 @@ for (let i = 0; i < 46; i += 1) {
   tableData.push(rowData);
 }
 
-export default function Availability() {
+const availability = new Array(336);
+availability.fill(true);
+
+export default function Availability({route}) {
+  const {code} = route.params;
+
+  const [dimensions, setDimensions] = useState({ window });
+  const [isModalVisible, setModalVisible] = useState(true);
+  const [selectedDay, setSelectedDay] = useState();
+  const [startTime, setStartTime] = useState({
+    hour,
+    minute,
+    day,
+  });
+  const [endTime, setEndTime] = useState({
+    hour,
+    minute, 
+    day,
+  });
+
+  const updateAvailability = () => {
+    let startIdx = selectedDay*48 + startTime.day + startTime.minute + startTime.hour*2;
+    let endIdx = selectedDay*48 + endTime.day + endTime.minute + endTime.hour*2;
+    console.log("startIdx", startIdx);
+    console.log("endIdx", endIdx);
+    for (let i=startIdx; i<endIdx; i++) {
+      availability[i] = false;
+    }
+    firebase.firestore().collection("groups").doc(code).collection("members").set({
+      availability: availability,
+    });
+    toggleModal;
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
+
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        visible={isModalVisible}
+        backdropOpacity={0.1}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text>Add New Busy Time</Text>
+          </View>
+
+          <View style={styles.modalBody}>
+            <View>
+              <Text>Day: </Text>
+              <Picker
+                selectedValue={selectedDay}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedDay(itemValue);
+                }}
+              >
+                <Picker.Item label="Monday" value={1} />
+                <Picker.Item label="Tuesday" value={2} />
+                <Picker.Item label="Wednesday" value={3} />
+                <Picker.Item label="Thursday" value={4} />
+                <Picker.Item label="Friday" value={5} />
+                <Picker.Item label="Saturday" value={6} />
+                <Picker.Item label="Sunday" value={0} />
+              </Picker>
+            </View>
+            <View style={styles.selectTime}>
+              <Picker
+                selectedValue={startTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime.hour(itemValue);
+                }}
+              >
+                <Picker.Item label="12" value={0} />
+                <Picker.Item label="1" value={1} />
+                <Picker.Item label="2" value={2} />
+                <Picker.Item label="3" value={3} />
+                <Picker.Item label="4" value={4} />
+                <Picker.Item label="5" value={5} />
+                <Picker.Item label="6" value={6} />
+                <Picker.Item label="7" value={7} />
+                <Picker.Item label="8" value={8} />
+                <Picker.Item label="9" value={9} />
+                <Picker.Item label="10" value={10} />
+                <Picker.Item label="11" value={11} />
+              </Picker>
+              <Picker
+                selectedValue={startTime}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime.minute(itemValue);
+                }}
+              >
+                <Picker.Item label="00" value={0} />
+                <Picker.Item label="30" value={1} />
+              </Picker>
+              <Picker
+                selectedValue={startTime}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime.day(itemValue);
+                }}
+              >
+                <Picker.Item label="AM" value={0} />
+                <Picker.Item label="PM" value={12} />
+              </Picker>
+            </View>
+            <View style={styles.selectTime}>
+              <Picker
+                selectedValue={endTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime.hour(itemValue);
+                }}
+              >
+                <Picker.Item label="12" value={0} />
+                <Picker.Item label="1" value={1} />
+                <Picker.Item label="2" value={2} />
+                <Picker.Item label="3" value={3} />
+                <Picker.Item label="4" value={4} />
+                <Picker.Item label="5" value={5} />
+                <Picker.Item label="6" value={6} />
+                <Picker.Item label="7" value={7} />
+                <Picker.Item label="8" value={8} />
+                <Picker.Item label="9" value={9} />
+                <Picker.Item label="10" value={10} />
+                <Picker.Item label="11" value={11} />
+              </Picker>
+              <Picker
+                selectedValue={endTime}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime.minute(itemValue);
+                }}
+              >
+                <Picker.Item label="00" value={0} />
+                <Picker.Item label="30" value={1} />
+              </Picker>
+              <Picker
+                selectedValue={endTime}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime.day(itemValue);
+                }}
+              >
+                <Picker.Item label="AM" value={0} />
+                <Picker.Item label="PM" value={12} />
+              </Picker>
+            </View>
+          </View>
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={styles.createBtn}
+              onPress={updateAvailability}
+            >
+              <Text style={styles.btnTxt}>Add</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
           data={agenda.tableHead}
@@ -78,12 +271,12 @@ export default function Availability() {
           textStyle={styles.text}
         />
       </Table>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Table
           borderStyle={{ borderWidth: 1 }}
           style={{ flexDirection: "row" }}
         >
-          <TableWrapper style={{ width: 80 }}>
+          <TableWrapper style={{ width: dimensions.window.width / 8 }}>
             <Col
               data={agenda.tableTime}
               style={styles.time}
@@ -106,6 +299,12 @@ export default function Availability() {
           </TableWrapper>
         </Table>
       </ScrollView>
+      <IconButton
+        icon="plus-circle"
+        color={"#00f"}
+        size={20}
+        onPress={toggleModal}
+      />
     </View>
   );
 }

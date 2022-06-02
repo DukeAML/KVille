@@ -108,7 +108,9 @@ export default function DrawerContent(props) {
               )}
               label="Your Availability"
               onPress={() => {
-                props.navigation.navigate("AvailabilityScreen");
+                props.navigation.navigate("AvailabilityScreen", {
+                  code: groupCode
+                });
               }}
             />
             <DrawerItem

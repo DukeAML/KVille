@@ -97,7 +97,7 @@ export default function Main() {
       }
     >
       <Drawer.Navigator
-        initialRouteName="Start"
+        initialRouteName="AvailabilityScreen"
         drawerContent={(props) => <DrawerContent {...props} />}
       >
         <Drawer.Screen
