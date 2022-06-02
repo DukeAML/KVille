@@ -25,3 +25,6 @@ UI suggestions:
 Issue log: 
     -git isn't case sensitive, i.e. changing file name in vscode will not be registered by git, must change from github repo
     
+Looking ahead: 
+    -RTL - react testing library, create tests; unit and integration tests (jest/enzyme)
+    -CI/CD - automate integration with testing (circleCI)
