@@ -1,81 +1,69 @@
-import React from "react";
-import {
+import React, { useState, useEffect, useCallback } from "react";import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   Button,
   ScrollView,
+  Dimensions
 } from "react-native";
-import {
-  Table,
-  TableWrapper,
-  Row,
-  Col,
-  Cell,
-} from "react-native-table-component";
+import { Table, TableWrapper, Row, Col, Cell, } from "react-native-table-component";
+
+
+import { useFocusEffect } from "@react-navigation/native";
+import AppLoading from "expo-app-loading";
+
+
+
 import { createGroupSchedule } from "../backend/CreateGroupSchedule";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const times = [
-  "12am",
-  "1am",
-  "2am",
-  "3am",
-  "4am",
-  "5am",
-  "6am",
-  "7am",
-  "8am",
-  "9am",
-  "10am",
-  "11am",
-  "12am",
-  "1pm",
-  "2pm",
-  "3pm",
-  "4pm",
-  "5pm",
-  "6pm",
-  "7pm",
-  "8pm",
-  "9pm",
-  "10pm",
-  "11pm",
-  "12am",
+  "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am",
+  "9am", "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm",
+  "6pm", "7pm", "8pm", "9pm", "10pm", "11pm", "12am",
 ];
 
-let group = [
-  "poop1",
-  "poop2",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+const colors = ['blue'];
+
+let colorCodes = [
+  {
+    name: 'null',
+    color: 'red'
+  }
+];
+
+/* let group = [
+  "poop1", "poop2", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", 
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
   "null",
-];
+];  */
+//let SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY = new Array();
+let SUNDAY = new Array();
+let MONDAY = new Array();
+let TUESDAY = new Array();
+let WEDNESDAY = new Array();
+let THURSDAY = new Array();
+let FRIDAY = new Array();
+let SATURDAY = new Array();
 
-let groupScheduleArr = {
-  tableData: group,
-};
 
 const OneCell = ({ index, person }) => {
+  //const backgroundColor = "pink";
   return (
-    <TouchableOpacity onPress={() => console.log("index: ", index)}>
-      <View style={styles.btn}>
-        <Text style={styles.btnText}>{person}</Text>
-      </View>
-    </TouchableOpacity>
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={() => console.log("index: ", index)}>
+        <View style={styles.btn}>
+          <Text style={styles.btnText}>{person}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -104,7 +92,7 @@ const RenderCell = (data, index, members, numDay, numNight) => {
         <OneCell index={index} person={people[0]} />
       </View>
     );
-  } else if ((isNight && numNight === 2) || numDay === 2) {
+  } else if ((isNight && numNight === 2) || (!isNight && numDay === 2)) {
     return (
       <View style={styles.row}>
         <OneCell index={index} person={people[0]} />
@@ -146,7 +134,7 @@ const DailyTable = ({ day }) => {
       {day.map((rowData, index) => (
         <TableWrapper key={index} style={styles.row}>
           <Cell
-            data={RenderCell(1, index, day[index], 1, 6)}
+            data={RenderCell(1, index, day[index], 2, 10)}
             textStyle={styles.text}
           />
         </TableWrapper>
@@ -154,8 +142,16 @@ const DailyTable = ({ day }) => {
     </Table>
   );
 };
+const win = Dimensions.get("window");
+const tableLength = win.width * 0.85;
+
+
+
 
 export default function Schedule() {
+  const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
+
+
   let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos;
   const ref = React.useRef(); //creates reference for scrollView
 
@@ -163,14 +159,77 @@ export default function Schedule() {
     //for auto-scolling to certain y-position
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
   }
+  
+  const GroupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
 
-  return (
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+
+      if (mounted) {
+        GroupRef.get().then((doc) => {
+          
+          let schedule = doc.data().groupSchedule;
+
+          console.log('Here is Schedule from firebase: ', schedule);
+          /* console.log('value: ', schedule[120]);
+          MONDAY.push(schedule[0]); */
+
+          SUNDAY= schedule.splice(0,48);
+          MONDAY = schedule.splice(0,48);
+          TUESDAY= schedule.splice(0,48);
+          WEDNESDAY= schedule.splice(0,48);
+          THURSDAY= schedule.splice(0,48);
+          FRIDAY= schedule.splice(0,48);
+          SATURDAY= schedule.splice(0,48);
+
+         /*  for (let d1 = 0, d2 = 48, d3 =96, d4 = 144, d5 = 192, d6 =240, d7 = 288; 
+                d1<48, d2<96, d3< 144, d4<192, d5<240, d6< 288, d7 < 336; 
+                  d1++,d2++, d3++,d4++, d5++,d6++, d7++){ //Adds each schedule to repspective day
+              if (mounted) {
+                SUNDAY.push(schedule[d1]);
+                //MONDAY.push(schedule[d2]);
+                TUESDAY.push(schedule[d3]);
+                WEDNESDAY.push(schedule[d4]);
+                THURSDAY.push(schedule[d5]);
+                FRIDAY.push(schedule[d6]);
+                SATURDAY.push(schedule[d7]);
+              }
+          } */
+          
+          /* console.log('Schedules: \n', SUNDAY, '\n', MONDAY,  '\n', TUESDAY, '\n', WEDNESDAY, 
+            '\n', THURSDAY, '\n', FRIDAY, '\n', SATURDAY,); */
+
+        })
+        .then((doc) => {
+          //for making sure firebase is done reading
+          setLoaded(true);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+      }
+      return () => {
+        mounted = false;
+      };
+    }, [])
+  );
+
+
+
+
+
+  if (!loaded) {
+    //if firebase reading done, then render
+    return <AppLoading />;
+  } else { 
+    return (
     <View style={styles.bigContainer}>
       <View>
         <Button
           title="Create Group Schedule"
           onPress={() => {
-            createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
+            createGroupSchedule("BtycLIprkN3EmC9wmpaE", "black").then(
               (groupSchedule) => {
                 console.log("Group Schedule", groupSchedule);
 
@@ -261,7 +320,7 @@ export default function Schedule() {
 
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={SUNDAY} />
         </View>
 
         <Text
@@ -276,7 +335,7 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={MONDAY} />
         </View>
 
         <Text
@@ -291,7 +350,7 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={TUESDAY} />
         </View>
 
         <Text
@@ -306,7 +365,7 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={WEDNESDAY} />
         </View>
 
         <Text
@@ -321,7 +380,7 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={THURSDAY} />
         </View>
 
         <Text
@@ -336,7 +395,7 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={FRIDAY} />
         </View>
 
         <Text
@@ -351,11 +410,12 @@ export default function Schedule() {
         </Text>
         <View style={{ flexDirection: "row" }}>
           <TimeColumn />
-          <DailyTable day={group} />
+          <DailyTable day={SATURDAY} />
         </View>
       </ScrollView>
     </View>
   );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -364,46 +424,53 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     paddingTop: 30,
-    backgroundColor: "#C2C6D0",
+    backgroundColor: "#C2C6D0"
   },
   head: { height: 40, backgroundColor: "#808B97" },
   text: { margin: 6 },
   timesText: {
-    fontWeight: 800,
+    fontWeight: 800
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 20,
-    marginTop: 2,
+    marginTop: 2
   },
   button: {
     backgroundColor: "#1f509a",
     width: "14.5%",
     height: 50,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   buttonText: {
     fontSize: "auto",
     fontWeight: "500",
     textAlign: "center",
-    color: "white",
+    color: "white"
   },
   dayHeader: {
     marginVertical: 20,
     fontSize: 28,
     fontWeight: "700",
-    textAlign: "center",
+    textAlign: "center"
   },
   row: {
+    //flex: 1,
     flexDirection: "row",
     backgroundColor: "lavender",
-    width: 500,
-    alignItems: "center",
-    justifyContent: "space-around",
+    width: tableLength,
+    alignItems: "center"
+    //justifyContent: "space-around"
   },
-  btn: { width: 58, height: 30, backgroundColor: "#78B7BB", borderRadius: 2 },
-  btnText: { textAlign: "center", color: "#fff" },
+  btn: {
+    //width: 58,
+    height: 30,
+    backgroundColor: "#78B7BB",
+    //borderRadius: 2,
+    alignSelf: "stretch"
+  },
+  btnText: { textAlign: "center", color: "#fff" }
 });
