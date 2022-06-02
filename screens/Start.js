@@ -165,10 +165,10 @@ export default function Start({ navigation }) {
           <Button
             title="Create Group Schedule"
             onPress={() =>
-              console.log(
-                "Group Schedule",
-                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue")
-              )
+              createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then((groupSchedule) => {
+                console.log(groupSchedule);
+              })
+              
             }
           />
           {/* <Button
