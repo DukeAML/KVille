@@ -2,6 +2,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
+
 export function createGroupSchedule(groupCode, tentType) {
   let numDay;
   let numNight;
@@ -180,6 +181,7 @@ export function createGroupSchedule(groupCode, tentType) {
       }
       console.log(equalHours);
     });
+
 
   return groupScheduleArr; //return group schedule array
 
