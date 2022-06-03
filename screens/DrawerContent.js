@@ -153,6 +153,7 @@ export default function DrawerContent(props) {
                 props.navigation.navigate("SettingScreen", {
                   code: groupCode,
                   name: groupName,
+                  tentType: tentType,
                 });
               }}
             />
