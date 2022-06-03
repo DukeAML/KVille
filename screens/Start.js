@@ -28,7 +28,8 @@ let GROUPS = new Array();
 
 //const for list Items of Groups List
 const Group = ({ groupName, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={styles.listItem}>
+  <TouchableOpacity onPress={onPress} style={[styles.listItem, styles.shadowProp]}>
+    <Text style={[styles.listText, {textAlign: "left"}]}>Group Name: </Text>
     <Text style={styles.listText}>{groupName}</Text>
   </TouchableOpacity>
 );
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
   startContainer: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "#1f509a",
+    backgroundColor: "#C2C6D0",
     alignItems: "center",
     marginTop: "0%",
   },
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   listItem: {
-    backgroundColor: "green",
+    backgroundColor: "#e5e5e5",
     padding: 8,
     marginVertical: 4,
     borderRadius: 7,
@@ -246,6 +247,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     //fontFamily: "sans-serif",
     fontWeight: "500",
-    color: "white",
+    color: "black",
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
 });

@@ -22,7 +22,7 @@ let members = new Array(); //members array for list
 
 //Render Item for Each List Item of group members
 const Member = ({ name, backgroundColor }) => (
-  <View style={[styles.listItem, backgroundColor]}>
+  <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
     <Text style={styles.listText}>{name}</Text>
   </View>
 );
@@ -124,7 +124,7 @@ export default function GroupInfo({ route, navigation }) {
   } else {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Group Name:</Text>
+        <Text style={styles.header}>Group Name</Text>
 
         <View style={styles.boxText}>
           <Text style={styles.contentText}>{groupName}</Text>
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
   },
   header: {
     marginVertical: 10,
-    marginHorizontal: 15,
-    fontSize: 32,
+    marginHorizontal: 50,
+    fontSize: 28,
     fontWeight: "700",
   },
   contentText: {
@@ -185,4 +185,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: "center",
   },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 3},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  }
 });
