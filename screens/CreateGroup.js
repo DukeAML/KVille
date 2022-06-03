@@ -9,7 +9,7 @@ import {
   ImageBackground,
 } from "react-native";
 import zion from "../assets/zion.png";
-//import { Picker } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -92,6 +92,7 @@ import {
   setCurrentUser,
   setGroupCode,
   setGroupName,
+  setTentType
 } from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
@@ -105,6 +106,7 @@ export default function CreateGroup({ navigation }) {
     tentType: "",
     groupCode: "",
     userName: "",
+    tentType: "",
   });
 
   const groupRole = "Creator";
@@ -160,6 +162,7 @@ export default function CreateGroup({ navigation }) {
     });
     dispatch(setGroupCode(group.groupCode));
     dispatch(setGroupName(group.groupName));
+    dispatch(setTentType(group.tentType));
     userRef
       .get()
       .then((snapshot) => {
@@ -187,7 +190,7 @@ export default function CreateGroup({ navigation }) {
           <TextInput
             style={styles.textInput}
             placeholder="Enter Group Name"
-            value = {group.groupName}
+            value={group.groupName}
             onChangeText={(groupName) =>
               setGroup({ ...group, groupName: groupName })
             }
@@ -223,6 +226,17 @@ export default function CreateGroup({ navigation }) {
             </Text>
           </View>
         </View>
+        <Picker
+          selectedValue={group.tentType}
+          onValueChange={(itemValue, itemIndex) => {
+            setGroup({ ...group, tentType: itemValue });
+          }}
+        >
+          <Picker.Item label="Black" value="Black" />
+          <Picker.Item label="Blue" value="Blue" />
+          <Picker.Item label="White" value="White" />
+          <Picker.Item label="Walk up line" value="Walk up line" />
+        </Picker>
         <View style={styles.btnContainer}>
           <TouchableOpacity
             style={styles.createBtn}

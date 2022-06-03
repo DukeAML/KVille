@@ -6,6 +6,7 @@ export const userSlice = createSlice({
     currentUser: null,
     currGroupCode: "",
     currGroupName: "",
+    currTentType: "",
   },
   reducers: {
     setCurrentUser: (state, action) => {
@@ -21,11 +22,14 @@ export const userSlice = createSlice({
     },
     setGroupName: (state, action) => {
       state.currGroupName = action.payload;
+    },
+    setTentType: (state, action) => {
+      state.currTentType = action.payload;
     }
   },
 });
 
-export const { setCurrentUser, reset, setGroupCode, setGroupName } = userSlice.actions;
+export const { setCurrentUser, reset, setGroupCode, setGroupName, setTentType } = userSlice.actions;
 
 export default userSlice.reducer;
 

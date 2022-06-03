@@ -20,7 +20,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
-import { setGroupCode, setGroupName } from "../redux/reducers/userSlice";
+import { setGroupCode, setGroupName, setTentType } from "../redux/reducers/userSlice";
 
 require("firebase/firestore");
 
@@ -48,13 +48,17 @@ export default function Start({ navigation }) {
       <Group
         name={item.name}
         onPress={() => {
+          firebase.firestore().collection("groups").doc(item.code).get().then((doc) => {
+            console.log("tent type", doc.data().tentType);
+            dispatch(setTentType(doc.data().tentType));
+          })
+          dispatch(setGroupCode(item.code));
+          dispatch(setGroupName(item.name));
           navigation.navigate("GroupInfo", {
             //pass groupcode and group name parameters
             code: item.code,
             name: item.name,
           });
-          dispatch(setGroupCode(item.code));
-          dispatch(setGroupName(item.name));
         }}
       />
     );
@@ -76,7 +80,7 @@ export default function Start({ navigation }) {
         .get()
         .then((doc) => {
           //setLoaded(false);
-          let currGroup = doc.data().groupCode; //will eventually probably be an array
+          let currGroup = doc.data().groupCode;
           console.log("Current user's groups", currGroup);
 
           if (currGroup.length !== 0) {

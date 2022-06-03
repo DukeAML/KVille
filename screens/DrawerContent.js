@@ -23,6 +23,7 @@ export default function DrawerContent(props) {
 
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupName = useSelector((state) => state.user.currGroupName);
+  const tentType = useSelector((state) => state.user.currTentType);
 
   //useEffect(() => {
   useFocusEffect(
@@ -119,7 +120,10 @@ export default function DrawerContent(props) {
               )}
               label="Schedule"
               onPress={() => {
-                props.navigation.navigate("ScheduleScreen");
+                props.navigation.navigate("ScheduleScreen", {
+                  code: groupCode,
+                  tentType: tentType,
+                });
               }}
             />
             <DrawerItem

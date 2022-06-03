@@ -11,11 +11,11 @@ export async function createGroupSchedule(groupCode, tentType) {
   //based on the current tentType, adjust # of people needed in tent for day and night hours
   //correspondingly
   switch (tentType) {
-    case "black":
+    case "Black":
       numDay = 2;
       numNight = 10;
       break;
-    case "blue":
+    case "Blue":
       numDay = 1;
       numNight = 6;
       break;
