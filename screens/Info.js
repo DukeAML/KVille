@@ -187,21 +187,21 @@ export default function Info() {
             <Row
               data={NIGHTHOURS.tableHead}
               flexArr={[1.00001, 2, 2]}
-              style={styles.tableHead}
-              textStyle={styles.tableText}
+              style={StyleSheet.flatten(styles.tableHead)}
+              textStyle={StyleSheet.flatten(styles.tableText)}
             />
             <TableWrapper style={styles.tableWrapper}>
               <Col
                 data={NIGHTHOURS.tableTitle}
-                style={styles.tableTitle}
+                style={StyleSheet.flatten(styles.tableTitle)}
                 heightArr={[28, 28]}
-                textStyle={styles.tableText}
+                textStyle={StyleSheet.flatten(styles.tableText)}
               />
               <Rows
                 data={NIGHTHOURS.tableData}
                 flexArr={[1.987, 1.987]}
-                style={styles.tableRow}
-                textStyle={styles.tableText}
+                style={StyleSheet.flatten(styles.tableRow)}
+                textStyle={StyleSheet.flatten(styles.tableText)}
               />
             </TableWrapper>
           </Table>
@@ -355,8 +355,8 @@ export default function Info() {
               <Rows
                 data={BLACKTENT.tableData}
                 flexArr={[1, 1.987]}
-                style={styles.tentTableRow}
-                textStyle={styles.tableText}
+                style={StyleSheet.flatten(styles.tentTableRow)}
+                textStyle={StyleSheet.flatten(styles.tableText)}
               />
             </TableWrapper>
           </Table>
@@ -384,8 +384,8 @@ export default function Info() {
               <Rows
                 data={BLUETENT.tableData}
                 flexArr={[1, 1.987]}
-                style={styles.tentTableRow}
-                textStyle={styles.tableText}
+                style={StyleSheet.flatten(styles.tentTableRow)}
+                textStyle={StyleSheet.flatten(styles.tableText)}
               />
             </TableWrapper>
           </Table>
@@ -415,8 +415,8 @@ export default function Info() {
               <Rows
                 data={WHITETENT.tableData}
                 flexArr={[1, 1.987]}
-                style={styles.tentTableRow}
-                textStyle={styles.tableText}
+                style={StyleSheet.flatten(styles.tentTableRow)}
+                textStyle={StyleSheet.flatten(styles.tableText)}
               />
             </TableWrapper>
           </Table>

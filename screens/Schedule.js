@@ -76,7 +76,7 @@ const TimeColumn = () => {
           60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
           60, 60, 60, 60, 60, 60, 60, 60,
         ]}
-        textStyle={styles.timesText}
+        textStyle={StyleSheet.flatten(styles.timesText)}
       />
     </Table>
   );
@@ -132,10 +132,10 @@ const DailyTable = ({ day }) => {
   return (
     <Table borderStyle={{ borderWidth: 1 }}>
       {day.map((rowData, index) => (
-        <TableWrapper key={index} style={styles.row}>
+        <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
           <Cell
             data={RenderCell(1, index, day[index], 2, 10)}
-            textStyle={styles.text}
+            textStyle={StyleSheet.flatten(styles.text)}
           />
         </TableWrapper>
       ))}
@@ -182,20 +182,6 @@ export default function Schedule() {
           THURSDAY= schedule.splice(0,48);
           FRIDAY= schedule.splice(0,48);
           SATURDAY= schedule.splice(0,48);
-
-         /*  for (let d1 = 0, d2 = 48, d3 =96, d4 = 144, d5 = 192, d6 =240, d7 = 288; 
-                d1<48, d2<96, d3< 144, d4<192, d5<240, d6< 288, d7 < 336; 
-                  d1++,d2++, d3++,d4++, d5++,d6++, d7++){ //Adds each schedule to repspective day
-              if (mounted) {
-                SUNDAY.push(schedule[d1]);
-                //MONDAY.push(schedule[d2]);
-                TUESDAY.push(schedule[d3]);
-                WEDNESDAY.push(schedule[d4]);
-                THURSDAY.push(schedule[d5]);
-                FRIDAY.push(schedule[d6]);
-                SATURDAY.push(schedule[d7]);
-              }
-          } */
           
           /* console.log('Schedules: \n', SUNDAY, '\n', MONDAY,  '\n', TUESDAY, '\n', WEDNESDAY, 
             '\n', THURSDAY, '\n', FRIDAY, '\n', SATURDAY,); */
