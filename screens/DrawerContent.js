@@ -23,6 +23,7 @@ export default function DrawerContent(props) {
 
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupName = useSelector((state) => state.user.currGroupName);
+  const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
 
   //useEffect(() => {
@@ -98,8 +99,8 @@ export default function DrawerContent(props) {
               label="Group Information"
               onPress={() => {
                 props.navigation.navigate("GroupInfo", {
-                  code: groupCode,
-                  name: groupName,
+                  groupCode: groupCode,
+                  groupName: groupName,
                 });
               }}
             />
@@ -110,7 +111,7 @@ export default function DrawerContent(props) {
               label="Your Availability"
               onPress={() => {
                 props.navigation.navigate("AvailabilityScreen", {
-                  code: groupCode
+                  groupCode,
                 });
               }}
             />
@@ -151,9 +152,10 @@ export default function DrawerContent(props) {
               label="Settings"
               onPress={() => {
                 props.navigation.navigate("SettingScreen", {
-                  code: groupCode,
-                  name: groupName,
-                  tentType: tentType,
+                  groupCode,
+                  groupName,
+                  userName,
+                  tentType,
                 });
               }}
             />

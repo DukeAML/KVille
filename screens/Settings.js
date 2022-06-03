@@ -59,11 +59,12 @@ export default function Settings({ route, navigation }) {
   //gets current user's group code from redux store
   //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
-  const { code, name, tentType } = route.params;
-  const [userName, setUserName] = useState(name);
+  const { groupCode, groupName, userName, tentType } = route.params;
+  const [currGroupName, setCurrGroupName] = useState(groupName);
+  const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
 
-  console.log("Current group code: ", code);
+  console.log("Current group code: ", groupCode);
   console.log("Current group name: ", name);
   //gets current user's group role from redux store
 
@@ -71,7 +72,7 @@ export default function Settings({ route, navigation }) {
     .firestore()
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase.firestore().collection("groups").doc(code);
+  const groupRef = firebase.firestore().collection("groups").doc(groupCode);
 
   //useEffect(() => {
   useFocusEffect(
@@ -100,20 +101,17 @@ export default function Settings({ route, navigation }) {
     groupRef.update({
       tentType: tent,
     });
-    groupRef
-      .collection("members")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        name: userName,
-      });
+    groupRef.collection("members").doc(firebase.auth().currentUser.uid).update({
+      name: userName,
+    });
     dispatch(setTentType(tent));
   };
 
   const leaveGroup = () => {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
-        groupCode: code,
-        name: name,
+        groupCode: groupCode,
+        groupName: groupName,     
       }),
     });
     if (isCreator) {
@@ -149,10 +147,19 @@ export default function Settings({ route, navigation }) {
       <Text style={{ color: "#fff" }}>Name:</Text>
       <TextInput
         style={styles.textInput}
-        value={userName}
-        placeholder={userName}
-        onChangeText={(userName) => setUserName(userName)}
+        value={name}
+        placeholder={name}
+        onChangeText={(name) => setName(name)}
       />
+      {isCreator ? <Text style={{ color: "#fff" }}>Group Name:</Text> : null}
+      {isCreator ? (
+        <TextInput
+          style={styles.textInput}
+          value={currGroupName}
+          placeholder={currGroupName}
+          onChangeText={(groupName) => setCurrGroupName(groupName)}
+        />
+      ) : null}
       <Text style={{ color: "#fff" }}>Tent Type: </Text>
       <Picker
         selectedValue={tent}

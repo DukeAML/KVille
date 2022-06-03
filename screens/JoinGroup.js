@@ -120,7 +120,7 @@ export default function JoinGroup({ navigation }) {
           .update({
             groupCode: firebase.firestore.FieldValue.arrayUnion({
               groupCode: groupCode,
-              name: docSnapshot.data().name,
+              groupName: docSnapshot.data().name,
             }),
           });
         //adds current user to member list
@@ -152,8 +152,8 @@ export default function JoinGroup({ navigation }) {
       })
       .then((snapshot) => {
         navigation.navigate("GroupInfo", {
-          code: groupCode,
-          name: groupName,
+          groupCode: groupCode,
+          groupName: groupName,
         });
       });
   };
