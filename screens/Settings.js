@@ -10,22 +10,22 @@ import {
 } from "react-native";
 import background from "../assets/Cameron-Crazies.jpg";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Picker } from "@react-native-picker/picker";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/reducers/userSlice";
-
-// import { notInGroup, setGroupInfo } from "../redux/reducers/userSlice";
+import { setTentType } from "../redux/reducers/userSlice";
 
 const styles = StyleSheet.create({
   settingsContainer: {
     flexDirection: "column",
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#1f509a",
+    //backgroundColor: "#1f509a",
+    backgroundColor: "#C2C6D0",
   },
   backgroundImage: {
     flex: 1,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     resizeMode: "cover",
-    opacity: 0.4,
+    //opacity: 0.4,
   },
   header: {
     flexDirection: "row",
@@ -59,7 +59,10 @@ export default function Settings({ route, navigation }) {
   //gets current user's group code from redux store
   //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
 
-  const { code, name } = route.params;
+  const { code, name, tentType } = route.params;
+  const [userName, setUserName] = useState(name);
+  const [tent, setTent] = useState(tentType);
+
   console.log("Current group code: ", code);
   console.log("Current group name: ", name);
   //gets current user's group role from redux store
@@ -93,6 +96,18 @@ export default function Settings({ route, navigation }) {
       return () => (mounted = false);
     }, [])
   );
+  const onSave = () => {
+    groupRef.update({
+      tentType: tent,
+    });
+    groupRef
+      .collection("members")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        name: userName,
+      });
+    dispatch(setTentType(tent));
+  };
 
   const leaveGroup = () => {
     userRef.update({
@@ -122,46 +137,62 @@ export default function Settings({ route, navigation }) {
           console.error("Error removing user: ", error);
         });
     }
-    // userRef
-    //   .get()
-    //   .then((snapshot) => {
-    //     if (snapshot.exists) {
-    //       dispatch(setCurrentUser(snapshot.data()));
-    //     } else {
-    //       console.log("does not exist");
-    //     }
-    //     return snapshot;
-    //   })
-    //   .then((snapshot) => {
-    //     navigation.navigate("Start");
-    //   });
-    // dispatch(notInGroup());
-    // dispatch(setGroupInfo({ groupCode: "", userName: "" }));
   };
 
   return (
     <View style={styles.settingsContainer}>
-      <ImageBackground source={background} style={styles.backgroundImage}>
-        <View style={styles.header}>
-          <Icon name="cog-outline" color={"#fff"} size={50} />
-          <Text style={{ color: "#fff" }}>Settings</Text>
-        </View>
-        <Text style={{ color: "#fff" }}>Name:</Text>
-        <TextInput style={styles.textInput} />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            leaveGroup();
-            navigation.navigate("Start");
-          }}
-        >
-          {isCreator ? (
-            <Text style={{ color: "#fff" }}>Delete Group</Text>
-          ) : (
-            <Text style={{ color: "#fff" }}>Leave Group</Text>
-          )}
-        </TouchableOpacity>
-      </ImageBackground>
+      {/* <ImageBackground source={background} style={styles.backgroundImage}> */}
+      <View style={styles.header}>
+        <Icon name="cog-outline" color={"#fff"} size={50} />
+        <Text style={{ color: "#fff" }}>Settings</Text>
+      </View>
+      <Text style={{ color: "#fff" }}>Name:</Text>
+      <TextInput
+        style={styles.textInput}
+        value={userName}
+        placeholder={userName}
+        onChangeText={(userName) => setUserName(userName)}
+      />
+      <Text style={{ color: "#fff" }}>Tent Type: </Text>
+      <Picker
+        selectedValue={tent}
+        onValueChange={(itemValue, itemIndex) => {
+          setTent(itemValue);
+        }}
+      >
+        <Picker.Item label="" value="" />
+        <Picker.Item label="Black" value="Black" />
+        <Picker.Item label="Blue" value="Blue" />
+        <Picker.Item label="White" value="White" />
+        <Picker.Item label="Walk up line" value="Walk up line" />
+      </Picker>
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#1F509A",
+          padding: 15,
+          position: "absolute",
+          bottom: 50,
+          width: "100%",
+          alignItems: "center",
+        }}
+        onPress={onSave}
+      >
+        <Text style={{ color: "#fff" }}>Save</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          leaveGroup();
+          navigation.navigate("Start");
+        }}
+      >
+        {isCreator ? (
+          <Text style={{ color: "#fff" }}>Delete Group</Text>
+        ) : (
+          <Text style={{ color: "#fff" }}>Leave Group</Text>
+        )}
+      </TouchableOpacity>
+      {/* </ImageBackground> */}
     </View>
   );
 }

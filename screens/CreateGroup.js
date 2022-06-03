@@ -92,7 +92,7 @@ import {
   setCurrentUser,
   setGroupCode,
   setGroupName,
-  setTentType
+  setTentType,
 } from "../redux/reducers/userSlice";
 // import {
 //   inGroup,
@@ -128,12 +128,16 @@ export default function CreateGroup({ navigation }) {
       let mounted = true;
       if (mounted) {
         //setGroup({ ...group, userName: userName });
-        setGroup({...group, groupCode: generateGroupCode(GROUP_CODE_LENGTH), userName: userName});
+        setGroup({
+          ...group,
+          groupCode: generateGroupCode(GROUP_CODE_LENGTH),
+          userName: userName,
+        });
       }
       return () => {
         setGroup({ ...group, groupName: "" });
         mounted = false;
-      }
+      };
     }, [])
   );
 
@@ -225,18 +229,20 @@ export default function CreateGroup({ navigation }) {
               {group.groupCode}
             </Text>
           </View>
+          <Text style={styles.centerText}>Tent Type</Text>
+          <Picker
+            selectedValue={group.tentType}
+            onValueChange={(itemValue, itemIndex) => {
+              setGroup({ ...group, tentType: itemValue });
+            }}
+          >
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Black" value="Black" />
+            <Picker.Item label="Blue" value="Blue" />
+            <Picker.Item label="White" value="White" />
+            <Picker.Item label="Walk up line" value="Walk up line" />
+          </Picker>
         </View>
-        <Picker
-          selectedValue={group.tentType}
-          onValueChange={(itemValue, itemIndex) => {
-            setGroup({ ...group, tentType: itemValue });
-          }}
-        >
-          <Picker.Item label="Black" value="Black" />
-          <Picker.Item label="Blue" value="Blue" />
-          <Picker.Item label="White" value="White" />
-          <Picker.Item label="Walk up line" value="Walk up line" />
-        </Picker>
         <View style={styles.btnContainer}>
           <TouchableOpacity
             style={styles.createBtn}
