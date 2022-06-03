@@ -39,7 +39,7 @@ export async function createGroupSchedule(groupCode, tentType) {
   //adds each member as an object to the memberArr 
   await firebase
     .firestore()
-    .collection("groupsTest")
+    .collection("groups")
     .doc(groupCode)
     .collection("members")
     .get()
