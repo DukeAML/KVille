@@ -148,6 +148,7 @@ export default function CreateGroup({ navigation }) {
       groupRole: groupRole,
       name: group.userName,
       inTent: false,
+      availability: [],
     });
     //updates current user's inGroup and groupCode states
     userRef.update({

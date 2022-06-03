@@ -103,35 +103,44 @@ for (let i = 0; i < 46; i += 1) {
 const availability = new Array(336);
 availability.fill(true);
 
-export default function Availability({route}) {
-  const {code} = route.params;
+export default function Availability({ route }) {
+  const { code } = route.params;
 
   const [dimensions, setDimensions] = useState({ window });
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState();
   const [startTime, setStartTime] = useState({
-    hour,
-    minute,
-    day,
+    hour: 0,
+    minute: 0,
+    day: 0,
   });
   const [endTime, setEndTime] = useState({
-    hour,
-    minute, 
-    day,
+    hour: 0,
+    minute: 0,
+    day: 0,
   });
 
   const updateAvailability = () => {
-    let startIdx = selectedDay*48 + startTime.day + startTime.minute + startTime.hour*2;
-    let endIdx = selectedDay*48 + endTime.day + endTime.minute + endTime.hour*2;
+    let startIdx =
+      selectedDay * 48 + startTime.day + startTime.minute + startTime.hour * 2;
+    let endIdx =
+      selectedDay * 48 + endTime.day + endTime.minute + endTime.hour * 2;
     console.log("startIdx", startIdx);
     console.log("endIdx", endIdx);
-    for (let i=startIdx; i<endIdx; i++) {
+    for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
-    firebase.firestore().collection("groups").doc(code).collection("members").set({
-      availability: availability,
-    });
-    toggleModal;
+    console.log("availability", availability);
+    firebase
+      .firestore()
+      .collection("groups")
+      .doc(code)
+      .collection("members")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        availability: availability,
+      });
+    toggleModal();
   };
 
   const toggleModal = () => {
@@ -179,7 +188,7 @@ export default function Availability({route}) {
               <Picker
                 selectedValue={startTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
-                  setStartTime.hour(itemValue);
+                  setStartTime({ ...startTime, hour: itemValue });
                 }}
               >
                 <Picker.Item label="12" value={0} />
@@ -196,18 +205,18 @@ export default function Availability({route}) {
                 <Picker.Item label="11" value={11} />
               </Picker>
               <Picker
-                selectedValue={startTime}
+                selectedValue={startTime.minute}
                 onValueChange={(itemValue, itemIndex) => {
-                  setStartTime.minute(itemValue);
+                  setStartTime({ ...startTime, minute: itemValue });
                 }}
               >
                 <Picker.Item label="00" value={0} />
                 <Picker.Item label="30" value={1} />
               </Picker>
               <Picker
-                selectedValue={startTime}
+                selectedValue={startTime.day}
                 onValueChange={(itemValue, itemIndex) => {
-                  setStartTime.day(itemValue);
+                  setStartTime({ ...startTime, day: itemValue });
                 }}
               >
                 <Picker.Item label="AM" value={0} />
@@ -218,7 +227,7 @@ export default function Availability({route}) {
               <Picker
                 selectedValue={endTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
-                  setEndTime.hour(itemValue);
+                  setEndTime({ ...endTime, hour: itemValue });
                 }}
               >
                 <Picker.Item label="12" value={0} />
@@ -235,18 +244,18 @@ export default function Availability({route}) {
                 <Picker.Item label="11" value={11} />
               </Picker>
               <Picker
-                selectedValue={endTime}
+                selectedValue={endTime.minute}
                 onValueChange={(itemValue, itemIndex) => {
-                  setEndTime.minute(itemValue);
+                  setEndTime({ ...endTime, minute: itemValue });
                 }}
               >
                 <Picker.Item label="00" value={0} />
                 <Picker.Item label="30" value={1} />
               </Picker>
               <Picker
-                selectedValue={endTime}
+                selectedValue={endTime.day}
                 onValueChange={(itemValue, itemIndex) => {
-                  setEndTime.day(itemValue);
+                  setEndTime({ ...endTime, day: itemValue });
                 }}
               >
                 <Picker.Item label="AM" value={0} />
