@@ -166,7 +166,7 @@ const DailyTable = ({ day, numberDay, numberNight }) => {
   );
 };
 const win = Dimensions.get("window");
-const tableLength = win.width * .92;
+const tableLength = win.width * .9;
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params;
@@ -540,5 +540,5 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     justifyContent: "center"
   },
-  btnText: { textAlign: "center", color: "#fff" },
+  btnText: { textAlign: "center", color: "#545454", fontWeight: "500" },
 });
