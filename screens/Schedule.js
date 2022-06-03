@@ -25,40 +25,33 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const times = [
-  "12am",
-  "1am",
-  "2am",
-  "3am",
-  "4am",
-  "5am",
-  "6am",
-  "7am",
-  "8am",
-  "9am",
-  "10am",
-  "11am",
-  "12am",
-  "1pm",
-  "2pm",
-  "3pm",
-  "4pm",
-  "5pm",
-  "6pm",
-  "7pm",
-  "8pm",
-  "9pm",
-  "10pm",
-  "11pm",
-  "12am",
+  "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", 
+  "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm",
+  "10pm", "11pm", "12am",
 ];
 
-const colors = ["blue"];
+const colors = ['red', '#f7e49a', '#fece79', '#f8a656', '#f48170', '#f38193', '#f391bc',
+  '#e4b7d5' , '#8b8bc3', '#94cae3', '#a0d9d9', '#97d1a9', '#97d1a9'];
+
+/* let colorCodes = [
+  { name: 'null', color: colors[0] },
+  { name: 'poop0', color: colors[1] },
+  { name: 'poop1', color: colors[2] },
+  { name: 'poop2', color: colors[3] },
+  { name: 'poop3', color: colors[4] },
+  { name: 'poop4', color: colors[5] },
+  { name: 'poop5', color: colors[6] },
+  { name: 'poop6', color: colors[7] },
+  { name: 'poop7', color: colors[8] },
+  { name: 'poop8', color: colors[9] },
+  { name: 'poop9', color: colors[10] },
+  { name: 'poop10', color: colors[11] },
+  { name: 'poop11', color: colors[12] },
+  { name: 'TrueAlways', color: 'blue' },
+]; */
 
 let colorCodes = [
-  {
-    name: "null",
-    color: "red",
-  },
+  {name: 'null', color: 'red'}
 ];
 
 /* let group = [
@@ -71,6 +64,8 @@ let colorCodes = [
   "null",
 ];  */
 //let SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY = new Array();
+let schedule = new Array();
+
 let SUNDAY = new Array();
 let MONDAY = new Array();
 let TUESDAY = new Array();
@@ -81,10 +76,12 @@ let SATURDAY = new Array();
 
 const OneCell = ({ index, person }) => {
   //const backgroundColor = "pink";
+  const indexofUser = colorCodes.map(object => object.name).indexOf(person);
+  const backgroundColor = colorCodes[indexofUser].color;
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={() => console.log("index: ", index)}>
-        <View style={styles.btn}>
+        <View style={[styles.btn, {backgroundColor: backgroundColor}]}>
           <Text style={styles.btnText}>{person}</Text>
         </View>
       </TouchableOpacity>
@@ -98,9 +95,9 @@ const TimeColumn = () => {
       <Col
         data={times}
         heightArr={[
-          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          0, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
           60, 60, 60, 60, 60, 60, 60, 60,
-        ]}
+        ]} 
         textStyle={StyleSheet.flatten(styles.timesText)}
       />
     </Table>
@@ -109,8 +106,8 @@ const TimeColumn = () => {
 
 const RenderCell = (data, index, members, numDay, numNight) => {
   const people = members.split(" ");
-  const isNight = index >= 2 && index <= 13;
-  //console.log("index ", index);
+  const isNight = (index >= 2 && index <= 13);
+  //console.log("index ", numDay, isNight, numNight);
   if (!isNight && numDay === 1) {
     return (
       <View style={styles.row}>
@@ -153,13 +150,14 @@ const RenderCell = (data, index, members, numDay, numNight) => {
   }
 };
 
-const DailyTable = ({ day }) => {
+const DailyTable = ({ day, numberDay, numberNight }) => {
+  //console.log('numday and night: ', numberDay, numberNight);
   return (
     <Table borderStyle={{ borderWidth: 1 }}>
       {day.map((rowData, index) => (
         <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
           <Cell
-            data={RenderCell(1, index, day[index], 2, 10)}
+            data={RenderCell(1, index, day[index], numberDay, numberNight)}
             textStyle={StyleSheet.flatten(styles.text)}
           />
         </TableWrapper>
@@ -168,7 +166,7 @@ const DailyTable = ({ day }) => {
   );
 };
 const win = Dimensions.get("window");
-const tableLength = win.width * 0.85;
+const tableLength = win.width * .92;
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params;
@@ -178,12 +176,32 @@ export default function Schedule({ route }) {
   let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos;
   const ref = useRef(); //creates reference for scrollView
 
+  let numberForDay, numberForNight;
+
+  switch (tentType) {
+    case 'Black':
+      numberForDay = 2;
+      numberForNight = 10;
+      break;
+    case 'Blue':
+      numberForDay = 1;
+      numberForNight = 6;
+      break;
+    default:
+      numberForDay = 1;
+      numberForNight = 2;
+  }
+
+  console.log('numberDay and Night values: ', numberForDay, numberForNight);
+
   function autoScroll(yPos) {
     //for auto-scolling to certain y-position
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
   }
 
-  const groupRef = firebase.firestore().collection("groups").doc(code);
+  //const groupRef = firebase.firestore().collection("groups").doc(code);
+  const groupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
+
 
   useFocusEffect(
     useCallback(() => {
@@ -193,7 +211,7 @@ export default function Schedule({ route }) {
         groupRef
           .get()
           .then((doc) => {
-            let schedule = doc.data().groupSchedule;
+            schedule = doc.data().groupSchedule;
 
             console.log("Here is Schedule from firebase: ", schedule);
             /* console.log('value: ', schedule[120]);
@@ -210,6 +228,29 @@ export default function Schedule({ route }) {
             /* console.log('Schedules: \n', SUNDAY, '\n', MONDAY,  '\n', TUESDAY, '\n', WEDNESDAY, 
             '\n', THURSDAY, '\n', FRIDAY, '\n', SATURDAY,); */
           })
+
+        groupRef.collection('members').get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+
+              let currName = doc.data().name; //gets current name in list
+              let current = {
+                //create new object for the current list item
+                name: currName,
+                color: 'yellow',
+              };
+              let nameExists;
+              if (colorCodes.length === 0) nameExists = false;
+              else {
+                nameExists = colorCodes.some((e) => e.name === currName);
+              }
+
+              if (!nameExists) {
+                // if not already in, add to the array
+                colorCodes.push(current);
+              }
+            })
+          })
           .then((doc) => {
             //for making sure firebase is done reading
             setLoaded(true);
@@ -224,29 +265,18 @@ export default function Schedule({ route }) {
     }, [])
   );
 
-  if (!loaded) {
+  if (!loaded ) {
     //if firebase reading done, then render
     return <AppLoading />;
   } else {
+
+    for (let index = 0; index < colorCodes.length ; index++){
+      colorCodes[index].color = colors[index];
+    }
+
     return (
       <View style={styles.bigContainer}>
-        <View>
-          <Button
-            title="Create Group Schedule"
-            onPress={() => {
-              createGroupSchedule(code, tentType).then(
-                (groupSchedule) => {
-                  console.log("Group Schedule", groupSchedule);
-
-                  groupRef
-                    .set({
-                      groupSchedule: groupSchedule,
-                    });
-                }
-              );
-            }}
-          />
-        </View>
+        
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[
@@ -309,6 +339,34 @@ export default function Schedule({ route }) {
           ref={ref}
           showsVerticalScrollIndicator={false}
         >
+          <View style = {styles.buttonContainer}>
+            <View style = {{flex: 1}}>
+              <Button
+                title="Push Edits"
+                color= "blue"
+              />
+            </View>
+
+            <View style = {{flex: 1}}>
+              <Button
+                title="Create Group Schedule"
+                color= "red"
+                onPress={() => {
+                  createGroupSchedule(code, tentType).then(
+                    (groupSchedule) => {
+                      console.log("Group Schedule", groupSchedule);
+
+                      groupRef
+                        .set({
+                          groupSchedule: groupSchedule,
+                        });
+                    }
+                  );
+                }}
+              />
+            </View>
+              
+          </View>
           <Text
             style={styles.dayHeader}
             onLayout={(event) => {
@@ -322,11 +380,11 @@ export default function Schedule({ route }) {
 
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={SUNDAY} />
+            <DailyTable day={SUNDAY} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
-            style={styles.dayHeader}
+            style={[styles.dayHeader, styles.dayHeaderBox]}
             onLayout={(event) => {
               const layout = event.nativeEvent.layout;
               monPos = layout.y;
@@ -337,7 +395,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={MONDAY} />
+            <DailyTable day={MONDAY} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
@@ -352,7 +410,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={TUESDAY} />
+            <DailyTable day={TUESDAY} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
@@ -362,12 +420,12 @@ export default function Schedule({ route }) {
               wedPos = layout.y;
             }}
           >
-            {" "}
+            {"    "}
             WEDNESDAY{" "}
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={WEDNESDAY} />
+            <DailyTable day={WEDNESDAY} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -382,7 +440,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={THURSDAY} />
+            <DailyTable day={THURSDAY} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -397,7 +455,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={FRIDAY} />
+            <DailyTable day={FRIDAY} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -412,7 +470,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={SATURDAY} />
+            <DailyTable day={SATURDAY} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
         </ScrollView>
       </View>
@@ -423,15 +481,15 @@ export default function Schedule({ route }) {
 const styles = StyleSheet.create({
   bigContainer: { flex: 1, backgroundColor: "#C2C6D0" },
   container: {
-    flex: 1,
-    padding: 16,
+    //flex: 1,
+    //padding: 16,
     paddingTop: 30,
     backgroundColor: "#C2C6D0",
   },
-  head: { height: 40, backgroundColor: "#808B97" },
   text: { margin: 6 },
   timesText: {
     fontWeight: 800,
+    marginHorizontal:10
   },
   buttonContainer: {
     flex: 1,
@@ -441,7 +499,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   button: {
-    backgroundColor: "#1f509a",
+    backgroundColor: "#e5e5e5",
     width: "14.5%",
     height: 50,
     alignItems: "center",
@@ -451,7 +509,14 @@ const styles = StyleSheet.create({
     fontSize: "auto",
     fontWeight: "500",
     textAlign: "center",
-    color: "white",
+    color: "black",
+  },
+  dayHeaderBox: {
+    backgroundColor: '#e5e5e5',
+    width: "",
+    height: 60,
+    borderRadius: 8,
+    textAlign: "center",
   },
   dayHeader: {
     marginVertical: 20,
@@ -473,6 +538,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#78B7BB",
     //borderRadius: 2,
     alignSelf: "stretch",
+    justifyContent: "center"
   },
   btnText: { textAlign: "center", color: "#fff" },
 });
