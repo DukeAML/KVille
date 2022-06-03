@@ -10,17 +10,19 @@ import {
   FlatList,
   Button,
 } from "react-native";
-import { createGroupSchedule } from "../backend/CreateGroupSchedule";
-import { createTestCases } from "../backend/firebaseAdd";
+
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
-import coachk from "../assets/coachk.png";
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
 import { setGroupCode, setGroupName, setTentType } from "../redux/reducers/userSlice";
+import { createGroupSchedule } from "../backend/CreateGroupSchedule";
+import { createTestCases } from "../backend/firebaseAdd";
+import coachk from "../assets/coachk.png";
 
 require("firebase/firestore");
 

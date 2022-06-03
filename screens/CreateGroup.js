@@ -8,7 +8,6 @@ import {
   TextInput,
   ImageBackground,
 } from "react-native";
-import zion from "../assets/zion.png";
 import { Picker } from "@react-native-picker/picker";
 
 import firebase from "firebase/compat/app";
@@ -16,6 +15,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { generateGroupCode } from "../backend/GroupCode";
+import zion from "../assets/zion.png";
 
 require("firebase/firestore");
 

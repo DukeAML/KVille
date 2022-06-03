@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import background from "../assets/Cameron-Crazies.jpg";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Picker } from "@react-native-picker/picker";
 
@@ -18,6 +17,7 @@ import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setTentType } from "../redux/reducers/userSlice";
+import background from "../assets/Cameron-Crazies.jpg";
 
 const styles = StyleSheet.create({
   settingsContainer: {

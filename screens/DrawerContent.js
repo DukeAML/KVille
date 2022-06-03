@@ -9,7 +9,6 @@ import {
   Switch,
 } from "react-native-paper";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import firebase from "firebase/compat/app";

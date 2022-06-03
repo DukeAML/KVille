@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
 import { Text, View, StyleSheet, FlatList, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
+import { useSelector } from "react-redux";
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
