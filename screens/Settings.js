@@ -16,7 +16,11 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setUserName, setTentType } from "../redux/reducers/userSlice";
+import {
+  setGroupName,
+  setUserName,
+  setTentType,
+} from "../redux/reducers/userSlice";
 import background from "../assets/Cameron-Crazies.jpg";
 
 export default function Settings({ route, navigation }) {
@@ -48,7 +52,7 @@ export default function Settings({ route, navigation }) {
     setName(userName);
     setTent(tentType);
     return () => (mounted = false);
-  }, [groupName]);
+  }, [userName]);
 
   //useEffect(() => {
   useFocusEffect(
@@ -70,10 +74,38 @@ export default function Settings({ route, navigation }) {
           }
         });
       console.log("fetched isCreator from firebase");
-      return () => (mounted = false);
+      return () => {
+        mounted = false;
+        setCurrGroupName(groupName);
+        setName(userName);
+        setTent(tentType);
+      };
     }, [])
   );
+
   const onSave = () => {
+    let groupIndex;
+    let groupCodeArr;
+    userRef
+      .get()
+      .then((userDoc) => {
+        groupCodeArr = userDoc.data().groupCode;
+        groupIndex = groupCodeArr.findIndex(
+          (element) => (element.groupCode == groupCode)
+        );
+        console.log("group index", groupIndex);
+        groupCodeArr[groupIndex] = {
+          groupCode: groupCode,
+          groupName: currGroupName,
+        };
+        return userDoc;
+      })
+      .then((doc) => {
+        userRef.update({
+          groupCode: groupCodeArr,
+        });
+      });
+
     groupRef.update({
       tentType: tent,
     });
@@ -82,13 +114,14 @@ export default function Settings({ route, navigation }) {
     });
     dispatch(setUserName(name));
     dispatch(setTentType(tent));
+    dispatch(setGroupName(currGroupName));
   };
 
   const leaveGroup = () => {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
         groupCode: groupCode,
-        groupName: groupName,
+        groupName: currGroupName,
       }),
     });
     if (isCreator) {
