@@ -16,77 +16,6 @@ import "firebase/compat/firestore";
 
 import { generateGroupCode } from "../backend/GroupCode";
 import zion from "../assets/zion.png";
-
-require("firebase/firestore");
-
-//length of the group code
-const GROUP_CODE_LENGTH = 8;
-
-const styles = StyleSheet.create({
-  groupContainer: {
-    flexDirection: "column",
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#1f509a",
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-  },
-  textContainer: {
-    height: "70%",
-    width: "80%",
-    marginVertical: 50,
-    //justifyContent: "space-between"
-  },
-  text: {
-    color: "#fff",
-    //fontFamily: "Open Sans",
-    fontSize: 22,
-    fontWeight: "700",
-  },
-  centerText: {
-    color: "#fff",
-    //fontFamily: "Open Sans",
-    fontSize: 36,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  textInput: {
-    height: "5%",
-    textAlign: "center",
-    backgroundColor: "#FFFAFACC",
-    borderRadius: 15,
-    //placeholderTextColor: "#897F7FCC",
-  },
-  btnContainer: {
-    alignItems: "center",
-    width: "90%",
-  },
-  cancelBtn: {
-    borderRadius: 30,
-    backgroundColor: "#000",
-    padding: 15,
-    width: "45%",
-  },
-  createBtn: {
-    borderRadius: 30,
-    backgroundColor: "#1F509A",
-    padding: 15,
-    width: "45%",
-  },
-  btnTxt: {
-    fontWeight: "700",
-    color: "#fff",
-    fontSize: 36,
-    textAlign: "center",
-  },
-});
-
 import { useSelector, useDispatch } from "react-redux";
 import {
   setCurrentUser,
@@ -95,11 +24,9 @@ import {
   setUserName,
   setTentType,
 } from "../redux/reducers/userSlice";
-// import {
-//   inGroup,
-//   setGroupInfo,
-//   setCreatorRole,
-// } from "../redux/reducers/userSlice";
+
+//length of the group code
+const GROUP_CODE_LENGTH = 8;
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
@@ -262,3 +189,68 @@ export default function CreateGroup({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  groupContainer: {
+    flexDirection: "column",
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#1f509a",
+  },
+  backgroundImage: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover",
+  },
+  textContainer: {
+    height: "70%",
+    width: "80%",
+    marginVertical: 50,
+    //justifyContent: "space-between"
+  },
+  text: {
+    color: "#fff",
+    //fontFamily: "Open Sans",
+    fontSize: 22,
+    fontWeight: "700",
+  },
+  centerText: {
+    color: "#fff",
+    //fontFamily: "Open Sans",
+    fontSize: 36,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  textInput: {
+    height: "5%",
+    textAlign: "center",
+    backgroundColor: "#FFFAFACC",
+    borderRadius: 15,
+    //placeholderTextColor: "#897F7FCC",
+  },
+  btnContainer: {
+    alignItems: "center",
+    width: "90%",
+  },
+  cancelBtn: {
+    borderRadius: 30,
+    backgroundColor: "#000",
+    padding: 15,
+    width: "45%",
+  },
+  createBtn: {
+    borderRadius: 30,
+    backgroundColor: "#1F509A",
+    padding: 15,
+    width: "45%",
+  },
+  btnTxt: {
+    fontWeight: "700",
+    color: "#fff",
+    fontSize: 36,
+    textAlign: "center",
+  },
+});
