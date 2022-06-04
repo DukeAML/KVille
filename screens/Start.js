@@ -20,7 +20,12 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
-import { setGroupCode, setGroupName, setTentType } from "../redux/reducers/userSlice";
+import {
+  setGroupCode,
+  setGroupName,
+  setUserName,
+  setTentType,
+} from "../redux/reducers/userSlice";
 import { createGroupSchedule } from "../backend/CreateGroupSchedule";
 import { createTestCases } from "../backend/firebaseAdd";
 import coachk from "../assets/coachk.png";
@@ -33,8 +38,11 @@ let GROUPS = new Array();
 
 //const for list Items of Groups List
 const Group = ({ groupName, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.listItem, styles.shadowProp]}>
-    <Text style={[styles.listText, {textAlign: "left"}]}>Group Name: </Text>
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.listItem, styles.shadowProp]}
+  >
+    <Text style={[styles.listText, { textAlign: "left" }]}>Group Name: </Text>
     <Text style={styles.listText}>{groupName}</Text>
   </TouchableOpacity>
 );
@@ -54,10 +62,25 @@ export default function Start({ navigation }) {
       <Group
         groupName={item.groupName}
         onPress={() => {
-          firebase.firestore().collection("groups").doc(item.code).get().then((doc) => {
-            console.log("tent type", doc.data().tentType);
-            dispatch(setTentType(doc.data().tentType));
-          })
+          firebase
+            .firestore()
+            .collection("groups")
+            .doc(item.code)
+            .get()
+            .then((doc) => {
+              console.log("tent type", doc.data().tentType);
+              dispatch(setTentType(doc.data().tentType));
+            });
+          firebase
+            .firestore()
+            .collection("groups")
+            .doc(item.code)
+            .collection("members")
+            .doc(firebase.auth().currentUser.uid)
+            .get()
+            .then((memDoc) => {
+              dispatch(setUserName(memDoc.data().name));
+            });
           dispatch(setGroupCode(item.code));
           dispatch(setGroupName(item.groupName));
           navigation.navigate("GroupInfo", {
@@ -82,61 +105,61 @@ export default function Start({ navigation }) {
       let mounted = true;
       //Accesses Names of Members from firebase and adds them to the array
       if (mounted) {
-      userRef
-        .get()
-        .then((doc) => {
-          //setLoaded(false);
-          let currGroup = doc.data().groupCode;
-          console.log("Current user's groups", currGroup);
+        userRef
+          .get()
+          .then((doc) => {
+            //setLoaded(false);
+            let currGroup = doc.data().groupCode;
+            console.log("Current user's groups", currGroup);
 
-          if (currGroup.length !== 0) {
-            currGroup.forEach((group) => {
-              let current = {
-                code: group.groupCode,
-                groupName: group.groupName,
-              };
-              let codeExists;
-              if (GROUPS.length === 0) codeExists = false;
-              else {
-                codeExists = GROUPS.some((e) => e.code === group.code);
-              }
+            if (currGroup.length !== 0) {
+              currGroup.forEach((group) => {
+                let current = {
+                  code: group.groupCode,
+                  groupName: group.groupName,
+                };
+                let codeExists;
+                if (GROUPS.length === 0) codeExists = false;
+                else {
+                  codeExists = GROUPS.some((e) => e.code === group.code);
+                }
 
-              if (mounted && !codeExists) {
-                GROUPS.push(current);
-              }
-            });
-          }
+                if (mounted && !codeExists) {
+                  GROUPS.push(current);
+                }
+              });
+            }
 
-        // console.log ("current name:", currCode);
-        // //add condition here:
+            // console.log ("current name:", currCode);
+            // //add condition here:
 
-        // let current = {
-        //   code: currCode,
-        //   name: 'stinkyalvintester'
-        // };
+            // let current = {
+            //   code: currCode,
+            //   name: 'stinkyalvintester'
+            // };
 
-        // let codeExists;
-        // if (GROUPS.length === 0) codeExists = false;
-        // else {
-        //   codeExists = (GROUPS.some(e => e.code === currCode));
-        // }
-        // console.log(GROUPS);
+            // let codeExists;
+            // if (GROUPS.length === 0) codeExists = false;
+            // else {
+            //   codeExists = (GROUPS.some(e => e.code === currCode));
+            // }
+            // console.log(GROUPS);
 
-        // if (mounted && !codeExists){
-        //   GROUPS.push(current);
-        // }
-          return doc;
-        })
-        .then((doc) => {
-          setLoaded(true);
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
+            // if (mounted && !codeExists){
+            //   GROUPS.push(current);
+            // }
+            return doc;
+          })
+          .then((doc) => {
+            setLoaded(true);
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
       }
-      
+
       return () => {
-        mounted = false
+        mounted = false;
         GROUPS = [];
         setLoaded(false);
       };
@@ -175,10 +198,11 @@ export default function Start({ navigation }) {
           <Button
             title="Create Group Schedule"
             onPress={() =>
-              createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then((groupSchedule) => {
-                console.log(groupSchedule);
-              })
-              
+              createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
+                (groupSchedule) => {
+                  console.log(groupSchedule);
+                }
+              )
             }
           />
           {/* <Button
@@ -244,7 +268,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 4,
     borderRadius: 7,
-    width: window.width * .9,
+    width: window.width * 0.9,
     justifyContent: "flex-start",
     alignItems: "center",
   },
@@ -255,8 +279,8 @@ const styles = StyleSheet.create({
     color: "black",
   },
   shadowProp: {
-    shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },

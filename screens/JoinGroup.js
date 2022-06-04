@@ -11,43 +11,15 @@ import {
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-//import { useGestureHandlerRef } from "@freact-navigation/stack";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
   setCurrentUser,
   setGroupCode,
   setGroupName,
+  setUserName,
 } from "../redux/reducers/userSlice";
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    flex: 1,
-    backgroundColor: "#1f509a",
-    alignItems: "center",
-    marginTop: "0%",
-  },
-  textInput: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    width: "65%",
-    textAlign: "center",
-    borderRadius: 15,
-    //height: "7%",
-  },
-  button: {
-    backgroundColor: "#000",
-    padding: 15,
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: "#fff",
-    textAlign: "center",
-  },
-});
 
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
@@ -111,6 +83,7 @@ export default function JoinGroup({ navigation }) {
       if (docSnapshot.exists) {
         groupName = docSnapshot.data().name;
         dispatch(setGroupCode(groupCode));
+        dispatch(setUserName(name));
         dispatch(setGroupName(groupName));
         //updates current user's info
         firebase
@@ -184,3 +157,31 @@ export default function JoinGroup({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    flex: 1,
+    backgroundColor: "#1f509a",
+    alignItems: "center",
+    marginTop: "0%",
+  },
+  textInput: {
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    width: "65%",
+    textAlign: "center",
+    borderRadius: 15,
+    //height: "7%",
+  },
+  button: {
+    backgroundColor: "#000",
+    padding: 15,
+    borderRadius: 30,
+  },
+  buttonText: {
+    fontSize: 15,
+    color: "#fff",
+    textAlign: "center",
+  },
+});

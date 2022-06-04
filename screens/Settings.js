@@ -16,41 +16,8 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setTentType } from "../redux/reducers/userSlice";
+import { setUserName, setTentType } from "../redux/reducers/userSlice";
 import background from "../assets/Cameron-Crazies.jpg";
-
-const styles = StyleSheet.create({
-  settingsContainer: {
-    flexDirection: "column",
-    flex: 1,
-    alignItems: "center",
-    //backgroundColor: "#1f509a",
-    backgroundColor: "#C2C6D0",
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    //opacity: 0.4,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "absolute",
-    left: 0,
-  },
-  button: {
-    backgroundColor: "#1F509A",
-    padding: 15,
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    alignItems: "center",
-  },
-});
 
 export default function Settings({ route, navigation }) {
   const [isCreator, setCreator] = useState(false);
@@ -64,8 +31,7 @@ export default function Settings({ route, navigation }) {
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
 
-  console.log("Current group code: ", groupCode);
-  console.log("Current group name: ", name);
+  console.log("route params", route.params);
   //gets current user's group role from redux store
 
   const userRef = firebase
@@ -73,6 +39,16 @@ export default function Settings({ route, navigation }) {
     .collection("users")
     .doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+
+  //sets states to updated params after each time param is changed
+  useEffect(() => {
+    let mounted = true;
+    //console.log("route params after change", route.params);
+    setCurrGroupName(groupName);
+    setName(userName);
+    setTent(tentType);
+    return () => (mounted = false);
+  }, [groupName]);
 
   //useEffect(() => {
   useFocusEffect(
@@ -102,8 +78,9 @@ export default function Settings({ route, navigation }) {
       tentType: tent,
     });
     groupRef.collection("members").doc(firebase.auth().currentUser.uid).update({
-      name: userName,
+      name: name,
     });
+    dispatch(setUserName(name));
     dispatch(setTentType(tent));
   };
 
@@ -111,7 +88,7 @@ export default function Settings({ route, navigation }) {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
         groupCode: groupCode,
-        groupName: groupName,     
+        groupName: groupName,
       }),
     });
     if (isCreator) {
@@ -203,3 +180,36 @@ export default function Settings({ route, navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  settingsContainer: {
+    flexDirection: "column",
+    flex: 1,
+    alignItems: "center",
+    //backgroundColor: "#1f509a",
+    backgroundColor: "#C2C6D0",
+  },
+  backgroundImage: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover",
+    //opacity: 0.4,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "absolute",
+    left: 0,
+  },
+  button: {
+    backgroundColor: "#1F509A",
+    padding: 15,
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+  },
+});

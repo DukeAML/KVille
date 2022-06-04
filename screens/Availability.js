@@ -54,42 +54,6 @@ const agenda = {
   ],
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 0,
-    //justifyContent:"center"
-  },
-  wrapper: {
-    flexDirection: "row",
-  },
-  title: {
-    flex: 1,
-  },
-  row: {
-    height: 40,
-    backgroundColor: "#E7E6E1",
-  },
-  text: {
-    textAlign: "center",
-  },
-  modalContainer: {
-    width: "100%",
-    height: "90%",
-    borderRadius: 25,
-    borderWidth: 1,
-    borderStyle: "solid",
-    alignItems: "center",
-    //justifyContent: "center",
-    backgroundColor: "#ffffff",
-  },
-  selectTime: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-});
-
 //const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
 const tableData = [];
 for (let i = 0; i < 46; i += 1) {
@@ -160,6 +124,7 @@ export default function Availability({ route }) {
         animationType="slide"
         visible={isModalVisible}
         backdropOpacity={0.1}
+        onBackdropPress={toggleModal}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
@@ -317,3 +282,39 @@ export default function Availability({ route }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 0,
+    //justifyContent:"center"
+  },
+  wrapper: {
+    flexDirection: "row",
+  },
+  title: {
+    flex: 1,
+  },
+  row: {
+    height: 40,
+    backgroundColor: "#E7E6E1",
+  },
+  text: {
+    textAlign: "center",
+  },
+  modalContainer: {
+    width: "100%",
+    height: "90%",
+    borderRadius: 25,
+    borderWidth: 1,
+    borderStyle: "solid",
+    alignItems: "center",
+    //justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
+  selectTime: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+});
