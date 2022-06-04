@@ -28,3 +28,5 @@ Issue log:
 Looking ahead: 
     -RTL - react testing library, create tests; unit and integration tests (jest/enzyme)
     -CI/CD - automate integration with testing (circleCI)
+    -third party logging service (sentry) 
+    -react error boundary, more error catching

@@ -49,7 +49,7 @@ export default function Start({ navigation }) {
   const renderGroup = ({ item }) => {
     return (
       <Group
-        name={item.groupName}
+        groupName={item.groupName}
         onPress={() => {
           firebase.firestore().collection("groups").doc(item.code).get().then((doc) => {
             console.log("tent type", doc.data().tentType);
