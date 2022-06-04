@@ -43,10 +43,26 @@ let colorCodes = [
 
 let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 
+const TimeColumn = () => {
+  return (
+    <Table>
+      <Col
+        data={times}
+        heightArr={[
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60, 60, 60, 60,
+        ]} 
+        textStyle={StyleSheet.flatten(styles.timesText)}
+      />
+    </Table>
+  );
+};
 
-const OneCell = ({ index, person }) => {
+
+/* const OneCell = ({ index, person }) => {
   //const backgroundColor = "pink";
-  const indexofUser = colorCodes.map(object => object.name).indexOf(person);
+  //const indexofUser = colorCodes.map(object => object.name).indexOf(person);
+  const indexofUser = colorCodes.findIndex((object) =>  object.name === person);
   const backgroundColor = colorCodes[indexofUser].color;
   return (
     <View style={{ flex: 1 }}>
@@ -65,7 +81,7 @@ const TimeColumn = () => {
       <Col
         data={times}
         heightArr={[
-          30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
           60, 60, 60, 60, 60, 60, 60, 60,
         ]} 
         textStyle={StyleSheet.flatten(styles.timesText)}
@@ -80,20 +96,20 @@ const RenderCell = (data, index, members, numDay, numNight) => {
   //console.log("index ", numDay, isNight, numNight);
   if (!isNight && numDay === 1) {
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, {width: dimensions.win.width*.88}]}>
         <OneCell index={index} person={people[0]} />
       </View>
     );
   } else if ((isNight && numNight === 2) || (!isNight && numDay === 2)) {
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, {width: dimensions.win.width*.88}]}>
         <OneCell index={index} person={people[0]} />
         <OneCell index={index} person={people[1]} />
       </View>
     );
   } else if (isNight && numNight === 6) {
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, {width: dimensions.win.width*.88}]}>
         <OneCell index={index} person={people[0]} />
         <OneCell index={index} person={people[1]} />
         <OneCell index={index} person={people[2]} />
@@ -104,7 +120,7 @@ const RenderCell = (data, index, members, numDay, numNight) => {
     );
   } else {
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, {width: dimensions.win.width*.88}]}>
         <OneCell index={index} person={people[0]} />
         <OneCell index={index} person={people[1]} />
         <OneCell index={index} person={people[2]} />
@@ -146,18 +162,20 @@ const DailyTable = ({ dayArr, numberDay, numberNight, day }) => {
       indexAdder=0;
   }
   return (
-    <Table borderStyle={{ borderColor: "transparent" }}>
-      {dayArr.map((rowData, index) => (
-        <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
-          <Cell
-            data={RenderCell(1, index+indexAdder, dayArr[index], numberDay, numberNight)}
-            textStyle={StyleSheet.flatten(styles.text)}
-          />
-        </TableWrapper>
-      ))}
-    </Table>
+    <View style = {{marginTop: 30}}>
+      <Table borderStyle={{ borderColor: "transparent" }}>
+        {dayArr.map((rowData, index) => (
+          <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
+            <Cell
+              data={RenderCell(1, index+indexAdder, dayArr[index], numberDay, numberNight)}
+              textStyle={StyleSheet.flatten(styles.text)}
+            />
+          </TableWrapper>
+        ))}
+      </Table>
+    </View>
   );
-};
+}; */
 
 
 const deleteCell = () =>{
@@ -168,17 +186,140 @@ const deleteCell = () =>{
 
 
 const win = Dimensions.get("window");
-const tableLength = win.width * .88;
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params;
   console.log("Schedule screen params", route.params);
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
   const [isModalVisible, setModalVisible] = useState(false);
+  
+  
+  
+  /* const [dimensions, setDimensions] = useState({ win });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ win }) => {
+      setDimensions({ win });
+    });
+    return () => subscription?.remove();
+  });
+
+  console.log ('Dimensions: ', dimensions.win.width, 'x', dimensions.win.height); */
+
+
+
+  const OneCell = ({ index, person }) => {
+    //const backgroundColor = "pink";
+    //const indexofUser = colorCodes.map(object => object.name).indexOf(person);
+    const indexofUser = colorCodes.findIndex((object) =>  object.name === person);
+    const backgroundColor = colorCodes[indexofUser].color;
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => console.log("index: ", index)}>
+          <View style={[styles.timeSlotBtn, {backgroundColor: backgroundColor}]}>
+            <Text style={styles.btnText}>{person}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  
+  
+  const RenderCell = (data, index, members, numDay, numNight) => {
+    const people = members.split(" ");
+    const isNight = (index >= 2 && index <= 13);
+    //console.log("index ", numDay, isNight, numNight);
+    if (!isNight && numDay === 1) {
+      return (
+        <View style={styles.row}>
+          <OneCell index={index} person={people[0]} />
+        </View>
+      );
+    } else if ((isNight && numNight === 2) || (!isNight && numDay === 2)) {
+      return (
+        <View style={styles.row}>
+          <OneCell index={index} person={people[0]} />
+          <OneCell index={index} person={people[1]} />
+        </View>
+      );
+    } else if (isNight && numNight === 6) {
+      return (
+        <View style={styles.row}>
+          <OneCell index={index} person={people[0]} />
+          <OneCell index={index} person={people[1]} />
+          <OneCell index={index} person={people[2]} />
+          <OneCell index={index} person={people[3]} />
+          <OneCell index={index} person={people[4]} />
+          <OneCell index={index} person={people[5]} />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.row}>
+          <OneCell index={index} person={people[0]} />
+          <OneCell index={index} person={people[1]} />
+          <OneCell index={index} person={people[2]} />
+          <OneCell index={index} person={people[3]} />
+          <OneCell index={index} person={people[4]} />
+          <OneCell index={index} person={people[5]} />
+          <OneCell index={index} person={people[6]} />
+          <OneCell index={index} person={people[7]} />
+          <OneCell index={index} person={people[8]} />
+          <OneCell index={index} person={people[9]} />
+        </View>
+      );
+    }
+  };
+  
+  const DailyTable = ({ dayArr, numberDay, numberNight, day }) => {
+    //console.log('numday and night: ', numberDay, numberNight);
+    let indexAdder = 0;
+    switch (day) {
+      case 'Monday':
+        indexAdder = 48;
+        break;
+      case 'Tuesday':
+        indexAdder = 96;
+        break;
+      case 'Wednesday':
+        indexAdder = 144;
+        break;
+      case 'Thursday':
+        indexAdder = 192;
+        break;
+      case 'Friday':
+        indexAdder = 240;
+        break;
+      case 'Saturday':
+        indexAdder = 288;
+        break;
+      default:
+        indexAdder=0;
+    }
+    return (
+      <View style = {{marginTop: 30}}>
+        <Table borderStyle={{ borderColor: "transparent" }}>
+          {dayArr.map((rowData, index) => (
+            <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
+              <Cell
+                data={RenderCell(1, index+indexAdder, dayArr[index], numberDay, numberNight)}
+                textStyle={StyleSheet.flatten(styles.text)}
+              />
+            </TableWrapper>
+          ))}
+        </Table>
+      </View>
+    );
+  };
+
+  
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+ 
 
   let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos;
   const ref = useRef(); //creates reference for scrollView
@@ -305,58 +446,58 @@ export default function Schedule({ route }) {
               <Button title="Hide modal" onPress={toggleModal} />
             </View>
           </Modal>
-        </View>
+        </View> 
 
 
 
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, styles.shadowProp]}>
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(sunPos)}
           >
-            <Text style={styles.buttonText}>Sunday</Text>
+            <Text style={styles.buttonText}>Sun</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(monPos)}
           >
-            <Text style={styles.buttonText}>Monday</Text>
+            <Text style={styles.buttonText}>Mon</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(tuesPos)}
           >
-            <Text style={styles.buttonText}>Tuesday</Text>
+            <Text style={styles.buttonText}>Tues</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(wedPos)}
           >
-            <Text style={styles.buttonText}>Wednesday</Text>
+            <Text style={styles.buttonText}>Wed</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(thurPos)}
           >
-            <Text style={styles.buttonText}>Thursday</Text>
+            <Text style={styles.buttonText}>Thur</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(friPos)}
           >
-            <Text style={styles.buttonText}>Friday</Text>
+            <Text style={styles.buttonText}>Fri</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => autoScroll(satPos)}
           >
-            <Text style={styles.buttonText}>Saturday</Text>
+            <Text style={styles.buttonText}>Sat</Text>
           </TouchableOpacity>
         </View>
 
@@ -512,10 +653,11 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     backgroundColor: "#C2C6D0",
   },
-  text: { margin: 6 },
+  text: { margin: 3 },
   timesText: {
     fontWeight: 800,
-    marginHorizontal:6
+    fontSize: 8,
+    marginRight:6
   },
   buttonContainer: {
     flex: 1,
@@ -555,7 +697,7 @@ const styles = StyleSheet.create({
     //flex: 1,
     flexDirection: "row",
     backgroundColor: "lavender",
-    width: tableLength,
+    width: win.width * .88,
     alignItems: "center",
     borderBottomColor: 'black',
     borderBottomWidth: 1
@@ -569,7 +711,13 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     justifyContent: "center"
   },
-  btnText: { textAlign: "center", color: "#545454", fontWeight: "500" },
+  btnText: { textAlign: "center", color: "#545454", fontWeight: "500", fontSize: 10 },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -3, height: 5},
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+  },
   deletePopup: {
     alignSelf: "center",
     flexDirection: "column", 

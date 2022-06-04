@@ -77,9 +77,7 @@ export default function GroupInfo({ route, navigation }) {
                 members.push(current);
               }
 
-              let indexOfUser = members.findIndex((member) => {
-                return member.id === currName;
-              });
+              let indexOfUser = members.findIndex((member) =>  member.id === currName);
               tentStatusChanged = !(
                 members[indexOfUser].inTent == tentCondition
               );
