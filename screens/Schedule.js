@@ -215,7 +215,10 @@ export default function Schedule({ route }) {
     const backgroundColor = colorCodes[indexofUser].color;
     return (
       <View style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => console.log("index: ", index)}>
+        <TouchableOpacity onPress={() => {
+          toggleModal();
+          console.log("index: ", index)
+        }}>
           <View style={[styles.timeSlotBtn, {backgroundColor: backgroundColor}]}>
             <Text style={styles.btnText}>{person}</Text>
           </View>
@@ -438,12 +441,24 @@ export default function Schedule({ route }) {
           <Modal 
             isVisible={isModalVisible}
             onBackdropPress={() => setModalVisible(false)}
-            //customBackdrop={<View style={{ flex: 1 }} />}
           >
             <View style={styles.deletePopup}>
-              <Text>Hello!</Text>
-
-              <Button title="Hide modal" onPress={toggleModal} />
+              <Text>Edit Timeslot</Text>
+              <TouchableOpacity onPress={toggleModal} >
+                <View style = 
+                {{
+                  backgroundColor: "#f2f2f2",
+                  width: "90%",
+                  alignSelf: "center"
+                }}>
+                  <Text>Change Member</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={toggleModal} >
+                <View style = {{backgroundColor: "#636363"}}>
+                  <Text style= {{textAlign: "center", color: "white"}}>Edit</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </Modal>
         </View> 
@@ -724,7 +739,7 @@ const styles = StyleSheet.create({
     marginTop: win.height * .90,
     width: win.width,
     height: win.height * 0.1,
-    backgroundColor: "white"
+    backgroundColor: "#C2C6D0"
   }
 });
 
