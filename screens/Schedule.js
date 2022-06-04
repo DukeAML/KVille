@@ -31,7 +31,7 @@ const times = [
 ];
 
 const colors = ['red', '#f7e49a', '#fece79', '#f8a656', '#f48170', '#f38193', '#f391bc',
-  '#e4b7d5' , '#8b8bc3', '#94cae3', '#a0d9d9', '#97d1a9', '#97d1a9'];
+  '#e4b7d5' , '#8b8bc3', '#94cae3', '#a0d9d9', '#97d1a9', '#ffcaaf'];
 
 /* let colorCodes = [
   { name: 'null', color: colors[0] },
@@ -64,15 +64,16 @@ let colorCodes = [
   "null",
 ];  */
 //let SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY = new Array();
-let schedule = new Array();
+let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 
-let SUNDAY = new Array();
+//Intitalize the schedule for each day of the week
+/* let SUNDAY = new Array();
 let MONDAY = new Array();
 let TUESDAY = new Array();
 let WEDNESDAY = new Array();
 let THURSDAY = new Array();
 let FRIDAY = new Array();
-let SATURDAY = new Array();
+let SATURDAY = new Array(); */
 
 const OneCell = ({ index, person }) => {
   //const backgroundColor = "pink";
@@ -81,7 +82,7 @@ const OneCell = ({ index, person }) => {
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={() => console.log("index: ", index)}>
-        <View style={[styles.btn, {backgroundColor: backgroundColor}]}>
+        <View style={[styles.timeSlotBtn, {backgroundColor: backgroundColor}]}>
           <Text style={styles.btnText}>{person}</Text>
         </View>
       </TouchableOpacity>
@@ -95,7 +96,7 @@ const TimeColumn = () => {
       <Col
         data={times}
         heightArr={[
-          0, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
           60, 60, 60, 60, 60, 60, 60, 60,
         ]} 
         textStyle={StyleSheet.flatten(styles.timesText)}
@@ -153,7 +154,7 @@ const RenderCell = (data, index, members, numDay, numNight) => {
 const DailyTable = ({ day, numberDay, numberNight }) => {
   //console.log('numday and night: ', numberDay, numberNight);
   return (
-    <Table borderStyle={{ borderWidth: 1 }}>
+    <Table borderStyle={{ borderColor: "transparent" }}>
       {day.map((rowData, index) => (
         <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
           <Cell
@@ -199,6 +200,18 @@ export default function Schedule({ route }) {
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
   }
 
+/*   const DayNavigationButton = ({day, position}) =>{
+    console.log('position : ',position);
+    return(
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => autoScroll({position})}
+      >
+        <Text style={styles.buttonText}>{day}</Text>
+      </TouchableOpacity>
+    );
+  }; */
+
   //const groupRef = firebase.firestore().collection("groups").doc(code);
   const groupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
 
@@ -213,17 +226,17 @@ export default function Schedule({ route }) {
           .then((doc) => {
             schedule = doc.data().groupSchedule;
 
-            console.log("Here is Schedule from firebase: ", schedule);
+            //console.log("Here is Schedule from firebase: ", schedule);
             /* console.log('value: ', schedule[120]);
           MONDAY.push(schedule[0]); */
 
-            SUNDAY = schedule.splice(0, 48);
-            MONDAY = schedule.splice(0, 48);
-            TUESDAY = schedule.splice(0, 48);
-            WEDNESDAY = schedule.splice(0, 48);
-            THURSDAY = schedule.splice(0, 48);
-            FRIDAY = schedule.splice(0, 48);
-            SATURDAY = schedule.splice(0, 48);
+            /* SUNDAY = schedule.slice(0, 48);
+            MONDAY = schedule.slice(48, 96);
+            TUESDAY = schedule.slice(96, 144);
+            WEDNESDAY = schedule.slice(144, 192);
+            THURSDAY = schedule.slice(192, 240);
+            FRIDAY = schedule.slice(240, 288);
+            SATURDAY = schedule.slice(288, 336); */
 
             /* console.log('Schedules: \n', SUNDAY, '\n', MONDAY,  '\n', TUESDAY, '\n', WEDNESDAY, 
             '\n', THURSDAY, '\n', FRIDAY, '\n', SATURDAY,); */
@@ -270,19 +283,27 @@ export default function Schedule({ route }) {
     return <AppLoading />;
   } else {
 
+    console.log('color codes: ', schedule);
+
     for (let index = 0; index < colorCodes.length ; index++){
       colorCodes[index].color = colors[index];
     }
 
     return (
       <View style={styles.bigContainer}>
-        
+
+        {/* <View style={styles.buttonContainer}>
+          <DayNavigationButton day='Sunday' position={sunPos}/>
+          <DayNavigationButton day='Monday' position={monPos}/>
+          <DayNavigationButton day='Tuesday' position={tuesPos}/>
+          <DayNavigationButton day='Wednesday' position={wedPos}/>
+          <DayNavigationButton day='Thursday' position={thurPos}/>
+          <DayNavigationButton day='Friday' position={friPos}/>
+          <DayNavigationButton day='Saturday' position={satPos}/>
+        </View> */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[
-              styles.button,
-              { borderTopLeftRadius: 7, borderBottomLeftRadius: 7 },
-            ]}
+            style={styles.button}
             onPress={() => autoScroll(sunPos)}
           >
             <Text style={styles.buttonText}>Sunday</Text>
@@ -324,10 +345,7 @@ export default function Schedule({ route }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.button,
-              { borderTopRightRadius: 7, borderBottomRightRadius: 7 },
-            ]}
+            style={styles.button}
             onPress={() => autoScroll(satPos)}
           >
             <Text style={styles.buttonText}>Saturday</Text>
@@ -380,7 +398,7 @@ export default function Schedule({ route }) {
 
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={SUNDAY} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable day={schedule.slice(0,48)} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
@@ -395,7 +413,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={MONDAY} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable day={schedule.slice(48, 96)} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
@@ -410,7 +428,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={TUESDAY} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable day={schedule.slice(96, 144)} numberDay={numberForDay} numberNight={numberForNight} />
           </View>
 
           <Text
@@ -425,7 +443,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={WEDNESDAY} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable day={schedule.slice(144, 192)} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -440,7 +458,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={THURSDAY} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable day={schedule.slice(192, 240)} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -455,7 +473,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={FRIDAY} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable day={schedule.slice(240, 288)} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
 
           <Text
@@ -470,7 +488,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={SATURDAY} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable day={schedule.slice(288, 336)} numberDay={numberForDay} numberNight={numberForNight}/>
           </View>
         </ScrollView>
       </View>
@@ -489,14 +507,14 @@ const styles = StyleSheet.create({
   text: { margin: 6 },
   timesText: {
     fontWeight: 800,
-    marginHorizontal:10
+    marginHorizontal:6
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginHorizontal: 20,
-    marginTop: 2,
+/*     marginHorizontal: 20,
+    marginTop: 2, */
   },
   button: {
     backgroundColor: "#e5e5e5",
@@ -517,6 +535,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
     textAlign: "center",
+    justifyContent: "center"
   },
   dayHeader: {
     marginVertical: 20,
@@ -530,9 +549,11 @@ const styles = StyleSheet.create({
     backgroundColor: "lavender",
     width: tableLength,
     alignItems: "center",
+    borderBottomColor: 'black',
+    borderBottomWidth: 1
     //justifyContent: "space-around"
   },
-  btn: {
+  timeSlotBtn: {
     //width: 58,
     height: 30,
     backgroundColor: "#78B7BB",

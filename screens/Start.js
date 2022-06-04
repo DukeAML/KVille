@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Dimensions,
   SafeAreaView,
   FlatList,
   Button,
@@ -25,6 +26,8 @@ import { createTestCases } from "../backend/firebaseAdd";
 import coachk from "../assets/coachk.png";
 
 require("firebase/firestore");
+
+const window = Dimensions.get("window");
 
 let GROUPS = new Array();
 
@@ -241,7 +244,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 4,
     borderRadius: 7,
-    width: 300,
+    width: window.width * .9,
     justifyContent: "flex-start",
     alignItems: "center",
   },
