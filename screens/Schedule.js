@@ -18,6 +18,7 @@ import {
 
 import { useFocusEffect } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
+import Modal from "react-native-modal";
 
 import { createGroupSchedule } from "../backend/CreateGroupSchedule";
 import firebase from "firebase/compat/app";
@@ -33,47 +34,15 @@ const times = [
 const colors = ['red', '#f7e49a', '#fece79', '#f8a656', '#f48170', '#f38193', '#f391bc',
   '#e4b7d5' , '#8b8bc3', '#94cae3', '#a0d9d9', '#97d1a9', '#ffcaaf'];
 
-/* let colorCodes = [
-  { name: 'null', color: colors[0] },
-  { name: 'poop0', color: colors[1] },
-  { name: 'poop1', color: colors[2] },
-  { name: 'poop2', color: colors[3] },
-  { name: 'poop3', color: colors[4] },
-  { name: 'poop4', color: colors[5] },
-  { name: 'poop5', color: colors[6] },
-  { name: 'poop6', color: colors[7] },
-  { name: 'poop7', color: colors[8] },
-  { name: 'poop8', color: colors[9] },
-  { name: 'poop9', color: colors[10] },
-  { name: 'poop10', color: colors[11] },
-  { name: 'poop11', color: colors[12] },
-  { name: 'TrueAlways', color: 'blue' },
-]; */
 
 let colorCodes = [
   {name: 'null', color: 'red'}
 ];
 
-/* let group = [
-  "poop1", "poop2", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", 
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
-  "null",
-];  */
-//let SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY = new Array();
+
+
 let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 
-//Intitalize the schedule for each day of the week
-/* let SUNDAY = new Array();
-let MONDAY = new Array();
-let TUESDAY = new Array();
-let WEDNESDAY = new Array();
-let THURSDAY = new Array();
-let FRIDAY = new Array();
-let SATURDAY = new Array(); */
 
 const OneCell = ({ index, person }) => {
   //const backgroundColor = "pink";
@@ -151,14 +120,37 @@ const RenderCell = (data, index, members, numDay, numNight) => {
   }
 };
 
-const DailyTable = ({ day, numberDay, numberNight }) => {
+const DailyTable = ({ dayArr, numberDay, numberNight, day }) => {
   //console.log('numday and night: ', numberDay, numberNight);
+  let indexAdder = 0;
+  switch (day) {
+    case 'Monday':
+      indexAdder = 48;
+      break;
+    case 'Tuesday':
+      indexAdder = 96;
+      break;
+    case 'Wednesday':
+      indexAdder = 144;
+      break;
+    case 'Thursday':
+      indexAdder = 192;
+      break;
+    case 'Friday':
+      indexAdder = 240;
+      break;
+    case 'Saturday':
+      indexAdder = 288;
+      break;
+    default:
+      indexAdder=0;
+  }
   return (
     <Table borderStyle={{ borderColor: "transparent" }}>
-      {day.map((rowData, index) => (
+      {dayArr.map((rowData, index) => (
         <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
           <Cell
-            data={RenderCell(1, index, day[index], numberDay, numberNight)}
+            data={RenderCell(1, index+indexAdder, dayArr[index], numberDay, numberNight)}
             textStyle={StyleSheet.flatten(styles.text)}
           />
         </TableWrapper>
@@ -166,13 +158,27 @@ const DailyTable = ({ day, numberDay, numberNight }) => {
     </Table>
   );
 };
+
+
+const deleteCell = () =>{
+  //must delete from 'schedule' and update the string within
+  //then has to also update the schedule on screen
+
+}
+
+
 const win = Dimensions.get("window");
-const tableLength = win.width * .9;
+const tableLength = win.width * .88;
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params;
   console.log("Schedule screen params", route.params);
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos;
   const ref = useRef(); //creates reference for scrollView
@@ -225,21 +231,6 @@ export default function Schedule({ route }) {
           .get()
           .then((doc) => {
             schedule = doc.data().groupSchedule;
-
-            //console.log("Here is Schedule from firebase: ", schedule);
-            /* console.log('value: ', schedule[120]);
-          MONDAY.push(schedule[0]); */
-
-            /* SUNDAY = schedule.slice(0, 48);
-            MONDAY = schedule.slice(48, 96);
-            TUESDAY = schedule.slice(96, 144);
-            WEDNESDAY = schedule.slice(144, 192);
-            THURSDAY = schedule.slice(192, 240);
-            FRIDAY = schedule.slice(240, 288);
-            SATURDAY = schedule.slice(288, 336); */
-
-            /* console.log('Schedules: \n', SUNDAY, '\n', MONDAY,  '\n', TUESDAY, '\n', WEDNESDAY, 
-            '\n', THURSDAY, '\n', FRIDAY, '\n', SATURDAY,); */
           })
 
         groupRef.collection('members').get()
@@ -301,6 +292,23 @@ export default function Schedule({ route }) {
           <DayNavigationButton day='Friday' position={friPos}/>
           <DayNavigationButton day='Saturday' position={satPos}/>
         </View> */}
+
+        <View>
+          <Modal 
+            isVisible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+            //customBackdrop={<View style={{ flex: 1 }} />}
+          >
+            <View style={styles.deletePopup}>
+              <Text>Hello!</Text>
+
+              <Button title="Hide modal" onPress={toggleModal} />
+            </View>
+          </Modal>
+        </View>
+
+
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -398,7 +406,7 @@ export default function Schedule({ route }) {
 
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(0,48)} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable dayArr={schedule.slice(0,48)} numberDay={numberForDay} numberNight={numberForNight} day='Sunday' />
           </View>
 
           <Text
@@ -413,7 +421,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(48, 96)} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable dayArr={schedule.slice(48, 96)} numberDay={numberForDay} numberNight={numberForNight} day='Monday' />
           </View>
 
           <Text
@@ -428,7 +436,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(96, 144)} numberDay={numberForDay} numberNight={numberForNight} />
+            <DailyTable dayArr={schedule.slice(96, 144)} numberDay={numberForDay} numberNight={numberForNight} day='Tuesday' />
           </View>
 
           <Text
@@ -443,7 +451,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(144, 192)} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable dayArr={schedule.slice(144, 192)} numberDay={numberForDay} numberNight={numberForNight} day='Wednesday'/>
           </View>
 
           <Text
@@ -458,7 +466,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(192, 240)} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable dayArr={schedule.slice(192, 240)} numberDay={numberForDay} numberNight={numberForNight} day='Thursday'/>
           </View>
 
           <Text
@@ -473,7 +481,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(240, 288)} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable dayArr={schedule.slice(240, 288)} numberDay={numberForDay} numberNight={numberForNight} day='Friday'/>
           </View>
 
           <Text
@@ -488,7 +496,7 @@ export default function Schedule({ route }) {
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable day={schedule.slice(288, 336)} numberDay={numberForDay} numberNight={numberForNight}/>
+            <DailyTable dayArr={schedule.slice(288, 336)} numberDay={numberForDay} numberNight={numberForNight} day='Saturday'/>
           </View>
         </ScrollView>
       </View>
@@ -562,4 +570,64 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   btnText: { textAlign: "center", color: "#545454", fontWeight: "500" },
+  deletePopup: {
+    alignSelf: "center",
+    flexDirection: "column", 
+    marginTop: win.height * .90,
+    width: win.width,
+    height: win.height * 0.1,
+    backgroundColor: "white"
+  }
 });
+
+
+
+
+//Intitalize the schedule for each day of the week
+/* let SUNDAY = new Array();
+let MONDAY = new Array();
+let TUESDAY = new Array();
+let WEDNESDAY = new Array();
+let THURSDAY = new Array();
+let FRIDAY = new Array();
+let SATURDAY = new Array(); */
+
+/* let group = [
+  "poop1", "poop2", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", 
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
+  "null",
+];  */
+
+/* let colorCodes = [
+  { name: 'null', color: colors[0] },
+  { name: 'poop0', color: colors[1] },
+  { name: 'poop1', color: colors[2] },
+  { name: 'poop2', color: colors[3] },
+  { name: 'poop3', color: colors[4] },
+  { name: 'poop4', color: colors[5] },
+  { name: 'poop5', color: colors[6] },
+  { name: 'poop6', color: colors[7] },
+  { name: 'poop7', color: colors[8] },
+  { name: 'poop8', color: colors[9] },
+  { name: 'poop9', color: colors[10] },
+  { name: 'poop10', color: colors[11] },
+  { name: 'poop11', color: colors[12] },
+  { name: 'TrueAlways', color: 'blue' },
+]; */
+
+
+//console.log("Here is Schedule from firebase: ", schedule);
+
+/*  In firebase code
+
+SUNDAY = schedule.slice(0, 48);
+MONDAY = schedule.slice(48, 96);
+TUESDAY = schedule.slice(96, 144);
+WEDNESDAY = schedule.slice(144, 192);
+THURSDAY = schedule.slice(192, 240);
+FRIDAY = schedule.slice(240, 288);
+SATURDAY = schedule.slice(288, 336); */
