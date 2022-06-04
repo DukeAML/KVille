@@ -1,10 +1,10 @@
+import React, { useState, useEffect } from "react";
+import { Text } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
-import { Text } from "react-native";
 import { IconButton } from "react-native-paper";
 import AppLoading from "expo-app-loading";
 

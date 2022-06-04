@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
 import { Text, View, StyleSheet, FlatList, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
+import { useSelector } from "react-redux";
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -30,15 +31,15 @@ const Member = ({ name, backgroundColor }) => (
 export default function GroupInfo({ route, navigation }) {
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
 
-  const { code, name } = route.params; // take in navigation parameters
-  console.log("Group code passed to GroupInfo:", code);
+  const { groupCode, groupName } = route.params; // take in navigation parameters
+  console.log("Group code passed to GroupInfo:", groupCode);
 
   /* const [groupName,setGroupName]= useState('');
   const groupCode = useSelector((state) => state.user.currentUser.groupCode); */
 
   //const GroupRef = firebase.firestore().collection("groups").doc(groupCode);
 
-  const GroupRef = firebase.firestore().collection("groups").doc(code);
+  const GroupRef = firebase.firestore().collection("groups").doc(groupCode);
 
   //useEffect(() => {
   useFocusEffect(
@@ -108,7 +109,7 @@ export default function GroupInfo({ route, navigation }) {
         //setLoaded(false);
         mounted = false;
       };
-    }, [code])
+    }, [groupCode])
   );
   //}, [navigation]);
 
@@ -127,12 +128,12 @@ export default function GroupInfo({ route, navigation }) {
         <Text style={styles.header}>Group Name</Text>
 
         <View style={styles.boxText}>
-          <Text style={styles.contentText}>{name}</Text>
+          <Text style={styles.contentText}>{groupName}</Text>
         </View>
 
         <Text style={styles.header}>Group Code</Text>
         <View style={styles.boxText}>
-          <Text style={styles.contentText}>{code}</Text>
+          <Text style={styles.contentText}>{groupCode}</Text>
         </View>
 
         <SafeAreaView>

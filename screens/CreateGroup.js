@@ -8,7 +8,6 @@ import {
   TextInput,
   ImageBackground,
 } from "react-native";
-import zion from "../assets/zion.png";
 import { Picker } from "@react-native-picker/picker";
 
 import firebase from "firebase/compat/app";
@@ -16,6 +15,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { generateGroupCode } from "../backend/GroupCode";
+import zion from "../assets/zion.png";
 
 require("firebase/firestore");
 
@@ -92,6 +92,7 @@ import {
   setCurrentUser,
   setGroupCode,
   setGroupName,
+  setUserName,
   setTentType,
 } from "../redux/reducers/userSlice";
 // import {
@@ -161,11 +162,12 @@ export default function CreateGroup({ navigation }) {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayUnion({
         groupCode: group.groupCode,
-        name: group.groupName,
+        groupName: group.groupName,
       }),
     });
     dispatch(setGroupCode(group.groupCode));
     dispatch(setGroupName(group.groupName));
+    dispatch(setUserName(group.userName));
     dispatch(setTentType(group.tentType));
     userRef
       .get()
@@ -179,8 +181,8 @@ export default function CreateGroup({ navigation }) {
       })
       .then((snapshot) => {
         navigation.navigate("GroupInfo", {
-          code: group.groupCode,
-          name: group.groupName,
+          groupCode: group.groupCode,
+          groupName: group.groupName,
         });
       });
   };

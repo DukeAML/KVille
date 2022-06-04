@@ -104,7 +104,7 @@ const availability = new Array(336);
 availability.fill(true);
 
 export default function Availability({ route }) {
-  const { code } = route.params;
+  const { groupCode } = route.params;
 
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -134,7 +134,7 @@ export default function Availability({ route }) {
     firebase
       .firestore()
       .collection("groups")
-      .doc(code)
+      .doc(groupCode)
       .collection("members")
       .doc(firebase.auth().currentUser.uid)
       .update({

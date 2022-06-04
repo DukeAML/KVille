@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-
 import {
   Table,
   TableWrapper,

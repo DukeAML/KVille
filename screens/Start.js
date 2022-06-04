@@ -11,17 +11,19 @@ import {
   FlatList,
   Button,
 } from "react-native";
-import { createGroupSchedule } from "../backend/CreateGroupSchedule";
-import { createTestCases } from "../backend/firebaseAdd";
+
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
 import AppLoading from "expo-app-loading";
-import coachk from "../assets/coachk.png";
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
 import { setGroupCode, setGroupName, setTentType } from "../redux/reducers/userSlice";
+import { createGroupSchedule } from "../backend/CreateGroupSchedule";
+import { createTestCases } from "../backend/firebaseAdd";
+import coachk from "../assets/coachk.png";
 
 require("firebase/firestore");
 
@@ -30,10 +32,10 @@ const window = Dimensions.get("window");
 let GROUPS = new Array();
 
 //const for list Items of Groups List
-const Group = ({ name, onPress }) => (
+const Group = ({ groupName, onPress }) => (
   <TouchableOpacity onPress={onPress} style={[styles.listItem, styles.shadowProp]}>
     <Text style={[styles.listText, {textAlign: "left"}]}>Group Name: </Text>
-    <Text style={styles.listText}>{name}</Text>
+    <Text style={styles.listText}>{groupName}</Text>
   </TouchableOpacity>
 );
 
@@ -50,18 +52,18 @@ export default function Start({ navigation }) {
   const renderGroup = ({ item }) => {
     return (
       <Group
-        name={item.name}
+        name={item.groupName}
         onPress={() => {
           firebase.firestore().collection("groups").doc(item.code).get().then((doc) => {
             console.log("tent type", doc.data().tentType);
             dispatch(setTentType(doc.data().tentType));
           })
           dispatch(setGroupCode(item.code));
-          dispatch(setGroupName(item.name));
+          dispatch(setGroupName(item.groupName));
           navigation.navigate("GroupInfo", {
             //pass groupcode and group name parameters
-            code: item.code,
-            name: item.name,
+            groupCode: item.code,
+            groupName: item.groupName,
           });
         }}
       />
@@ -91,7 +93,7 @@ export default function Start({ navigation }) {
             currGroup.forEach((group) => {
               let current = {
                 code: group.groupCode,
-                name: group.name,
+                groupName: group.groupName,
               };
               let codeExists;
               if (GROUPS.length === 0) codeExists = false;
