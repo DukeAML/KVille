@@ -11,9 +11,8 @@ import {
   Table,
   TableWrapper,
   Row,
-  Rows,
   Col,
-  Cols,
+  Cell,
 } from "react-native-table-component";
 import { IconButton } from "react-native-paper";
 import Modal from "react-native-modal";
@@ -69,6 +68,7 @@ availability.fill(true);
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
+  console.log("availability params", route.params);
 
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -117,6 +117,14 @@ export default function Availability({ route }) {
     });
     return () => subscription?.remove();
   });
+
+  const element = (data, index) => (
+    <TouchableOpacity onPress={() => this._alertIndex(index)}>
+      <View style={styles.btn}>
+        <Text style={styles.btnText}>button</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -260,6 +268,21 @@ export default function Availability({ route }) {
           </TableWrapper>
           <TableWrapper style={{ flex: 1 }}>
             {tableData.map((rowData, index) => (
+              <TableWrapper key={index} style={styles.row}>
+                {rowData.map((cellData, cellIndex) => (
+                  <Cell
+                    key={cellIndex}
+                    data={
+                      availability[48 * cellIndex + index]
+                        ? cellData
+                        : element(cellData, index)
+                    }
+                    textStyle={styles.text}
+                  />
+                ))}
+              </TableWrapper>
+            ))}
+            {/* {tableData.map((rowData, index) => (
               <Row
                 key={index}
                 data={rowData}
@@ -269,7 +292,7 @@ export default function Availability({ route }) {
                 ]}
                 textStyle={styles.text}
               />
-            ))}
+            ))} */}
           </TableWrapper>
         </Table>
       </ScrollView>
@@ -298,6 +321,7 @@ const styles = StyleSheet.create({
   row: {
     height: 40,
     backgroundColor: "#E7E6E1",
+    flexDirection: "row",
   },
   text: {
     textAlign: "center",
@@ -317,4 +341,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
+  btn: { width: 58, height: 18, backgroundColor: "#78B7BB", borderRadius: 2 },
+  btnText: { textAlign: "center", color: "#fff" },
 });

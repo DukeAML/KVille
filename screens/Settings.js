@@ -107,6 +107,7 @@ export default function Settings({ route, navigation }) {
       });
 
     groupRef.update({
+      name: currGroupName,
       tentType: tent,
     });
     groupRef.collection("members").doc(firebase.auth().currentUser.uid).update({
