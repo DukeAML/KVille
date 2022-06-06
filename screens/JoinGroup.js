@@ -21,6 +21,9 @@ import {
 } from "../redux/reducers/userSlice";
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 
+let availability = new Array(336);
+availability.fill(true);
+
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState("");
   const [name, setName] = useState("");
@@ -104,6 +107,7 @@ export default function JoinGroup({ navigation }) {
             groupRole: "member",
             name: name,
             inTent: false,
+            availability: availability,
           });
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));

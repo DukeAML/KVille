@@ -28,6 +28,10 @@ import {
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
 
+let availability = new Array(336);
+availability.fill(true);
+
+
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
     groupName: "",
@@ -83,7 +87,7 @@ export default function CreateGroup({ navigation }) {
       groupRole: groupRole,
       name: group.userName,
       inTent: false,
-      availability: [],
+      availability: availability,
     });
     //updates current user's inGroup and groupCode states
     userRef.update({

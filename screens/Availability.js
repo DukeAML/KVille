@@ -29,12 +29,12 @@ const window = Dimensions.get('window');
 // prettier-ignore
 const agenda = {
   tableHead: ['', 'Sun', 'Mon', 'Tu', 'Wed', 'Th', 'Fri', 'Sat'],
-  tableTime: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM','8 AM', '9 AM', '11 AM', '12 PM',' 1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM',],
+  tableTime: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM','8 AM', '9 AM', '10AM', '11 AM', '12 PM',' 1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM',],
 };
 
 //const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
 const tableData = [];
-for (let i = 0; i < 46; i += 1) {
+for (let i = 0; i < 48; i += 1) {
   const rowData = [];
   for (let j = 0; j < 7; j += 1) {
     rowData.push('');
@@ -42,8 +42,7 @@ for (let i = 0; i < 46; i += 1) {
   tableData.push(rowData);
 }
 
-let availability = new Array(336);
-availability.fill(true);
+let availability;
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -53,7 +52,7 @@ export default function Availability({ route }) {
   const [loaded, setLoaded] = useState(false);
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedDay, setSelectedDay] = useState();
+  const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
     minute: 0,
@@ -74,11 +73,31 @@ export default function Availability({ route }) {
 
   const updateAvailability = () => {
     let startIdx =
-      selectedDay * 48 + startTime.day + startTime.minute + startTime.hour * 2;
+      parseInt(selectedDay) * 48 +
+      parseInt(startTime.day) +
+      parseInt(startTime.minute) +
+      parseInt(startTime.hour) * 2;
     let endIdx =
-      selectedDay * 48 + endTime.day + endTime.minute + endTime.hour * 2;
-    console.log('startIdx', startIdx);
-    console.log('endIdx', endIdx);
+      parseInt(selectedDay) * 48 +
+      parseInt(endTime.day) +
+      parseInt(endTime.minute) +
+      parseInt(endTime.hour) * 2;
+    console.log(
+      'startIdx',
+      selectedDay,
+      startTime.day,
+      startTime.minute,
+      startTime.hour,
+      startIdx
+    );
+    console.log(
+      'endIdx',
+      selectedDay,
+      endTime.day,
+      endTime.minute,
+      endTime.hour,
+      endIdx
+    );
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
@@ -120,7 +139,7 @@ export default function Availability({ route }) {
   );
 
   const element = (data, index) => (
-    <TouchableOpacity onPress={() => this._alertIndex(index)}>
+    <TouchableOpacity onPress={() => console.log(index)}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>button</Text>
       </View>
@@ -198,7 +217,7 @@ export default function Availability({ route }) {
                   }}
                 >
                   <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={12} />
+                  <Picker.Item label='PM' value={24} />
                 </Picker>
               </View>
               <View style={styles.selectTime}>
@@ -237,7 +256,7 @@ export default function Availability({ route }) {
                   }}
                 >
                   <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={12} />
+                  <Picker.Item label='PM' value={24} />
                 </Picker>
               </View>
             </View>
@@ -347,6 +366,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  btn: { width: 58, height: 18, backgroundColor: '#78B7BB', borderRadius: 2 },
-  btnText: { textAlign: 'center', color: '#fff' },
+  btn: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#78B7BB',
+    borderRadius: 2,
+  },
+  btnText: {
+    textAlign: 'center',
+    color: '#fff',
+  },
 });

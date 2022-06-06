@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -7,21 +7,21 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
-} from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Picker } from "@react-native-picker/picker";
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Picker } from '@react-native-picker/picker';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from 'react-redux';
 import {
   setGroupName,
   setUserName,
   setTentType,
-} from "../redux/reducers/userSlice";
-import background from "../assets/Cameron-Crazies.jpg";
+} from '../redux/reducers/userSlice';
+import background from '../assets/Cameron-Crazies.jpg';
 
 export default function Settings({ route, navigation }) {
   const [isCreator, setCreator] = useState(false);
@@ -35,14 +35,14 @@ export default function Settings({ route, navigation }) {
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
 
-  console.log("route params", route.params);
+  console.log('route params', route.params);
   //gets current user's group role from redux store
 
   const userRef = firebase
     .firestore()
-    .collection("users")
+    .collection('users')
     .doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase.firestore().collection("groups").doc(groupCode);
+  const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
   //sets states to updated params after each time param is changed
   useEffect(() => {
@@ -58,22 +58,22 @@ export default function Settings({ route, navigation }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
-      groupRef
-        .collection("members")
-        .doc(firebase.auth().currentUser.uid)
-        .get()
-        .then((snapshot) => {
-          if (snapshot.exists) {
-            if (mounted) {
-              if (snapshot.data().groupRole === "Creator") {
+      if (mounted) {
+        groupRef
+          .collection('members')
+          .doc(firebase.auth().currentUser.uid)
+          .get()
+          .then((snapshot) => {
+            if (snapshot.exists) {
+              if (snapshot.data().groupRole === 'Creator') {
                 setCreator(true);
               }
+            } else {
+              console.log('does not exist');
             }
-          } else {
-            console.log("does not exist");
-          }
-        });
-      console.log("fetched isCreator from firebase");
+          });
+        console.log('fetched isCreator from firebase');
+      }
       return () => {
         mounted = false;
         setCurrGroupName(groupName);
@@ -91,9 +91,9 @@ export default function Settings({ route, navigation }) {
       .then((userDoc) => {
         groupCodeArr = userDoc.data().groupCode;
         groupIndex = groupCodeArr.findIndex(
-          (element) => (element.groupCode == groupCode)
+          (element) => element.groupCode == groupCode
         );
-        console.log("group index", groupIndex);
+        console.log('group index', groupIndex);
         groupCodeArr[groupIndex] = {
           groupCode: groupCode,
           groupName: currGroupName,
@@ -110,7 +110,7 @@ export default function Settings({ route, navigation }) {
       name: currGroupName,
       tentType: tent,
     });
-    groupRef.collection("members").doc(firebase.auth().currentUser.uid).update({
+    groupRef.collection('members').doc(firebase.auth().currentUser.uid).update({
       name: name,
     });
     dispatch(setUserName(name));
@@ -129,21 +129,21 @@ export default function Settings({ route, navigation }) {
       groupRef
         .delete()
         .then(() => {
-          console.log("Group successfully deleted!");
+          console.log('Group successfully deleted!');
         })
         .catch((error) => {
-          console.error("Error removing group: ", error);
+          console.error('Error removing group: ', error);
         });
     } else {
       groupRef
-        .collection("members")
+        .collection('members')
         .doc(firebase.auth().currentUser.uid)
         .delete()
         .then(() => {
-          console.log("Current user successfully removed from group!");
+          console.log('Current user successfully removed from group!');
         })
         .catch((error) => {
-          console.error("Error removing user: ", error);
+          console.error('Error removing user: ', error);
         });
     }
   };
@@ -152,17 +152,17 @@ export default function Settings({ route, navigation }) {
     <View style={styles.settingsContainer}>
       {/* <ImageBackground source={background} style={styles.backgroundImage}> */}
       <View style={styles.header}>
-        <Icon name="cog-outline" color={"#fff"} size={50} />
-        <Text style={{ color: "#fff" }}>Settings</Text>
+        <Icon name='cog-outline' color={'#fff'} size={50} />
+        <Text style={{ color: '#fff' }}>Settings</Text>
       </View>
-      <Text style={{ color: "#fff" }}>Name:</Text>
+      <Text style={{ color: '#fff' }}>Name:</Text>
       <TextInput
         style={styles.textInput}
         value={name}
         placeholder={name}
         onChangeText={(name) => setName(name)}
       />
-      {isCreator ? <Text style={{ color: "#fff" }}>Group Name:</Text> : null}
+      {isCreator ? <Text style={{ color: '#fff' }}>Group Name:</Text> : null}
       {isCreator ? (
         <TextInput
           style={styles.textInput}
@@ -171,43 +171,43 @@ export default function Settings({ route, navigation }) {
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
-      <Text style={{ color: "#fff" }}>Tent Type: </Text>
+      <Text style={{ color: '#fff' }}>Tent Type: </Text>
       <Picker
         selectedValue={tent}
         onValueChange={(itemValue, itemIndex) => {
           setTent(itemValue);
         }}
       >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="Black" value="Black" />
-        <Picker.Item label="Blue" value="Blue" />
-        <Picker.Item label="White" value="White" />
-        <Picker.Item label="Walk up line" value="Walk up line" />
+        <Picker.Item label='' value='' />
+        <Picker.Item label='Black' value='Black' />
+        <Picker.Item label='Blue' value='Blue' />
+        <Picker.Item label='White' value='White' />
+        <Picker.Item label='Walk up line' value='Walk up line' />
       </Picker>
       <TouchableOpacity
         style={{
-          backgroundColor: "#1F509A",
+          backgroundColor: '#1F509A',
           padding: 15,
-          position: "absolute",
+          position: 'absolute',
           bottom: 50,
-          width: "100%",
-          alignItems: "center",
+          width: '100%',
+          alignItems: 'center',
         }}
         onPress={onSave}
       >
-        <Text style={{ color: "#fff" }}>Save</Text>
+        <Text style={{ color: '#fff' }}>Save</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           leaveGroup();
-          navigation.navigate("Start");
+          navigation.navigate('Start');
         }}
       >
         {isCreator ? (
-          <Text style={{ color: "#fff" }}>Delete Group</Text>
+          <Text style={{ color: '#fff' }}>Delete Group</Text>
         ) : (
-          <Text style={{ color: "#fff" }}>Leave Group</Text>
+          <Text style={{ color: '#fff' }}>Leave Group</Text>
         )}
       </TouchableOpacity>
       {/* </ImageBackground> */}
@@ -217,33 +217,33 @@ export default function Settings({ route, navigation }) {
 
 const styles = StyleSheet.create({
   settingsContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     //backgroundColor: "#1f509a",
-    backgroundColor: "#C2C6D0",
+    backgroundColor: '#C2C6D0',
   },
   backgroundImage: {
     flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
+    alignItems: 'center',
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%',
+    resizeMode: 'cover',
     //opacity: 0.4,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "absolute",
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
     left: 0,
   },
   button: {
-    backgroundColor: "#1F509A",
+    backgroundColor: '#1F509A',
     padding: 15,
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
 });
