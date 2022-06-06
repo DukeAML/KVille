@@ -66,7 +66,7 @@ const editCell = (index, oldMember, newMember) =>{
   //then has to also update the schedule on screen
   schedule[index] = schedule[index].replace(oldMember, newMember);
   console.log('index: ',index,'|| old: ', oldMember, '|| new: ', newMember);
-  console.log(schedule);
+  //console.log(schedule);
 };
 
 
