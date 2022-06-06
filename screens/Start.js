@@ -182,8 +182,11 @@ export default function Start({ navigation }) {
           <Text style={styles.groupText}>Groups</Text>
           <TouchableOpacity onPress={toggleModal}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Icon name="add-circle-outline" color={"#656565"} size={20} />
-              <Text style={[styles.groupText, { fontSize: 16, fontWeight: 500 }]}>
+              <Icon name="add-circle-outline" color={"#2E5984"} size={20} />
+              <Text style={[
+                styles.groupText, 
+                { fontSize: 16, fontWeight: 700, color: "#2E5984", marginLeft:4}
+              ]}>
                 Add Group
               </Text>
             </View>
@@ -245,7 +248,7 @@ export default function Start({ navigation }) {
               </TouchableOpacity>
             </View>
           </Modal>
-          <Button
+          {/* <Button
               title="Create Group Schedule"
               onPress={() =>
                 createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
@@ -254,7 +257,7 @@ export default function Start({ navigation }) {
                   }
                 )
               }
-            />
+            /> */}
             {/* <Button
               title="Add test case"
               onPress={() => createTestCases()}
