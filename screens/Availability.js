@@ -120,7 +120,7 @@ export default function Availability({ route }) {
   );
 
   const element = (data, index) => (
-    <TouchableOpacity onPress={() => this._alertIndex(index)}>
+    <TouchableOpacity onPress={() => console.log(index)}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>button</Text>
       </View>
@@ -347,6 +347,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  btn: { width: 58, height: 18, backgroundColor: '#78B7BB', borderRadius: 2 },
-  btnText: { textAlign: 'center', color: '#fff' },
+  btn: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#78B7BB',
+    borderRadius: 2,
+  },
+  btnText: {
+    textAlign: 'center',
+    color: '#fff',
+  },
 });
