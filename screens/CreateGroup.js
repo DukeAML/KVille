@@ -126,6 +126,7 @@ export default function CreateGroup({ navigation }) {
 
           <TextInput
             style={styles.textInput}
+            autoFocus = {true}
             placeholder="Enter Group Name"
             value={group.groupName}
             onChangeText={(groupName) =>

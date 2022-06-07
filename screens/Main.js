@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -6,7 +6,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from 'expo-splash-screen';
 
 import StartScreen from "./Start";
 import CreateGroupScreen from "./CreateGroup";
@@ -23,13 +23,11 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-const Drawer = createDrawerNavigator();
-const PERSISTENCE_KEY = "NAVIGATION_STATE_V1";
-
-//import {clearData, fetchUser } from "../redux/actions/index";
-
 import { useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";
+
+const Drawer = createDrawerNavigator();
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -64,44 +62,63 @@ export default function Main() {
     if (!isReady) {
       restoreState();
     }
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setIsReady(true);
+      }
+    }
+
+    prepare();
   }, [isReady]);
 
-  useEffect(() => {
-    // clearData(dispatch);
-    // fetchUser(dispatch);
-    dispatch(reset());
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          dispatch(setCurrentUser(snapshot.data()));
-        } else {
-          console.log("does not exist");
-        }
-      });
-    console.log("cleared data and fetched user");
-  }, []);
+  // useEffect(() => {
+  //   // clearData(dispatch);
+  //   // fetchUser(dispatch);
+  //   dispatch(reset());
+  //   firebase
+  //     .firestore()
+  //     .collection("users")
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get()
+  //     .then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         dispatch(setCurrentUser(snapshot.data()));
+  //       } else {
+  //         console.log("does not exist");
+  //       }
+  //     });
+  //   console.log("cleared data and fetched user");
+  // }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isReady]);
 
   if (!isReady) {
-    return <AppLoading />;
+    return null
   }
 
   return (
     <NavigationContainer
       initialState={initialState}
+      onReady ={onLayoutRootView}
       onStateChange={(state) =>
         AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
       }
     >
       <Drawer.Navigator
-        initialRouteName="Start"
+        initialRouteName='Start'
         drawerContent={(props) => <DrawerContent {...props} />}
       >
         <Drawer.Screen
-          name="Start"
+          name='Start'
           component={StartScreen}
           options={{
             headerShown: false,
@@ -120,56 +137,62 @@ export default function Main() {
           }}
         />
         <Drawer.Screen
-          name="CreateGroup"
+          name='CreateGroup'
           component={CreateGroupScreen}
           options={({ navigation }) => ({
+            title: 'Create Group',
             headerStyle: {
-              backgroundColor: "#1f509a",
+              backgroundColor: '#1f509a',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
-            },
-            headerLeft: () => (
-              <Text
-                style={{ color: "#fff", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
-        />
-        <Drawer.Screen
-          name="JoinGroup"
-          component={JoinGroupScreen}
-          options={({ navigation }) => ({
-            title: "Join Group",
-            headerLeft: () => (
-              <Text
-                style={{ color: "#000", marginLeft: 10 }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
-        />
-        <Drawer.Screen
-          name="GroupInfo"
-          component={GroupInfoScreen}
-          options={({ navigation }) => ({
-            title: "Black Tent",
-            headerStyle: {
-              backgroundColor: "#C2C6D0",
-              borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerTitleStyle: {
-              right: "0%",
+              color: '#fff',
+            },
+            headerTitleAlign: 'center',
+            presentation: 'modal',
+            headerLeft: () => (
+              <Text
+                style={{ color: '#fff', marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name='JoinGroup'
+          component={JoinGroupScreen}
+          options={({ navigation }) => ({
+            title: 'Join Group',
+            headerTitleAlign: 'center',
+            headerLeft: () => (
+              <Text
+                style={{ color: '#000', marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name='GroupInfo'
+          component={GroupInfoScreen}
+          options={({ navigation }) => ({
+            headerStyle: {
+              backgroundColor: '#C2C6D0',
+              borderBottomWidth: 0,
+              shadowColor: 'transparent',
+            },
+            headerTitleStyle: {
+              right: '0%',
               fontSize: 28,
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
@@ -177,17 +200,17 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="AvailabilityScreen"
+          name='AvailabilityScreen'
           component={AvailabilityScreen}
           options={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "#C2C6D0",
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
@@ -195,17 +218,17 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="ScheduleScreen"
+          name='ScheduleScreen'
           component={ScheduleScreen}
           options={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "#C2C6D0",
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
@@ -213,17 +236,17 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="MonitorScreen"
+          name='MonitorScreen'
           component={MonitorScreen}
           options={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "#C2C6D0",
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
@@ -231,17 +254,17 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="InfoScreen"
+          name='InfoScreen'
           component={InfoScreen}
           options={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "#C2C6D0",
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
@@ -249,17 +272,17 @@ export default function Main() {
           })}
         />
         <Drawer.Screen
-          name="SettingScreen"
+          name='SettingScreen'
           component={SettingScreen}
           options={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "#C2C6D0",
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
-              shadowColor: "transparent",
+              shadowColor: 'transparent',
             },
             headerLeft: () => (
               <IconButton
-                icon="menu"
+                icon='menu'
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
