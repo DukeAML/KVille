@@ -12,7 +12,6 @@ import {
 import {
   Table,
   TableWrapper,
-  Row,
   Col,
   Cell,
 } from "react-native-table-component";
@@ -42,7 +41,6 @@ let colorCodes = [ //Array for color corresponding to each member
 ];
 
 
-
 let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 
 const TimeColumn = () => { //component for side table of 12am-12am time segments
@@ -51,8 +49,8 @@ const TimeColumn = () => { //component for side table of 12am-12am time segments
       <Col
         data={times}
         heightArr={[
-          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-          60, 60, 60, 60, 60, 60, 60, 60,
+          62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
+          62, 62, 62, 62, 62, 62, 62, 62,
         ]} 
         textStyle={StyleSheet.flatten(styles.timesText)}
       />
@@ -63,7 +61,6 @@ const TimeColumn = () => { //component for side table of 12am-12am time segments
 //function for editing the schedule based on old member and new member to replace
 const editCell = (index, oldMember, newMember) =>{
   //must delete from 'schedule' and update the string within
-  //then has to also update the schedule on screen
   schedule[index] = schedule[index].replace(oldMember, newMember);
   console.log('index: ',index,'|| old: ', oldMember, '|| new: ', newMember);
   //console.log(schedule);
@@ -84,8 +81,10 @@ export default function Schedule({ route }) {
   const [oldMember, setOldMember] = useState(""); //to store which member is being replaced
   const [editIndex, setEditIndex] = useState (0); //to store which index is being edited
 
-  let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
-  const ref = useRef(); //creates reference for scrollView
+  const [renderDay, setRenderDay] = useState("Sunday"); //stores the current day that is being rendered
+ 
+  /* let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
+  const ref = useRef(); //creates reference for scrollView */
 
   const toggleModal = () => { //to toggle the edit cell popup
     setModalVisible(!isModalVisible);
@@ -95,9 +94,9 @@ export default function Schedule({ route }) {
     setMemberModalVisible(!isMemberModalVisible);
   };
 
-  function autoScroll(yPos) { //for auto-scolling to certain y-position
+  /* function autoScroll(yPos) { //for auto-scolling to certain y-position
     ref.current.scrollTo({ x: 0, y: yPos, animated: true });
-  }
+  } */
 
   //variables to store the # of people needed for the day and night shifts
   let numberForDay, numberForNight; 
@@ -117,7 +116,7 @@ export default function Schedule({ route }) {
       numberForNight = 2;
   }
 
-  console.log('numberDay and Night values: ', numberForDay, numberForNight);
+  //console.log('numberDay and Night values: ', numberForDay, numberForNight);
 
   /* const [dimensions, setDimensions] = useState({ win });
 
@@ -132,20 +131,23 @@ export default function Schedule({ route }) {
 
 
  //Component for the popup list of members for each member
-  const Member = ({ name }) => (
-    <View>
-      <TouchableOpacity 
-        onPress={() => {
-          setNewMember(name);
-          toggleMemberModal();
-      }}>
-        <View style={{ backgroundColor: "#636363", borderBottomColor: '#f9f9f9',
-            borderBottomWidth: 1 }}>
-          <Text style={{ textAlign: "center", color: "white" }}>{name}</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
+  const Member = ({ name }) => {
+    let indexOfUser = colorCodes.findIndex((member) =>  member.name === name);
+    let backgroundColor = (indexOfUser%2 == 1) ? "#656565": "#555555"; //alternates the colors of list
+    return(
+      <View>
+        <TouchableOpacity 
+          onPress={() => {
+            setNewMember(name);
+            toggleMemberModal();
+        }}>
+          <View style={{ backgroundColor: backgroundColor}}>
+            <Text style={{ textAlign: "center", color: "white", height: 25 }}>{name}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   //to render flatList in member list popup
   const renderMember = ({ item }) => {
@@ -156,7 +158,7 @@ export default function Schedule({ route }) {
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
     const indexofUser = colorCodes.findIndex((object) => object.name === person);
-    const backgroundColor = colorCodes[indexofUser].color;
+    const backgroundColor = colorCodes[indexofUser].color; //gets background color from the colorCodes Array
     return (
       <View style={{ flex: 1 }}>
         <TouchableOpacity onPress={() => {
@@ -175,53 +177,53 @@ export default function Schedule({ route }) {
   
   //Component for each row to list the people in that time shift
   //# of people on the row is dependent on the tentType and time of day
-  const RenderCell = (data, index, members, numDay, numNight) => {
+  const RenderCell = (data, index, arrayIndex, members, numDay, numNight) => {
     const people = members.split(" ");
     const isNight = (index >= 2 && index <= 13);
-    //console.log("index ", numDay, isNight, numNight);
+
     if (!isNight && numDay === 1) {
       return (
         <View style={styles.row}>
-          <OneCell index={index} person={people[0]} />
+          <OneCell index={arrayIndex} person={people[0]} />
         </View>
       );
     } else if ((isNight && numNight === 2) || (!isNight && numDay === 2)) {
       return (
         <View style={styles.row}>
-          <OneCell index={index} person={people[0]} />
-          <OneCell index={index} person={people[1]} />
+          <OneCell index={arrayIndex} person={people[0]} />
+          <OneCell index={arrayIndex} person={people[1]} />
         </View>
       );
     } else if (isNight && numNight === 6) {
       return (
         <View style={styles.row}>
-          <OneCell index={index} person={people[0]} />
-          <OneCell index={index} person={people[1]} />
-          <OneCell index={index} person={people[2]} />
-          <OneCell index={index} person={people[3]} />
-          <OneCell index={index} person={people[4]} />
-          <OneCell index={index} person={people[5]} />
+          <OneCell index={arrayIndex} person={people[0]} />
+          <OneCell index={arrayIndex} person={people[1]} />
+          <OneCell index={arrayIndex} person={people[2]} />
+          <OneCell index={arrayIndex} person={people[3]} />
+          <OneCell index={arrayIndex} person={people[4]} />
+          <OneCell index={arrayIndex} person={people[5]} />
         </View>
       );
     } else {
       return (
         <View style={styles.row}>
-          <OneCell index={index} person={people[0]} />
-          <OneCell index={index} person={people[1]} />
-          <OneCell index={index} person={people[2]} />
-          <OneCell index={index} person={people[3]} />
-          <OneCell index={index} person={people[4]} />
-          <OneCell index={index} person={people[5]} />
-          <OneCell index={index} person={people[6]} />
-          <OneCell index={index} person={people[7]} />
-          <OneCell index={index} person={people[8]} />
-          <OneCell index={index} person={people[9]} />
+          <OneCell index={arrayIndex} person={people[0]} />
+          <OneCell index={arrayIndex} person={people[1]} />
+          <OneCell index={arrayIndex} person={people[2]} />
+          <OneCell index={arrayIndex} person={people[3]} />
+          <OneCell index={arrayIndex} person={people[4]} />
+          <OneCell index={arrayIndex} person={people[5]} />
+          <OneCell index={arrayIndex} person={people[6]} />
+          <OneCell index={arrayIndex} person={people[7]} />
+          <OneCell index={arrayIndex} person={people[8]} />
+          <OneCell index={arrayIndex} person={people[9]} />
         </View>
       );
     }
   };
   //Component for the table for one day's schedule
-  const DailyTable = ({ dayArr, numberDay, numberNight, day }) => {
+  const DailyTable = ({ numberDay, numberNight, day }) => {
     let indexAdder = 0;
     //depending on day parameter, change index in GLOBAL schedule array
     switch (day) {
@@ -246,13 +248,15 @@ export default function Schedule({ route }) {
       default:
         indexAdder=0;
     }
+    let dayArr= schedule.slice(indexAdder, indexAdder+48);
+    //console.log(day,"||", dayArr);
     return (
       <View style = {{marginTop: 30}}>
         <Table borderStyle={{ borderColor: "transparent" }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
               <Cell
-                data={RenderCell(1, index+indexAdder, dayArr[index], numberDay, numberNight)}
+                data={RenderCell(1, index, index+indexAdder, dayArr[index], numberDay, numberNight)}
                 textStyle={StyleSheet.flatten(styles.text)}
               />
             </TableWrapper>
@@ -261,6 +265,19 @@ export default function Schedule({ route }) {
       </View>
     );
   };
+  //Component for the top day buttons
+  const DayButton = ({day, abbrev}) => {
+    return (
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setRenderDay(day)}
+      >
+        <Text style={styles.buttonText}>{abbrev}</Text>
+      </TouchableOpacity>
+    )
+  };
+
+
 
   //Firebase reference for group
   const groupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
@@ -296,12 +313,9 @@ export default function Schedule({ route }) {
               };
               let nameExists;
               if (colorCodes.length === 0) nameExists = false;
-              else {
-                nameExists = colorCodes.some((e) => e.name === currName);
-              }
+              else {nameExists = colorCodes.some((e) => e.name === currName);}
 
-              if (!nameExists) {
-                // if not already in, add to the array
+              if (!nameExists) {  // if not already in the colorCodes array, add to the array
                 colorCodes.push(current);
               }
             })
@@ -309,6 +323,7 @@ export default function Schedule({ route }) {
           .then((doc) => {
             //for making sure firebase is done reading
             setLoaded(true);
+            console.log('read from firebase'); //checks when firbase is read
           })
           .catch((error) => {
             console.log("Error getting documents: ", error);
@@ -322,14 +337,10 @@ export default function Schedule({ route }) {
 
 
   
-
-  if (!loaded ) {
-    //if firebase reading done, then render
+  if (!loaded ) {     //if firebase reading done, then render
     return <AppLoading />;
   } else {
-
     //console.log('Full Schedule: ', schedule);
-
 
     //initializes the colorCodes fso each member has a unique color background
     for (let index = 0; index < colorCodes.length ; index++){ 
@@ -383,8 +394,13 @@ export default function Schedule({ route }) {
           onBackdropPress={() => setMemberModalVisible(false)}
           //customBackdrop={<View style={{ flex: 1 }} />}
         >
-          <View style={{ justifyContent: "flex-end" }}>
-
+          <View
+            style={{
+              alignSelf: "center",
+              width: "45%",
+              marginTop: win.width * 0.4
+            }}
+          >
             <View>
               <FlatList
                 data={colorCodes}
@@ -396,68 +412,21 @@ export default function Schedule({ route }) {
         </Modal>
         </View>
 
+        <View>
+          <View style={[styles.buttonContainer, styles.shadowProp]}>
+            <DayButton day = "Sunday" abbrev="Sun"/>
+            <DayButton day = "Monday" abbrev="Mon"/>
+            <DayButton day = "Tuesday" abbrev="Tue"/>
+            <DayButton day = "Wednesday" abbrev="Wed"/>
+            <DayButton day = "Thursday" abbrev="Thur"/>
+            <DayButton day = "Friday" abbrev="Fri"/>
+            <DayButton day = "Saturday" abbrev="Sat"/>
+          </View>
 
-
-        <View style={[styles.buttonContainer, styles.shadowProp]}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(sunPos)}
-          >
-            <Text style={styles.buttonText}>Sun</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(monPos)}
-          >
-            <Text style={styles.buttonText}>Mon</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(tuesPos)}
-          >
-            <Text style={styles.buttonText}>Tues</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(wedPos)}
-          >
-            <Text style={styles.buttonText}>Wed</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(thurPos)}
-          >
-            <Text style={styles.buttonText}>Thur</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(friPos)}
-          >
-            <Text style={styles.buttonText}>Fri</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(satPos)}
-          >
-            <Text style={styles.buttonText}>Sat</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          style={{ marginHorizontal: 10, marginVertical: 50 }}
-          ref={ref}
-          showsVerticalScrollIndicator={false}
-        >
           <View style = {styles.buttonContainer}>
             <View style = {{flex: 1}}>
               <Button
-                title="Push Edits"
+                title="Push Changes"
                 color= "blue"
                 onPress={pushEdits}
               />
@@ -481,113 +450,23 @@ export default function Schedule({ route }) {
                 }}
               />
             </View>
-              
           </View>
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              sunPos = layout.y;
-            }}
-          >
-            {" "}
-            SUNDAY{" "}
-          </Text>
+        </View>
 
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(0,48)} numberDay={numberForDay} numberNight={numberForNight} day='Sunday' />
-          </View>
 
-          <Text
-            style={[styles.dayHeader, styles.dayHeaderBox]}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              monPos = layout.y;
-            }}
-          >
-            {" "}
-            MONDAY{" "}
+        <ScrollView
+          //style={{ marginHorizontal: 10}}
+          //ref={ref}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.dayHeader}>
+            {renderDay}
           </Text>
           <View style={{ flexDirection: "row" }}>
             <TimeColumn />
-            <DailyTable dayArr={schedule.slice(48, 96)} numberDay={numberForDay} numberNight={numberForNight} day='Monday' />
+            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day={renderDay} />
           </View>
 
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              tuesPos = layout.y;
-            }}
-          >
-            {" "}
-            TUESDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(96, 144)} numberDay={numberForDay} numberNight={numberForNight} day='Tuesday' />
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              wedPos = layout.y;
-            }}
-          >
-            {"    "}
-            WEDNESDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(144, 192)} numberDay={numberForDay} numberNight={numberForNight} day='Wednesday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              thurPos = layout.y;
-            }}
-          >
-            {" "}
-            THURSDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(192, 240)} numberDay={numberForDay} numberNight={numberForNight} day='Thursday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              friPos = layout.y;
-            }}
-          >
-            {" "}
-            FRIDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(240, 288)} numberDay={numberForDay} numberNight={numberForNight} day='Friday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              satPos = layout.y;
-            }}
-          >
-            {" "}
-            SATURDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable dayArr={schedule.slice(288, 336)} numberDay={numberForDay} numberNight={numberForNight} day='Saturday'/>
-          </View>
         </ScrollView>
       </View>
     );
@@ -595,36 +474,34 @@ export default function Schedule({ route }) {
 }
 
 const styles = StyleSheet.create({
-  bigContainer: { flex: 1, backgroundColor: "#C2C6D0" },
-  container: {
-    paddingTop: 30,
-    backgroundColor: "#C2C6D0",
-  },
-  text: { margin: 3 },
-  timesText: {
+  bigContainer: { flex: 1, backgroundColor: "#C2C6D0" }, //for the entire page's container
+  text: { margin: 3 }, //text within cells
+  timesText: {   //text style for the side text of the list of times
     fontWeight: 800,
-    fontSize: 8,
-    marginRight:6
+    fontSize: 9,
+    //marginRight:6,
+    width: win.width * 0.10,
+    textAlign: "center",
   },
-  buttonContainer: {
+  buttonContainer: { //container for the top buttons
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  button: {
+  button: { //for the day buttons at top of screen
     backgroundColor: "#e5e5e5",
-    width: "14.5%",
+    width: win.width/7,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: {
+  buttonText: { //text for day buttons
     fontSize: "auto",
     fontWeight: "500",
     textAlign: "center",
     color: "black",
   },
-  dayHeaderBox: {
+  dayHeaderBox: { //NOT IN USE RN
     backgroundColor: '#e5e5e5',
     width: "",
     height: 60,
@@ -632,23 +509,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center"
   },
-  dayHeader: {
-    marginVertical: 20,
+  dayHeader: {  //text for the header for the day
+    marginTop: 20,
     fontSize: 28,
     fontWeight: "700",
     textAlign: "center",
   },
-  row: {
-    //flex: 1,
+  row: { //style for one row of the table
     flexDirection: "row",
     backgroundColor: "lavender",
     width: win.width * .88,
+    height: 31,
     alignItems: "center",
     borderBottomColor: 'black',
     borderBottomWidth: 1
-    //justifyContent: "space-around"
   },
-  timeSlotBtn: {
+  timeSlotBtn: { //Button for oneCell of the Table
     //width: 58,
     height: 30,
     backgroundColor: "#78B7BB",
@@ -656,19 +532,19 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     justifyContent: "center"
   },
-  btnText: { 
+  btnText: { //Text within one cell button
     textAlign: "center", 
     color: "#545454", 
     fontWeight: "500", 
     fontSize: 10 
   },
-  shadowProp: {
+  shadowProp: { //shadows to apply
     shadowColor: '#171717',
     shadowOffset: {width: -3, height: 5},
     shadowOpacity: 0.4,
     shadowRadius: 3,
   },
-  deletePopup: {
+  deletePopup: { //style for the bottom screen popup for editing a cell
     alignSelf: "center",
     flexDirection: "column", 
     marginTop: win.height * .90,
@@ -862,3 +738,160 @@ const DailyTable = ({ dayArr, numberDay, numberNight, day }) => {
   }; */
 
   //const groupRef = firebase.firestore().collection("groups").doc(code);
+
+  /* <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              sunPos = layout.y;
+            }}
+          >
+            {" "}
+            SUNDAY{" "}
+          </Text>
+
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Sunday' />
+          </View>
+
+          <Text
+            style={[styles.dayHeader, styles.dayHeaderBox]}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              monPos = layout.y;
+            }}
+          >
+            {" "}
+            MONDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Monday' />
+          </View>
+
+          <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              tuesPos = layout.y;
+            }}
+          >
+            {" "}
+            TUESDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Tuesday' />
+          </View>
+
+          <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              wedPos = layout.y;
+            }}
+          >
+            {"    "}
+            WEDNESDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Wednesday'/>
+          </View>
+
+          <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              thurPos = layout.y;
+            }}
+          >
+            {" "}
+            THURSDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Thursday'/>
+          </View>
+
+          <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              friPos = layout.y;
+            }}
+          >
+            {" "}
+            FRIDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Friday'/>
+          </View>
+
+          <Text
+            style={styles.dayHeader}
+            onLayout={(event) => {
+              const layout = event.nativeEvent.layout;
+              satPos = layout.y;
+            }}
+          >
+            {" "}
+            SATURDAY{" "}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <TimeColumn />
+            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Saturday'/>
+          </View> */
+
+          /* <View style={[styles.buttonContainer, styles.shadowProp]}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(sunPos)}
+          >
+            <Text style={styles.buttonText}>Sun</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(monPos)}
+          >
+            <Text style={styles.buttonText}>Mon</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(tuesPos)}
+          >
+            <Text style={styles.buttonText}>Tues</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(wedPos)}
+          >
+            <Text style={styles.buttonText}>Wed</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(thurPos)}
+          >
+            <Text style={styles.buttonText}>Thur</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(friPos)}
+          >
+            <Text style={styles.buttonText}>Fri</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => autoScroll(satPos)}
+          >
+            <Text style={styles.buttonText}>Sat</Text>
+          </TouchableOpacity>
+        </View> */

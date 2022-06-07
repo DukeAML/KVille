@@ -8,7 +8,6 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  SafeAreaView,
   FlatList,
   Button,
 } from "react-native";
@@ -303,7 +302,7 @@ const styles = StyleSheet.create({
   },
   popUp: {  //style for popup menu of add group
     width: "90%",
-    height: "25%",
+    height: 160,
     backgroundColor: "#1E3F66",
     alignSelf: "center",
     alignItems: "center",
