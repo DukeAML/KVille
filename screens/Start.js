@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ScrollView,
   Dimensions,
   SafeAreaView,
   FlatList,
@@ -13,6 +14,9 @@ import {
 } from "react-native";
 
 import { useFonts, NovaCut_400Regular } from "@expo-google-fonts/nova-cut";
+import Icon from "react-native-vector-icons/Ionicons";
+import DukeBasketballLogo from "../assets/DukeBasketballLogo.png";
+import Modal from "react-native-modal";
 import AppLoading from "expo-app-loading";
 
 import firebase from "firebase/compat/app";
@@ -28,7 +32,7 @@ import {
 } from "../redux/reducers/userSlice";
 import { createGroupSchedule } from "../backend/CreateGroupSchedule";
 import { createTestCases } from "../backend/firebaseAdd";
-import coachk from "../assets/coachk.png";
+
 
 require("firebase/firestore");
 
@@ -37,23 +41,33 @@ const window = Dimensions.get("window");
 let GROUPS = new Array();
 
 //const for list Items of Groups List
-const Group = ({ groupName, onPress }) => (
+const Group = ({ groupName, groupCode, onPress }) => (
   <TouchableOpacity
     onPress={onPress}
     style={[styles.listItem, styles.shadowProp]}
   >
-    <Text style={[styles.listText, { textAlign: "left" }]}>Group Name: </Text>
-    <Text style={styles.listText}>{groupName}</Text>
+    <View style={{ flexDirection: "row", justifyContent: "left" }}>
+      <Image source={DukeBasketballLogo} style={styles.image} /> 
+      <View style={{ flexDirection: "column" }}>
+        <Text style={[styles.listText, { fontSize: 20 }]}>{groupName}</Text>
+        <Text style={[styles.listText, { color: "#555555" }]}>{groupCode}</Text>
+      </View>
+    </View>
   </TouchableOpacity>
 );
 
 export default function Start({ navigation }) {
-  let [fontsLoaded] = useFonts({
+  /* let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
-  });
+  }); */
 
+  const [isModalVisible, setModalVisible] = useState(false);
   const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
   console.log("Is Start loaded", loaded);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   const dispatch = useDispatch();
   //for rendering list items of Groups
@@ -61,6 +75,7 @@ export default function Start({ navigation }) {
     return (
       <Group
         groupName={item.groupName}
+        groupCode={item.code}
         onPress={() => {
           firebase
             .firestore()
@@ -129,25 +144,6 @@ export default function Start({ navigation }) {
                 }
               });
             }
-
-            // console.log ("current name:", currCode);
-            // //add condition here:
-
-            // let current = {
-            //   code: currCode,
-            //   name: 'stinkyalvintester'
-            // };
-
-            // let codeExists;
-            // if (GROUPS.length === 0) codeExists = false;
-            // else {
-            //   codeExists = (GROUPS.some(e => e.code === currCode));
-            // }
-            // console.log(GROUPS);
-
-            // if (mounted && !codeExists){
-            //   GROUPS.push(current);
-            // }
             return doc;
           })
           .then((doc) => {
@@ -166,49 +162,106 @@ export default function Start({ navigation }) {
     }, [GROUPS])
   );
 
-  if (!fontsLoaded || !loaded) {
+  if (!loaded) {
     return <AppLoading />;
   } else {
     return (
       <View style={styles.startContainer}>
-        {/* <View style={styles.header}>
-          <Text style={styles.banner}>Krzyzewskiville</Text>
-        </View> */}
-        {/* <Image source={coachk} style={styles.image} /> */}
-        <SafeAreaView>
+        <View style={styles.topBanner}>
+          <Text style={styles.topText}>Welcome to Krzyzewskiville!</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            width: "90%",
+            alignItems: "center",
+            marginBottom: 5
+          }}
+        >
+          <Text style={styles.groupText}>Groups</Text>
+          <TouchableOpacity onPress={toggleModal}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Icon name="add-circle-outline" color={"#2E5984"} size={20} />
+              <Text style={[
+                styles.groupText, 
+                { fontSize: 16, fontWeight: 700, color: "#2E5984", marginLeft:4}
+              ]}>
+                Add Group
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false}>
           <FlatList
             data={GROUPS}
             renderItem={renderGroup}
             keyExtractor={(item) => item.code}
           />
-        </SafeAreaView>
-        <View style={styles.textContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("JoinGroup")}
+        </ScrollView>
+
+        <View>
+          <Modal
+            isVisible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+            //customBackdrop={<View style={{ flex: 1 }} />}
           >
-            <Text style={styles.buttonText}>Join Group</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("CreateGroup")}
-          >
-            <Text style={styles.buttonText}>Create New Group</Text>
-          </TouchableOpacity>
-          <Button
-            title="Create Group Schedule"
-            onPress={() =>
-              createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
-                (groupSchedule) => {
-                  console.log(groupSchedule);
-                }
-              )
-            }
-          />
+            <View style={styles.popUp}>
+              <Text style={styles.popUpHeader}>Add Group</Text>
+              <TouchableOpacity
+              onPress={() => navigation.navigate("JoinGroup")}
+              >
+                <View
+                  style={[
+                    styles.popButton,
+                    {
+                      borderBottomLeftRadius: 3,
+                      borderBottomRightRadius: 3,
+                      borderTopLeftRadius: 11,
+                      borderTopRightRadius: 11
+                    }
+                  ]}
+                >
+                  <Icon name="person-add-outline" color={"white"} size={20} style= {{marginLeft:10}}/>
+                  <Text style={styles.buttonText}>Join Group</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+              onPress={() => navigation.navigate("CreateGroup")}
+              >
+                <View
+                  style={[
+                    styles.popButton,
+                    {
+                      borderBottomLeftRadius: 11,
+                      borderBottomRightRadius: 11,
+                      borderTopLeftRadius: 3,
+                      borderTopRightRadius: 3
+                    }
+                  ]}
+                >
+                  <Icon name="people-circle-outline" color={"white"} size={20} style= {{marginLeft:10}}/>
+                  <Text style={styles.buttonText}>Create New Group</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Modal>
           {/* <Button
-            title="Add test case"
-            onPress={() => createTestCases()}
-          /> */}
+              title="Create Group Schedule"
+              onPress={() =>
+                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
+                  (groupSchedule) => {
+                    console.log(groupSchedule);
+                  }
+                )
+              }
+            /> */}
+            {/* <Button
+              title="Add test case"
+              onPress={() => createTestCases()}
+            /> */}
         </View>
       </View>
     );
@@ -216,73 +269,110 @@ export default function Start({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  startContainer: {
+  startContainer: {  //Overarching Container
     flexDirection: "column",
     flex: 1,
     backgroundColor: "#C2C6D0",
     alignItems: "center",
-    marginTop: "0%",
+    marginTop: "0%"
   },
-  header: {
+/*   header: {
     left: "0%",
-    width: "100%",
+    width: "100%"
+  }, */
+  topBanner: {  //for the top container holding "welcome to k-ville"
+    alignItems: "flex-start",
+    marginTop: 50,
+    marginBottom: 35,
+    width: "90%"
+    //borderWidth: 2
   },
-  textContainer: {
-    flexDirection: "column",
-    flex: 1,
+  topText: {  //"welcome to kville" text
+    fontFamily: "Arial",
+    textAlign: "left",
+    fontWeight: 800,
+    fontSize: 28
+  },
+  groupText: { //text for 'Groups' and '+ Add Group'
+    fontFamily: "sans-serif",
+    textAlign: "left",
+    width: "90%",
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#656565"
+  },
+  popUp: {  //style for popup menu of add group
+    width: "90%",
+    height: "25%",
+    backgroundColor: "#1E3F66",
+    alignSelf: "center",
     alignItems: "center",
-    justifyContent: "space-evenly",
-    width: "100%",
+    borderRadius: 20,
+    margin: 15
   },
-  banner: {
+  popUpHeader: {  //style for text at the top of the popup
+    fontFamily: "Arial",
+    fontWeight: 600,
+    color: "white",
+    height: 40,
+    width: window.width * 0.8,
+    marginTop: 15,
+    textAlign: "center",
+    fontSize: 24
+    //borderWidth: 1
+  },
+  popButton: {  //style for the buttons in the popup
+    flexDirection: "row",
+    width: window.width * 0.7,
+    height: 40,
+    marginVertical: 2,
+    alignSelf: "stretch",
+    backgroundColor: "#2E5984",
+    justifyContent: "flex-start",
+    alignItems: "center"
+    //borderWidth: 1
+  },
+  buttonText: { //popup buttons' text
+    fontSize: 16,
+    color: "white",
+    textAlign: "left",
+    marginLeft: 15
+  },
+
+/*   banner: {
     color: "#fff",
     fontFamily: "NovaCut_400Regular",
     fontSize: 36,
-    left: "0%",
+    left: "0%"
+  }, */
+  image: { //for the duke basketball logos
+    width: 45,
+    height: 39,
+    alignSelf: "center",
+    //borderWidth: 1,
+    marginLeft: 10,
+    marginRight: 20
   },
-  image: {
-    width: "100%",
-    height: "80%",
-    resizeMode: "cover",
-  },
-  textInput: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    width: "65%",
-    textAlign: "center",
-    borderRadius: 15,
-    //height: "7%",
-  },
-  button: {
-    backgroundColor: "#000",
-    padding: 15,
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: "#fff",
-    textAlign: "center",
-  },
-  listItem: {
+
+  listItem: { //for the items for each group
     backgroundColor: "#e5e5e5",
     padding: 8,
-    marginVertical: 4,
-    borderRadius: 7,
+    marginVertical: 7,
+    borderRadius: 10,
     width: window.width * 0.9,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: "flex-start"
   },
-  listText: {
-    fontSize: 16,
+  listText: { //for the text inside the group cards
+    fontSize: 15,
     //fontFamily: "sans-serif",
     fontWeight: "500",
-    color: "black",
+    color: "black"
   },
-  shadowProp: {
+  shadowProp: { //shadow for the group cards
     shadowColor: "#171717",
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
-    elevation: 20,
-  },
+    elevation: 20
+  }
 });
