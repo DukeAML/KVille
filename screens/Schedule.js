@@ -28,7 +28,7 @@ import "firebase/compat/firestore";
 const times = [ //Times for right column of the list of times of the day
   "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", 
   "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm",
-  "10pm", "11pm", "12am",
+  "10pm", "11pm",
 ];
 
 //Colors of each member, first is for 'null'
@@ -50,7 +50,7 @@ const TimeColumn = () => { //component for side table of 12am-12am time segments
         data={times}
         heightArr={[
           62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
-          62, 62, 62, 62, 62, 62, 62, 62,
+          62, 62, 62, 62, 62, 62, 62,
         ]} 
         textStyle={StyleSheet.flatten(styles.timesText)}
       />

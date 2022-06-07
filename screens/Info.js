@@ -130,7 +130,7 @@ export default function Info() {
       </View>
 
       <ScrollView
-        style={{ marginHorizontal: 20, marginVertical: 50 }}
+        style={{ marginHorizontal: 20, marginTop: 50 }}
         ref={ref}
         showsVerticalScrollIndicator={false}
       >

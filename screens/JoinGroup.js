@@ -136,7 +136,144 @@ export default function JoinGroup({ navigation }) {
   };
 
   return (
+    
     <View style={styles.container}>
+      <View style={styles.topBanner}>
+        <TouchableOpacity
+          onPress={() => {
+            onJoinGroup(navigation);
+            //navigation.navigate("GroupNavigator");
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={[
+                styles.groupText,
+                {
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: "#2E5984",
+                  width: 86
+                  //borderWidth: 2
+                }
+              ]}
+            >
+              Join Group
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          width: "90%",
+          marginBottom: 10
+        }}
+      >
+        <Text style={styles.groupText}>Username</Text>
+      </View>
+
+      <TextInput
+        style={[styles.textInput, styles.shadowProp]}
+        value={name}
+        placeholder={name}
+        onChangeText={(name) => setName(name)}
+      />
+
+
+      <View
+        style={{
+          flexDirection: "row",
+          width: "90%",
+          marginBottom: 10,
+          marginTop: 60
+        }}
+      >
+        <Text style={styles.groupText}>Group Code</Text>
+      </View>
+
+      <TextInput
+        style={[styles.textInput, styles.shadowProp]}
+        onChangeText={(code) => setInputGroupCode(code.trim())}
+        value={groupCode}
+        placeholder="Enter Group Code"
+      />
+      
+      {/* <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          onJoinGroup(navigation);
+          //navigation.navigate("GroupNavigator");
+        }}
+      >
+        <Text style={styles.buttonText}>Join Group</Text>
+      </TouchableOpacity> */}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    flex: 1,
+    backgroundColor: "#C2C6D0",
+    alignItems: "center",
+    marginTop: "0%"
+  },
+  textInput: {
+    backgroundColor: "#f6f6f6",
+    padding: 10,
+    width: "90%",
+    fontSize: 20,
+    fontWeight: 500,
+    textAlign: "left",
+    borderRadius: 8,
+    borderColor: "#656565",
+    borderWidth: 2
+    //height: "7%",
+  },
+  groupText: {
+    //text for 'Groups' and '+ Add Group'
+    fontFamily: "sans-serif",
+    textAlign: "left",
+    width: "90%",
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#656565"
+  },
+  topBanner: {
+    //for the top container holding "welcome to k-ville"
+    alignItems: "flex-end",
+    marginTop: 20,
+    marginBottom: 60,
+    width: "90%"
+    //borderWidth: 2
+    //borderWidth: 2
+  },
+  button: {
+    backgroundColor: "#000",
+    padding: 15,
+    borderRadius: 30
+  },
+  buttonText: {
+    fontSize: 15,
+    color: "#fff",
+    textAlign: "center"
+  },
+  shadowProp: { //shadow for the group cards
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 20
+  }
+});
+
+/*
+
+
+<View style={styles.container}>
       <TextInput
         style={styles.textInput}
         onChangeText={(code) => setInputGroupCode(code.trim())}
@@ -159,33 +296,5 @@ export default function JoinGroup({ navigation }) {
         <Text style={styles.buttonText}>Join Group</Text>
       </TouchableOpacity>
     </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    flex: 1,
-    backgroundColor: "#1f509a",
-    alignItems: "center",
-    marginTop: "0%",
-  },
-  textInput: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    width: "65%",
-    textAlign: "center",
-    borderRadius: 15,
-    //height: "7%",
-  },
-  button: {
-    backgroundColor: "#000",
-    padding: 15,
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: "#fff",
-    textAlign: "center",
-  },
-});
+*/
