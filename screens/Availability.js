@@ -152,7 +152,6 @@ export default function Availability({ route }) {
         <Modal
           animationType='slide'
           visible={isModalVisible}
-          backdropOpacity={0.1}
           onBackdropPress={toggleModal}
         >
           <View style={styles.modalContainer}>

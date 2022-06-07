@@ -1,45 +1,45 @@
-import React, { useState } from "react";
-import { View, Button, TextInput, Text, StyleSheet } from "react-native";
-import { Snackbar } from "react-native-paper";
+import React, { useState } from 'react';
+import { View, Button, TextInput, Text, StyleSheet } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-require("firebase/firestore");
+require('firebase/firestore');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   formCenter: {
-    justifyContent: "center",
+    justifyContent: 'center',
     flex: 1,
     margin: 25,
   },
   textInput: {
     marginBottom: 10,
-    borderColor: "gray",
-    backgroundColor: "whitesmoke",
+    borderColor: 'gray',
+    backgroundColor: 'whitesmoke',
     padding: 10,
     borderWidth: 1,
     borderRadius: 8,
   },
   bottomButton: {
-    alignContent: "center",
-    borderTopColor: "gray",
+    alignContent: 'center',
+    borderTopColor: 'gray',
     borderTopWidth: 1,
     padding: 10,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 30,
   },
 });
 
 export default function Register(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [groupCode, setGroupCode] = useState([]);
   const [inGroup, setInGroup] = useState(false);
   const [isValid, setIsValid] = useState(true);
@@ -54,7 +54,7 @@ export default function Register(props) {
       setIsValid({
         bool: true,
         boolSnack: true,
-        message: "Please fill out everything",
+        message: 'Please fill out everything',
       });
       return;
     }
@@ -62,7 +62,7 @@ export default function Register(props) {
       setIsValid({
         bool: true,
         boolSnack: true,
-        message: "passwords must be at least 6 characters",
+        message: 'passwords must be at least 6 characters',
       });
       return;
     }
@@ -70,14 +70,14 @@ export default function Register(props) {
       setIsValid({
         bool: true,
         boolSnack: true,
-        message: "passwords must be at least 6 characters",
+        message: 'passwords must be at least 6 characters',
       });
       return;
     }
     firebase
       .firestore()
-      .collection("users")
-      .where("username", "==", username)
+      .collection('users')
+      .where('username', '==', username)
       .get()
       .then((snapshot) => {
         if (!snapshot.exist) {
@@ -94,7 +94,7 @@ export default function Register(props) {
                 .then(function () {});
               firebase
                 .firestore()
-                .collection("users")
+                .collection('users')
                 .doc(firebase.auth().currentUser.uid)
                 .set({
                   name,
@@ -107,7 +107,7 @@ export default function Register(props) {
               setIsValid({
                 bool: true,
                 boolSnack: true,
-                message: "Something went wrong",
+                message: 'Something went wrong',
               });
             });
         }
@@ -116,7 +116,7 @@ export default function Register(props) {
         setIsValid({
           bool: true,
           boolSnack: true,
-          message: "Something went wrong",
+          message: 'Something went wrong',
         });
       });
   };
@@ -126,32 +126,33 @@ export default function Register(props) {
       <View style={styles.formCenter}>
         <TextInput
           style={styles.textInput}
-          placeholder="Username"
+          placeholder='Username'
           value={username}
-          keyboardType="twitter"
+          keyboardType='twitter'
           onChangeText={(username) =>
             setUsername(
               username
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/\s+/g, "")
-                .replace(/[^a-z0-9]/gi, "")
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, '')
+                .replace(/[^a-z0-9]/gi, '')
             )
           }
         />
         <TextInput
           style={styles.textInput}
-          placeholder="name"
+          placeholder='name'
           onChangeText={(name) => setName(name)}
         />
         <TextInput
           style={styles.textInput}
-          placeholder="email"
+          placeholder='email'
+          keyboardType={'email-address'}
           onChangeText={(email) => setEmail(email)}
         />
         <TextInput
           style={styles.textInput}
-          placeholder="password"
+          placeholder='password'
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
@@ -159,14 +160,14 @@ export default function Register(props) {
         <Button
           style={styles.button}
           onPress={() => onRegister()}
-          title="Register"
+          title='Register'
         />
       </View>
 
       <View style={styles.bottomButton}>
         <Text
-          style={{ textAlign: "center" }}
-          onPress={() => props.navigation.navigate("Login")}
+          style={{ textAlign: 'center' }}
+          onPress={() => props.navigation.navigate('Login')}
         >
           Already have an account? SignIn.
         </Text>
