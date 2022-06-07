@@ -1,6 +1,6 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import RNModal from "react-native-modal";
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import RNModal from 'react-native-modal';
 
 const Modal = ({ isVisible = false, children, ...props }) => {
   {
@@ -28,9 +28,7 @@ const ModalHeader = ({ title }) => (
   </View>
 );
 
-const ModalBody = ({ children }) => (
-  <View style={styles.body}>{children}</View>
-);
+const ModalBody = ({ children }) => <View style={styles.body}>{children}</View>;
 
 const ModalFooter = ({ children }) => (
   <View style={styles.footer}>{children}</View>
@@ -38,31 +36,31 @@ const ModalFooter = ({ children }) => (
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: "#000",
-    borderStyle: "solid",
+    borderColor: '#000',
+    borderStyle: 'solid',
   },
   header: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     paddingTop: 10,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
   },
   body: {
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 15,
     minHeight: 100,
   },
   footer: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
 });
 
@@ -71,5 +69,4 @@ Modal.Container = ModalContainer;
 Modal.Body = ModalBody;
 Modal.Footer = ModalFooter;
 
-export default Modal;
-
+export { Modal };
