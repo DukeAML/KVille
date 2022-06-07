@@ -150,10 +150,10 @@ export default function JoinGroup({ navigation }) {
               style={[
                 styles.groupText,
                 {
-                  fontSize: 16,
+                  fontSize: 24,
                   fontWeight: 700,
                   color: "#2E5984",
-                  width: 86
+                  width: "100%"
                   //borderWidth: 2
                 }
               ]}
@@ -243,9 +243,9 @@ const styles = StyleSheet.create({
     color: "#656565"
   },
   topBanner: {
-    //for the top container holding "welcome to k-ville"
+    //for the top container holding "join group button"
     alignItems: "flex-end",
-    marginTop: 20,
+    marginTop: 25,
     marginBottom: 60,
     width: "90%"
     //borderWidth: 2

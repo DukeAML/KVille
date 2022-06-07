@@ -154,7 +154,11 @@ export default function Schedule({ route }) {
     return <Member name={item.name} />;
   };
 
-  //Component for each single cell timeslot
+  /* Component for each single cell timeslot 
+        Parameters:
+          index: index of cell within the entire schedule array
+          person: string holding the person currently scheduled for the time cell
+  */
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
     const indexofUser = colorCodes.findIndex((object) => object.name === person);
@@ -175,10 +179,17 @@ export default function Schedule({ route }) {
     );
   };
   
-  //Component for each row to list the people in that time shift
-  //# of people on the row is dependent on the tentType and time of day
+  /*Component for each row to list the people in that time shift
+    # of people on the row is dependent on the tentType and time of day
+      Parameters: 
+        index: index of cell within the day (range from 0-47) 
+        arrayIndex: index of cell in the entire schedule array (range from 0-337)
+        members: string of one time shift (ex. "member1 member2 member3 member4 ")
+        numDay: the number of people required for a day shift
+        numNight: the number of people required for a night shift
+  */
   const RenderCell = (data, index, arrayIndex, members, numDay, numNight) => {
-    const people = members.split(" ");
+    const people = members.split(" "); //stores the string as an array of single members
     const isNight = (index >= 2 && index <= 13);
 
     if (!isNight && numDay === 1) {
@@ -265,6 +276,7 @@ export default function Schedule({ route }) {
       </View>
     );
   };
+
   //Component for the top day buttons
   const DayButton = ({day, abbrev}) => {
     return (
