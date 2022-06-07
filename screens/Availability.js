@@ -29,7 +29,7 @@ const window = Dimensions.get('window');
 // prettier-ignore
 const agenda = {
   tableHead: ['', 'Sun', 'Mon', 'Tu', 'Wed', 'Th', 'Fri', 'Sat'],
-  tableTime: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM','8 AM', '9 AM', '10AM', '11 AM', '12 PM',' 1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM',],
+  tableTime: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM','8 AM', '9 AM', '10 AM', '11 AM', '12 PM',' 1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM',],
 };
 
 //const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
@@ -139,10 +139,7 @@ export default function Availability({ route }) {
   );
 
   const element = (data, index) => (
-    <TouchableOpacity onPress={() => console.log(index)}>
-      <View style={styles.btn}>
-        <Text style={styles.btnText}>button</Text>
-      </View>
+    <TouchableOpacity style={styles.btn} onPress={() => console.log(index)}>
     </TouchableOpacity>
   );
 
@@ -286,13 +283,18 @@ export default function Availability({ route }) {
               <Col
                 data={agenda.tableTime}
                 style={styles.time}
-                //heightArr={[28, 28]}
                 textStyle={styles.text}
               />
             </TableWrapper>
             <TableWrapper style={{ flex: 1 }}>
               {tableData.map((rowData, index) => (
-                <TableWrapper key={index} style={styles.row}>
+                <TableWrapper
+                  key={index}
+                  style={[
+                    styles.row,
+                    index % 2 && { backgroundColor: '#F7F6E7' },
+                  ]}
+                >
                   {rowData.map((cellData, cellIndex) => (
                     <Cell
                       key={cellIndex}
@@ -306,17 +308,6 @@ export default function Availability({ route }) {
                   ))}
                 </TableWrapper>
               ))}
-              {/* {tableData.map((rowData, index) => (
-              <Row
-                key={index}
-                data={rowData}
-                style={[
-                  styles.row,
-                  index % 2 && { backgroundColor: "#F7F6E7" },
-                ]}
-                textStyle={styles.text}
-              />
-            ))} */}
             </TableWrapper>
           </Table>
         </ScrollView>
@@ -335,13 +326,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    //justifyContent:"center"
-  },
-  wrapper: {
-    flexDirection: 'row',
-  },
-  title: {
-    flex: 1,
   },
   row: {
     height: 40,
@@ -368,9 +352,9 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '100%',
-    height: '100%',
+    height: 41,
     backgroundColor: '#78B7BB',
-    borderRadius: 2,
+    borderRadius: 10,
   },
   btnText: {
     textAlign: 'center',

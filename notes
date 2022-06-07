@@ -7,6 +7,7 @@ Tasks:
 
 Notes: 
     -navigating to screen in drawer navigator doesn't actually unmount, so useEffect will not be effective, instead use useFocusEffect which is called everytime screen is in focus
+    -JSDoc
 
 Database: 
     -users: userID -> name, email, group code, availability
