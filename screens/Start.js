@@ -191,14 +191,14 @@ export default function Start({ navigation }) {
         <Text style={styles.groupText}>Groups</Text>
         <TouchableOpacity onPress={toggleModal}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Icon name='add-circle-outline' color={'#2E5984'} size={20} />
+            <Icon name='add-circle-outline' color={'#1f509a'} size={20} />
             <Text
               style={[
                 styles.groupText,
                 {
                   fontSize: 16,
                   fontWeight: '700',
-                  color: '#2E5984',
+                  color: '#1f509a',
                   marginLeft: 4,
                 },
               ]}
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   topText: {
     //"welcome to kville" text
-    fontFamily: 'Arial',
+    //fontFamily: 'Arial',
     textAlign: 'left',
     fontWeight: '800',
     fontSize: 28,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   },
   popUpHeader: {
     //style for text at the top of the popup
-    fontFamily: 'Arial',
+    //fontFamily: 'Arial',
     fontWeight: '600',
     color: 'white',
     height: 40,

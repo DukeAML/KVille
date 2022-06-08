@@ -150,9 +150,9 @@ export default function JoinGroup({ navigation }) {
               style={[
                 styles.groupText,
                 {
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: 700,
-                  color: "#2E5984",
+                  color: "#1f509a",
                   width: "100%"
                   //borderWidth: 2
                 }
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   },
   groupText: {
     //text for 'Groups' and '+ Add Group'
-    fontFamily: "sans-serif",
+    //fontFamily: "sans-serif",
     textAlign: "left",
     width: "90%",
     fontSize: 20,

@@ -17,7 +17,7 @@ import {
   Col,
 } from "react-native-table-component";
 
-import kvilleBoundary from "../assets/kvilleBoundary.jpg";
+import KVilleBoundary from "../assets/KVilleBoundary.jpg";
 import kvillesign from "../assets/kvillesign.jpg";
 
 //DATA for The TABLES
@@ -258,7 +258,7 @@ export default function Info() {
               resizeMode: "contain",
               alignSelf: "center",
             }}
-            source={kvilleBoundary}
+            source={KVilleBoundary}
           />
         </View>
 
