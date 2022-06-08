@@ -5,16 +5,20 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
-export default function Login({navigation}) {
+const window = Dimensions.get('window');
+
+export default function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [dimensions, setDimensions] = useState({ window });
 
   const onSignUp = () => {
     //firebase.auth().signInWithEmailAndPassword(email, password);
@@ -31,7 +35,7 @@ export default function Login({navigation}) {
         return firebase.auth().signInWithEmailAndPassword(email, password);
       })
       .catch((error) => {
-        //Handle Errors here.
+        // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
       });
@@ -39,10 +43,25 @@ export default function Login({navigation}) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.banner}>
+        <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
+          LOGIN
+        </Text>
+        <View style={styles.imageContainer}></View>
+        <View
+          style={[
+            styles.slant,
+            {
+              borderRightWidth: dimensions.window.width,
+              borderTopWidth: dimensions.window.height / 5,
+            },
+          ]}
+        ></View>
+      </View>
       <View style={styles.formCenter}>
         <View style={styles.section}>
           <View style={styles.icon}>
-            <Icon name='account-circle-outline' color='#000' size={25} />
+            <Icon name='account-circle-outline' color={'#000'} size={25} />
           </View>
           <TextInput
             style={styles.textInput}
@@ -55,7 +74,7 @@ export default function Login({navigation}) {
 
         <View style={styles.section}>
           <View style={styles.icon}>
-            <Icon name='lock-outline' color='#000' size={25} />
+            <Icon name='lock-outline' color={'#000'} size={25} />
           </View>
           <TextInput
             style={styles.textInput}
@@ -65,7 +84,7 @@ export default function Login({navigation}) {
             onChangeText={(password) => setPassword(password)}
           />
           <TouchableOpacity
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 5 }}
             onPress={() => {
               setSecureTextEntry(!secureTextEntry);
               return false;
@@ -73,7 +92,7 @@ export default function Login({navigation}) {
           >
             <Icon
               name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-              color='#000'
+              color={'#000'}
               size={20}
             />
           </TouchableOpacity>
@@ -88,7 +107,7 @@ export default function Login({navigation}) {
         <Text>Don't have an account? </Text>
         <Text
           title='Register'
-          onPress={() => navigation.navigate('Register')}
+          onPress={() => props.navigation.navigate('Register')}
           style={{ textAlign: 'center', color: '#0FA4DC' }}
         >
           Sign Up
@@ -101,6 +120,38 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  banner: {
+    //position: 'absolute',
+    backgroundColor: '#1F509A',
+    width: '100%',
+    height: '50%',
+    //justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 30,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 15,
+    width: 100,
+    height: 70,
+  },
+  slant: {
+    position: 'absolute',
+    bottom: 0,
+    marginLeft: 0,
+    //backgroundColor: '#fff',
+    height: 0,
+    width: 0,
+    borderStyle: 'solid',
+    borderTopWidth: 150,
+    borderRightColor: '#f5f5f5',
+    borderBottomColor: '#f5f5f5',
+    borderTopColor: 'transparent',
+    //borderLeftColor: 'transparent',
   },
   formCenter: {
     justifyContent: 'center',
@@ -111,11 +162,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     //justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'whitesmoke',
+    backgroundColor: '#f5f5f5',
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     margin: 10,
-    shadowColor: '#0FA4DC',
+    shadowColor: '#1F509A',
     elevation: 20,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -129,8 +180,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'whitesmoke',
-    shadowColor: '#0FA4DC',
+    backgroundColor: '#f5f5f5',
+    shadowColor: '#1F509A',
     elevation: 20,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -141,9 +192,9 @@ const styles = StyleSheet.create({
     height: 20,
     flexDirection: 'row',
     flex: 1,
-    backgroundColor: 'whitesmoke',
+    backgroundColor: '#f5f5f5',
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 8,
     height: '100%',
     alignItem: 'center',
     outlineWidth: 0,
