@@ -162,7 +162,7 @@ export default function Start({ navigation }) {
         GROUPS = [];
         setIsReady(false);
       };
-    }, [GROUPS])
+    }, [])
   );
 
   const onLayoutRootView = useCallback(async () => {

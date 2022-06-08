@@ -17,7 +17,7 @@ import {
   Col,
 } from "react-native-table-component";
 
-import KVilleBoundary from "../assets/KVilleBoundary.jpg";
+import KVilleBoundary from "../assets/kvilleBoundary.jpg";
 import kvillesign from "../assets/kvillesign.jpg";
 
 //DATA for The TABLES

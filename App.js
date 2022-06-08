@@ -48,8 +48,10 @@ export default function App() {
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setLoggedIn(false);
+            setIsReady(true);
           } else {
             setLoggedIn(true);
+            setIsReady(true);
           }
         });
       } catch (e) {
