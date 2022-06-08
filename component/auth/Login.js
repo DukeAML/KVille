@@ -1,44 +1,44 @@
-import React, { useState } from "react";
-import { View, Button, Text, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import React, { useState } from 'react';
+import { View, Button, Text, StyleSheet } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   formCenter: {
-    justifyContent: "center",
+    justifyContent: 'center',
     flex: 1,
     margin: 25,
   },
   textInput: {
     marginBottom: 10,
-    borderColor: "gray",
-    backgroundColor: "whitesmoke",
+    borderColor: 'gray',
+    backgroundColor: 'whitesmoke',
     padding: 10,
     borderWidth: 1,
     borderRadius: 8,
     height: 20,
-    alignItem: "center",
+    alignItem: 'center',
     //justifyContent: "center",
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   bottomButton: {
-    alignContent: "center",
-    borderTopColor: "gray",
+    alignContent: 'center',
+    borderTopColor: 'gray',
     borderTopWidth: 1,
     padding: 10,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 30,
   },
 });
 
 export default function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const onSignUp = () => {
     firebase.auth().signInWithEmailAndPassword(email, password);
@@ -66,32 +66,38 @@ export default function Login(props) {
       <View style={styles.formCenter}>
         <TextInput
           style={styles.textInput}
-          placeholder="email"
+          placeholder='email'
           value={email}
           onChangeText={(email) => setEmail(email)}
-          right={<TextInput.Icon name="account-circle-outline" />}
-          activeUnderlineColor="#00f"
+          keyboardType="email-address"
+          right={<TextInput.Icon name='account-circle-outline' />}
+          activeUnderlineColor='#00f'
         />
         <TextInput
           style={styles.textInput}
-          placeholder="password"
+          placeholder='password'
           secureTextEntry={true}
           value={password}
           onChangeText={(password) => setPassword(password)}
-          right={<TextInput.Icon name="lock-outline" style={{margin: 10, padding: 20, color:"#f00"}} />}
+          right={
+            <TextInput.Icon
+              name='lock-outline'
+              style={{ margin: 10, padding: 20, color: '#f00' }}
+            />
+          }
         />
         <Button
           style={styles.button}
           onPress={() => onSignUp()}
-          title="Sign In"
+          title='Sign In'
         />
       </View>
 
       <View style={styles.bottomButton}>
         <Text
-          title="Register"
-          onPress={() => props.navigation.navigate("Register")}
-          style={{ textAlign: "center" }}
+          title='Register'
+          onPress={() => props.navigation.navigate('Register')}
+          style={{ textAlign: 'center' }}
         >
           Don't have an account? SignUp.
         </Text>
