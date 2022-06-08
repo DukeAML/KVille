@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Text, View, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
-import { useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-
-require('firebase/firestore');
 
 /* let currentUserName;
 
@@ -32,12 +29,7 @@ export default function GroupInfo({ route }) {
   const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
 
   const { groupCode, groupName } = route.params; // take in navigation parameters
-  console.log('Group code passed to GroupInfo:', groupCode);
-
-  /* const [groupName,setGroupName]= useState('');
-  const groupCode = useSelector((state) => state.user.currentUser.groupCode); */
-
-  //const GroupRef = firebase.firestore().collection("groups").doc(groupCode);
+  console.log('route params: ', route.params);
 
   const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
 
@@ -52,50 +44,53 @@ export default function GroupInfo({ route }) {
           await GroupRef.collection('members')
             .get()
             .then((querySnapshot) => {
-              setIsReady(false);
-              querySnapshot.forEach((doc) => {
-                let currName = doc.data().name; //gets current name in list
-                //console.log("current name:", currName);
+              if (mounted) {
+                //setIsReady(false);
+                querySnapshot.forEach((doc) => {
+                  let currName = doc.data().name; //gets current name in list
+                  //console.log("current name:", currName);
 
-                let tentCondition = doc.data().inTent; //gets tent status as well
-                //console.log("tentcondition:", tentCondition);
+                  let tentCondition = doc.data().inTent; //gets tent status as well
+                  //console.log("tentcondition:", tentCondition);
 
-                let current = {
-                  //create new object for the current list item
-                  id: currName,
-                  name: currName,
-                  inTent: tentCondition,
-                };
+                  let current = {
+                    //create new object for the current list item
+                    id: currName,
+                    name: currName,
+                    inTent: tentCondition,
+                  };
 
-                let nameExists, tentStatusChanged; //checks if member is already in list array
-                if (members.length === 0) nameExists = false;
-                else {
-                  nameExists = members.some((e) => e.name === currName);
-                }
+                  let nameExists, tentStatusChanged; //checks if member is already in list array
+                  if (members.length === 0) nameExists = false;
+                  else {
+                    nameExists = members.some((e) => e.name === currName);
+                  }
 
-                if (!nameExists) {
-                  // if not already in, add to the array
-                  members.push(current);
-                }
+                  if (mounted && !nameExists) {
+                    // if not already in, add to the array
+                    members.push(current);
+                  }
 
-                let indexOfUser = members.findIndex(
-                  (member) => member.id === currName
-                );
-                tentStatusChanged = !(
-                  members[indexOfUser].inTent == tentCondition
-                );
-                /* console.log("status1: ",members[indexOfUser].inTent); 
-        console.log("status: ",tentStatusChanged); 
-        console.log("ARRAY: ",members); */
+                  let indexOfUser = members.findIndex(
+                    (member) => member.id === currName
+                  );
+                  tentStatusChanged = !(
+                    members[indexOfUser].inTent == tentCondition
+                  );
+                  // console.log('status1: ', members[indexOfUser].inTent);
+                  // console.log('status: ', tentStatusChanged);
+                  // console.log('ARRAY: ', members);
 
-                // checks if tent status changed after refresh and updates list
-                if (nameExists && tentStatusChanged) {
-                  members.splice(indexOfUser, 1);
-                  members.insert(indexOfUser, current);
-                }
+                  // checks if tent status changed after refresh and updates list
+                  if (nameExists && tentStatusChanged) {
+                    members.splice(indexOfUser, 1);
+                    members.insert(indexOfUser, current);
+                  }
 
-                // doc.data() is never undefined for query doc snapshots
-              });
+                  // doc.data() is never undefined for query doc snapshots
+                });
+                console.log('done reading members', members);
+              }
             });
         } catch (e) {
           console.warn(e);
@@ -104,9 +99,8 @@ export default function GroupInfo({ route }) {
           setIsReady(true);
         }
       }
-      if (mounted) {
-        prepare();
-      }
+      prepare();
+
       return () => {
         members = [];
         setIsReady(false);
@@ -115,24 +109,24 @@ export default function GroupInfo({ route }) {
     }, [groupCode])
   );
 
-  //variable for each name box, change color to green if status is inTent
-  const renderMember = ({ item }) => {
-    const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return <Member name={item.name} backgroundColor={{ backgroundColor }} />;
-  };
-
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
       await SplashScreen.hideAsync();
     }
   }, [isReady]);
 
+  //variable for each name box, change color to green if status is inTent
+  const renderMember = ({ item }) => {
+    const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
+    return <Member name={item.name} backgroundColor={{ backgroundColor }} />;
+  };
+
   if (!isReady) {
     //if firebase reading done, then render
     return null;
   }
   return (
-    <View style={styles.container} onLayout={onLayoutRootView} >
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <Text style={styles.header}>Group Name</Text>
 
       <View style={styles.boxText}>

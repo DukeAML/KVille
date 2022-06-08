@@ -4,6 +4,7 @@ Tasks:
     -implement push notifications - expo api
     -discord community??
     -for now code everything under black tent; later add options with picker in CreateGroup.js (reminder can't use directly since hooks not allowed in class component, create separate component file and import in, or figure out how to use without hooks)
+    -forgot password
 
 Notes: 
     -navigating to screen in drawer navigator doesn't actually unmount, so useEffect will not be effective, instead use useFocusEffect which is called everytime screen is in focus
