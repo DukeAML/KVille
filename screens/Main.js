@@ -19,9 +19,9 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
-// import firebase from "firebase/compat/app";
-// import "firebase/compat/auth";
-// import "firebase/compat/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";
@@ -76,24 +76,24 @@ export default function Main() {
     prepare();
   }, [isReady]);
 
-  // useEffect(() => {
-  //   // clearData(dispatch);
-  //   // fetchUser(dispatch);
-  //   dispatch(reset());
-  //   firebase
-  //     .firestore()
-  //     .collection("users")
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((snapshot) => {
-  //       if (snapshot.exists) {
-  //         dispatch(setCurrentUser(snapshot.data()));
-  //       } else {
-  //         console.log("does not exist");
-  //       }
-  //     });
-  //   console.log("cleared data and fetched user");
-  // }, []);
+  useEffect(() => {
+    // clearData(dispatch);
+    // fetchUser(dispatch);
+    dispatch(reset());
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          dispatch(setCurrentUser(snapshot.data()));
+        } else {
+          console.log("does not exist");
+        }
+      });
+    console.log("cleared data and fetched user");
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
