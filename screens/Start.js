@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, StackActions } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -32,8 +32,6 @@ import {
 } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
-
-require('firebase/firestore');
 
 const window = Dimensions.get('window');
 
@@ -76,32 +74,44 @@ export default function Start({ navigation }) {
         groupName={item.groupName}
         groupCode={item.code}
         onPress={() => {
-          firebase
-            .firestore()
-            .collection('groups')
-            .doc(item.code)
-            .get()
-            .then((doc) => {
-              console.log('tent type', doc.data().tentType);
-              dispatch(setTentType(doc.data().tentType));
+          const updateRedux = async () => {
+            await firebase
+              .firestore()
+              .collection('groups')
+              .doc(item.code)
+              .get()
+              .then((doc) => {
+                console.log('tent type', doc.data().tentType);
+                dispatch(setTentType(doc.data().tentType));
+              });
+            await firebase
+              .firestore()
+              .collection('groups')
+              .doc(item.code)
+              .collection('members')
+              .doc(firebase.auth().currentUser.uid)
+              .get()
+              .then((memDoc) => {
+                dispatch(setUserName(memDoc.data().name));
+              });
+
+            dispatch(setGroupCode(item.code));
+            dispatch(setGroupName(item.groupName));
+            // navigation.dispatch(
+            //   StackActions.replace('GroupInfo', {
+            //     //pass groupcode and group name parameters
+            //     groupCode: item.code,
+            //     groupName: item.groupName,
+            //   })
+            // );
+            navigation.navigate('GroupInfo', {
+              //pass groupcode and group name parameters
+              groupCode: item.code,
+              groupName: item.groupName,
             });
-          firebase
-            .firestore()
-            .collection('groups')
-            .doc(item.code)
-            .collection('members')
-            .doc(firebase.auth().currentUser.uid)
-            .get()
-            .then((memDoc) => {
-              dispatch(setUserName(memDoc.data().name));
-            });
-          dispatch(setGroupCode(item.code));
-          dispatch(setGroupName(item.groupName));
-          navigation.navigate('GroupInfo', {
-            //pass groupcode and group name parameters
-            groupCode: item.code,
-            groupName: item.groupName,
-          });
+            console.log('mounted', mounted);
+          };
+          updateRedux();
         }}
       />
     );
@@ -113,9 +123,10 @@ export default function Start({ navigation }) {
     .collection('users')
     .doc(firebase.auth().currentUser.uid);
 
+  let mounted;
   useFocusEffect(
     useCallback(() => {
-      let mounted = true;
+      mounted = true;
 
       async function prepare() {
         try {
@@ -123,26 +134,28 @@ export default function Start({ navigation }) {
 
           //Accesses Names of Members from firebase and adds them to the array
           await userRef.get().then((doc) => {
-            //setIsReady(false);
-            let currGroup = doc.data().groupCode;
-            console.log("Current user's groups", currGroup);
+            if (mounted) {
+              //setIsReady(false);
+              let currGroup = doc.data().groupCode;
+              console.log("Current user's groups", currGroup);
 
-            if (currGroup.length !== 0) {
-              currGroup.forEach((group) => {
-                let current = {
-                  code: group.groupCode,
-                  groupName: group.groupName,
-                };
-                let codeExists;
-                if (GROUPS.length === 0) codeExists = false;
-                else {
-                  codeExists = GROUPS.some((e) => e.code === group.code);
-                }
+              if (mounted && currGroup.length !== 0) {
+                currGroup.forEach((group) => {
+                  let current = {
+                    code: group.groupCode,
+                    groupName: group.groupName,
+                  };
+                  let codeExists;
+                  if (GROUPS.length === 0) codeExists = false;
+                  else {
+                    codeExists = GROUPS.some((e) => e.code === group.code);
+                  }
 
-                if (mounted && !codeExists) {
-                  GROUPS.push(current);
-                }
-              });
+                  if (mounted && !codeExists) {
+                    GROUPS.push(current);
+                  }
+                });
+              }
             }
           });
         } catch (e) {
@@ -152,15 +165,14 @@ export default function Start({ navigation }) {
           setIsReady(true);
         }
       }
-      //prepare();
-      if (mounted) {
-        prepare();
-      }
+      prepare();
 
       return () => {
         mounted = false;
         GROUPS = [];
         setIsReady(false);
+        console.log('mounted after', mounted);
+        console.log('start screen was unfocused');
       };
     }, [])
   );

@@ -46,7 +46,7 @@ export default function Login({navigation}) {
           </View>
           <TextInput
             style={styles.textInput}
-            placeholder='email'
+            placeholder='Email'
             value={email}
             onChangeText={(email) => setEmail(email)}
             keyboardType='email-address'
@@ -59,23 +59,27 @@ export default function Login({navigation}) {
           </View>
           <TextInput
             style={styles.textInput}
-            placeholder='password'
+            placeholder='Password'
             secureTextEntry={secureTextEntry}
             value={password}
             onChangeText={(password) => setPassword(password)}
           />
           <TouchableOpacity
-            style={{ marginRight: 5 }}
+            style={{ marginRight: 10 }}
             onPress={() => {
               setSecureTextEntry(!secureTextEntry);
               return false;
             }}
           >
-            <Icon name='eye-off-outline' color='#000' size={20} />
+            <Icon
+              name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+              color='#000'
+              size={20}
+            />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => onSignUp()}>
+        <TouchableOpacity style={styles.button} onPress={onSignUp}>
           <Text style={{ color: '#fff' }}>Sign In</Text>
         </TouchableOpacity>
       </View>
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'whitesmoke',
     height: 40,
-    borderRadius: 5,
+    borderRadius: 20,
     margin: 10,
     shadowColor: '#0FA4DC',
     elevation: 20,
@@ -139,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'whitesmoke',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 20,
     height: '100%',
     alignItem: 'center',
     outlineWidth: 0,

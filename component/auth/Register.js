@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import { View, Button, TextInput, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { Snackbar } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-require('firebase/firestore');
-
 export default function Register(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [groupCode, setGroupCode] = useState([]);
   const [isValid, setIsValid] = useState(true);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const onRegister = () => {
-    if (
-      name.length == 0 ||
-      username.length == 0 ||
-      email.length == 0 ||
-      password.length == 0
-    ) {
+    if (username.length == 0 || email.length == 0 || password.length == 0) {
       setIsValid({
         bool: true,
         boolSnack: true,
@@ -69,7 +69,6 @@ export default function Register(props) {
                 .collection('users')
                 .doc(firebase.auth().currentUser.uid)
                 .set({
-                  name,
                   email,
                   username,
                   groupCode,
@@ -96,54 +95,81 @@ export default function Register(props) {
   return (
     <View style={styles.container}>
       <View style={styles.formCenter}>
-        <TextInput
-          style={styles.textInput}
-          placeholder='Username'
-          value={username}
-          keyboardType='twitter'
-          onChangeText={(username) =>
-            setUsername(
-              username
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/\s+/g, '')
-                .replace(/[^a-z0-9]/gi, '')
-            )
-          }
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder='name'
-          onChangeText={(name) => setName(name)}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder='email'
-          keyboardType={'email-address'}
-          onChangeText={(email) => setEmail(email)}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder='password'
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
+        <View style={styles.section}>
+          <View style={styles.icon}>
+            <Icon name='account-circle-outline' color='#000' size={25} />
+          </View>
+          <TextInput
+            style={styles.textInput}
+            placeholder='Username'
+            value={username}
+            keyboardType='twitter'
+            onChangeText={(username) =>
+              setUsername(
+                username
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, '')
+              )
+            }
+          />
+        </View>
 
-        <Button
-          style={styles.button}
-          onPress={() => onRegister()}
-          title='Register'
-        />
+        <View style={styles.section}>
+          <View style={styles.icon}>
+            <Icon name='email-outline' color='#000' size={25} />
+          </View>
+          <TextInput
+            style={styles.textInput}
+            placeholder='Email'
+            value={email}
+            keyboardType={'email-address'}
+            onChangeText={(email) => setEmail(email)}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.icon}>
+            <Icon name='lock-outline' color='#000' size={25} />
+          </View>
+          <TextInput
+            style={styles.textInput}
+            placeholder='Password'
+            value={password}
+            secureTextEntry={secureTextEntry}
+            onChangeText={(password) => setPassword(password)}
+          />
+          <TouchableOpacity
+            style={{ marginRight: 10 }}
+            onPress={() => {
+              setSecureTextEntry(!secureTextEntry);
+              return false;
+            }}
+          >
+            <Icon
+              name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+              color='#000'
+              size={20}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={onRegister}>
+          <Text style={{ color: '#fff' }}>Register</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.bottomButton}>
+        <Text>Already have an account? </Text>
         <Text
-          style={{ textAlign: 'center' }}
+          style={{ textAlign: 'center', color: '#0FA4DC' }}
           onPress={() => props.navigation.navigate('Login')}
         >
-          Already have an account? SignIn.
+          Sign In
         </Text>
       </View>
+
       <Snackbar
         visible={isValid.boolSnack}
         duration={2000}
@@ -166,16 +192,62 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 25,
   },
+  section: {
+    flexDirection: 'row',
+    //justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'whitesmoke',
+    height: 40,
+    borderRadius: 20,
+    margin: 10,
+    shadowColor: '#0FA4DC',
+    elevation: 20,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 7,
+  },
+  icon: {
+    position: 'absolute',
+    left: -10,
+    height: 50,
+    width: 50,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'whitesmoke',
+    shadowColor: '#0FA4DC',
+    elevation: 20,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 7,
+  },
   textInput: {
-    marginBottom: 10,
-    borderColor: 'gray',
+    marginLeft: 40,
+    height: 20,
+    flexDirection: 'row',
+    flex: 1,
     backgroundColor: 'whitesmoke',
     padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 20,
+    height: '100%',
+    alignItem: 'center',
+    outlineWidth: 0,
+    //justifyContent: "center",
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    backgroundColor: '#1F509A',
+    height: 30,
+    marginTop: 40,
+    borderRadius: 50,
   },
   bottomButton: {
+    flexDirection: 'row',
     alignContent: 'center',
+    justifyContent: 'center',
     borderTopColor: 'gray',
     borderTopWidth: 1,
     padding: 10,

@@ -51,7 +51,7 @@ export default function CreateGroup({ navigation }) {
     .doc(firebase.auth().currentUser.uid);
   let groupRef;
 
-  const userName = useSelector((state) => state.user.currentUser.name);
+  const userName = useSelector((state) => state.user.currentUser.username);
 
   //on first render sets name to user's registered name
   //useEffect(() => {
