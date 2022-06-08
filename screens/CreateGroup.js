@@ -187,16 +187,17 @@ export default function CreateGroup({ navigation }) {
 
       <Text style={[styles.headerText, {marginTop:20}]}>Tent Type</Text>
       <Picker
-            selectedValue={group.tentType}
-            onValueChange={(itemValue, itemIndex) => {
-              setGroup({ ...group, tentType: itemValue });
-            }}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Black" value="Black" />
-            <Picker.Item label="Blue" value="Blue" />
-            <Picker.Item label="White" value="White" />
-            <Picker.Item label="Walk up line" value="Walk up line" />
+        selectedValue={group.tentType}
+        onValueChange={(itemValue, itemIndex) => {
+          setGroup({ ...group, tentType: itemValue });
+        }}
+        style = {{width: "90%", height: 30}}
+      >
+        <Picker.Item label="" value="" />
+        <Picker.Item label="Black" value="Black" />
+        <Picker.Item label="Blue" value="Blue" />
+        <Picker.Item label="White" value="White" />
+        <Picker.Item label="Walk up line" value="Walk up line" />
       </Picker>
 
       <Text style={[styles.headerText, {marginTop:20}]}>Username</Text>
@@ -289,8 +290,7 @@ const styles = StyleSheet.create({
     width: "100%",
     resizeMode: "cover"
   },
-  topBanner: {
-    //for the top container holding "welcome to k-ville"
+  topBanner: { //for the top container holding "create" button
     alignItems: "center",
     justifyContent: "flex-end",
     flexDirection: "row",
@@ -299,9 +299,7 @@ const styles = StyleSheet.create({
     width: "90%"
     //borderWidth: 2
   },
-  headerText: {
-    //text for 'Groups' and '+ Add Group'
-    //fontFamily: "sans-serif",
+  headerText: { //text for 'headers of each input'
     textAlign: "left",
     width: "90%",
     fontSize: 20,
