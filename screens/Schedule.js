@@ -17,7 +17,7 @@ import {
 } from "react-native-table-component";
 
 import { useFocusEffect } from "@react-navigation/native";
-import AppLoading from "expo-app-loading";
+import * as SplashScreen from 'expo-splash-screen';
 import Modal from "react-native-modal";
 
 import { createGroupSchedule } from "../backend/CreateGroupSchedule";
@@ -72,7 +72,7 @@ const win = Dimensions.get("window"); //Global Var for screen size
 export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
   console.log("Schedule screen params", route.params);
-  const [loaded, setLoaded] = useState(false); // for checking if firebase is read before rendering
+  const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
 
@@ -305,41 +305,50 @@ export default function Schedule({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+      async function prepare() {
+        try {
+          await SplashScreen.preventAutoHideAsync();
 
-      if (mounted) { 
-        groupRef //stores group schedule in global variable
-          .get()
-          .then((doc) => {
+          //stores group schedule in global variable
+          await groupRef.get().then((doc) => {
             schedule = doc.data().groupSchedule;
-          })
-
-        groupRef.collection('members').get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => { //stores each member in colorCodes array
-
-              let currName = doc.data().name; //gets current name in list
-              let current = {
-                //create new object for the current list item
-                name: currName,
-                color: '',
-              };
-              let nameExists;
-              if (colorCodes.length === 0) nameExists = false;
-              else {nameExists = colorCodes.some((e) => e.name === currName);}
-
-              if (!nameExists) {  // if not already in the colorCodes array, add to the array
-                colorCodes.push(current);
-              }
-            })
-          })
-          .then((doc) => {
-            //for making sure firebase is done reading
-            setLoaded(true);
-            console.log('read from firebase'); //checks when firbase is read
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
           });
+
+          await groupRef
+            .collection('members')
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                //stores each member in colorCodes array
+
+                let currName = doc.data().name; //gets current name in list
+                let current = {
+                  //create new object for the current list item
+                  name: currName,
+                  color: '',
+                };
+                let nameExists;
+                if (colorCodes.length === 0) nameExists = false;
+                else {
+                  nameExists = colorCodes.some((e) => e.name === currName);
+                }
+
+                if (!nameExists) {
+                  // if not already in the colorCodes array, add to the array
+                  colorCodes.push(current);
+                }
+              });
+            });
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          // Tell the application to render
+          setIsReady(true);
+        }
+      }
+      
+      if (mounted) {
+        prepare();
       }
       return () => {
         mounted = false;
@@ -347,142 +356,144 @@ export default function Schedule({ route }) {
     }, [])
   );
 
-
-  
-  if (!loaded ) {     //if firebase reading done, then render
-    return <AppLoading />;
-  } else {
-    //console.log('Full Schedule: ', schedule);
-
-    //initializes the colorCodes fso each member has a unique color background
-    for (let index = 0; index < colorCodes.length ; index++){ 
-      colorCodes[index].color = colors[index];
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
     }
+  }, [isReady]);
+  
+  if (!isReady ) {     //if firebase reading done, then render
+    return null;
+  } 
+  //console.log('Full Schedule: ', schedule);
 
-    return (
-      <View style={styles.bigContainer}>
+  //initializes the colorCodes fso each member has a unique color background
+  for (let index = 0; index < colorCodes.length ; index++){ 
+    colorCodes[index].color = colors[index];
+  }
 
-        <View>
-          <Modal 
-            isVisible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
-          >
-            <View style={styles.deletePopup}>
-              <Text
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: 1,
-                  width: "80%"
-              }}>
-                Edit Timeslot
-              </Text>
-
-              <TouchableOpacity onPress={toggleMemberModal} >
-                <View style = 
-                {{
-                  backgroundColor: "#f2f2f2",
-                  width: "90%",
-                  alignSelf: "center"
-                }}>
-                  <Text style={{ textAlign: "center" }}>{newMember}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress= {() => {
-                toggleModal();
-                editCell(editIndex, oldMember, newMember);
-              }}>
-                <View style = {{backgroundColor: "#636363"}}>
-                  <Text style= {{textAlign: "center", color: "white"}}>Edit</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </View> 
-
-
-        <View>
-        <Modal
-          isVisible={isMemberModalVisible}
-          onBackdropPress={() => setMemberModalVisible(false)}
-          //customBackdrop={<View style={{ flex: 1 }} />}
+  return (
+    <View style={styles.bigContainer} onLayout={onLayoutRootView}>
+      <View>
+        <Modal 
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
         >
-          <View
-            style={{
-              alignSelf: "center",
-              width: "45%",
-              marginTop: win.width * 0.4
-            }}
-          >
-            <View>
-              <FlatList
-                data={colorCodes}
-                renderItem={renderMember}
-                keyExtractor={(item) => item.color}
-              />
-            </View>
+          <View style={styles.deletePopup}>
+            <Text
+              style={{
+                borderBottomColor: "black",
+                borderBottomWidth: 1,
+                width: "80%"
+            }}>
+              Edit Timeslot
+            </Text>
+
+            <TouchableOpacity onPress={toggleMemberModal} >
+              <View style = 
+              {{
+                backgroundColor: "#f2f2f2",
+                width: "90%",
+                alignSelf: "center"
+              }}>
+                <Text style={{ textAlign: "center" }}>{newMember}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress= {() => {
+              toggleModal();
+              editCell(editIndex, oldMember, newMember);
+            }}>
+              <View style = {{backgroundColor: "#636363"}}>
+                <Text style= {{textAlign: "center", color: "white"}}>Edit</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </Modal>
-        </View>
-
-        <View>
-          <View style={[styles.buttonContainer, styles.shadowProp]}>
-            <DayButton day = "Sunday" abbrev="Sun"/>
-            <DayButton day = "Monday" abbrev="Mon"/>
-            <DayButton day = "Tuesday" abbrev="Tue"/>
-            <DayButton day = "Wednesday" abbrev="Wed"/>
-            <DayButton day = "Thursday" abbrev="Thur"/>
-            <DayButton day = "Friday" abbrev="Fri"/>
-            <DayButton day = "Saturday" abbrev="Sat"/>
-          </View>
-
-          <View style = {styles.buttonContainer}>
-            <View style = {{flex: 1}}>
-              <Button
-                title="Push Changes"
-                color= "blue"
-                onPress={pushEdits}
-              />
-            </View>
-
-            <View style = {{flex: 1}}>
-              <Button
-                title="Create Group Schedule"
-                color= "red"
-                onPress={() => {
-                  createGroupSchedule(code, tentType).then(
-                    (groupSchedule) => {
-                      console.log("Group Schedule", groupSchedule);
-
-                      groupRef
-                        .set({
-                          groupSchedule: groupSchedule,
-                        });
-                    }
-                  );
-                }}
-              />
-            </View>
-          </View>
-        </View>
+      </View> 
 
 
-        <ScrollView
-          //style={{ marginHorizontal: 10}}
-          //ref={ref}
-          showsVerticalScrollIndicator={false}
+      <View>
+      <Modal
+        isVisible={isMemberModalVisible}
+        onBackdropPress={() => setMemberModalVisible(false)}
+        //customBackdrop={<View style={{ flex: 1 }} />}
+      >
+        <View
+          style={{
+            alignSelf: "center",
+            width: "45%",
+            marginTop: win.width * 0.4
+          }}
         >
-          <Text style={styles.dayHeader}>
-            {renderDay}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day={renderDay} />
+          <View>
+            <FlatList
+              data={colorCodes}
+              renderItem={renderMember}
+              keyExtractor={(item) => item.color}
+            />
+          </View>
+        </View>
+      </Modal>
+      </View>
+
+      <View>
+        <View style={[styles.buttonContainer, styles.shadowProp]}>
+          <DayButton day = "Sunday" abbrev="Sun"/>
+          <DayButton day = "Monday" abbrev="Mon"/>
+          <DayButton day = "Tuesday" abbrev="Tue"/>
+          <DayButton day = "Wednesday" abbrev="Wed"/>
+          <DayButton day = "Thursday" abbrev="Thur"/>
+          <DayButton day = "Friday" abbrev="Fri"/>
+          <DayButton day = "Saturday" abbrev="Sat"/>
+        </View>
+
+        <View style = {styles.buttonContainer}>
+          <View style = {{flex: 1}}>
+            <Button
+              title="Push Changes"
+              color= "blue"
+              onPress={pushEdits}
+            />
           </View>
 
-        </ScrollView>
+          <View style = {{flex: 1}}>
+            <Button
+              title="Create Group Schedule"
+              color= "red"
+              onPress={() => {
+                createGroupSchedule(code, tentType).then(
+                  (groupSchedule) => {
+                    console.log("Group Schedule", groupSchedule);
+
+                    groupRef
+                      .set({
+                        groupSchedule: groupSchedule,
+                      });
+                  }
+                );
+              }}
+            />
+          </View>
+        </View>
       </View>
-    );
-  }
+
+
+      <ScrollView
+        //style={{ marginHorizontal: 10}}
+        //ref={ref}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.dayHeader}>
+          {renderDay}
+        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <TimeColumn />
+          <DailyTable numberDay={numberForDay} numberNight={numberForNight} day={renderDay} />
+        </View>
+
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
