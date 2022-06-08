@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -107,106 +108,116 @@ export default function Register(props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.banner}>
-        <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
-          REGISTER
-        </Text>
-        <View style={styles.imageContainer}>
-          <Image
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View style={styles.banner}>
+          <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
+            REGISTER
+          </Text>
+          <View style={styles.imageContainer}>
+            <Image
+              style={[
+                styles.logo,
+                {
+                  tintColor: '#D9D9D9',
+                  opacity: 0.2,
+                  height: '100%',
+                  top: -45,
+                  resizeMode: 'repeat',
+                  justifyContent: 'space-between',
+                },
+              ]}
+              source={DukeBasketballLogo}
+            />
+            <View style={styles.boldImage}>
+              <Image style={styles.logo} source={DukeBasketballLogo} />
+            </View>
+          </View>
+          <View
             style={[
-              styles.logo,
+              styles.slant,
               {
-                tintColor: '#D9D9D9',
-                opacity: 0.2,
-                height: '100%',
-                top: -45,
-                resizeMode: 'repeat',
-                justifyContent: 'space-between',
+                borderRightWidth: dimensions.window.width,
+                borderTopWidth: dimensions.window.height / 5,
               },
             ]}
-            source={DukeBasketballLogo}
-          />
-          <View style={styles.boldImage}>
-            <Image style={styles.logo} source={DukeBasketballLogo} />
-          </View>
-        </View>
-        <View
-          style={[
-            styles.slant,
-            {
-              borderRightWidth: dimensions.window.width,
-              borderTopWidth: dimensions.window.height / 5,
-            },
-          ]}
-        ></View>
-      </View>
-
-      <View style={styles.formCenter}>
-        <View style={styles.section}>
-          <View style={styles.icon}>
-            <Icon name='account-circle-outline' color='#000' size={25} />
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Username'
-            value={username}
-            keyboardType='twitter'
-            onChangeText={(username) =>
-              setUsername(
-                username
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-                  .replace(/\s+/g, '')
-                  .replace(/[^a-z0-9]/gi, '')
-              )
-            }
-          />
+          ></View>
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.icon}>
-            <Icon name='email-outline' color='#000' size={25} />
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Email'
-            value={email}
-            keyboardType={'email-address'}
-            onChangeText={(email) => setEmail(email)}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.icon}>
-            <Icon name='lock-outline' color='#000' size={25} />
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Password'
-            value={password}
-            secureTextEntry={secureTextEntry}
-            onChangeText={(password) => setPassword(password)}
-          />
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              setSecureTextEntry(!secureTextEntry);
-              return false;
-            }}
-          >
-            <Icon
-              name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-              color='#000'
-              size={20}
+        <View style={styles.formCenter}>
+          <View style={styles.section}>
+            <View style={styles.icon}>
+              <Icon name='account-circle-outline' color='#000' size={25} />
+            </View>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Username'
+              value={username}
+              //keyboardType='twitter'
+              onChangeText={(username) =>
+                setUsername(
+                  username
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '')
+                    .replace(/[^a-z0-9]/gi, '')
+                )
+              }
             />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.icon}>
+              <Icon name='email-outline' color='#000' size={25} />
+            </View>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Email'
+              value={email}
+              keyboardType={'email-address'}
+              onChangeText={(email) => setEmail(email)}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.icon}>
+              <Icon name='lock-outline' color='#000' size={25} />
+            </View>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Password'
+              value={password}
+              secureTextEntry={secureTextEntry}
+              onChangeText={(password) => setPassword(password)}
+            />
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => {
+                setSecureTextEntry(!secureTextEntry);
+                return false;
+              }}
+            >
+              <Icon
+                name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+                color='#000'
+                size={20}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={onRegister}>
+            <Text style={{ color: '#fff' }}>Register</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={onRegister}>
-          <Text style={{ color: '#fff' }}>Register</Text>
-        </TouchableOpacity>
-      </View>
-
+        <Snackbar
+          visible={isValid.boolSnack}
+          duration={2000}
+          onDismiss={() => {
+            setIsValid({ boolSnack: false });
+          }}
+        >
+          {isValid.message}
+        </Snackbar>
+      </KeyboardAvoidingView>
       <View style={styles.bottomButton}>
         <Text>Already have an account? </Text>
         <Text
@@ -216,16 +227,6 @@ export default function Register(props) {
           Sign In
         </Text>
       </View>
-
-      <Snackbar
-        visible={isValid.boolSnack}
-        duration={2000}
-        onDismiss={() => {
-          setIsValid({ boolSnack: false });
-        }}
-      >
-        {isValid.message}
-      </Snackbar>
     </View>
   );
 }
@@ -328,7 +329,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginLeft: 50,
-    height: 20,
     flexDirection: 'row',
     flex: 1,
     backgroundColor: '#f5f5f5',
@@ -356,6 +356,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     padding: 10,
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 15,
   },
 });

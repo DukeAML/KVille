@@ -7,12 +7,13 @@ import {
   TextInput,
   Dimensions,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
 const window = Dimensions.get('window');
 
@@ -30,106 +31,110 @@ export default function Login(props) {
   });
 
   const onSignUp = () => {
-    //firebase.auth().signInWithEmailAndPassword(email, password);
+    firebase.auth().signInWithEmailAndPassword(email, password);
     //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    firebase
-      .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        // Existing and future Auth states are now persisted in the current
-        // session only. Closing the window would clear any existing state even
-        // if a user forgets to sign out.
-        // ...
-        // New sign-in will be persisted with session persistence.
-        return firebase.auth().signInWithEmailAndPassword(email, password);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-      });
+    // firebase
+    //   .auth()
+    //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    //   .then(() => {
+    //     // Existing and future Auth states are now persisted in the current
+    //     // session only. Closing the window would clear any existing state even
+    //     // if a user forgets to sign out.
+    //     // ...
+    //     // New sign-in will be persisted with session persistence.
+    //     return firebase.auth().signInWithEmailAndPassword(email, password);
+    //   })
+    //   .catch((error) => {
+    //     // Handle Errors here.
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     console.log(errorCode, errorMessage);
+    //   });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.banner}>
-        <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
-          LOGIN
-        </Text>
-        <View style={styles.imageContainer}>
-          <Image
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View style={styles.banner}>
+          <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
+            LOGIN
+          </Text>
+          <View style={styles.imageContainer}>
+            <Image
+              style={[
+                styles.logo,
+                {
+                  flex: 1,
+                  tintColor: '#D9D9D9',
+                  opacity: 0.2,
+                  aspectRatio: 0.84,
+                  maxWidth: 60,
+                  top: -45,
+                  resizeMode: 'repeat',
+                },
+              ]}
+              resizeMode={'repeat'}
+              source={DukeBasketballLogo}
+            />
+            <View style={styles.boldImage}>
+              <Image style={styles.logo} source={DukeBasketballLogo} />
+            </View>
+          </View>
+          <View
             style={[
-              styles.logo,
+              styles.slant,
               {
-                tintColor: '#D9D9D9',
-                opacity: 0.2,
-                height: '100%',
-                top: -30,
-                resizeMode: 'repeat',
+                borderRightWidth: dimensions.window.width,
+                borderTopWidth: dimensions.window.height / 5,
               },
             ]}
-            //resizeMode='repeat'
-            source={DukeBasketballLogo}
-          />
-          <View style={styles.boldImage}>
-            <Image style={styles.logo} source={DukeBasketballLogo} />
-          </View>
+          ></View>
         </View>
-        <View
-          style={[
-            styles.slant,
-            {
-              borderRightWidth: dimensions.window.width,
-              borderTopWidth: dimensions.window.height / 5,
-            },
-          ]}
-        ></View>
-      </View>
-      <View style={styles.formCenter}>
-        <View style={styles.section}>
-          <View style={styles.icon}>
-            <Icon name='account-circle-outline' color={'#000'} size={25} />
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Email'
-            value={email}
-            onChangeText={(email) => setEmail(email)}
-            keyboardType='email-address'
-          />
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.icon}>
-            <Icon name='lock-outline' color={'#000'} size={25} />
-          </View>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Password'
-            secureTextEntry={secureTextEntry}
-            value={password}
-            onChangeText={(password) => setPassword(password)}
-          />
-          <TouchableOpacity
-            style={{ marginRight: 5 }}
-            onPress={() => {
-              setSecureTextEntry(!secureTextEntry);
-              return false;
-            }}
-          >
-            <Icon
-              name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-              color={'#000'}
-              size={20}
+        <View style={styles.formCenter}>
+          <View style={styles.section}>
+            <View style={styles.icon}>
+              <Icon name='account-circle-outline' color={'#000'} size={25} />
+            </View>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Email'
+              value={email}
+              onChangeText={(email) => setEmail(email)}
+              keyboardType='email-address'
             />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.icon}>
+              <Icon name='lock-outline' color={'#000'} size={25} />
+            </View>
+            <TextInput
+              style={styles.textInput}
+              placeholder='Password'
+              secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={(password) => setPassword(password)}
+            />
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => {
+                setSecureTextEntry(!secureTextEntry);
+                return false;
+              }}
+            >
+              <Icon
+                name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+                color={'#000'}
+                size={20}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={onSignUp}>
+            <Text style={{ color: '#fff' }}>Sign In</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={onSignUp}>
-          <Text style={{ color: '#fff' }}>Sign In</Text>
-        </TouchableOpacity>
-      </View>
-
+      </KeyboardAvoidingView>
       <View style={styles.bottomButton}>
         <Text>Don't have an account? </Text>
         <Text
@@ -242,7 +247,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginLeft: 50,
-    height: 20,
     flexDirection: 'row',
     flex: 1,
     backgroundColor: '#f5f5f5',
