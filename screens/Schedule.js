@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   bigContainer: { flex: 1, backgroundColor: "#C2C6D0" }, //for the entire page's container
   text: { margin: 3 }, //text within cells
   timesText: {   //text style for the side text of the list of times
-    fontWeight: 800,
+    fontWeight: "800",
     fontSize: 9,
     //marginRight:6,
     width: win.width * 0.10,
