@@ -136,7 +136,7 @@ export default function CreateGroup({ navigation }) {
                 styles.groupText,
                 {
                   fontSize: 24,
-                  fontWeight: 700,
+                  fontWeight: '700',
                   color: "#1F509A",
                   width: "100%"
                   //borderWidth: 2
@@ -210,67 +210,6 @@ export default function CreateGroup({ navigation }) {
               setGroup({ ...group, userName: userName })
             }
         />
-
-
-
-
-
-
-      {/* <ImageBackground source={zion} style={styles.backgroundImage}> 
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>Group Name:</Text>
-
-          
-          
-          <Text style={styles.centerText}>Group Code</Text>
-          <View
-            style={{
-              backgroundColor: "#FFFAFA90",
-              //height: "15%",
-              alignContent: "center",
-              flexDirection: "row",
-              flex: 0.2,
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 30,
-                fontWeight: "bold",
-                flex: 1,
-              }}
-            >
-              {group.groupCode}
-            </Text>
-          </View>
-          <Text style={styles.centerText}>Tent Type</Text>
-          <Picker
-            selectedValue={group.tentType}
-            onValueChange={(itemValue, itemIndex) => {
-              setGroup({ ...group, tentType: itemValue });
-            }}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Black" value="Black" />
-            <Picker.Item label="Blue" value="Blue" />
-            <Picker.Item label="White" value="White" />
-            <Picker.Item label="Walk up line" value="Walk up line" />
-          </Picker>
-        </View>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity
-            style={styles.createBtn}
-            onPress={() => {
-              onCreateGroup();
-              //navigation.navigate("GroupNavigator");
-              console.log(group.groupCode);
-              console.log(groupRole);
-            }}
-          >
-            <Text style={styles.btnTxt}>Create</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground> */}
     </View>
   );
 }
@@ -359,77 +298,3 @@ const styles = StyleSheet.create({
     textAlign: "center"
   }
 });
-
-{/* <View style={styles.groupContainer}>
-      <ImageBackground source={zion} style={styles.backgroundImage}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>Group Name:</Text>
-
-          <TextInput
-            style={styles.textInput}
-            autoFocus = {true}
-            placeholder="Enter Group Name"
-            value={group.groupName}
-            onChangeText={(groupName) =>
-              setGroup({ ...group, groupName: groupName })
-            }
-          />
-          <TextInput
-            style={styles.textInput}
-            value={group.userName}
-            placeholder={group.userName}
-            onChangeText={(userName) =>
-              setGroup({ ...group, userName: userName })
-            }
-          />
-
-          <Text style={styles.centerText}>Group Code</Text>
-          <View
-            style={{
-              backgroundColor: "#FFFAFA90",
-              //height: "15%",
-              alignContent: "center",
-              flexDirection: "row",
-              flex: 0.2,
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 30,
-                fontWeight: "bold",
-                flex: 1,
-              }}
-            >
-              {group.groupCode}
-            </Text>
-          </View>
-          <Text style={styles.centerText}>Tent Type</Text>
-          <Picker
-            selectedValue={group.tentType}
-            onValueChange={(itemValue, itemIndex) => {
-              setGroup({ ...group, tentType: itemValue });
-            }}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Black" value="Black" />
-            <Picker.Item label="Blue" value="Blue" />
-            <Picker.Item label="White" value="White" />
-            <Picker.Item label="Walk up line" value="Walk up line" />
-          </Picker>
-        </View>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity
-            style={styles.createBtn}
-            onPress={() => {
-              onCreateGroup();
-              //navigation.navigate("GroupNavigator");
-              console.log(group.groupCode);
-              console.log(groupRole);
-            }}
-          >
-            <Text style={styles.btnTxt}>Create</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-    </View> */}
