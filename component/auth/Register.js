@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -6,9 +6,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -24,6 +26,13 @@ export default function Register(props) {
   const [isValid, setIsValid] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [dimensions, setDimensions] = useState({ window });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
 
   const onRegister = () => {
     if (username.length == 0 || email.length == 0 || password.length == 0) {
@@ -102,7 +111,25 @@ export default function Register(props) {
         <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
           REGISTER
         </Text>
-        <View style={styles.imageContainer}></View>
+        <View style={styles.imageContainer}>
+          <Image
+            style={[
+              styles.logo,
+              {
+                tintColor: '#D9D9D9',
+                opacity: 0.2,
+                height: '100%',
+                top: -45,
+                resizeMode: 'repeat',
+                justifyContent: 'space-between',
+              },
+            ]}
+            source={DukeBasketballLogo}
+          />
+          <View style={styles.boldImage}>
+            <Image style={styles.logo} source={DukeBasketballLogo} />
+          </View>
+        </View>
         <View
           style={[
             styles.slant,
@@ -209,23 +236,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   banner: {
+    //position: 'absolute',
     backgroundColor: '#1F509A',
     width: '100%',
     height: '50%',
+    //justifyContent: 'center',
     alignItems: 'center',
   },
   imageContainer: {
     position: 'absolute',
     bottom: 0,
     left: 30,
+    backgroundColor: 'transparent',
+    width: 90,
+    height: '100%',
+    //justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+    margin: 0,
+  },
+  // dimImage: {
+  //   borderWidth: 1,
+  //   height: '100%',
+  //   width: 90,
+  //   alignItems: 'center',
+  // },
+  boldImage: {
+    position: 'absolute',
+    bottom: 0,
     backgroundColor: '#f5f5f5',
     borderRadius: 15,
-    width: 100,
+    width: 90,
     height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  logo: {
+    height: 60,
+    width: 60,
+    resizeMode: 'contain',
   },
   slant: {
     position: 'absolute',
     bottom: 0,
+    zIndex: 1,
     marginLeft: 0,
     //backgroundColor: '#fff',
     height: 0,
@@ -248,7 +303,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     height: 40,
-    borderRadius: 5,
+    borderRadius: 20,
     margin: 10,
     shadowColor: '#1F509A',
     elevation: 20,
@@ -272,15 +327,14 @@ const styles = StyleSheet.create({
     shadowRadius: 7,
   },
   textInput: {
-    marginLeft: 40,
+    marginLeft: 50,
     height: 20,
     flexDirection: 'row',
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 20,
     height: '100%',
-    alignItem: 'center',
     outlineWidth: 0,
     //justifyContent: "center",
   },
