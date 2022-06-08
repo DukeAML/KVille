@@ -19,9 +19,9 @@ import MonitorScreen from "./Monitor";
 import InfoScreen from "./Info";
 import SettingScreen from "./Settings";
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+// import firebase from "firebase/compat/app";
+// import "firebase/compat/auth";
+// import "firebase/compat/firestore";
 
 import { useDispatch } from "react-redux";
 import { setCurrentUser, reset } from "../redux/reducers/userSlice";

@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   Button,
+  SafeAreaView,
 } from 'react-native';
 
 import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
@@ -119,20 +120,9 @@ export default function Start({ navigation }) {
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          // Tell the application to render
-          setIsReady(true);
-        }
-      }
 
-      prepare();
-      //Accesses Names of Members from firebase and adds them to the array
-      if (mounted) {
-        userRef
-          .get()
-          .then((doc) => {
+          //Accesses Names of Members from firebase and adds them to the array
+          await userRef.get().then((doc) => {
             //setIsReady(false);
             let currGroup = doc.data().groupCode;
             console.log("Current user's groups", currGroup);
@@ -154,14 +144,17 @@ export default function Start({ navigation }) {
                 }
               });
             }
-            return doc;
-          })
-          .then((doc) => {
-            setIsReady(true);
-          })
-          .catch((error) => {
-            console.log('Error getting documents: ', error);
           });
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          // Tell the application to render
+          setIsReady(true);
+        }
+      }
+      //prepare();
+      if (mounted) {
+        prepare();
       }
 
       return () => {
@@ -172,11 +165,17 @@ export default function Start({ navigation }) {
     }, [GROUPS])
   );
 
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
   if (!isReady) {
     return null;
   }
   return (
-    <View style={styles.startContainer}>
+    <View style={styles.startContainer} onLayout={onLayoutRootView}>
       <View style={styles.topBanner}>
         <Text style={styles.topText}>Welcome to Krzyzewskiville!</Text>
       </View>
@@ -198,7 +197,7 @@ export default function Start({ navigation }) {
                 styles.groupText,
                 {
                   fontSize: 16,
-                  fontWeight: 700,
+                  fontWeight: '700',
                   color: '#2E5984',
                   marginLeft: 4,
                 },
@@ -209,14 +208,16 @@ export default function Start({ navigation }) {
           </View>
         </TouchableOpacity>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* 
+      <ScrollView showsVerticalScrollIndicator={false}> */}
+      <SafeAreaView>
         <FlatList
           data={GROUPS}
           renderItem={renderGroup}
           keyExtractor={(item) => item.code}
         />
-      </ScrollView>
+      </SafeAreaView>
+      {/* </ScrollView> */}
 
       <View>
         <Modal
@@ -317,16 +318,16 @@ const styles = StyleSheet.create({
     //"welcome to kville" text
     fontFamily: 'Arial',
     textAlign: 'left',
-    fontWeight: 800,
+    fontWeight: '800',
     fontSize: 28,
   },
   groupText: {
     //text for 'Groups' and '+ Add Group'
-    fontFamily: 'sans-serif',
+    //fontFamily: 'sans-serif',
     textAlign: 'left',
     width: '90%',
     fontSize: 24,
-    fontWeight: 700,
+    fontWeight: '700',
     color: '#656565',
   },
   popUp: {
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
   popUpHeader: {
     //style for text at the top of the popup
     fontFamily: 'Arial',
-    fontWeight: 600,
+    fontWeight: '600',
     color: 'white',
     height: 40,
     width: window.width * 0.8,

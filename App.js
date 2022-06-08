@@ -34,7 +34,7 @@ import { Provider } from 'react-redux';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function App() {
       } catch (e) {
         console.warn(e);
       } finally {
-        setLoaded(true);
+        setIsReady(true);
       }
     }
 
@@ -63,10 +63,10 @@ export default function App() {
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
-    if (loaded) {
+    if (isReady) {
       await SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [isReady]);
 
   //       //set persistence so user stays logged in; currently(5/14) not working
   //       firebase
@@ -76,7 +76,7 @@ export default function App() {
   //           console.log("persistence set");
   //         });
 
-  if (!loaded) {
+  if (!isReady) {
     return null;
   }
   if (!loggedIn) {
