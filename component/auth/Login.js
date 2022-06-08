@@ -11,30 +11,30 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-export default function Login(props) {
+export default function Login({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const onSignUp = () => {
-    firebase.auth().signInWithEmailAndPassword(email, password);
+    //firebase.auth().signInWithEmailAndPassword(email, password);
     //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    // firebase
-    //   .auth()
-    //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    //   .then(() => {
-    //     Existing and future Auth states are now persisted in the current
-    //     session only. Closing the window would clear any existing state even
-    //     if a user forgets to sign out.
-    //     ...
-    //     New sign-in will be persisted with session persistence.
-    //     return firebase.auth().signInWithEmailAndPassword(email, password);
-    //   })
-    //   .catch((error) => {
-    //     Handle Errors here.
-    //     var errorCode = error.code;
-    //     var errorMessage = error.message;
-    //   });
+    firebase
+      .auth()
+      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        // Existing and future Auth states are now persisted in the current
+        // session only. Closing the window would clear any existing state even
+        // if a user forgets to sign out.
+        // ...
+        // New sign-in will be persisted with session persistence.
+        return firebase.auth().signInWithEmailAndPassword(email, password);
+      })
+      .catch((error) => {
+        //Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      });
   };
 
   return (
@@ -50,8 +50,6 @@ export default function Login(props) {
             value={email}
             onChangeText={(email) => setEmail(email)}
             keyboardType='email-address'
-            right={<TextInput.Icon name='account-circle-outline' />}
-            activeUnderlineColor='#00f'
           />
         </View>
 
@@ -65,12 +63,6 @@ export default function Login(props) {
             secureTextEntry={secureTextEntry}
             value={password}
             onChangeText={(password) => setPassword(password)}
-            right={
-              <TextInput.Icon
-                name='lock-outline'
-                style={{ margin: 10, padding: 20, color: '#f00' }}
-              />
-            }
           />
           <TouchableOpacity
             style={{ marginRight: 5 }}
@@ -83,7 +75,7 @@ export default function Login(props) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={onSignUp}>
+        <TouchableOpacity style={styles.button} onPress={() => onSignUp()}>
           <Text style={{ color: '#fff' }}>Sign In</Text>
         </TouchableOpacity>
       </View>
@@ -92,7 +84,7 @@ export default function Login(props) {
         <Text>Don't have an account? </Text>
         <Text
           title='Register'
-          onPress={() => props.navigation.navigate('Register')}
+          onPress={() => navigation.navigate('Register')}
           style={{ textAlign: 'center', color: '#0FA4DC' }}
         >
           Sign Up
