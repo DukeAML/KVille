@@ -8,40 +8,12 @@ import 'firebase/compat/firestore';
 
 require('firebase/firestore');
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  formCenter: {
-    justifyContent: 'center',
-    flex: 1,
-    margin: 25,
-  },
-  textInput: {
-    marginBottom: 10,
-    borderColor: 'gray',
-    backgroundColor: 'whitesmoke',
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
-  },
-  bottomButton: {
-    alignContent: 'center',
-    borderTopColor: 'gray',
-    borderTopWidth: 1,
-    padding: 10,
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-});
-
 export default function Register(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [groupCode, setGroupCode] = useState([]);
-  const [inGroup, setInGroup] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
   const onRegister = () => {
@@ -184,3 +156,30 @@ export default function Register(props) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  formCenter: {
+    justifyContent: 'center',
+    flex: 1,
+    margin: 25,
+  },
+  textInput: {
+    marginBottom: 10,
+    borderColor: 'gray',
+    backgroundColor: 'whitesmoke',
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  bottomButton: {
+    alignContent: 'center',
+    borderTopColor: 'gray',
+    borderTopWidth: 1,
+    padding: 10,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+});
