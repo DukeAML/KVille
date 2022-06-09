@@ -600,7 +600,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 9,
     //marginRight:6,
-    width: win.width * 0.10,
+    width: win.width * 0.1,
     textAlign: "center",
   },
   buttonContainer: { //container for the top buttons

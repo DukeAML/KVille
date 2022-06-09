@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
   groupText: {
     //text for 'Groups' and '+ Add Group'
     //fontFamily: "sans-serif",
-    textAlign: 'left',
     width: '90%',
     fontSize: 20,
     fontWeight: '700',
@@ -247,7 +246,6 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 60,
     width: '90%',
-    //borderWidth: 2
     //borderWidth: 2
   },
   button: {
