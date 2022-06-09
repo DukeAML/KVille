@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   ScrollView,
   FlatList,
   Dimensions,
@@ -75,6 +74,9 @@ export default function Schedule({ route }) {
   const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
+
+  const [typeOfEdit, setTypeOfEdit] = useState("Push"); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState("Select a Member"); //to set the new member to replace old one
@@ -82,6 +84,10 @@ export default function Schedule({ route }) {
   const [editIndex, setEditIndex] = useState (0); //to store which index is being edited
 
   const [renderDay, setRenderDay] = useState("Sunday"); //stores the current day that is being rendered
+
+  //FIREBASE REFERENCE for group
+  const groupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
+  //const groupRef = firebase.firestore().collection("groups").doc(code);
  
   /* let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
   const ref = useRef(); //creates reference for scrollView */
@@ -94,9 +100,11 @@ export default function Schedule({ route }) {
     setMemberModalVisible(!isMemberModalVisible);
   };
 
-  /* function autoScroll(yPos) { //for auto-scolling to certain y-position
-    ref.current.scrollTo({ x: 0, y: yPos, animated: true });
-  } */
+  const toggleConfirmation = () => { //to toggle the popup for the edit confirmation
+    setConfirmationVisible(!isConfirmationVisible);
+  };
+
+
 
   //variables to store the # of people needed for the day and night shifts
   let numberForDay, numberForNight; 
@@ -117,18 +125,6 @@ export default function Schedule({ route }) {
   }
 
   //console.log('numberDay and Night values: ', numberForDay, numberForNight);
-
-  /* const [dimensions, setDimensions] = useState({ win });
-
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", ({ win }) => {
-      setDimensions({ win });
-    });
-    return () => subscription?.remove();
-  });
-
-  console.log ('Dimensions: ', dimensions.win.width, 'x', dimensions.win.height); */
-
 
  //Component for the popup list of members for each member
   const Member = ({ name }) => {
@@ -298,11 +294,63 @@ export default function Schedule({ route }) {
     )
   };
 
+  //Modal component for confirming if the user wants to push edits or create a new schedule
+  const ConfirmationModal = ({ type }) => {
+    if (type == "Push") {
+      return (
+        <View style={styles.confirmationPop}>
+          
+          <Text style={styles.confirmationHeader}>Push Changes</Text>
+          <Text style={styles.confirmationText}>
+            Are you sure you want to push changes? This will change the schedule
+            for everyone in your group.
+          </Text>
+          <TouchableOpacity
+            onPress= {() => {
+              pushEdits();
+              toggleConfirmation();
+            }}
+          >
+            <View style={styles.confirmationBottomBtn}>
+              <Text style={[styles.buttonText, {color: "white"}]}>Yes I'm Sure</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (type == 'Create'){
+      return (
+        <View style={styles.confirmationPop}>
+          
+          <Text style={styles.confirmationHeader}>Create New Schedule</Text>
+          <Text style={styles.confirmationText}>
+            Are you sure you want to create a new schedule? This will erase the current schedule
+            for all group members and cannot be undone.
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              toggleConfirmation();
+              //createGroupSchedule(code, tentType).then(
+              createGroupSchedule('BtycLIprkN3EmC9wmpaE', "Black").then(
+                (groupSchedule) => {
+                  console.log("Group Schedule", groupSchedule);
 
+                  groupRef
+                    .set({
+                      groupSchedule: groupSchedule,
+                    });
+                }
+              );
+            }}
+          >
+            <View style={styles.confirmationBottomBtn}>
+              <Text style={[styles.buttonText, {color: "white"}]}>Yes I'm Sure</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
 
-  //Firebase reference for group
-  const groupRef = firebase.firestore().collection("groupsTest").doc('BtycLIprkN3EmC9wmpaE');
-  //const groupRef = firebase.firestore().collection("groups").doc(code);
 
   //to push changes made to schedule to firebase
   const pushEdits = () => {
@@ -372,7 +420,7 @@ export default function Schedule({ route }) {
     }
   }, [isReady]);
   
-  if (!isReady ) {     //if firebase reading done, then render
+  if (!isReady ) {     //if firebase reading is done, then can render
     return null;
   } 
   //console.log('Full Schedule: ', schedule);
@@ -405,7 +453,6 @@ export default function Schedule({ route }) {
             <TouchableOpacity onPress={toggleMemberModal} >
               <View style = 
               {{
-                //backgroundColor: "#f2f2f2",
                 height: win.height * 0.06,
                 width: "100%",
                 alignSelf: "center",
@@ -447,7 +494,6 @@ export default function Schedule({ route }) {
       <Modal
         isVisible={isMemberModalVisible}
         onBackdropPress={() => setMemberModalVisible(false)}
-        //customBackdrop={<View style={{ flex: 1 }} />}
       >
         <View
           style={{
@@ -469,6 +515,16 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
+        <Modal
+          isVisible={isConfirmationVisible}
+          onBackdropPress={() => setConfirmationVisible(false)}
+          //customBackdrop={<View style={{ flex: 1 }} />}
+        >
+          <ConfirmationModal type= {typeOfEdit}/>
+        </Modal>
+      </View>
+
+      <View>
         <View style={styles.buttonContainer}>
           <DayButton day = "Sunday" abbrev="Sun"/>
           <DayButton day = "Monday" abbrev="Mon"/>
@@ -480,15 +536,26 @@ export default function Schedule({ route }) {
         </View>
 
         <View style = {[styles.buttonContainer, styles.shadowProp]}>
-          <TouchableOpacity onPress={pushEdits}>
+          <TouchableOpacity 
+            onPress={() => {
+              toggleConfirmation();
+              setTypeOfEdit("Push");
+            }}
+          >
             <View style ={[styles.topEditBtn,{backgroundColor: "#5d5d5d"}]}>
               <Text style={[styles.topEditBtnText,{color: "white"}]}>Push Changes</Text>
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              createGroupSchedule(code, tentType).then(
+          <TouchableOpacity 
+            onPress= {() => {
+              toggleConfirmation();
+              setTypeOfEdit("Create");
+            }}
+            /* onPress={() => {
+              //createGroupSchedule(code, tentType).then(
+              createGroupSchedule('BtycLIprkN3EmC9wmpaE', "Black")
+              .then(
                 (groupSchedule) => {
                   console.log("Group Schedule", groupSchedule);
 
@@ -498,7 +565,7 @@ export default function Schedule({ route }) {
                     });
                 }
               );
-            }}>
+            }} */>
             <View style ={[styles.topEditBtn,{backgroundColor: "#c9c9c9"}]}>
               <Text style={styles.topEditBtnText}>Create New Schedule</Text>
             </View>
@@ -564,6 +631,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500"
   },
+  confirmationPop: {
+    width: "90%",
+    height: 175,
+    backgroundColor: "#1E3F66",
+    alignSelf: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    margin: 15
+  },
+  confirmationHeader: {
+    //style for text at the top of the popup
+    fontWeight: "600",
+    color: "white",
+    height: 30,
+    //borderWidth:2,
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 18
+  },
+  confirmationText: {
+    backgroundColor: "#2E5984",
+    color: "white",
+    textAlign: "center",
+    width: "90%",
+    marginVertical: 8,
+    padding: 5,
+    borderRadius: 15
+  },
+  confirmationBottomBtn:{
+    color: "white",
+    backgroundColor: "black",
+    width: win.width * 0.5,
+    borderRadius: 8,
+    justifyContent: "center",
+    height: 26
+  },
   dayHeaderBox: { //NOT IN USE RN
     backgroundColor: '#e5e5e5',
     width: "",
@@ -622,6 +725,18 @@ const styles = StyleSheet.create({
 
 
 
+  /* const [dimensions, setDimensions] = useState({ win });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ win }) => {
+      setDimensions({ win });
+    });
+    return () => subscription?.remove();
+  });
+
+  console.log ('Dimensions: ', dimensions.win.width, 'x', dimensions.win.height); */
+
+
 /* //TEST GROUP
 let group = [
   "poop1", "poop2", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ", 
@@ -632,6 +747,12 @@ let group = [
   "poop0 poop5 poop2 poop11 poop1 TrueAlways ", "poop0 poop5 poop2 poop11 poop1 TrueAlways ",
   "null",
 ];  *
+
+
+
+  /* function autoScroll(yPos) { //for auto-scolling to certain y-position
+    ref.current.scrollTo({ x: 0, y: yPos, animated: true });
+  } */
 
 
 
