@@ -144,13 +144,13 @@ export default function GroupInfo({ route }) {
         <Text style={styles.contentText}>{groupCode}</Text>
       </View>
 
-      <SafeAreaView>
+      <View>
         <FlatList
           data={members}
           renderItem={renderMember}
           keyExtractor={(item) => item.id}
         />
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -161,15 +161,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#C2C6D0',
   },
   header: {
-    marginVertical: 10,
-    marginHorizontal: 50,
-    fontSize: 28,
+    marginBottom: 10,
+    marginTop: 4,
+    alignSelf: "center",
+    //borderWidth: 2,
+    color: "#3a3b3c",
+    width: "90%",
+    fontSize: 22,
     fontWeight: '700',
   },
   contentText: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
+    marginHorizontal: 8
   },
   listItem: {
     backgroundColor: '#1f509a',
