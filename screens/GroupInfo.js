@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
+import Modal from "react-native-modal";
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -18,15 +21,15 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 
 let members = new Array(); //members array for list
 
-//Render Item for Each List Item of group members
-const Member = ({ name, backgroundColor }) => (
-  <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
-    <Text style={styles.listText}>{name}</Text>
-  </View>
-);
 
 export default function GroupInfo({ route }) {
   const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [currMember, setCurrMember] = useState("");
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   const { groupCode, groupName } = route.params; // take in navigation parameters
   console.log('route params: ', route.params);
@@ -115,6 +118,21 @@ export default function GroupInfo({ route }) {
     }
   }, [isReady]);
 
+  //Render Item for Each List Item of group members
+  const Member = ({ name, backgroundColor }) => (
+    <TouchableOpacity
+        onPress={() => {
+          toggleModal();
+          setCurrMember(name);
+        }}
+      >
+      <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
+        <Text style={styles.listText}>{name}</Text>
+      </View>
+    </TouchableOpacity>
+    
+  );
+
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
@@ -126,7 +144,11 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <ScrollView 
+      style={styles.container} 
+      onLayout={onLayoutRootView}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.header}>Group Name</Text>
 
       <View style={styles.boxText}>
@@ -145,7 +167,38 @@ export default function GroupInfo({ route }) {
           keyExtractor={(item) => item.id}
         />
       </View>
-    </View>
+
+
+      <View>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          //customBackdrop={<View style={{ flex: 1 }} />}
+        >
+          <View style={styles.popUp}>
+            <View
+              style={{
+                flexDirextion: "row",
+                width: "90%",
+                alignItems: "flex-end"
+              }}
+            >
+              <TouchableOpacity onPress={toggleModal}>
+                <Icon name='close'
+                  color={'white'}
+                  size={15}
+                  style={{ marginTop: 5 }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.popUpHeader}>{currMember} Information</Text>
+            <Text style={styles.popUpText}>Scheduled Hrs: </Text>
+          </View>
+        </Modal>
+      </View>
+
+    </ScrollView>
   );
 }
 
@@ -198,4 +251,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
+  popUp: {
+    width: "90%",
+    height: 100,
+    backgroundColor: "#1E3F66",
+    alignSelf: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    margin: 15
+  },
+  popUpHeader: {
+    fontFamily: "Arial",
+    fontWeight: "600",
+    color: "white",
+    marginBottom: 5,
+    textAlign: "center",
+    fontSize: 16
+    //borderWidth: 1
+  },
+  popUpText: {
+    backgroundColor: "#2E5984",
+    color: "white",
+    textAlign: "center",
+    width: "90%",
+    marginVertical: 8,
+    padding: 5,
+    borderRadius: 15
+  }
 });

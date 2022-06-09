@@ -307,7 +307,7 @@ export default function Schedule({ route }) {
           </Text>
           <TouchableOpacity
             onPress= {() => {
-              pushEdits();
+              pushEdits(); //if confirmed, push edits and dismiss popUp
               toggleConfirmation();
             }}
           >
