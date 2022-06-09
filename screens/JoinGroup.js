@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import firebase from 'firebase/compat/app';
@@ -136,70 +137,71 @@ export default function JoinGroup({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topBanner}>
-        <TouchableOpacity
-          onPress={() => {
-            onJoinGroup(navigation);
-            //navigation.navigate("GroupNavigator");
+    <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.topBanner}>
+          <TouchableOpacity
+            onPress={() => {
+              onJoinGroup(navigation);
+              //navigation.navigate("GroupNavigator");
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text
+                style={[
+                  styles.groupText,
+                  {
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: '#1f509a',
+                    width: '100%',
+                    //borderWidth: 2
+                  },
+                ]}
+              >
+                Join Group
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '90%',
+            marginBottom: 10,
           }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text
-              style={[
-                styles.groupText,
-                {
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: '#1f509a',
-                  width: '100%',
-                  //borderWidth: 2
-                },
-              ]}
-            >
-              Join Group
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+          <Text style={styles.groupText}>Group Code</Text>
+        </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '90%',
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.groupText}>Group Code</Text>
-      </View>
+        <TextInput
+          style={[styles.textInput, styles.shadowProp]}
+          autoFocus={true}
+          onChangeText={(code) => setInputGroupCode(code.trim())}
+          value={groupCode}
+          placeholder='Enter Group Code'
+        />
 
-      <TextInput
-        style={[styles.textInput, styles.shadowProp]}
-        autoFocus={true}
-        onChangeText={(code) => setInputGroupCode(code.trim())}
-        value={groupCode}
-        placeholder='Enter Group Code'
-      />
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '90%',
+            marginBottom: 10,
+            marginTop: 60,
+          }}
+        >
+          <Text style={styles.groupText}>Username</Text>
+        </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '90%',
-          marginBottom: 10,
-          marginTop: 60,
-        }}
-      >
-        <Text style={styles.groupText}>Username</Text>
-      </View>
+        <TextInput
+          style={[styles.textInput, styles.shadowProp]}
+          value={name}
+          placeholder={name}
+          onChangeText={(name) => setName(name)}
+        />
 
-      <TextInput
-        style={[styles.textInput, styles.shadowProp]}
-        value={name}
-        placeholder={name}
-        onChangeText={(name) => setName(name)}
-      />
-
-      {/* <TouchableOpacity
+        {/* <TouchableOpacity
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
@@ -208,7 +210,8 @@ export default function JoinGroup({ navigation }) {
       >
         <Text style={styles.buttonText}>Join Group</Text>
       </TouchableOpacity> */}
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 

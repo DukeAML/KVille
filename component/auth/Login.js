@@ -68,8 +68,8 @@ export default function Login(props) {
                   tintColor: '#D9D9D9',
                   opacity: 0.2,
                   aspectRatio: 0.84,
-                  maxWidth: 60,
-                  top: -45,
+                  width: 50,
+                  top: -30,
                   resizeMode: 'repeat',
                 },
               ]}

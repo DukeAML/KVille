@@ -118,12 +118,13 @@ export default function Register(props) {
               style={[
                 styles.logo,
                 {
+                  flex: 1,
                   tintColor: '#D9D9D9',
                   opacity: 0.2,
-                  height: '100%',
-                  top: -45,
+                  aspectRatio: 0.84,
+                  width: 50,
+                  top: -30,
                   resizeMode: 'repeat',
-                  justifyContent: 'space-between',
                 },
               ]}
               source={DukeBasketballLogo}

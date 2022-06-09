@@ -118,98 +118,102 @@ export default function CreateGroup({ navigation }) {
   };
 
   return (
-    <View style={styles.groupContainer}>
+    <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
+      <View style={styles.groupContainer}>
+        <View style={styles.topBanner}>
+          <TouchableOpacity
+            onPress={() => {
+              onCreateGroup();
+              //navigation.navigate("GroupNavigator");
+              console.log(group.groupCode);
+              console.log(groupRole);
+            }}
+          >
+            <View>
+              <Text
+                style={[
+                  styles.groupText,
+                  {
+                    fontSize: 24,
+                    fontWeight: '700',
+                    color: '#1F509A',
+                    width: '100%',
+                    //borderWidth: 2
+                  },
+                ]}
+              >
+                Create
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.topBanner}>
-        <TouchableOpacity
-          onPress={() => {
-            onCreateGroup();
-            //navigation.navigate("GroupNavigator");
-            console.log(group.groupCode);
-            console.log(groupRole);
-          }} 
-        >
-          <View>
-            <Text
-              style={[
-                styles.groupText,
-                {
-                  fontSize: 24,
-                  fontWeight: '700',
-                  color: "#1F509A",
-                  width: "100%"
-                  //borderWidth: 2
-                }
-              ]}
-            >
-              Create
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{width: "90%"}}>
-        <Text style={styles.headerText}>Group Name</Text>
-      </View>
-      <TextInput
-            style={styles.textInput}
-            autoFocus = {true}
-            placeholder="Enter Group Name"
-            value={group.groupName}
-            onChangeText={(groupName) =>
-              setGroup({ ...group, groupName: groupName })
-            }
-      />
-
-      <Text style={[styles.headerText, {marginTop:20}]}>Group Code</Text>
-      <View
-        style={[styles.textInput, {
-          backgroundColor: "#ededed",
-          height: 50,
-          width: "90%",
-          alignItems: "center",
-          flexDirection: "row"
-          //flex: 0.2
-        }]}
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 30,
-            fontWeight: "bold",
-            flex: 1
-          }}
-        >
-          {group.groupCode}
-        </Text>
-      </View>
-
-      <Text style={[styles.headerText, {marginTop:20}]}>Tent Type</Text>
-      <Picker
-        selectedValue={group.tentType}
-        onValueChange={(itemValue, itemIndex) => {
-          setGroup({ ...group, tentType: itemValue });
-        }}
-        style = {{width: "90%", height: 30}}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="Black" value="Black" />
-        <Picker.Item label="Blue" value="Blue" />
-        <Picker.Item label="White" value="White" />
-        <Picker.Item label="Walk up line" value="Walk up line" />
-      </Picker>
-
-      <Text style={[styles.headerText, {marginTop:20}]}>Username</Text>
-      
-      <TextInput
-            style={[styles.textInput, {borderWidth:2, borderColor: "#8e8e8e"}]}
-            value={group.userName}
-            placeholder={group.userName}
-            onChangeText={(userName) =>
-              setGroup({ ...group, userName: userName })
-            }
+        <View style={{ width: '90%' }}>
+          <Text style={styles.headerText}>Group Name</Text>
+        </View>
+        <TextInput
+          style={styles.textInput}
+          autoFocus={true}
+          placeholder='Enter Group Name'
+          value={group.groupName}
+          onChangeText={(groupName) =>
+            setGroup({ ...group, groupName: groupName })
+          }
         />
-    </View>
+
+        <Text style={[styles.headerText, { marginTop: 20 }]}>Group Code</Text>
+        <View
+          style={[
+            styles.textInput,
+            {
+              backgroundColor: '#ededed',
+              height: 50,
+              width: '90%',
+              alignItems: 'center',
+              flexDirection: 'row',
+              //flex: 0.2
+            },
+          ]}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 30,
+              fontWeight: 'bold',
+              flex: 1,
+            }}
+          >
+            {group.groupCode}
+          </Text>
+        </View>
+
+        <Text style={[styles.headerText, { marginTop: 20 }]}>Tent Type</Text>
+        <Picker
+          selectedValue={group.tentType}
+          onValueChange={(itemValue, itemIndex) => {
+            setGroup({ ...group, tentType: itemValue });
+          }}
+          style={{ width: '90%', height: 30 }}
+        >
+          <Picker.Item label='' value='' />
+          <Picker.Item label='Black' value='Black' />
+          <Picker.Item label='Blue' value='Blue' />
+          <Picker.Item label='White' value='White' />
+          <Picker.Item label='Walk up line' value='Walk up line' />
+        </Picker>
+
+        <Text style={[styles.headerText, { marginTop: 20 }]}>Username</Text>
+
+        <TextInput
+          style={[styles.textInput, { borderWidth: 2, borderColor: '#8e8e8e' }]}
+          value={group.userName}
+          placeholder={group.userName}
+          onChangeText={(userName) =>
+            setGroup({ ...group, userName: userName })
+          }
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
