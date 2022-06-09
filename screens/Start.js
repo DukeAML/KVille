@@ -195,6 +195,7 @@ export default function Start({ navigation }) {
       <View
         style={{
           flexDirection: 'row',
+          justifyContent: "space-between",
           width: '90%',
           alignItems: 'center',
           marginBottom: 5,
@@ -336,8 +337,8 @@ const styles = StyleSheet.create({
   groupText: {
     //text for 'Groups' and '+ Add Group'
     //fontFamily: 'sans-serif',
-    textAlign: 'left',
-    width: '90%',
+    //textAlign: 'left',
+    //width: '90%',
     fontSize: 24,
     fontWeight: '700',
     color: '#656565',
