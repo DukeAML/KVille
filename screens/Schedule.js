@@ -30,13 +30,13 @@ const times = [ //Times for right column of the list of times of the day
   "10pm", "11pm",
 ];
 
-//Colors of each member, first is for 'null'
+//Colors of each member, first is for 'empty'
 const colors = ['#D0342C', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
   '#a4c2f4' , '#9fc5e8', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
 
 
 let colorCodes = [ //Array for color corresponding to each member
-  {name: 'null', color: '#D0342C'}
+  {name: 'empty', color: '#D0342C'}
 ];
 
 
@@ -333,6 +333,8 @@ export default function Schedule({ route }) {
               createGroupSchedule('BtycLIprkN3EmC9wmpaE', "Black").then(
                 (groupSchedule) => {
                   console.log("Group Schedule", groupSchedule);
+
+                  schedule = groupSchedule;
 
                   groupRef
                     .set({

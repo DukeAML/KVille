@@ -39,7 +39,8 @@ export async function createGroupSchedule(groupCode, tentType) {
   //adds each member as an object to the memberArr 
   await firebase
     .firestore()
-    .collection("groups")
+    //.collection("groups")     //UPDATE THIS TO 'groups' in real case
+    .collection('groupsTest')
     .doc(groupCode)
     .collection("members")
     .get()
@@ -91,8 +92,8 @@ export async function createGroupSchedule(groupCode, tentType) {
                 groupScheduleArr[nightHour + time] +=
                   memberArr[memberIdx].name + " ";
                 memberArr[memberIdx].hours++;
-              } else { //otherwise, input null to that empty spot
-                groupScheduleArr[nightHour + time] += "null ";
+              } else { //otherwise, input empty to that empty spot
+                groupScheduleArr[nightHour + time] += "empty ";
               }
             }
           }
@@ -104,7 +105,7 @@ export async function createGroupSchedule(groupCode, tentType) {
 
 
         //deals with blocking so members have consecutive shifts of 30 min
-        if (prevMember1 && prevMember2) { //if previous shifts were not 'null' continue
+        if (prevMember1 && prevMember2) { //if previous shifts were not 'empty' continue
           //switches prev1 and prev2 if first person is not available and second person is for the new time so that only have to consider one case
           if (  //If black tent (numDay=2), and previous1 is not available but previous2 is, switch variables so rest of code works
             numDay == 2 &&
@@ -136,16 +137,16 @@ export async function createGroupSchedule(groupCode, tentType) {
                     groupScheduleArr[time] += memberArr[1].name + " ";
                     memberArr[1].hours++;
                     memberArr[1].consecutive++;
-                  } else { //otherwise no one is available and add null
-                    groupScheduleArr[time] += "null ";
+                  } else { //otherwise no one is available and add empty
+                    groupScheduleArr[time] += "empty ";
                   }
                 } else { //If the first index does not equal the previous1 member
                   if (memberArr[0].availability[time]) { //then add the first index instead
                     groupScheduleArr[time] += memberArr[0].name + " ";
                     memberArr[0].hours++;
                     memberArr[0].consecutive++;
-                  } else { //if not available, no one is available so add null
-                    groupScheduleArr[time] += "null ";
+                  } else { //if not available, no one is available so add empty
+                    groupScheduleArr[time] += "empty ";
                   }
                 }
               }
@@ -160,14 +161,14 @@ export async function createGroupSchedule(groupCode, tentType) {
         if (memberArr[0].availability[time]) { //if first index is available, add to current block in group schedule
           groupScheduleArr[time] = memberArr[0].name;
           memberArr[0].hours++;
-        } else { //otherwise, add null
-          groupScheduleArr[time] = "null";
+        } else { //otherwise, add empty
+          groupScheduleArr[time] = "empty";
         }
         if (numDay == 2 && memberArr[1].availability[time]) { //if black tent, add next available person
           groupScheduleArr[time] += " " + memberArr[1].name;
           memberArr[1].hours++;
         } else if (!memberArr[1].availability[time]) {
-          groupScheduleArr[time] += " " + "null";
+          groupScheduleArr[time] += " " + "empty";
         }
         prevMember1 = memberArr[0]; //set previous varibles to current block holders before iterating again
         prevMember2 = memberArr[1];

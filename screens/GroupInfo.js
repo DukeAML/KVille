@@ -144,10 +144,10 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <ScrollView 
+    <View 
       style={styles.container} 
       onLayout={onLayoutRootView}
-      showsVerticalScrollIndicator={false}
+      //showsVerticalScrollIndicator={false}
     >
       <Text style={styles.header}>Group Name</Text>
 
@@ -198,7 +198,7 @@ export default function GroupInfo({ route }) {
         </Modal>
       </View>
 
-    </ScrollView>
+    </View>
   );
 }
 
