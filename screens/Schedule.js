@@ -25,9 +25,9 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const times = [ //Times for right column of the list of times of the day
-  "12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", 
-  "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm",
-  "10pm", "11pm",
+  '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
+  '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
+  '10pm', '11pm',
 ];
 
 //Colors of each member, first is for 'empty'
@@ -137,11 +137,11 @@ export default function Schedule({ route }) {
             setNewMember(name);
             toggleMemberModal();
         }}>
-          <View style={{ backgroundColor: "#656565"}}>
+          <View style={{ backgroundColor: '#656565'}}>
             <Text
               style={{
-                textAlign: "left",
-                color: "white",
+                textAlign: 'left',
+                color: 'white',
                 marginLeft: 15,
                 height: 25
               }}
@@ -195,6 +195,7 @@ export default function Schedule({ route }) {
   */
   const RenderCell = (data, index, arrayIndex, members, numDay, numNight) => {
     const people = members.split(" "); //stores the string as an array of single members
+    //console.log('people: ', people);
     const isNight = (index >= 2 && index <= 13);
 
     if (!isNight && numDay === 1) {
@@ -268,7 +269,7 @@ export default function Schedule({ route }) {
     //console.log(day,"||", dayArr);
     return (
       <View style = {{marginTop: 30}}>
-        <Table borderStyle={{ borderColor: "transparent" }}>
+        <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
               <Cell
@@ -296,7 +297,7 @@ export default function Schedule({ route }) {
 
   //Modal component for confirming if the user wants to push edits or create a new schedule
   const ConfirmationModal = ({ type }) => {
-    if (type == "Push") {
+    if (type == 'Push') {
       return (
         <View style={styles.confirmationPop}>
           
@@ -305,6 +306,7 @@ export default function Schedule({ route }) {
             Are you sure you want to push changes? This will change the schedule
             for everyone in your group.
           </Text>
+          
           <TouchableOpacity
             onPress= {() => {
               pushEdits(); //if confirmed, push edits and dismiss popUp
@@ -312,7 +314,7 @@ export default function Schedule({ route }) {
             }}
           >
             <View style={styles.confirmationBottomBtn}>
-              <Text style={[styles.buttonText, {color: "white"}]}>Yes I'm Sure</Text>
+              <Text style={[styles.buttonText, {color: 'white'}]}>Yes I'm Sure</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -345,7 +347,7 @@ export default function Schedule({ route }) {
             }}
           >
             <View style={styles.confirmationBottomBtn}>
-              <Text style={[styles.buttonText, {color: "white"}]}>Yes I'm Sure</Text>
+              <Text style={[styles.buttonText, {color: 'white'}]}>Yes I'm Sure</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -374,7 +376,7 @@ export default function Schedule({ route }) {
             schedule = doc.data().groupSchedule;
           });
 
-          await groupRef
+          /* await groupRef
             .collection('members')
             .get()
             .then((querySnapshot) => {
@@ -398,7 +400,7 @@ export default function Schedule({ route }) {
                   colorCodes.push(current);
                 }
               });
-            });
+            }); */
         } catch (e) {
           console.warn(e);
         } finally {
@@ -427,10 +429,31 @@ export default function Schedule({ route }) {
   } 
   //console.log('Full Schedule: ', schedule);
 
-  //initializes the colorCodes fso each member has a unique color background
+  
+  //sets up the color assignment for each user
+  for (let i = 0; i < schedule.length; i++) {
+    if (colorCodes.length >= 14) break;   //CHANGE THIS TO 13 FOR REAL GROUP
+    if(schedule[i] === schedule[i-1]) continue; //if the past line is the same, skip as members will not be new
+    const people = schedule[i].split(" ");
+    for (let j = 0; j < people.length; j++) {
+      if (!colorCodes.some((e) => e.name === people[j])) {
+        if (people[j] !== "") {
+          colorCodes.push({
+            name: people[j],
+            color: ""
+          });
+        }
+      }
+    }
+  }
+ 
+
+  //initializes the colorCodes so each member has a unique color background
   for (let index = 0; index < colorCodes.length ; index++){ 
     colorCodes[index].color = colors[index];
   }
+
+  console.log('colors: ', colorCodes);
 
   return (
     <View style={styles.bigContainer} onLayout={onLayoutRootView}>
@@ -443,11 +466,11 @@ export default function Schedule({ route }) {
             <Text
               style={{
                 fontSize: 26,
-                fontWeight: "500",
-                textAlign: "center",
+                fontWeight: '500',
+                textAlign: 'center',
                 borderBottomWidth: 1,
                 height: win.height * 0.05,
-                width: "100%"
+                width: '100%'
             }}>
               Edit Timeslot
             </Text>
@@ -456,12 +479,12 @@ export default function Schedule({ route }) {
               <View style = 
               {{
                 height: win.height * 0.06,
-                width: "100%",
-                alignSelf: "center",
-                justifyContent: "center"
+                width: '100%',
+                alignSelf: 'center',
+                justifyContent: 'center'
               }}>
                 <Text style=
-                {{ textAlign: "center", fontSize: 20  }}>{newMember}</Text>
+                {{ textAlign: 'center', fontSize: 20  }}>{newMember}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress= {() => {
@@ -472,16 +495,16 @@ export default function Schedule({ route }) {
               }
             }}>
               <View style = {{
-                backgroundColor: "#636363",
+                backgroundColor: '#636363',
                 height: win.height * 0.06,
-                justifyContent: "center"
+                justifyContent: 'center'
               }}>
                 <Text
                   style={{
-                    textAlign: "center",
-                    color: "white",
+                    textAlign: 'center',
+                    color: 'white',
                     fontSize: 24,
-                    fontWeight: "500"
+                    fontWeight: '500'
                   }}>
                     Edit
                 </Text>
@@ -499,7 +522,7 @@ export default function Schedule({ route }) {
       >
         <View
           style={{
-            width: "50%",
+            width: '50%',
             borderWidth: 1,
             //marginTop:win.height *.38 -  25*7,
             marginTop: win.height * 0.3
@@ -541,18 +564,18 @@ export default function Schedule({ route }) {
           <TouchableOpacity 
             onPress={() => {
               toggleConfirmation();
-              setTypeOfEdit("Push");
+              setTypeOfEdit('Push');
             }}
           >
-            <View style ={[styles.topEditBtn,{backgroundColor: "#5d5d5d"}]}>
-              <Text style={[styles.topEditBtnText,{color: "white"}]}>Push Changes</Text>
+            <View style ={[styles.topEditBtn,{backgroundColor: '#5d5d5d'}]}>
+              <Text style={[styles.topEditBtnText,{color: 'white'}]}>Push Changes</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity 
             onPress= {() => {
               toggleConfirmation();
-              setTypeOfEdit("Create");
+              setTypeOfEdit('Create');
             }}
             /* onPress={() => {
               //createGroupSchedule(code, tentType).then(
@@ -568,7 +591,7 @@ export default function Schedule({ route }) {
                 }
               );
             }} */>
-            <View style ={[styles.topEditBtn,{backgroundColor: "#c9c9c9"}]}>
+            <View style ={[styles.topEditBtn,{backgroundColor: '#c9c9c9'}]}>
               <Text style={styles.topEditBtnText}>Create New Schedule</Text>
             </View>
           </TouchableOpacity>
@@ -583,7 +606,7 @@ export default function Schedule({ route }) {
         <Text style={styles.dayHeader}>
           {renderDay}
         </Text>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: 'row' }}>
           <TimeColumn />
           <DailyTable numberDay={numberForDay} numberNight={numberForNight} day={renderDay} />
         </View>
@@ -594,116 +617,107 @@ export default function Schedule({ route }) {
 }
 
 const styles = StyleSheet.create({
-  bigContainer: { flex: 1, backgroundColor: "#C2C6D0" }, //for the entire page's container
+  bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
   text: { margin: 3 }, //text within cells
   timesText: {   //text style for the side text of the list of times
-    fontWeight: "800",
+    fontWeight: '800',
     fontSize: 9,
     //marginRight:6,
     width: win.width * 0.1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   buttonContainer: { //container for the top buttons
     //flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   button: { //for the day buttons at top of screen
-    backgroundColor: "#e5e5e5",
+    backgroundColor: '#e5e5e5',
     width: win.width/7,
     height: 50,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: { //text for day buttons
-    fontSize: "auto",
-    fontWeight: "500",
-    textAlign: "center",
-    color: "black",
+    fontSize: 'auto',
+    fontWeight: '500',
+    textAlign: 'center',
+    color: 'black',
   },
   topEditBtn:{
     width: win.width*0.5,
-    backgroundColor: "white",
-    justifyContent: "center",
+    backgroundColor: 'white',
+    justifyContent: 'center',
     height: 40
 
   },
   topEditBtnText:{
-    textAlign:"center",
+    textAlign:'center',
     fontSize: 16,
-    fontWeight: "500"
+    fontWeight: '500'
   },
   confirmationPop: {
-    width: "90%",
+    width: '90%',
     height: 175,
-    backgroundColor: "#1E3F66",
-    alignSelf: "center",
-    alignItems: "center",
+    backgroundColor: '#1E3F66',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
     borderRadius: 20,
     margin: 15
   },
   confirmationHeader: {
     //style for text at the top of the popup
-    fontWeight: "600",
-    color: "white",
+    fontWeight: '600',
+    color: 'white',
     height: 30,
     //borderWidth:2,
-    marginTop: 8,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 18
   },
   confirmationText: {
-    backgroundColor: "#2E5984",
-    color: "white",
-    textAlign: "center",
-    width: "90%",
-    marginVertical: 8,
+    backgroundColor: '#2E5984',
+    color: 'white',
+    textAlign: 'center',
+    width: '90%',
     padding: 5,
     borderRadius: 15
   },
   confirmationBottomBtn:{
-    color: "white",
-    backgroundColor: "black",
+    color: 'white',
+    backgroundColor: 'black',
     width: win.width * 0.5,
     borderRadius: 8,
-    justifyContent: "center",
+    justifyContent: 'center',
     height: 26
-  },
-  dayHeaderBox: { //NOT IN USE RN
-    backgroundColor: '#e5e5e5',
-    width: "",
-    height: 60,
-    borderRadius: 8,
-    textAlign: "center",
-    justifyContent: "center"
   },
   dayHeader: {  //text for the header for the day
     marginTop: 20,
     fontSize: 28,
-    fontWeight: "700",
-    textAlign: "center",
+    fontWeight: '700',
+    textAlign: 'center',
   },
   row: { //style for one row of the table
-    flexDirection: "row",
-    backgroundColor: "lavender",
+    flexDirection: 'row',
+    backgroundColor: 'lavender',
     width: win.width * .88,
     height: 31,
-    alignItems: "center",
+    alignItems: 'center',
     borderBottomColor: 'black',
     borderBottomWidth: 1
   },
   timeSlotBtn: { //Button for oneCell of the Table
     //width: 58,
     height: 30,
-    backgroundColor: "#78B7BB",
+    backgroundColor: '#78B7BB',
     //borderRadius: 2,
-    alignSelf: "stretch",
-    justifyContent: "center"
+    alignSelf: 'stretch',
+    justifyContent: 'center'
   },
   btnText: { //Text within one cell button
-    textAlign: "center", 
-    color: "black", 
-    fontWeight: "500", 
+    textAlign: 'center', 
+    color: 'black', 
+    fontWeight: '500', 
     fontSize: 10 
   },
   shadowProp: { //shadows to apply
@@ -713,13 +727,13 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   deletePopup: { //style for the bottom screen popup for editing a cell
-    alignSelf: "center",
-    flexDirection: "column", 
-    justifyContent: "space-between",
+    alignSelf: 'center',
+    flexDirection: 'column', 
+    justifyContent: 'space-between',
     marginTop: win.height * .83,
     width: win.width,
     height: win.height * 0.17,
-    backgroundColor: "#C2C6D0"
+    backgroundColor: '#C2C6D0'
   }
 });
 

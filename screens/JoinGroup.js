@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Image,
+  Dimensions,
   KeyboardAvoidingView,
 } from 'react-native';
 
@@ -21,14 +23,27 @@ import {
   setUserName,
 } from '../redux/reducers/userSlice';
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
+import coachKLogo from "../assets/coachKLogo.png";
 
 let availability = new Array(336);
 availability.fill(true);
+
+const window = Dimensions.get("window");
 
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState('');
   const [name, setName] = useState('');
   //const [groupName, setGroupName] = useState('');
+
+  const [dimensions, setDimensions] = useState({ window });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
+
   let groupName = '';
 
   const dispatch = useDispatch();
@@ -188,7 +203,7 @@ export default function JoinGroup({ navigation }) {
             flexDirection: 'row',
             width: '90%',
             marginBottom: 10,
-            marginTop: 60,
+            marginTop: 55,
           }}
         >
           <Text style={styles.groupText}>Username</Text>
@@ -201,13 +216,50 @@ export default function JoinGroup({ navigation }) {
           onChangeText={(name) => setName(name)}
         />
 
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%"
+          }}
+        >
+          <View
+            style={[
+              styles.triangle,
+              {
+                borderRightWidth: dimensions.window.width,
+                borderTopWidth: dimensions.window.height / 4
+              }
+            ]}
+          ></View>
+          {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
+          <Image
+            source={coachKLogo}
+            style={{
+              position: "absolute",
+              marginVertical: 20,
+              zIndex: 1,
+              height: 161,
+              width: 140,
+              alignSelf: "center"
+            }}
+          />
+          <View
+            style={{
+              width: "100%",
+              height: dimensions.window.height / 10,
+              backgroundColor: "#1F509A"
+            }}
+          ></View>
+        </View>
+
         {/* <TouchableOpacity
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
           //navigation.navigate("GroupNavigator");
         }}
-      >
+          >
         <Text style={styles.buttonText}>Join Group</Text>
       </TouchableOpacity> */}
       </View>
@@ -246,8 +298,8 @@ const styles = StyleSheet.create({
   topBanner: {
     //for the top container holding "join group button"
     alignItems: 'flex-end',
-    marginTop: 25,
-    marginBottom: 60,
+    marginTop: 15,
+    marginBottom: 40,
     width: '90%',
     //borderWidth: 2
   },
@@ -262,12 +314,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   shadowProp: {
-    //shadow for the group cards
+    //shadow for the text input and image
     shadowColor: '#171717',
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 20,
+  },
+  triangle: {
+    //position: "relative",
+    //zIndex: 1,
+    height: 0,
+    width: 0,
+    borderTopWidth: 150,
+    borderRightColor: "#1F509A",
+    //borderRightColor: 'transparent',
+    //borderBottomColor: "#f5f5f5",
+    borderTopColor: "transparent",
+    transform: [{ scaleX: -1 }]
   },
 });
 

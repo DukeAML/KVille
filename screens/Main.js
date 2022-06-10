@@ -142,18 +142,18 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Create Group',
             headerStyle: {
-              backgroundColor: '#1f509a',
+              backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
             headerTitleStyle: {
-              color: '#fff',
+              color: 'black',
             },
             headerTitleAlign: 'center',
             presentation: 'modal',
             headerLeft: () => (
               <Text
-                style={{ color: '#fff', marginLeft: 10 }}
+                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel
@@ -166,10 +166,15 @@ export default function Main() {
           component={JoinGroupScreen}
           options={({ navigation }) => ({
             title: 'Join Group',
+            headerStyle:{
+              backgroundColor: '#C2C6D0',
+              borderBottomWidth: 0,
+              shadowColor: 'transparent',
+            },
             headerTitleAlign: 'center',
             headerLeft: () => (
               <Text
-                style={{ color: '#000', marginLeft: 10 }}
+                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel

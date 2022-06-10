@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Dimensions,
+  Image,
   KeyboardAvoidingView,
 } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
@@ -24,11 +26,15 @@ import {
   setTentType,
 } from "../redux/reducers/userSlice";
 
+import coachKLogo from '../assets/coachKLogo.png'
+
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
 
 let availability = new Array(336);
 availability.fill(true);
+
+const window = Dimensions.get("window");
 
 
 export default function CreateGroup({ navigation }) {
@@ -43,6 +49,15 @@ export default function CreateGroup({ navigation }) {
   const groupRole = "Creator";
 
   const dispatch = useDispatch();
+
+  const [dimensions, setDimensions] = useState({ window });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
 
   const userRef = firebase
     .firestore()
@@ -74,7 +89,7 @@ export default function CreateGroup({ navigation }) {
 
   //Create group function
   const onCreateGroup = () => {
-    groupRef = firebase.firestore().collection("groups").doc(group.groupCode);
+    groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     groupRef.set({
       name: group.groupName,
@@ -82,7 +97,7 @@ export default function CreateGroup({ navigation }) {
       groupSchedule: [],
     });
     //adds current user to collection of members in the group
-    groupRef.collection("members").doc(firebase.auth().currentUser.uid).set({
+    groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
       groupRole: groupRole,
       name: group.userName,
       inTent: false,
@@ -212,6 +227,46 @@ export default function CreateGroup({ navigation }) {
             setGroup({ ...group, userName: userName })
           }
         />
+
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%"
+          }}
+        >
+          <View
+            style={[
+              styles.triangle,
+              {
+                borderRightWidth: dimensions.window.width,
+                borderTopWidth: dimensions.window.height / 5
+              }
+            ]}
+          ></View>
+          {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
+          <Image
+            //source={coachKFaceLogo}
+            source={coachKLogo}
+            style={{
+              position: "absolute",
+              marginVertical: 20,
+              zIndex: 1,
+              height: 161,
+              width: 141,
+              //height: 135,
+              //width: 135,
+              alignSelf: "center"
+            }}
+          />
+          <View
+            style={{
+              width: "100%",
+              height: dimensions.window.height / 14,
+              backgroundColor: "#1F509A"
+            }}
+          ></View>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -219,85 +274,95 @@ export default function CreateGroup({ navigation }) {
 
 const styles = StyleSheet.create({
   groupContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "#C2C6D0"
+    alignItems: 'center',
+    backgroundColor: '#C2C6D0'
   },
   backgroundImage: {
     flex: 1,
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover"
+    alignItems: 'center',
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%',
+    resizeMode: 'cover'
   },
   topBanner: { //for the top container holding "create" button
-    alignItems: "center",
-    justifyContent: "flex-end",
-    flexDirection: "row",
-    marginTop: 20,
-    marginBottom: 20,
-    width: "90%"
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 12,
+    width: '90%'
     //borderWidth: 2
   },
   headerText: { //text for 'headers of each input'
-    textAlign: "left",
-    width: "90%",
+    textAlign: 'left',
+    width: '90%',
     fontSize: 20,
     marginBottom: 10,
-    fontWeight: "700"
-    //color: "#656565"
+    fontWeight: '700'
+    //color: '#656565'
   },
   textContainer: {
-    height: "70%",
-    width: "80%",
+    height: '70%',
+    width: '80%',
     marginVertical: 50
-    //justifyContent: "space-between"
+    //justifyContent: 'space-between'
   },
   text: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 22,
-    fontWeight: "700"
+    fontWeight: '700'
   },
   centerText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 36,
-    fontWeight: "700",
-    textAlign: "center"
+    fontWeight: '700',
+    textAlign: 'center'
   },
   textInput: {
     //backgroundColor: "#FFFFFF",
     padding: 10,
-    width: "90%",
+    width: '90%',
     fontSize: 20,
-    fontWeight: "400",
-    textAlign: "left",
+    fontWeight: '400',
+    textAlign: 'left',
     borderRadius: 15,
-    //borderColor: "",
+    //borderColor: '',
     //borderWidth: 2
-    //height: "7%",
+    //height: '7%',
   },
   btnContainer: {
-    alignItems: "center",
-    width: "90%"
+    alignItems: 'center',
+    width: '90%'
   },
   cancelBtn: {
     borderRadius: 30,
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     padding: 15,
-    width: "45%"
+    width: '45%'
   },
   createBtn: {
     borderRadius: 30,
-    backgroundColor: "#1F509A",
+    backgroundColor: '#1F509A',
     padding: 15,
-    width: "45%"
+    width: '45%'
   },
   btnTxt: {
-    fontWeight: "700",
-    color: "#fff",
+    fontWeight: '700',
+    color: '#fff',
     fontSize: 36,
-    textAlign: "center"
+    textAlign: 'center'
+  },
+  triangle: {
+    //position: "relative",
+    //zIndex: 1,
+    height: 0,
+    width: 0,
+    borderTopWidth: 150,
+    borderRightColor: "#1F509A",
+    borderTopColor: "transparent",
+    transform: [{ scaleX: -1 }]
   }
 });
