@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     //style for text at the top of the popup
     fontWeight: '600',
     color: 'white',
-    height: 30,
+    //height: 30,
     //borderWidth:2,
     textAlign: 'center',
     fontSize: 18

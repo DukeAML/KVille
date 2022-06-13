@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
+import Modal from "react-native-modal";
+
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -26,6 +28,12 @@ import background from '../assets/Cameron-Crazies.jpg';
 export default function Settings({ route, navigation }) {
   const [isCreator, setCreator] = useState(false);
   const dispatch = useDispatch();
+
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+
+  const toggleConfirmation = () => {
+    setConfirmationVisible(!isConfirmationVisible);
+  };
 
   //gets current user's group code from redux store
   //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
@@ -148,10 +156,97 @@ export default function Settings({ route, navigation }) {
     }
   };
 
+  const ConfirmationModal = () => {
+    return (
+      <View style={styles.confirmationPop}>
+        <TouchableOpacity 
+          onPress={toggleConfirmation} 
+          style={{flexDirection: 'row', width: '100%', justifyContent: 'flex-end'
+          }}
+        >
+          <Icon name='close'
+            color={'white'}
+            size={15}
+            style={{ marginTop: 3, marginRight:10 }}
+          />
+        </TouchableOpacity>
+        {isCreator ? <Text style={styles.confirmationHeader}>Delete Group</Text> :
+         <Text style={styles.confirmationHeader}>Leave Group</Text>}
+        {isCreator? (
+          <Text style={styles.confirmationText}>
+            Are you sure you want to DELETE this group? This will delete it for everyone in this group 
+            and CANNOT be undone.
+          </Text>
+          ): (
+          <Text style={styles.confirmationText}>
+            Are you sure you want to LEAVE this group? This will delete all your information in this group 
+            and CANNOT be undone.
+          </Text>
+          )
+        }
+        
+        <TouchableOpacity
+          onPress={() => {
+            leaveGroup();
+            navigation.navigate('Start');
+            toggleConfirmation();
+          }}
+          //onPress= {toggleConfirmation}
+          style={styles.confirmationBottomBtn}
+        >
+            <Text style={[styles.buttonText, {color: 'white'}]}>Yes I'm Sure</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  } 
+  console.log('is Creator? ', isCreator);
+
   return (
     <View style={styles.settingsContainer}>
       {/* <ImageBackground source={background} style={styles.backgroundImage}> */}
-      <View style={styles.header}>
+      <View style={styles.topBanner}>
+      <View style={{flexDirection: "row", alignItems: 'center'}}>
+          <Icon name="cog-outline" color={"#fff"} size={35} />
+          <Text
+            style={[
+              styles.headerText,
+              { color: "#fff", width: "100%", marginLeft: 6}
+            ]}
+          >
+            Settings
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={onSave}
+        >
+          <View>
+            <Text
+              style={[
+                styles.groupText,
+                {
+                  fontSize: 21,
+                  fontWeight: 700,
+                  color: "#1F509A",
+                }
+              ]}
+            >
+              Save
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
+        <Text style={styles.headerText}>Name</Text>
+        <Icon name='account-edit' color={'#656565'} size={20} style={{marginRight: 8}}/> 
+      </View>
+      <TextInput
+        style={[styles.textInput, styles.shadowProp]}
+        value={name}
+        placeholder={name}
+        onChangeText={(name) => setName(name)}
+      />
+
+      {/* <View style={styles.header}>
         <Icon name='cog-outline' color={'#fff'} size={50} />
         <Text style={{ color: '#fff' }}>Settings</Text>
       </View>
@@ -171,12 +266,31 @@ export default function Settings({ route, navigation }) {
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
-      <Text style={{ color: '#fff' }}>Tent Type: </Text>
+      <Text style={{ color: '#fff' }}>Tent Type: </Text> */}
+      {isCreator ? (
+      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
+        <Text style={styles.headerText}>Group Name</Text>
+        <Icon name='circle-edit-outline' color={'#656565'} size={20} style={{marginRight: 8}} /> 
+      </View>
+      ) : null}
+      {isCreator ? (
+        <TextInput
+          style={[styles.textInput, styles.shadowProp]}
+          value={currGroupName}
+          placeholder={currGroupName}
+          onChangeText={(groupName) => setCurrGroupName(groupName)}
+        />
+      ) : null}
+      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
+        <Text style={styles.headerText}>Tent Type</Text>
+        <Icon name='home-edit' color={'#656565'} size={20} style={{marginRight: 8}}/> 
+      </View>
       <Picker
         selectedValue={tent}
         onValueChange={(itemValue, itemIndex) => {
           setTent(itemValue);
         }}
+        style={{ width: '90%', height: 30 }}
       >
         <Picker.Item label='' value='' />
         <Picker.Item label='Black' value='Black' />
@@ -184,7 +298,7 @@ export default function Settings({ route, navigation }) {
         <Picker.Item label='White' value='White' />
         <Picker.Item label='Walk up line' value='Walk up line' />
       </Picker>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{
           backgroundColor: '#1F509A',
           padding: 15,
@@ -196,26 +310,130 @@ export default function Settings({ route, navigation }) {
         onPress={onSave}
       >
         <Text style={{ color: '#fff' }}>Save</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => {
+        /* onPress={() => {
           leaveGroup();
           navigation.navigate('Start');
-        }}
+        }} */
+        onPress= {toggleConfirmation}
       >
         {isCreator ? (
-          <Text style={{ color: '#fff' }}>Delete Group</Text>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
         ) : (
-          <Text style={{ color: '#fff' }}>Leave Group</Text>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
         )}
       </TouchableOpacity>
       {/* </ImageBackground> */}
+
+      <View>
+        <Modal
+          isVisible={isConfirmationVisible}
+          onBackdropPress={() => setConfirmationVisible(false)}
+        >
+          <ConfirmationModal/>
+        </Modal>
+      </View>
+
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  settingsContainer: {
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'center',
+    //backgroundColor: "#1f509a",
+    backgroundColor: '#C2C6D0',
+  },
+  topBanner: {
+    //for the top container holding top 'settings' and save button
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginTop: 25,
+    marginBottom: 30,
+    width: "90%"
+    //borderWidth: 2
+  },
+  headerText: {
+    //text for different setting headers
+    textAlign: "left",
+    width: "90%",
+    fontSize: 20,
+    marginBottom: 10,
+    fontWeight: "700",
+    color: "#656565"
+  },
+  textInput: {
+    backgroundColor: '#f6f6f6',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: "90%",
+    fontSize: 18,
+    fontWeight: "500",
+    textAlign: "left",
+    borderRadius: 15,
+    marginBottom: 23,
+    borderColor: '#656565',
+    borderWidth: 2
+  },
+  confirmationPop: {
+    width: '90%',
+    height: 173,
+    backgroundColor: '#1E3F66',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderRadius: 20,
+    margin: 15
+  },
+  confirmationHeader: {
+    //style for text at the top of the popup
+    fontWeight: '600',
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 18
+  },
+  confirmationText: {
+    backgroundColor: '#2E5984',
+    color: 'white',
+    textAlign: 'center',
+    width: '90%',
+    padding: 5,
+    borderRadius: 15
+  },
+  confirmationBottomBtn:{
+    color: 'white',
+    backgroundColor: 'black',
+    width: '50%',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 26
+  },
+  button: {
+    backgroundColor: '#1F509A',
+    padding: 15,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems: 'center',
+  },
+  shadowProp: {
+    //shadow for the text input and image
+    shadowColor: '#171717',
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 20,
+  },
+});
+
+/* const styles = StyleSheet.create({
   settingsContainer: {
     flexDirection: 'column',
     flex: 1,
@@ -247,3 +465,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+ */
