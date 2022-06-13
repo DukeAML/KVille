@@ -376,7 +376,8 @@ export default function Schedule({ route }) {
             schedule = doc.data().groupSchedule;
           });
 
-          /* await groupRef
+          /* Old code for accessing firebase to assign color blocks to each member
+            await groupRef
             .collection('members')
             .get()
             .then((querySnapshot) => {

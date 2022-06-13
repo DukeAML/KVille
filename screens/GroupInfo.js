@@ -25,7 +25,10 @@ let members = new Array(); //members array for list
 export default function GroupInfo({ route }) {
   const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
   const [isModalVisible, setModalVisible] = useState(false);
+
+  //These 2 hooks are used for identifying which member is clicked from the list
   const [currMember, setCurrMember] = useState("");
+  const [currIndex, setCurrIndex] = useState(0);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -35,6 +38,7 @@ export default function GroupInfo({ route }) {
   console.log('route params: ', route.params);
 
   const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
+  //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
 
   useFocusEffect(
     useCallback(() => {
@@ -56,11 +60,15 @@ export default function GroupInfo({ route }) {
                   let tentCondition = doc.data().inTent; //gets tent status as well
                   //console.log("tentcondition:", tentCondition);
 
+                  //let scheduledHours = doc.data().scheduledHrs;
+                  let scheduledHours = 0;
+
                   let current = {
                     //create new object for the current list item
                     id: currName,
                     name: currName,
                     inTent: tentCondition,
+                    hours: scheduledHours,
                   };
 
                   let nameExists, tentStatusChanged; //checks if member is already in list array
@@ -119,19 +127,23 @@ export default function GroupInfo({ route }) {
   }, [isReady]);
 
   //Render Item for Each List Item of group members
-  const Member = ({ name, backgroundColor }) => (
+  const Member = ({ name, backgroundColor }) => {
+    const indexOfUser = members.findIndex( (member) => member.id === name );
+    //console.log(name, indexOfUser, members[indexOfUser].hours);
+    return (
     <TouchableOpacity
         onPress={() => {
           toggleModal();
           setCurrMember(name);
+          setCurrIndex(indexOfUser);
         }}
       >
       <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
         <Text style={styles.listText}>{name}</Text>
       </View>
     </TouchableOpacity>
-    
-  );
+    );
+  }
 
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
@@ -193,7 +205,7 @@ export default function GroupInfo({ route }) {
             </View>
 
             <Text style={styles.popUpHeader}>{currMember} Information</Text>
-            <Text style={styles.popUpText}>Scheduled Hrs: </Text>
+            <Text style={styles.popUpText}>Scheduled Hrs:  {members[currIndex].hours} hrs</Text>
           </View>
         </Modal>
       </View>

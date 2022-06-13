@@ -194,7 +194,7 @@ export default function Settings({ route, navigation }) {
           //onPress= {toggleConfirmation}
           style={styles.confirmationBottomBtn}
         >
-            <Text style={[styles.buttonText, {color: 'white'}]}>Yes I'm Sure</Text>
+            <Text style={[styles.buttonText, {color: 'white'}]}>Yes, Delete This Group</Text>
         </TouchableOpacity>
       </View>
     );

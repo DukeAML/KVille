@@ -5,9 +5,9 @@ import "firebase/compat/firestore";
 export function createTestCases() {
   function availability() {
     let arr = new Array();
-    let num ;
+    let num =1;
     for (let i = 0; i < 336; i++) {
-      num = Math.floor(Math.random() * 2);
+      //num = Math.floor(Math.random() * 2);
       arr.push(num == 0 ? false : true);
     }
     return arr;
@@ -18,13 +18,13 @@ export function createTestCases() {
     .collection("groupsTest")
     .doc("BtycLIprkN3EmC9wmpaE")
     .collection("members")
-    .add({ availability: availability(), name: "FalseAlways"});
-//   for (let i = 0; i < 12; i++) {
-//     firebase
-//       .firestore()
-//       .collection("groupsTest")
-//       .doc("BtycLIprkN3EmC9wmpaE")
-//       .collection("members")
-//       .add({ availability: availability(), name: "poop" + i });
-//   }
+    .add({ availability: availability(), name: "TrueAlways"});
+/*    for (let i = 0; i < 12; i++) {
+     firebase
+       .firestore()
+       .collection("groupsTest")
+       .doc("BtycLIprkN3EmC9wmpaE")
+       .collection("members")
+       .add({ availability: availability(), name: "poop" + i, scheduledHrs: 0});
+   } */
 }

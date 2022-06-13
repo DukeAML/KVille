@@ -39,7 +39,7 @@ export async function createGroupSchedule(groupCode, tentType) {
   //adds each member as an object to the memberArr 
   await firebase
     .firestore()
-    //.collection("groups")     //UPDATE THIS TO 'groups' in real cases *****************!!!
+    //.collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
     .collection('groupsTest')
     .doc(groupCode)
     .collection("members")
@@ -181,7 +181,38 @@ export async function createGroupSchedule(groupCode, tentType) {
         //console.log(memberArr[i].name, memberArr[i].hours);
       }
       console.log(equalHours);
+    //});
+
+    }).then((collSnap) => {   //to update the number of scheduled hours for each member
+      firebase
+        .firestore()
+        //.collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
+        .collection('groupsTest')
+        .doc(groupCode)
+        .collection("members")
+        .get()
+        .then((collSnap) => {
+          collSnap.forEach((doc) => {
+            let currName = doc.data().name
+            let indexOfUser;
+            if ( memberArr.some((e) => e.name === currName) ) { //if Name is in member array
+              indexOfUser = memberArr.findIndex( (member) => member.name === currName );
+            }
+
+            console.log( 'hours of ',currName,' is ', memberArr[indexOfUser].hours);
+
+            doc.ref.update({
+              scheduledHrs: memberArr[indexOfUser].hours / 2
+            });
+          });
+          return collSnap;
+        })
     });
+    
+    
+    
+
+   
 
   return groupScheduleArr; //return group schedule array
 
