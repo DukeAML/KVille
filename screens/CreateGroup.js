@@ -184,8 +184,9 @@ export default function CreateGroup({ navigation }) {
               backgroundColor: '#ededed',
               height: 50,
               width: '90%',
-              alignItems: 'center',
+              justifyContent: 'center',
               flexDirection: 'row',
+              alignItems:'center'
               //flex: 0.2
             },
           ]}
@@ -193,9 +194,9 @@ export default function CreateGroup({ navigation }) {
           <Text
             style={{
               textAlign: 'center',
-              fontSize: 30,
-              fontWeight: 'bold',
-              flex: 1,
+              fontSize: 26,
+              fontWeight: '700',
+              //flex: 1,
             }}
           >
             {group.groupCode}
@@ -230,8 +231,9 @@ export default function CreateGroup({ navigation }) {
 
         <View
           style={{
-            position: "absolute",
-            bottom: 0,
+            /* position: "absolute",
+          bottom: 0, */
+            marginTop: 'auto',
             width: "100%"
           }}
         >
@@ -240,7 +242,7 @@ export default function CreateGroup({ navigation }) {
               styles.triangle,
               {
                 borderRightWidth: dimensions.window.width,
-                borderTopWidth: dimensions.window.height / 5
+                borderTopWidth: dimensions.window.height / 6
               }
             ]}
           ></View>
@@ -250,10 +252,10 @@ export default function CreateGroup({ navigation }) {
             source={coachKLogo}
             style={{
               position: "absolute",
-              marginVertical: 20,
+              marginVertical: 10,
               zIndex: 1,
-              height: 161,
-              width: 141,
+              height: 129,
+              width: 113,
               //height: 135,
               //width: 135,
               alignSelf: "center"
@@ -262,8 +264,10 @@ export default function CreateGroup({ navigation }) {
           <View
             style={{
               width: "100%",
-              height: dimensions.window.height / 14,
-              backgroundColor: "#1F509A"
+              height: dimensions.window.height / 15,
+              backgroundColor: "#1F509A",
+              /* borderTopWidth: 2, //for hiding faint white line
+              borderTopColor: '#1F509A' */
             }}
           ></View>
         </View>
@@ -333,7 +337,7 @@ const styles = StyleSheet.create({
     //borderWidth: 2
     //height: '7%',
   },
-  btnContainer: {
+  /* btnContainer: {
     alignItems: 'center',
     width: '90%'
   },
@@ -354,7 +358,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 36,
     textAlign: 'center'
-  },
+  }, */
   triangle: {
     //position: "relative",
     //zIndex: 1,

@@ -161,7 +161,7 @@ export default function JoinGroup({ navigation }) {
               //navigation.navigate("GroupNavigator");
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View>
               <Text
                 style={[
                   styles.groupText,
@@ -218,8 +218,9 @@ export default function JoinGroup({ navigation }) {
 
         <View
           style={{
-            position: "absolute",
-            bottom: 0,
+            /* position: "absolute",
+            bottom: 0, */
+            marginTop: 'auto',
             width: "100%"
           }}
         >
@@ -228,7 +229,7 @@ export default function JoinGroup({ navigation }) {
               styles.triangle,
               {
                 borderRightWidth: dimensions.window.width,
-                borderTopWidth: dimensions.window.height / 4
+                borderTopWidth: dimensions.window.height / 5
               }
             ]}
           ></View>
@@ -297,7 +298,9 @@ const styles = StyleSheet.create({
   },
   topBanner: {
     //for the top container holding "join group button"
-    alignItems: 'flex-end',
+    //alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginTop: 15,
     marginBottom: 40,
     width: '90%',

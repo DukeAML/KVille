@@ -264,8 +264,8 @@ export default function Availability({ route }) {
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
           data={agenda.tableHead}
-          style={styles.head}
-          textStyle={styles.text}
+          style={StyleSheet.flatten(styles.head)}
+          textStyle={StyleSheet.flatten(styles.text)}
         />
       </Table>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -276,8 +276,8 @@ export default function Availability({ route }) {
           <TableWrapper style={{ width: dimensions.window.width / 8 }}>
             <Col
               data={agenda.tableTime}
-              style={styles.time}
-              textStyle={styles.text}
+              style={StyleSheet.flatten(styles.time)}
+              textStyle={StyleSheet.flatten(styles.text)}
             />
           </TableWrapper>
           <TableWrapper style={{ flex: 1 }}>
@@ -297,7 +297,7 @@ export default function Availability({ route }) {
                         ? cellData
                         : element(cellData, index)
                     }
-                    textStyle={styles.text}
+                    textStyle={StyleSheet.flatten(styles.text)}
                   />
                 ))}
               </TableWrapper>
@@ -329,12 +329,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalContainer: {
-    width: '100%',
-    height: '90%',
+    width: '90%',
+    height: '70%',
     borderRadius: 25,
     borderWidth: 1,
     borderStyle: 'solid',
     alignItems: 'center',
+    alignSelf: 'center',
     //justifyContent: "center",
     backgroundColor: '#ffffff',
   },
@@ -344,10 +345,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btn: {
-    width: '100%',
+    width: '95%',
+    alignSelf: 'center',
     height: 41,
-    backgroundColor: '#78B7BB',
-    borderRadius: 10,
+    backgroundColor: '#1F509A',
+    borderRadius: 5,
   },
   btnText: {
     textAlign: 'center',

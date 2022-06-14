@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
-import Modal from "react-native-modal";
+import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -190,9 +190,9 @@ export default function GroupInfo({ route }) {
           <View style={styles.popUp}>
             <View
               style={{
-                flexDirextion: "row",
-                width: "90%",
-                alignItems: "flex-end"
+                flexDirextion: 'row',
+                width: '90%',
+                alignItems: 'flex-end'
               }}
             >
               <TouchableOpacity onPress={toggleModal}>
@@ -222,10 +222,10 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 10,
     marginTop: 4,
-    alignSelf: "center",
+    alignSelf: 'center',
     //borderWidth: 2,
-    color: "#3a3b3c",
-    width: "90%",
+    color: '#3a3b3c',
+    width: '90%',
     fontSize: 22,
     fontWeight: '700',
   },
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 16,
-    //fontFamily: "sans-serif",
+    //fontFamily: 'sans-serif',
     fontWeight: '500',
     color: 'white',
   },
@@ -264,28 +264,27 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   popUp: {
-    width: "90%",
+    width: '90%',
     height: 100,
-    backgroundColor: "#1E3F66",
-    alignSelf: "center",
-    alignItems: "center",
+    backgroundColor: '#1E3F66',
+    alignSelf: 'center',
+    alignItems: 'center',
     borderRadius: 20,
     margin: 15
   },
   popUpHeader: {
-    fontFamily: "Arial",
-    fontWeight: "600",
-    color: "white",
+    fontWeight: '600',
+    color: 'white',
     marginBottom: 5,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16
     //borderWidth: 1
   },
   popUpText: {
-    backgroundColor: "#2E5984",
-    color: "white",
-    textAlign: "center",
-    width: "90%",
+    backgroundColor: '#2E5984',
+    color: 'white',
+    textAlign: 'center',
+    width: '90%',
     marginVertical: 8,
     padding: 5,
     borderRadius: 15
