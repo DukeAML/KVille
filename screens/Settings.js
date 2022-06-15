@@ -69,22 +69,22 @@ export default function Settings({ route, navigation }) {
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
-          console.log('groupCode used', groupCode);
+          //console.log('groupCode used', groupCode);
           await groupRef
             .collection('members')
             .doc(firebase.auth().currentUser.uid)
             .get()
             .then((snapshot) => {
               if (mounted) {
-                console.log('GroupRole', snapshot.data().groupRole);
+                //console.log('GroupRole', snapshot.data().groupRole);
                 if (snapshot.data().groupRole == 'Creator') {
                   //isCreator = true;
                   setCreator(true);
-                  console.log('set isCreator true');
+                  //console.log('set isCreator true');
                 } else {
                   //isCreator = false;
                   setCreator(false);
-                  console.log('set isCreator false');
+                  //console.log('set isCreator false');
                 }
               }
             });
@@ -92,7 +92,7 @@ export default function Settings({ route, navigation }) {
           setCurrGroupName(groupName);
           setName(userName);
           setTent(tentType);
-          console.log('fetched isCreator from firebase', isCreator);
+          //console.log('fetched isCreator from firebase', isCreator);
         } catch (e) {
           console.warn(e);
         } finally {
@@ -242,8 +242,6 @@ export default function Settings({ route, navigation }) {
       await SplashScreen.hideAsync();
     }
   }, [isReady]);
-
-  console.log('is Creator? ', isCreator);
 
   if (!isReady) {
     return null;
