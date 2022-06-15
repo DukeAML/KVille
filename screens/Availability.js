@@ -15,7 +15,6 @@ import {
   Col,
   Cell,
 } from 'react-native-table-component';
-import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
@@ -312,13 +311,6 @@ export default function Availability({ route }) {
           <Icon name={'plus-circle'} color={'#1F509A'} size={40} />
         </TouchableOpacity>
       </View>
-
-      {/* <IconButton
-        icon='plus-circle'
-        color={'#00f'}
-        size={20}
-        onPress={toggleModal}
-      /> */}
     </View>
   );
 }

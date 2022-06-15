@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, StyleSheet } from 'react-native';
 import {
   Title,
   Drawer,
   Text,
   TouchableRipple,
   Switch,
-} from "react-native-paper";
-import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+} from 'react-native-paper';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from 'react-redux';
 // import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
@@ -25,27 +25,45 @@ export default function DrawerContent(props) {
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
 
-  //useEffect(() => {
+  useEffect(() => {
+    let mounted = true;
+    if (mounted && groupCode != '') {
+      firebase
+        .firestore()
+        .collection('groups')
+        .doc(groupCode)
+        .collection('members')
+        .doc(firebase.auth().currentUser.uid)
+        .update({
+          inTent: status,
+        });
+    }
+    return () => (mounted = false);
+  }, [status]);
+
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
-      if (mounted && groupCode !== "") {
+      if (mounted && groupCode != '') {
         firebase
           .firestore()
-          .collection("groups")
+          .collection('groups')
           .doc(groupCode)
-          .collection("members")
+          .collection('members')
           .doc(firebase.auth().currentUser.uid)
-          .update({
-            inTent: status,
+          .get()
+          .then((doc) => {
+            if (mounted) {
+              setStatus(doc.data().inTent);
+              console.log('status: ', status);
+            }
           });
       }
       return () => (mounted = false);
-    }, [status])
+    }, [groupCode])
   );
 
   const onToggleSwitch = () => {
-    //console.log("status: ", status);
     setStatus(!status);
   };
 
@@ -61,7 +79,7 @@ export default function DrawerContent(props) {
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
-            <View style={{ flexDirection: "row", marginTop: 15 }}>
+            <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Title style={styles.title}>Krzyzewskiville</Title>
             </View>
 
@@ -84,20 +102,20 @@ export default function DrawerContent(props) {
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="home-outline" color={color} size={size} />
+                <Icon name='home-outline' color={color} size={size} />
               )}
-              label="Home"
+              label='Home'
               onPress={() => {
-                props.navigation.navigate("Start");
+                props.navigation.navigate('Start');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="account-group-outline" color={color} size={size} />
+                <Icon name='account-group-outline' color={color} size={size} />
               )}
-              label="Group Information"
+              label='Group Information'
               onPress={() => {
-                props.navigation.navigate("GroupInfo", {
+                props.navigation.navigate('GroupInfo', {
                   groupCode: groupCode,
                   groupName: groupName,
                 });
@@ -105,22 +123,22 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="calendar-text-outline" color={color} size={size} />
+                <Icon name='calendar-text-outline' color={color} size={size} />
               )}
-              label="Your Availability"
+              label='Your Availability'
               onPress={() => {
-                props.navigation.navigate("AvailabilityScreen", {
+                props.navigation.navigate('AvailabilityScreen', {
                   groupCode,
                 });
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="calendar-outline" color={color} size={size} />
+                <Icon name='calendar-outline' color={color} size={size} />
               )}
-              label="Schedule"
+              label='Schedule'
               onPress={() => {
-                props.navigation.navigate("ScheduleScreen", {
+                props.navigation.navigate('ScheduleScreen', {
                   code: groupCode,
                   tentType: tentType,
                 });
@@ -128,29 +146,29 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="alert-outline" color={color} size={size} />
+                <Icon name='alert-outline' color={color} size={size} />
               )}
-              label="Line Monitoring"
+              label='Line Monitoring'
               onPress={() => {
-                props.navigation.navigate("MonitorScreen");
+                props.navigation.navigate('MonitorScreen');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="information-outline" color={color} size={size} />
+                <Icon name='information-outline' color={color} size={size} />
               )}
-              label="Information"
+              label='Information'
               onPress={() => {
-                props.navigation.navigate("InfoScreen");
+                props.navigation.navigate('InfoScreen');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="cog-outline" color={color} size={size} />
+                <Icon name='cog-outline' color={color} size={size} />
               )}
-              label="Settings"
+              label='Settings'
               onPress={() => {
-                props.navigation.navigate("SettingScreen", {
+                props.navigation.navigate('SettingScreen', {
                   groupCode,
                   groupName,
                   userName,
@@ -158,9 +176,9 @@ export default function DrawerContent(props) {
                 });
               }}
             />
-            <DrawerItem label="Log out" onPress={() => onLogout()} />
+            <DrawerItem label='Log out' onPress={() => onLogout()} />
           </Drawer.Section>
-          <Drawer.Section title="Preferences">
+          <Drawer.Section title='Preferences'>
             <View style={styles.preference}>
               <Text>Status</Text>
               <Switch value={status} onValueChange={onToggleSwitch} />
@@ -193,7 +211,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     marginTop: 3,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
@@ -201,16 +219,16 @@ const styles = StyleSheet.create({
   },
   row: {
     marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   section: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 15,
   },
   paragraph: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginRight: 3,
   },
   drawerSection: {
@@ -218,12 +236,12 @@ const styles = StyleSheet.create({
   },
   bottomDrawerSection: {
     marginBottom: 15,
-    borderTopColor: "#f4f4f4",
+    borderTopColor: '#f4f4f4',
     borderTopWidth: 1,
   },
   preference: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
   },

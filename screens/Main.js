@@ -246,6 +246,7 @@ export default function Main() {
           name='MonitorScreen'
           component={MonitorScreen}
           options={({ navigation }) => ({
+            title: '',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
@@ -283,7 +284,7 @@ export default function Main() {
           name='SettingScreen'
           component={SettingScreen}
           options={({ navigation }) => ({
-            title: 'Settings',
+            title: '',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
