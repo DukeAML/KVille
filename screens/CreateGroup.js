@@ -102,6 +102,7 @@ export default function CreateGroup({ navigation }) {
       name: group.userName,
       inTent: false,
       availability: availability,
+      scheduledHrs: 0,
     });
     //updates current user's inGroup and groupCode states
     userRef.update({

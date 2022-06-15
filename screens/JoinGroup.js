@@ -124,6 +124,7 @@ export default function JoinGroup({ navigation }) {
             name: name,
             inTent: false,
             availability: availability,
+            scheduledHrs: 0,
           });
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));

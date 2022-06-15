@@ -16,6 +16,7 @@ import {
   Cell,
 } from 'react-native-table-component';
 import { IconButton } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
@@ -256,7 +257,7 @@ export default function Availability({ route }) {
               style={styles.createBtn}
               onPress={updateAvailability}
             >
-              <Text style={styles.btnTxt}>Add</Text>
+              <Text style={styles.btnText}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -305,12 +306,18 @@ export default function Availability({ route }) {
           </TableWrapper>
         </Table>
       </ScrollView>
-      <IconButton
+      <View style={styles.addContainer}>
+        <TouchableOpacity style={styles.addBtn} onPress={toggleModal}>
+          <Icon name={'plus-circle'} color={'#00f'} size={40} />
+        </TouchableOpacity>
+      </View>
+
+      {/* <IconButton
         icon='plus-circle'
         color={'#00f'}
         size={20}
         onPress={toggleModal}
-      />
+      /> */}
     </View>
   );
 }
@@ -355,4 +362,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
   },
+  addContainer: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    //width: 50,
+    borderWidth: 2,
+  },
+  addBtn: {
+    //position: 'absolute',
+    right: 10,
+  }
 });

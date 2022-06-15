@@ -68,8 +68,8 @@ export default function GroupInfo({ route }) {
                   let tentCondition = doc.data().inTent; //gets tent status as well
                   //console.log("tentcondition:", tentCondition);
 
-                  //let scheduledHours = doc.data().scheduledHrs;
-                  let scheduledHours = 0;
+                  let scheduledHours = doc.data().scheduledHrs;
+                  //let scheduledHours = 0;
 
                   let current = {
                     //create new object for the current list item
