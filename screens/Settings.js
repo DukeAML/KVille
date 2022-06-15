@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import Modal from "react-native-modal";
-
+import Modal from 'react-native-modal';
+import * as SplashScreen from 'expo-splash-screen';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -23,20 +23,20 @@ import {
   setUserName,
   setTentType,
 } from '../redux/reducers/userSlice';
-import background from '../assets/Cameron-Crazies.jpg';
 
 export default function Settings({ route, navigation }) {
+  //let isCreator;
   const [isCreator, setCreator] = useState(false);
-  const dispatch = useDispatch();
-
+  const [isReady, setIsReady] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const dispatch = useDispatch();
 
   const toggleConfirmation = () => {
     setConfirmationVisible(!isConfirmationVisible);
   };
 
   //gets current user's group code from redux store
-  //const groupCode = useSelector((state) => state.user.currentUser.groupCode);
+  //const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const { groupCode, groupName, userName, tentType } = route.params;
   const [currGroupName, setCurrGroupName] = useState(groupName);
@@ -53,42 +53,65 @@ export default function Settings({ route, navigation }) {
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
   //sets states to updated params after each time param is changed
-  useEffect(() => {
-    let mounted = true;
-    //console.log("route params after change", route.params);
-    setCurrGroupName(groupName);
-    setName(userName);
-    setTent(tentType);
-    return () => (mounted = false);
-  }, [userName]);
+  // useEffect(() => {
+  //   let mounted = true;
+  //   //console.log("route params after change", route.params);
+  //   setCurrGroupName(groupName);
+  //   setName(userName);
+  //   setTent(tentType);
+  //   return () => (mounted = false);
+  // }, [userName]);
 
   //useEffect(() => {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
-      if (mounted) {
-        groupRef
-          .collection('members')
-          .doc(firebase.auth().currentUser.uid)
-          .get()
-          .then((snapshot) => {
-            if (snapshot.exists) {
-              if (snapshot.data().groupRole === 'Creator') {
-                setCreator(true);
+      async function prepare() {
+        try {
+          await SplashScreen.preventAutoHideAsync();
+          console.log('groupCode used', groupCode);
+          await groupRef
+            .collection('members')
+            .doc(firebase.auth().currentUser.uid)
+            .get()
+            .then((snapshot) => {
+              if (mounted) {
+                console.log('GroupRole', snapshot.data().groupRole);
+                if (snapshot.data().groupRole == 'Creator') {
+                  //isCreator = true;
+                  setCreator(true);
+                  console.log('set isCreator true');
+                } else {
+                  //isCreator = false;
+                  setCreator(false);
+                  console.log('set isCreator false');
+                }
               }
-            } else {
-              console.log('does not exist');
-            }
-          });
-        console.log('fetched isCreator from firebase');
+            });
+
+          setCurrGroupName(groupName);
+          setName(userName);
+          setTent(tentType);
+          console.log('fetched isCreator from firebase', isCreator);
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          // Tell the application to render
+          setIsReady(true);
+        }
       }
+
+      prepare();
+
       return () => {
         mounted = false;
         setCurrGroupName(groupName);
         setName(userName);
         setTent(tentType);
+        setIsReady(false);
+        setCreator(false);
       };
-    }, [])
+    }, [route])
   );
 
   const onSave = () => {
@@ -159,32 +182,38 @@ export default function Settings({ route, navigation }) {
   const ConfirmationModal = () => {
     return (
       <View style={styles.confirmationPop}>
-        <TouchableOpacity 
-          onPress={toggleConfirmation} 
-          style={{flexDirection: 'row', width: '100%', justifyContent: 'flex-end'
+        <TouchableOpacity
+          onPress={toggleConfirmation}
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'flex-end',
           }}
         >
-          <Icon name='close'
+          <Icon
+            name='close'
             color={'white'}
             size={15}
-            style={{ marginTop: 3, marginRight:10 }}
+            style={{ marginTop: 3, marginRight: 10 }}
           />
         </TouchableOpacity>
-        {isCreator ? <Text style={styles.confirmationHeader}>Delete Group</Text> :
-         <Text style={styles.confirmationHeader}>Leave Group</Text>}
-        {isCreator? (
+        {isCreator ? (
+          <Text style={styles.confirmationHeader}>Delete Group</Text>
+        ) : (
+          <Text style={styles.confirmationHeader}>Leave Group</Text>
+        )}
+        {isCreator ? (
           <Text style={styles.confirmationText}>
-            Are you sure you want to DELETE this group? This will delete it for everyone in this group 
-            and CANNOT be undone.
+            Are you sure you want to DELETE this group? This will delete it for
+            everyone in this group and CANNOT be undone.
           </Text>
-          ): (
+        ) : (
           <Text style={styles.confirmationText}>
-            Are you sure you want to LEAVE this group? This will delete all your information in this group 
-            and CANNOT be undone.
+            Are you sure you want to LEAVE this group? This will delete all your
+            information in this group and CANNOT be undone.
           </Text>
-          )
-        }
-        
+        )}
+
         <TouchableOpacity
           onPress={() => {
             leaveGroup();
@@ -194,31 +223,47 @@ export default function Settings({ route, navigation }) {
           //onPress= {toggleConfirmation}
           style={styles.confirmationBottomBtn}
         >
-            <Text style={[styles.buttonText, {color: 'white'}]}>Yes, Delete This Group</Text>
+          {isCreator ? (
+            <Text style={[styles.buttonText, { color: 'white' }]}>
+              Yes, Delete This Group
+            </Text>
+          ) : (
+            <Text style={[styles.buttonText, { color: 'white' }]}>
+              Yes, Leave This Group
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     );
-  } 
+  };
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
   console.log('is Creator? ', isCreator);
 
+  if (!isReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.settingsContainer}>
-      {/* <ImageBackground source={background} style={styles.backgroundImage}> */}
+    <View style={styles.settingsContainer} onLayout={onLayoutRootView}>
       <View style={styles.topBanner}>
-      <View style={{flexDirection: "row", alignItems: 'center'}}>
-          <Icon name="cog-outline" color={"#fff"} size={35} />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Icon name='cog-outline' color={'#fff'} size={35} />
           <Text
             style={[
               styles.headerText,
-              { color: "#fff", width: "100%", marginLeft: 6}
+              { color: '#fff', width: '100%', marginLeft: 6 },
             ]}
           >
             Settings
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={onSave}
-        >
+        <TouchableOpacity onPress={onSave}>
           <View>
             <Text
               style={[
@@ -226,8 +271,8 @@ export default function Settings({ route, navigation }) {
                 {
                   fontSize: 21,
                   fontWeight: 700,
-                  color: "#1F509A",
-                }
+                  color: '#1F509A',
+                },
               ]}
             >
               Save
@@ -235,9 +280,20 @@ export default function Settings({ route, navigation }) {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '90%',
+          justifyContent: 'space-between',
+        }}
+      >
         <Text style={styles.headerText}>Name</Text>
-        <Icon name='account-edit' color={'#656565'} size={20} style={{marginRight: 8}}/> 
+        <Icon
+          name='account-edit'
+          color={'#656565'}
+          size={20}
+          style={{ marginRight: 8 }}
+        />
       </View>
       <TextInput
         style={[styles.textInput, styles.shadowProp]}
@@ -268,10 +324,21 @@ export default function Settings({ route, navigation }) {
       ) : null}
       <Text style={{ color: '#fff' }}>Tent Type: </Text> */}
       {isCreator ? (
-      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
-        <Text style={styles.headerText}>Group Name</Text>
-        <Icon name='circle-edit-outline' color={'#656565'} size={20} style={{marginRight: 8}} /> 
-      </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '90%',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text style={styles.headerText}>Group Name</Text>
+          <Icon
+            name='circle-edit-outline'
+            color={'#656565'}
+            size={20}
+            style={{ marginRight: 8 }}
+          />
+        </View>
       ) : null}
       {isCreator ? (
         <TextInput
@@ -281,9 +348,20 @@ export default function Settings({ route, navigation }) {
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
-      <View style={{flexDirection: "row", width: "90%",justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '90%',
+          justifyContent: 'space-between',
+        }}
+      >
         <Text style={styles.headerText}>Tent Type</Text>
-        <Icon name='home-edit' color={'#656565'} size={20} style={{marginRight: 8}}/> 
+        <Icon
+          name='home-edit'
+          color={'#656565'}
+          size={20}
+          style={{ marginRight: 8 }}
+        />
       </View>
       <Picker
         selectedValue={tent}
@@ -317,26 +395,27 @@ export default function Settings({ route, navigation }) {
           leaveGroup();
           navigation.navigate('Start');
         }} */
-        onPress= {toggleConfirmation}
+        onPress={toggleConfirmation}
       >
         {isCreator ? (
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
+            Delete Group
+          </Text>
         ) : (
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
+            Leave Group
+          </Text>
         )}
       </TouchableOpacity>
-      {/* </ImageBackground> */}
 
       <View>
         <Modal
           isVisible={isConfirmationVisible}
           onBackdropPress={() => setConfirmationVisible(false)}
         >
-          <ConfirmationModal/>
+          <ConfirmationModal />
         </Modal>
       </View>
-
-
     </View>
   );
 }
@@ -351,35 +430,35 @@ const styles = StyleSheet.create({
   },
   topBanner: {
     //for the top container holding top 'settings' and save button
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginTop: 25,
     marginBottom: 30,
-    width: "90%"
+    width: '90%',
     //borderWidth: 2
   },
   headerText: {
     //text for different setting headers
-    textAlign: "left",
-    width: "90%",
+    textAlign: 'left',
+    width: '90%',
     fontSize: 20,
     marginBottom: 10,
-    fontWeight: "700",
-    color: "#656565"
+    fontWeight: '700',
+    color: '#656565',
   },
   textInput: {
     backgroundColor: '#f6f6f6',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    width: "90%",
+    width: '90%',
     fontSize: 18,
-    fontWeight: "500",
-    textAlign: "left",
+    fontWeight: '500',
+    textAlign: 'left',
     borderRadius: 15,
     marginBottom: 23,
     borderColor: '#656565',
-    borderWidth: 2
+    borderWidth: 2,
   },
   confirmationPop: {
     width: '90%',
@@ -389,14 +468,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRadius: 20,
-    margin: 15
+    margin: 15,
   },
   confirmationHeader: {
     //style for text at the top of the popup
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    fontSize: 18
+    fontSize: 18,
   },
   confirmationText: {
     backgroundColor: '#2E5984',
@@ -404,16 +483,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '90%',
     padding: 5,
-    borderRadius: 15
+    borderRadius: 15,
   },
-  confirmationBottomBtn:{
+  confirmationBottomBtn: {
     color: 'white',
     backgroundColor: 'black',
     width: '50%',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 26
+    height: 26,
   },
   button: {
     backgroundColor: '#1F509A',

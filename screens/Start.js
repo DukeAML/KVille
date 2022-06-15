@@ -109,7 +109,6 @@ export default function Start({ navigation }) {
               groupCode: item.code,
               groupName: item.groupName,
             });
-            console.log('mounted', mounted);
           };
           updateRedux();
         }}
@@ -171,7 +170,6 @@ export default function Start({ navigation }) {
         mounted = false;
         GROUPS = [];
         setIsReady(false);
-        console.log('mounted after', mounted);
         console.log('start screen was unfocused');
       };
     }, [])

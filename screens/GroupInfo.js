@@ -34,8 +34,6 @@ export default function GroupInfo({ route }) {
   //These 2 hooks are used for identifying which member is clicked from the list
   const [currMember, setCurrMember] = useState('');
   const [currIndex, setCurrIndex] = useState(0);
-  
-  //const [groupCode, set]
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
