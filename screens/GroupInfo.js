@@ -127,7 +127,7 @@ export default function GroupInfo({ route }) {
         setIsReady(false);
         mounted = false;
       };
-    }, [])
+    }, [groupCode])
   );
 
   const onLayoutRootView = useCallback(async () => {
