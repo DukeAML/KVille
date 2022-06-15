@@ -43,7 +43,7 @@ export default function Settings({ route, navigation }) {
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
 
-  console.log('route params', route.params);
+  console.log('Settings route params', route.params);
   //gets current user's group role from redux store
 
   const userRef = firebase

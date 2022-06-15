@@ -1,10 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -21,14 +27,15 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 
 let members = new Array(); //members array for list
 
-
 export default function GroupInfo({ route }) {
   const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
   const [isModalVisible, setModalVisible] = useState(false);
 
   //These 2 hooks are used for identifying which member is clicked from the list
-  const [currMember, setCurrMember] = useState("");
+  const [currMember, setCurrMember] = useState('');
   const [currIndex, setCurrIndex] = useState(0);
+  
+  //const [groupCode, set]
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -43,6 +50,9 @@ export default function GroupInfo({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+      console.log("GroupRef", route.params.groupCode);
+      //const GroupRef = firebase.firestore().collection('groups').doc(route.params.groupCode);
+
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
@@ -117,7 +127,7 @@ export default function GroupInfo({ route }) {
         setIsReady(false);
         mounted = false;
       };
-    }, [groupCode])
+    }, [])
   );
 
   const onLayoutRootView = useCallback(async () => {
@@ -128,22 +138,22 @@ export default function GroupInfo({ route }) {
 
   //Render Item for Each List Item of group members
   const Member = ({ name, backgroundColor }) => {
-    const indexOfUser = members.findIndex( (member) => member.id === name );
+    const indexOfUser = members.findIndex((member) => member.id === name);
     //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
-    <TouchableOpacity
+      <TouchableOpacity
         onPress={() => {
           toggleModal();
           setCurrMember(name);
           setCurrIndex(indexOfUser);
         }}
       >
-      <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
-        <Text style={styles.listText}>{name}</Text>
-      </View>
-    </TouchableOpacity>
+        <View style={[styles.listItem, backgroundColor, styles.shadowProp]}>
+          <Text style={styles.listText}>{name}</Text>
+        </View>
+      </TouchableOpacity>
     );
-  }
+  };
 
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
@@ -156,8 +166,8 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <View 
-      style={styles.container} 
+    <View
+      style={styles.container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
     >
@@ -180,7 +190,6 @@ export default function GroupInfo({ route }) {
         />
       </View>
 
-
       <View>
         <Modal
           isVisible={isModalVisible}
@@ -192,11 +201,12 @@ export default function GroupInfo({ route }) {
               style={{
                 flexDirextion: 'row',
                 width: '90%',
-                alignItems: 'flex-end'
+                alignItems: 'flex-end',
               }}
             >
               <TouchableOpacity onPress={toggleModal}>
-                <Icon name='close'
+                <Icon
+                  name='close'
                   color={'white'}
                   size={15}
                   style={{ marginTop: 5 }}
@@ -205,11 +215,12 @@ export default function GroupInfo({ route }) {
             </View>
 
             <Text style={styles.popUpHeader}>{currMember} Information</Text>
-            <Text style={styles.popUpText}>Scheduled Hrs:  {members[currIndex].hours} hrs</Text>
+            <Text style={styles.popUpText}>
+              Scheduled Hrs: {members[currIndex].hours} hrs
+            </Text>
           </View>
         </Modal>
       </View>
-
     </View>
   );
 }
@@ -233,7 +244,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   listItem: {
     backgroundColor: '#1f509a',
@@ -270,14 +281,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    margin: 15
+    margin: 15,
   },
   popUpHeader: {
     fontWeight: '600',
     color: 'white',
     marginBottom: 5,
     textAlign: 'center',
-    fontSize: 16
+    fontSize: 16,
     //borderWidth: 1
   },
   popUpText: {
@@ -287,6 +298,6 @@ const styles = StyleSheet.create({
     width: '90%',
     marginVertical: 8,
     padding: 5,
-    borderRadius: 15
-  }
+    borderRadius: 15,
+  },
 });

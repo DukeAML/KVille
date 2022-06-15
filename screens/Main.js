@@ -186,13 +186,13 @@ export default function Main() {
           name='GroupInfo'
           component={GroupInfoScreen}
           options={({ navigation }) => ({
+            title: 'Group Overview',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
             headerTitleStyle: {
-              right: '0%',
               fontSize: 28,
             },
             headerLeft: () => (
@@ -208,6 +208,7 @@ export default function Main() {
           name='AvailabilityScreen'
           component={AvailabilityScreen}
           options={({ navigation }) => ({
+            title: 'Availability',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
@@ -226,6 +227,7 @@ export default function Main() {
           name='ScheduleScreen'
           component={ScheduleScreen}
           options={({ navigation }) => ({
+            title: 'Group Schedule',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
@@ -262,6 +264,7 @@ export default function Main() {
           name='InfoScreen'
           component={InfoScreen}
           options={({ navigation }) => ({
+            title: 'Tent Details',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
@@ -280,6 +283,7 @@ export default function Main() {
           name='SettingScreen'
           component={SettingScreen}
           options={({ navigation }) => ({
+            title: 'Settings',
             headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
