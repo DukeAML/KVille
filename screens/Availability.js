@@ -254,10 +254,9 @@ export default function Availability({ route }) {
           </View>
           <View style={styles.modalFooter}>
             <TouchableOpacity
-              style={styles.createBtn}
               onPress={updateAvailability}
             >
-              <Text style={styles.btnText}>Add</Text>
+              <Text>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -306,9 +305,11 @@ export default function Availability({ route }) {
           </TableWrapper>
         </Table>
       </ScrollView>
-      <View style={styles.addContainer}>
-        <TouchableOpacity style={styles.addBtn} onPress={toggleModal}>
-          <Icon name={'plus-circle'} color={'#00f'} size={40} />
+      <View
+        style={[styles.addContainer, { width: dimensions.window.width / 8 }]}
+      >
+        <TouchableOpacity onPress={toggleModal}>
+          <Icon name={'plus-circle'} color={'#1F509A'} size={40} />
         </TouchableOpacity>
       </View>
 
@@ -363,14 +364,12 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   addContainer: {
-    backgroundColor: 'transparent',
+    position:'absolute',
+    backgroundColor: '#00000000',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    //width: 50,
-    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 0,
+    bottom: 0,
   },
-  addBtn: {
-    //position: 'absolute',
-    right: 10,
-  }
 });
