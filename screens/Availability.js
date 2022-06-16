@@ -17,7 +17,7 @@ import {
 } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import { Picker } from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
 import * as SplashScreen from 'expo-splash-screen';
 
 import firebase from 'firebase/compat/app';
@@ -157,104 +157,107 @@ export default function Availability({ route }) {
           <View style={styles.modalBody}>
             <View>
               <Text>Day: </Text>
-              <Picker
-                selectedValue={selectedDay}
-                onValueChange={(itemValue, itemIndex) => {
-                  setSelectedDay(itemValue);
-                }}
-              >
-                <Picker.Item label='Monday' value={1} />
-                <Picker.Item label='Tuesday' value={2} />
-                <Picker.Item label='Wednesday' value={3} />
-                <Picker.Item label='Thursday' value={4} />
-                <Picker.Item label='Friday' value={5} />
-                <Picker.Item label='Saturday' value={6} />
-                <Picker.Item label='Sunday' value={0} />
-              </Picker>
+              <RNPickerSelect
+                onValueChange={(value) => setSelectedDay(value)}
+                placeholder={{ label: 'Select a day...', value: null }}
+                items={[
+                  { label: 'Monday', value: 1 },
+                  { label: 'Tuesday', value: 2 },
+                  { label: 'Wednesday', value: 3 },
+                  { label: 'Thursday', value: 4 },
+                  { label: 'Friday', value: 5 },
+                  { label: 'Saturday', value: 6 },
+                  { label: 'Sunday', value: 7 },
+                ]}
+              />
             </View>
             <View style={styles.selectTime}>
-              <Picker
-                selectedValue={startTime.hour}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, hour: itemValue });
-                }}
-              >
-                <Picker.Item label='12' value={0} />
-                <Picker.Item label='1' value={1} />
-                <Picker.Item label='2' value={2} />
-                <Picker.Item label='3' value={3} />
-                <Picker.Item label='4' value={4} />
-                <Picker.Item label='5' value={5} />
-                <Picker.Item label='6' value={6} />
-                <Picker.Item label='7' value={7} />
-                <Picker.Item label='8' value={8} />
-                <Picker.Item label='9' value={9} />
-                <Picker.Item label='10' value={10} />
-                <Picker.Item label='11' value={11} />
-              </Picker>
-              <Picker
-                selectedValue={startTime.minute}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, minute: itemValue });
-                }}
-              >
-                <Picker.Item label='00' value={0} />
-                <Picker.Item label='30' value={1} />
-              </Picker>
-              <Picker
-                selectedValue={startTime.day}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, day: itemValue });
-                }}
-              >
-                <Picker.Item label='AM' value={0} />
-                <Picker.Item label='PM' value={24} />
-              </Picker>
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setStartTime({ ...startTime, hour: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: '12', value: 0 },
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                  { label: '3', value: 3 },
+                  { label: '4', value: 4 },
+                  { label: '5', value: 5 },
+                  { label: '6', value: 6 },
+                  { label: '7', value: 7 },
+                  { label: '8', value: 8 },
+                  { label: '9', value: 9 },
+                  { label: '10', value: 10 },
+                  { label: '11', value: 11 },
+                ]}
+              />
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setStartTime({ ...startTime, minute: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: '00', value: 0 },
+                  { label: '30', value: 1 },
+                ]}
+              />
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setStartTime({ ...startTime, day: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: 'AM', value: 0 },
+                  { label: 'PM', value: 24 },
+                ]}
+              />
             </View>
             <View style={styles.selectTime}>
-              <Picker
-                selectedValue={endTime.hour}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, hour: itemValue });
-                }}
-              >
-                <Picker.Item label='12' value={0} />
-                <Picker.Item label='1' value={1} />
-                <Picker.Item label='2' value={2} />
-                <Picker.Item label='3' value={3} />
-                <Picker.Item label='4' value={4} />
-                <Picker.Item label='5' value={5} />
-                <Picker.Item label='6' value={6} />
-                <Picker.Item label='7' value={7} />
-                <Picker.Item label='8' value={8} />
-                <Picker.Item label='9' value={9} />
-                <Picker.Item label='10' value={10} />
-                <Picker.Item label='11' value={11} />
-              </Picker>
-              <Picker
-                selectedValue={endTime.minute}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, minute: itemValue });
-                }}
-              >
-                <Picker.Item label='00' value={0} />
-                <Picker.Item label='30' value={1} />
-              </Picker>
-              <Picker
-                selectedValue={endTime.day}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, day: itemValue });
-                }}
-              >
-                <Picker.Item label='AM' value={0} />
-                <Picker.Item label='PM' value={24} />
-              </Picker>
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setEndTime({ ...endTime, hour: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: '12', value: 0 },
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                  { label: '3', value: 3 },
+                  { label: '4', value: 4 },
+                  { label: '5', value: 5 },
+                  { label: '6', value: 6 },
+                  { label: '7', value: 7 },
+                  { label: '8', value: 8 },
+                  { label: '9', value: 9 },
+                  { label: '10', value: 10 },
+                  { label: '11', value: 11 },
+                ]}
+              />
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setEndTime({ ...endTime, minute: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: '00', value: 0 },
+                  { label: '30', value: 1 },
+                ]}
+              />
+              <RNPickerSelect
+                onValueChange={(value) =>
+                  setEndTime({ ...endTime, day: value })
+                }
+                placeholder={{}}
+                items={[
+                  { label: 'AM', value: 0 },
+                  { label: 'PM', value: 24 },
+                ]}
+              />
             </View>
           </View>
           <View style={styles.modalFooter}>
-            <TouchableOpacity
-              onPress={updateAvailability}
-            >
+            <TouchableOpacity onPress={updateAvailability}>
               <Text>Add</Text>
             </TouchableOpacity>
           </View>
