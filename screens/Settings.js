@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
+  Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
@@ -248,7 +249,7 @@ export default function Settings({ route, navigation }) {
   }
 
   return (
-    <View style={styles.settingsContainer} onLayout={onLayoutRootView}>
+    <View style={styles.settingsContainer}>
       <View style={styles.topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon name='cog-outline' color={'#fff'} size={35} />
@@ -366,7 +367,10 @@ export default function Settings({ route, navigation }) {
         onValueChange={(itemValue, itemIndex) => {
           setTent(itemValue);
         }}
-        style={{ width: '90%', height: 30 }}
+        style={
+          Platform.OS === 'ios' ? styles.picker : { width: '90%', height: 30 }
+        }
+        itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
       >
         <Picker.Item label='' value='' />
         <Picker.Item label='Black' value='Black' />
@@ -457,6 +461,14 @@ const styles = StyleSheet.create({
     marginBottom: 23,
     borderColor: '#656565',
     borderWidth: 2,
+  },
+  picker: {
+    height: '25%',
+    width: '90%',
+    //borderWidth: 2,
+  },
+  pickerItem: {
+    height: '100%',
   },
   confirmationPop: {
     width: '90%',

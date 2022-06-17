@@ -9,6 +9,7 @@ import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 
@@ -39,21 +40,21 @@ const window = Dimensions.get("window");
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
-    groupName: "",
-    tentType: "",
-    groupCode: "",
-    userName: "",
-    tentType: "",
+    groupName: '',
+    tentType: '',
+    groupCode: '',
+    userName: '',
+    tentType: '',
   });
 
-  const groupRole = "Creator";
+  const groupRole = 'Creator';
 
   const dispatch = useDispatch();
 
   const [dimensions, setDimensions] = useState({ window });
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions({ window });
     });
     return () => subscription?.remove();
@@ -61,7 +62,7 @@ export default function CreateGroup({ navigation }) {
 
   const userRef = firebase
     .firestore()
-    .collection("users")
+    .collection('users')
     .doc(firebase.auth().currentUser.uid);
   let groupRef;
 
@@ -81,7 +82,7 @@ export default function CreateGroup({ navigation }) {
         });
       }
       return () => {
-        setGroup({ ...group, groupName: "" });
+        setGroup({ ...group, groupName: '' });
         mounted = false;
       };
     }, [])
@@ -121,12 +122,12 @@ export default function CreateGroup({ navigation }) {
         if (snapshot.exists) {
           dispatch(setCurrentUser(snapshot.data()));
         } else {
-          console.log("does not exist");
+          console.log('does not exist');
         }
         return snapshot;
       })
       .then((snapshot) => {
-        navigation.navigate("GroupInfo", {
+        navigation.navigate('GroupInfo', {
           groupCode: group.groupCode,
           groupName: group.groupName,
         });
@@ -134,146 +135,151 @@ export default function CreateGroup({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
-      <View style={styles.groupContainer}>
-        <View style={styles.topBanner}>
-          <TouchableOpacity
-            onPress={() => {
-              onCreateGroup();
-              //navigation.navigate("GroupNavigator");
-              console.log(group.groupCode);
-              console.log(groupRole);
-            }}
-          >
-            <View>
-              <Text
-                style={[
-                  styles.groupText,
-                  {
-                    fontSize: 24,
-                    fontWeight: '700',
-                    color: '#1F509A',
-                    width: '100%',
-                    //borderWidth: 2
-                  },
-                ]}
-              >
-                Create
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+    <View style={{ flex: 1, backgroundColor: '#C2C6D0' }}>
+      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
+        <View style={styles.groupContainer}>
+          <View style={styles.topBanner}>
+            <TouchableOpacity
+              onPress={() => {
+                onCreateGroup();
+                //navigation.navigate("GroupNavigator");
+                console.log(group.groupCode);
+                console.log(groupRole);
+              }}
+            >
+              <View>
+                <Text
+                  style={[
+                    styles.groupText,
+                    {
+                      fontSize: 24,
+                      fontWeight: '700',
+                      color: '#1F509A',
+                      width: '100%',
+                      //borderWidth: 2
+                    },
+                  ]}
+                >
+                  Create
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
 
-        <View style={{ width: '90%' }}>
-          <Text style={styles.headerText}>Group Name</Text>
-        </View>
-        <TextInput
-          style={styles.textInput}
-          autoFocus={true}
-          placeholder='Enter Group Name'
-          value={group.groupName}
-          onChangeText={(groupName) =>
-            setGroup({ ...group, groupName: groupName })
-          }
-        />
+          <View style={{ width: '90%' }}>
+            <Text style={styles.headerText}>Group Name</Text>
+          </View>
+          <TextInput
+            style={styles.textInput}
+            autoFocus={true}
+            placeholder='Enter Group Name'
+            value={group.groupName}
+            onChangeText={(groupName) =>
+              setGroup({ ...group, groupName: groupName })
+            }
+          />
 
-        <Text style={[styles.headerText, { marginTop: 20 }]}>Group Code</Text>
-        <View
-          style={[
-            styles.textInput,
-            {
-              backgroundColor: '#ededed',
-              height: 50,
-              width: '90%',
-              justifyContent: 'center',
-              flexDirection: 'row',
-              alignItems:'center'
-              //flex: 0.2
-            },
-          ]}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 26,
-              fontWeight: '700',
-              //flex: 1,
-            }}
-          >
-            {group.groupCode}
-          </Text>
-        </View>
-
-        <Text style={[styles.headerText, { marginTop: 20 }]}>Tent Type</Text>
-        <Picker
-          selectedValue={group.tentType}
-          onValueChange={(itemValue, itemIndex) => {
-            setGroup({ ...group, tentType: itemValue });
-          }}
-          style={{ width: '90%', height: 30 }}
-        >
-          <Picker.Item label='' value='' />
-          <Picker.Item label='Black' value='Black' />
-          <Picker.Item label='Blue' value='Blue' />
-          <Picker.Item label='White' value='White' />
-          <Picker.Item label='Walk up line' value='Walk up line' />
-        </Picker>
-
-        <Text style={[styles.headerText, { marginTop: 20 }]}>Username</Text>
-
-        <TextInput
-          style={[styles.textInput, { borderWidth: 2, borderColor: '#8e8e8e' }]}
-          value={group.userName}
-          placeholder={group.userName}
-          onChangeText={(userName) =>
-            setGroup({ ...group, userName: userName })
-          }
-        />
-
-        <View
-          style={{
-            /* position: "absolute",
-          bottom: 0, */
-            marginTop: 'auto',
-            width: "100%"
-          }}
-        >
+          <Text style={[styles.headerText, { marginTop: 20 }]}>Group Code</Text>
           <View
             style={[
-              styles.triangle,
+              styles.textInput,
               {
-                borderRightWidth: dimensions.window.width,
-                borderTopWidth: dimensions.window.height / 6
-              }
+                backgroundColor: '#ededed',
+                height: 50,
+                width: '90%',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+                //flex: 0.2
+              },
             ]}
-          ></View>
-          {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
-          <Image
-            //source={coachKFaceLogo}
-            source={coachKLogo}
-            style={{
-              position: "absolute",
-              marginVertical: 10,
-              zIndex: 1,
-              height: 129,
-              width: 113,
-              //height: 135,
-              //width: 135,
-              alignSelf: "center"
+          >
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 26,
+                fontWeight: '700',
+                //flex: 1,
+              }}
+            >
+              {group.groupCode}
+            </Text>
+          </View>
+
+          <Text style={[styles.headerText, { marginTop: 20 }]}>Tent Type</Text>
+          <Picker
+            selectedValue={group.tentType}
+            onValueChange={(itemValue, itemIndex) => {
+              setGroup({ ...group, tentType: itemValue });
             }}
+            style={Platform.OS === 'ios' ? styles.picker: {width: '90%', height: 30}}
+            itemStyle={Platform.OS === 'ios'? styles.pickerItem: {}}
+          >
+            <Picker.Item label='' value='' />
+            <Picker.Item label='Black' value='Black' />
+            <Picker.Item label='Blue' value='Blue' />
+            <Picker.Item label='White' value='White' />
+            <Picker.Item label='Walk up line' value='Walk up line' />
+          </Picker>
+
+          <Text style={[styles.headerText, { marginTop: 20 }]}>Username</Text>
+
+          <TextInput
+            style={[
+              styles.textInput,
+              { borderWidth: 2, borderColor: '#8e8e8e' },
+            ]}
+            value={group.userName}
+            placeholder={group.userName}
+            onChangeText={(userName) =>
+              setGroup({ ...group, userName: userName })
+            }
           />
-          <View
-            style={{
-              width: "100%",
-              height: dimensions.window.height / 15,
-              backgroundColor: "#1F509A",
-              /* borderTopWidth: 2, //for hiding faint white line
-              borderTopColor: '#1F509A' */
-            }}
-          ></View>
         </View>
+      </KeyboardAvoidingView>
+      <View
+        style={{
+          /* position: "absolute",
+          bottom: 0, */
+          marginTop: 'auto',
+          width: '100%',
+        }}
+      >
+        <View
+          style={[
+            styles.triangle,
+            {
+              borderRightWidth: dimensions.window.width,
+              borderTopWidth: dimensions.window.height / 6,
+            },
+          ]}
+        ></View>
+        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
+        <Image
+          //source={coachKFaceLogo}
+          source={coachKLogo}
+          style={{
+            position: 'absolute',
+            marginVertical: 10,
+            zIndex: 1,
+            height: 129,
+            width: 113,
+            //height: 135,
+            //width: 135,
+            alignSelf: 'center',
+          }}
+        />
+        <View
+          style={{
+            width: '100%',
+            height: dimensions.window.height / 15,
+            backgroundColor: '#1F509A',
+            /* borderTopWidth: 2, //for hiding faint white line
+              borderTopColor: '#1F509A' */
+          }}
+        ></View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -282,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#C2C6D0'
+    backgroundColor: '#C2C6D0',
   },
   backgroundImage: {
     flex: 1,
@@ -290,41 +296,43 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     height: '100%',
     width: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
-  topBanner: { //for the top container holding "create" button
+  topBanner: {
+    //for the top container holding "create" button
     alignItems: 'center',
     justifyContent: 'flex-end',
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 12,
-    width: '90%'
+    width: '90%',
     //borderWidth: 2
   },
-  headerText: { //text for 'headers of each input'
+  headerText: {
+    //text for 'headers of each input'
     textAlign: 'left',
     width: '90%',
     fontSize: 20,
     marginBottom: 10,
-    fontWeight: '700'
+    fontWeight: '700',
     //color: '#656565'
   },
   textContainer: {
     height: '70%',
     width: '80%',
-    marginVertical: 50
+    marginVertical: 50,
     //justifyContent: 'space-between'
   },
   text: {
     color: '#fff',
     fontSize: 22,
-    fontWeight: '700'
+    fontWeight: '700',
   },
   centerText: {
     color: '#fff',
     fontSize: 36,
     fontWeight: '700',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   textInput: {
     //backgroundColor: "#FFFFFF",
@@ -337,6 +345,14 @@ const styles = StyleSheet.create({
     //borderColor: '',
     //borderWidth: 2
     //height: '7%',
+  },
+  picker: {
+    width: '90%',
+    height: '20%',
+    //borderWidth: 2,
+  },
+  pickerItem: {
+    height: '100%',
   },
   /* btnContainer: {
     alignItems: 'center',
@@ -366,8 +382,8 @@ const styles = StyleSheet.create({
     height: 0,
     width: 0,
     borderTopWidth: 150,
-    borderRightColor: "#1F509A",
-    borderTopColor: "transparent",
-    transform: [{ scaleX: -1 }]
-  }
+    borderRightColor: '#1F509A',
+    borderTopColor: 'transparent',
+    transform: [{ scaleX: -1 }],
+  },
 });

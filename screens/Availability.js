@@ -18,6 +18,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import RNPickerSelect from 'react-native-picker-select';
+import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 
 import firebase from 'firebase/compat/app';
@@ -151,15 +152,16 @@ export default function Availability({ route }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text>Add New Busy Time</Text>
+            <Text style={styles.headerText}>Add New Busy Time</Text>
           </View>
 
           <View style={styles.modalBody}>
-            <View>
+            <View style={styles.selectDay}>
               <Text>Day: </Text>
               <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
                 placeholder={{ label: 'Select a day...', value: null }}
+                style={pickerSelectStyles}
                 items={[
                   { label: 'Monday', value: 1 },
                   { label: 'Tuesday', value: 2 },
@@ -171,94 +173,105 @@ export default function Availability({ route }) {
                 ]}
               />
             </View>
+            <Text>Start Time: </Text>
             <View style={styles.selectTime}>
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setStartTime({ ...startTime, hour: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: '12', value: 0 },
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                  { label: '3', value: 3 },
-                  { label: '4', value: 4 },
-                  { label: '5', value: 5 },
-                  { label: '6', value: 6 },
-                  { label: '7', value: 7 },
-                  { label: '8', value: 8 },
-                  { label: '9', value: 9 },
-                  { label: '10', value: 10 },
-                  { label: '11', value: 11 },
-                ]}
-              />
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setStartTime({ ...startTime, minute: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: '00', value: 0 },
-                  { label: '30', value: 1 },
-                ]}
-              />
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setStartTime({ ...startTime, day: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: 'AM', value: 0 },
-                  { label: 'PM', value: 24 },
-                ]}
-              />
+              <Picker
+                selectedValue={startTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, hour: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
+              </Picker>
+              <Picker
+                selectedValue={startTime.minute}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, minute: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
+              </Picker>
+              <Picker
+                selectedValue={startTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, day: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
             </View>
+            <Text>End Time: </Text>
             <View style={styles.selectTime}>
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setEndTime({ ...endTime, hour: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: '12', value: 0 },
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                  { label: '3', value: 3 },
-                  { label: '4', value: 4 },
-                  { label: '5', value: 5 },
-                  { label: '6', value: 6 },
-                  { label: '7', value: 7 },
-                  { label: '8', value: 8 },
-                  { label: '9', value: 9 },
-                  { label: '10', value: 10 },
-                  { label: '11', value: 11 },
-                ]}
-              />
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setEndTime({ ...endTime, minute: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: '00', value: 0 },
-                  { label: '30', value: 1 },
-                ]}
-              />
-              <RNPickerSelect
-                onValueChange={(value) =>
-                  setEndTime({ ...endTime, day: value })
-                }
-                placeholder={{}}
-                items={[
-                  { label: 'AM', value: 0 },
-                  { label: 'PM', value: 24 },
-                ]}
-              />
+              <Picker
+                selectedValue={endTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, hour: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.minute}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, minute: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, day: itemValue });
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
             </View>
           </View>
           <View style={styles.modalFooter}>
-            <TouchableOpacity onPress={updateAvailability}>
-              <Text>Add</Text>
+            <TouchableOpacity
+              style={styles.addBtn}
+              onPress={updateAvailability}
+            >
+              <Text style={styles.btnText}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -333,38 +346,108 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '90%',
-    height: '70%',
+    height: '80%',
     borderRadius: 25,
     borderWidth: 1,
     borderStyle: 'solid',
     alignItems: 'center',
     alignSelf: 'center',
-    //justifyContent: "center",
+    justifyContent: 'space-around',
     backgroundColor: '#ffffff',
   },
+  modalHeader: {
+    //borderWidth: 1,
+  },
+  headerText: {
+    fontSize: 20,
+  },
+  modalBody: {
+    alignItems: 'center',
+    width: '100%',
+    height: '80%',
+    justifyContent: 'space-evenly',
+  },
+  picker: {
+    height: '100%',
+    width: '35%',
+  },
+  pickerItem: {
+    height: '100%',
+  },
+  selectDay: {
+    alignItems: 'center',
+    width: '70%',
+    height: '20%',
+  },
   selectTime: {
-    flex: 1,
+    //flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
+    height: '30%',
+    width: '90%',
+  },
+  modalFooter: {
+    width: '100%',
+    height: '10%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addBtn: {
+    width: '95%',
+    height: '50%',
+    backgroundColor: '#1F509A',
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnText: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  cell: {
+    height: 40,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    margin: 0,
   },
   btn: {
+    margin: 0,
     width: '95%',
-    alignSelf: 'center',
-    height: 41,
+    height: 40,
     backgroundColor: '#1F509A',
     borderRadius: 5,
   },
-  btnText: {
-    textAlign: 'center',
-    color: '#fff',
-  },
   addContainer: {
-    position:'absolute',
+    position: 'absolute',
     backgroundColor: '#00000000',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     right: 0,
     bottom: 0,
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
