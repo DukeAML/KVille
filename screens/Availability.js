@@ -7,6 +7,7 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {
   Table,
@@ -44,6 +45,7 @@ for (let i = 0; i < 48; i += 1) {
 }
 
 let availability;
+let currIndex;
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -52,6 +54,7 @@ export default function Availability({ route }) {
   const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -95,13 +98,29 @@ export default function Availability({ route }) {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const toggleDeleteModal = () => {
+    setDeleteModalVisible(!isDeleteModalVisible);
+  };
 
   const element = (data, index) => (
     <TouchableOpacity
       style={styles.btn}
-      onPress={() => console.log(index)}
+      onPress={() => {
+        console.log(index);
+        toggleDeleteModal();
+        currIndex = index;
+      }}
     ></TouchableOpacity>
   );
+
+  const deleteCell = () => {
+    console.log(currIndex);
+    availability[currIndex] = true;
+    memberRef.update({
+      availability: availability,
+    })
+    toggleDeleteModal();
+  };
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -145,137 +164,31 @@ export default function Availability({ route }) {
   }
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <Modal
-        animationType='slide'
-        visible={isModalVisible}
-        onBackdropPress={toggleModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.headerText}>Add New Busy Time</Text>
-          </View>
-
-          <View style={styles.modalBody}>
-            <View style={styles.selectDay}>
-              <Text>Day: </Text>
-              <RNPickerSelect
-                onValueChange={(value) => setSelectedDay(value)}
-                placeholder={{ label: 'Select a day...', value: null }}
-                style={pickerSelectStyles}
-                items={[
-                  { label: 'Monday', value: 1 },
-                  { label: 'Tuesday', value: 2 },
-                  { label: 'Wednesday', value: 3 },
-                  { label: 'Thursday', value: 4 },
-                  { label: 'Friday', value: 5 },
-                  { label: 'Saturday', value: 6 },
-                  { label: 'Sunday', value: 7 },
-                ]}
-              />
-            </View>
-            <Text>Start Time: </Text>
-            <View style={styles.selectTime}>
-              <Picker
-                selectedValue={startTime.hour}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, hour: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='12' value={0} />
-                <Picker.Item label='1' value={1} />
-                <Picker.Item label='2' value={2} />
-                <Picker.Item label='3' value={3} />
-                <Picker.Item label='4' value={4} />
-                <Picker.Item label='5' value={5} />
-                <Picker.Item label='6' value={6} />
-                <Picker.Item label='7' value={7} />
-                <Picker.Item label='8' value={8} />
-                <Picker.Item label='9' value={9} />
-                <Picker.Item label='10' value={10} />
-                <Picker.Item label='11' value={11} />
-              </Picker>
-              <Picker
-                selectedValue={startTime.minute}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, minute: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='00' value={0} />
-                <Picker.Item label='30' value={1} />
-              </Picker>
-              <Picker
-                selectedValue={startTime.day}
-                onValueChange={(itemValue, itemIndex) => {
-                  setStartTime({ ...startTime, day: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='AM' value={0} />
-                <Picker.Item label='PM' value={24} />
-              </Picker>
-            </View>
-            <Text>End Time: </Text>
-            <View style={styles.selectTime}>
-              <Picker
-                selectedValue={endTime.hour}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, hour: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='12' value={0} />
-                <Picker.Item label='1' value={1} />
-                <Picker.Item label='2' value={2} />
-                <Picker.Item label='3' value={3} />
-                <Picker.Item label='4' value={4} />
-                <Picker.Item label='5' value={5} />
-                <Picker.Item label='6' value={6} />
-                <Picker.Item label='7' value={7} />
-                <Picker.Item label='8' value={8} />
-                <Picker.Item label='9' value={9} />
-                <Picker.Item label='10' value={10} />
-                <Picker.Item label='11' value={11} />
-              </Picker>
-              <Picker
-                selectedValue={endTime.minute}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, minute: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='00' value={0} />
-                <Picker.Item label='30' value={1} />
-              </Picker>
-              <Picker
-                selectedValue={endTime.day}
-                onValueChange={(itemValue, itemIndex) => {
-                  setEndTime({ ...endTime, day: itemValue });
-                }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label='AM' value={0} />
-                <Picker.Item label='PM' value={24} />
-              </Picker>
-            </View>
-          </View>
-          <View style={styles.modalFooter}>
-            <TouchableOpacity
-              style={styles.addBtn}
-              onPress={updateAvailability}
-            >
-              <Text style={styles.btnText}>Add</Text>
+      <View>
+        <Modal
+          animationType='slide'
+          visible={isDeleteModalVisible}
+          onBackdropPress={toggleDeleteModal}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              alignSelf: 'center',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              backgroundColor: '#C2C6D0',
+              width: window.width,
+              height: window.height * 0.1,
+              marginTop: window.height * 0.9,
+            }}
+          >
+            <TouchableOpacity onPress={deleteCell}>
+              <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </View>
+
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
           data={agenda.tableHead}
@@ -310,7 +223,7 @@ export default function Availability({ route }) {
                     data={
                       availability[48 * cellIndex + index]
                         ? cellData
-                        : element(cellData, index)
+                        : element(cellData, 48 * cellIndex + index)
                     }
                     textStyle={StyleSheet.flatten(styles.text)}
                   />
@@ -335,6 +248,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
+    //backgroundColor: '#C2C6D0',
   },
   row: {
     height: 40,
@@ -412,11 +326,12 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   btn: {
-    margin: 0,
+    //margin: 0,
     width: '95%',
-    height: 40,
+    height: 42,
     backgroundColor: '#1F509A',
     borderRadius: 5,
+    alignSelf: 'center',
   },
   addContainer: {
     position: 'absolute',
