@@ -158,12 +158,10 @@ export default function Availability({ route }) {
               }
               availabilityUI[j - 1] = [false, j - i];
               i = j;
-              console.log(availabilityUI[j - 1]);
             } else {
               availabilityUI[i] = [true, 0];
             }
           }
-          console.log(availabilityUI);
         } catch (e) {
           console.warn(e);
         } finally {
