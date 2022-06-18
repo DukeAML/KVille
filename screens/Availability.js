@@ -45,7 +45,11 @@ for (let i = 0; i < 48; i += 1) {
 }
 
 let availability;
+let availabilityUI;
 let currIndex;
+
+availabilityUI = new Array(336);
+availabilityUI.fill([true, 0]);
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -88,6 +92,7 @@ export default function Availability({ route }) {
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
+    availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
     console.log('availability', availability);
     memberRef.update({
       availability: availability,
@@ -104,7 +109,7 @@ export default function Availability({ route }) {
 
   const element = (data, index) => (
     <TouchableOpacity
-      style={styles.btn}
+      style={[styles.btn, { height: 40 * parseInt(availabilityUI[index][1]) }]}
       onPress={() => {
         console.log(index);
         toggleDeleteModal();
@@ -114,11 +119,16 @@ export default function Availability({ route }) {
   );
 
   const deleteCell = () => {
-    console.log(currIndex);
-    availability[currIndex] = true;
+    console.log('currIndex', currIndex);
+    let startIdx = currIndex - availabilityUI[currIndex][1];
+    console.log('startIdx', startIdx);
+    for (let i = startIdx; i <= currIndex; i++) {
+      availability[i] = true;
+    }
+    availabilityUI[currIndex] = [true, 0];
     memberRef.update({
       availability: availability,
-    })
+    });
     toggleDeleteModal();
   };
 
@@ -139,6 +149,19 @@ export default function Availability({ route }) {
           await memberRef.get().then((doc) => {
             availability = doc.data().availability;
           });
+          for (let i = 0; i < availability.length; i++) {
+            if (!availability[i]) {
+              let j = i;
+              while (j < availability.length && !availability[j]) {
+                availabilityUI[j] = [true, 0];
+                j++;
+              }
+              availabilityUI[j - 1] = [false, j - i];
+              i = j;
+            } else {
+              availabilityUI[i] = [true, 0];
+            }
+          }
         } catch (e) {
           console.warn(e);
         } finally {
@@ -162,33 +185,170 @@ export default function Availability({ route }) {
   if (!isReady) {
     return null;
   }
+
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <View>
-        <Modal
-          animationType='slide'
-          visible={isDeleteModalVisible}
-          onBackdropPress={toggleDeleteModal}
-        >
-          <View
-            style={{
-              position: 'absolute',
-              alignSelf: 'center',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              backgroundColor: '#C2C6D0',
-              width: window.width,
-              height: window.height * 0.1,
-              marginTop: window.height * 0.9,
-            }}
-          >
-            <TouchableOpacity onPress={deleteCell}>
-              <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+      <Modal
+        isVisible={isDeleteModalVisible}
+        onBackdropPress={toggleDeleteModal}
+        style={styles.deleteModal}
+      >
+        <TouchableOpacity onPress={deleteCell}>
+          <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+        </TouchableOpacity>
+      </Modal>
+
+      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.headerText}>Add New Busy Time</Text>
+          </View>
+
+          <View style={styles.modalBody}>
+            <View style={styles.selectDay}>
+              <Text>Day: </Text>
+              <RNPickerSelect
+                onValueChange={(value) => setSelectedDay(value)}
+                placeholder={{ label: 'Select a day...', value: null }}
+                style={pickerSelectStyles}
+                items={[
+                  { label: 'Monday', value: 1 },
+                  { label: 'Tuesday', value: 2 },
+                  { label: 'Wednesday', value: 3 },
+                  { label: 'Thursday', value: 4 },
+                  { label: 'Friday', value: 5 },
+                  { label: 'Saturday', value: 6 },
+                  { label: 'Sunday', value: 7 },
+                ]}
+              />
+            </View>
+            <Text>Start Time: </Text>
+            <View style={styles.selectTime}>
+              <Picker
+                selectedValue={startTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, hour: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
+              </Picker>
+              <Picker
+                selectedValue={startTime.minute}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, minute: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
+              </Picker>
+              <Picker
+                selectedValue={startTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, day: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
+            </View>
+            <Text>End Time: </Text>
+            <View style={styles.selectTime}>
+              <Picker
+                selectedValue={endTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, hour: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.minute}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, minute: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, day: itemValue });
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? styles.picker
+                    : { height: 30, width: '30%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
+            </View>
+          </View>
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={styles.addBtn}
+              onPress={updateAvailability}
+            >
+              <Text style={styles.btnText}>Add</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
-      </View>
-
+        </View>
+      </Modal>
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
           data={agenda.tableHead}
@@ -208,6 +368,7 @@ export default function Availability({ route }) {
               textStyle={StyleSheet.flatten(styles.text)}
             />
           </TableWrapper>
+
           <TableWrapper style={{ flex: 1 }}>
             {tableData.map((rowData, index) => (
               <TableWrapper
@@ -221,10 +382,14 @@ export default function Availability({ route }) {
                   <Cell
                     key={cellIndex}
                     data={
-                      availability[48 * cellIndex + index]
+                      availabilityUI[48 * cellIndex + index][0]
                         ? cellData
                         : element(cellData, 48 * cellIndex + index)
                     }
+                    style={[
+                      styles.cell,
+                      { width: dimensions.window.width / 8 },
+                    ]}
                     textStyle={StyleSheet.flatten(styles.text)}
                   />
                 ))}
@@ -267,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#C2C6D0',
   },
   modalHeader: {
     //borderWidth: 1,
@@ -341,6 +506,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 0,
     bottom: 0,
+  },
+  deleteModal: {
+    margin: 0,
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#C2C6D0',
+    shadowColor: '#171717',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 5,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    width: '100%',
+    height: '10%',
+    bottom: '0',
   },
 });
 
