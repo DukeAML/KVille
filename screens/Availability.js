@@ -45,7 +45,11 @@ for (let i = 0; i < 48; i += 1) {
 }
 
 let availability;
+let availabilityUI;
 let currIndex;
+
+availabilityUI = new Array(336);
+availabilityUI.fill([true, 0]);
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -55,7 +59,6 @@ export default function Availability({ route }) {
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -75,27 +78,6 @@ export default function Availability({ route }) {
     .collection('members')
     .doc(firebase.auth().currentUser.uid);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-  const toggleDeleteModal = () => {
-    setDeleteModalVisible(!isDeleteModalVisible);
-  };
-  const toggleConfirmation = () => {
-    setConfirmationVisible(!isConfirmationVisible);
-  };
-
-  const element = (data, index) => (
-    <TouchableOpacity
-      style={styles.btn}
-      onPress={() => {
-        console.log(index);
-        toggleDeleteModal();
-        currIndex = index;
-      }}
-    ></TouchableOpacity>
-  );
-
   const updateAvailability = () => {
     let startIdx =
       parseInt(selectedDay) * 48 +
@@ -110,26 +92,44 @@ export default function Availability({ route }) {
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
+    availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
     console.log('availability', availability);
-    // memberRef.update({
-    //   availability: availability,
-    // });
-    toggleModal();
-  };
-
-  const deleteCell = () => {
-    console.log(currIndex);
-    availability[currIndex] = true;
-    // memberRef.update({
-    //   availability: availability,
-    // });
-    toggleDeleteModal();
-  };
-
-  const pushEdits = () => {
     memberRef.update({
       availability: availability,
     });
+    toggleModal();
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+  const toggleDeleteModal = () => {
+    setDeleteModalVisible(!isDeleteModalVisible);
+  };
+
+  const element = (data, index) => (
+    <TouchableOpacity
+      style={[styles.btn, { height: 40 * parseInt(availabilityUI[index][1]) }]}
+      onPress={() => {
+        console.log(index);
+        toggleDeleteModal();
+        currIndex = index;
+      }}
+    ></TouchableOpacity>
+  );
+
+  const deleteCell = () => {
+    console.log('currIndex', currIndex);
+    let startIdx = currIndex - availabilityUI[currIndex][1];
+    console.log('startIdx', startIdx);
+    for (let i = startIdx; i <= currIndex; i++) {
+      availability[i] = true;
+    }
+    availabilityUI[currIndex] = [true, 0];
+    memberRef.update({
+      availability: availability,
+    });
+    toggleDeleteModal();
   };
 
   useEffect(() => {
@@ -149,6 +149,19 @@ export default function Availability({ route }) {
           await memberRef.get().then((doc) => {
             availability = doc.data().availability;
           });
+          for (let i = 0; i < availability.length; i++) {
+            if (!availability[i]) {
+              let j = i;
+              while (j < availability.length && !availability[j]) {
+                availabilityUI[j] = [true, 0];
+                j++;
+              }
+              availabilityUI[j - 1] = [false, j - i];
+              i = j;
+            } else {
+              availabilityUI[i] = [true, 0];
+            }
+          }
         } catch (e) {
           console.warn(e);
         } finally {
@@ -174,10 +187,9 @@ export default function Availability({ route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <Modal
-        animationType='slide'
-        visible={isDeleteModalVisible}
+        isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
         style={styles.deleteModal}
       >
@@ -186,11 +198,7 @@ export default function Availability({ route }) {
         </TouchableOpacity>
       </Modal>
 
-      <Modal
-        animationType='slide'
-        visible={isModalVisible}
-        onBackdropPress={toggleModal}
-      >
+      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerText}>Add New Busy Time</Text>
@@ -348,59 +356,6 @@ export default function Availability({ route }) {
           textStyle={StyleSheet.flatten(styles.text)}
         />
       </Table>
-      <View>
-        <Modal
-          isVisible={isConfirmationVisible}
-          onBackdropPress={toggleConfirmation}
-          //style={styles.confirmationPop}
-          //customBackdrop={<View style={{ flex: 1 }} />}
-        >
-          <View style={styles.confirmationPop}>
-            <Text style={styles.confirmationHeader}>Save</Text>
-            <Text style={styles.confirmationText}>
-              Are you sure you want to save changes?
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => {
-                pushEdits(); //if confirmed, push edits and dismiss popUp
-                toggleConfirmation();
-              }}
-              style={styles.confirmationBottomBtn}
-            >
-              <Text
-                style={{
-                  fontSize: 'auto',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  color: 'white',
-                }}
-              >
-                Yes I'm Sure
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
-      <View style={styles.saveContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            toggleConfirmation();
-          }}
-          style={styles.saveBtn}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 16,
-              fontWeight: '500',
-              color: '',
-            }}
-          >
-            Save
-          </Text>
-        </TouchableOpacity>
-      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Table
           borderStyle={{ borderWidth: 1 }}
@@ -427,10 +382,14 @@ export default function Availability({ route }) {
                   <Cell
                     key={cellIndex}
                     data={
-                      availability[48 * cellIndex + index]
+                      availabilityUI[48 * cellIndex + index][0]
                         ? cellData
                         : element(cellData, 48 * cellIndex + index)
                     }
+                    style={[
+                      styles.cell,
+                      { width: dimensions.window.width / 8 },
+                    ]}
                     textStyle={StyleSheet.flatten(styles.text)}
                   />
                 ))}
@@ -473,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#C2C6D0',
   },
   modalHeader: {
     //borderWidth: 1,
@@ -565,55 +524,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '10%',
     bottom: '0',
-  },
-  saveContainer: {
-    //flexDirection: 'row',
-  },
-  saveBtn: {
-    backgroundColor: '#c9c9c9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 20,
-    // shadowColor: '#171717',
-    // shadowOffset: { width: -3, height: 5 },
-    // shadowOpacity: 0.4,
-    // shadowRadius: 3,
-    // elevation: 5,
-  },
-  confirmationPop: {
-    width: '90%',
-    height: 175,
-    backgroundColor: '#1E3F66',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderRadius: 20,
-    margin: 15,
-  },
-  confirmationHeader: {
-    //style for text at the top of the popup
-    fontWeight: '600',
-    color: 'white',
-    //height: 30,
-    //borderWidth:2,
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  confirmationText: {
-    backgroundColor: '#2E5984',
-    color: 'white',
-    textAlign: 'center',
-    width: '90%',
-    padding: 5,
-    borderRadius: 15,
-  },
-  confirmationBottomBtn: {
-    //color: 'white',
-    backgroundColor: '#000',
-    width: '60%',
-    borderRadius: 8,
-    justifyContent: 'center',
-    height: 26,
   },
 });
 
