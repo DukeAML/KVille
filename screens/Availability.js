@@ -21,6 +21,7 @@ import Modal from 'react-native-modal';
 import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
+import { Snackbar } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -59,6 +60,8 @@ export default function Availability({ route }) {
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
   const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -79,6 +82,11 @@ export default function Availability({ route }) {
     .doc(firebase.auth().currentUser.uid);
 
   const updateAvailability = () => {
+    if (selectedDay == 0) {
+      toggleSnackBar();
+      setSnackMessage('Please select a day');
+      return;
+    }
     let startIdx =
       parseInt(selectedDay) * 48 +
       parseInt(startTime.day) +
@@ -89,6 +97,11 @@ export default function Availability({ route }) {
       parseInt(endTime.day) +
       parseInt(endTime.minute) +
       parseInt(endTime.hour) * 2;
+    if (startIdx >= endIdx) {
+      toggleSnackBar();
+      setSnackMessage('Invalid time slot');
+      return;
+    }
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
@@ -105,6 +118,9 @@ export default function Availability({ route }) {
   };
   const toggleDeleteModal = () => {
     setDeleteModalVisible(!isDeleteModalVisible);
+  };
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
   };
 
   const element = (data, index) => (
@@ -199,6 +215,16 @@ export default function Availability({ route }) {
       </Modal>
 
       <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+        <Snackbar
+          visible={isSnackVisible}
+          onDismiss={() => setSnackVisible(false)}
+          wrapperStyle={{ top: 0 }}
+          duration={2000}
+        >
+          <View style={{ width: '100%' }}>
+            <Text style={{textAlign:'center'}}>{snackMessage}</Text>
+          </View>
+        </Snackbar>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerText}>Add New Busy Time</Text>
@@ -209,7 +235,7 @@ export default function Availability({ route }) {
               <Text>Day: </Text>
               <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
-                placeholder={{ label: 'Select a day...', value: null }}
+                placeholder={{ label: 'Select a day...', value: 0 }}
                 style={pickerSelectStyles}
                 items={[
                   { label: 'Monday', value: 1 },

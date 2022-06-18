@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -9,25 +9,26 @@ import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
-import { Picker } from "@react-native-picker/picker";
+import { Picker } from '@react-native-picker/picker';
+import { Snackbar } from 'react-native-paper';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-import { generateGroupCode } from "../backend/GroupCode";
-import { useSelector, useDispatch } from "react-redux";
+import { generateGroupCode } from '../backend/GroupCode';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   setCurrentUser,
   setGroupCode,
   setGroupName,
   setUserName,
   setTentType,
-} from "../redux/reducers/userSlice";
+} from '../redux/reducers/userSlice';
 
-import coachKLogo from '../assets/coachKLogo.png'
+import coachKLogo from '../assets/coachKLogo.png';
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
@@ -35,8 +36,7 @@ const GROUP_CODE_LENGTH = 8;
 let availability = new Array(336);
 availability.fill(true);
 
-const window = Dimensions.get("window");
-
+const window = Dimensions.get('window');
 
 export default function CreateGroup({ navigation }) {
   const [group, setGroup] = useState({
@@ -46,19 +46,13 @@ export default function CreateGroup({ navigation }) {
     userName: '',
     tentType: '',
   });
-
-  const groupRole = 'Creator';
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
+  const [dimensions, setDimensions] = useState({ window });
 
   const dispatch = useDispatch();
 
-  const [dimensions, setDimensions] = useState({ window });
-
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ window }) => {
-      setDimensions({ window });
-    });
-    return () => subscription?.remove();
-  });
+  const groupRole = 'Creator';
 
   const userRef = firebase
     .firestore()
@@ -67,6 +61,13 @@ export default function CreateGroup({ navigation }) {
   let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.username);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions({ window });
+    });
+    return () => subscription?.remove();
+  });
 
   //on first render sets name to user's registered name
   //useEffect(() => {
@@ -88,8 +89,22 @@ export default function CreateGroup({ navigation }) {
     }, [])
   );
 
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
+  };
+
   //Create group function
   const onCreateGroup = () => {
+    if (group.groupName == '') {
+      toggleSnackBar();
+      setSnackMessage('Enter group name');
+      return;
+    }
+    if (group.tentType == '') {
+      toggleSnackBar();
+      setSnackMessage('Select tent type');
+      return;
+    }
     groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     groupRef.set({
@@ -212,8 +227,12 @@ export default function CreateGroup({ navigation }) {
             onValueChange={(itemValue, itemIndex) => {
               setGroup({ ...group, tentType: itemValue });
             }}
-            style={Platform.OS === 'ios' ? styles.picker: {width: '90%', height: 30}}
-            itemStyle={Platform.OS === 'ios'? styles.pickerItem: {}}
+            style={
+              Platform.OS === 'ios'
+                ? styles.picker
+                : { width: '90%', height: 30 }
+            }
+            itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
           >
             <Picker.Item label='' value='' />
             <Picker.Item label='Black' value='Black' />
@@ -279,6 +298,16 @@ export default function CreateGroup({ navigation }) {
           }}
         ></View>
       </View>
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <View style={{ width: '100%' }}>
+          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
+        </View>
+      </Snackbar>
     </View>
   );
 }

@@ -10,6 +10,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
 } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -21,24 +22,25 @@ import {
   setGroupCode,
   setGroupName,
   setUserName,
+  setTentType,
 } from '../redux/reducers/userSlice';
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
-import coachKLogo from "../assets/coachKLogo.png";
+import coachKLogo from '../assets/coachKLogo.png';
 
 let availability = new Array(336);
 availability.fill(true);
 
-const window = Dimensions.get("window");
+const window = Dimensions.get('window');
 
 export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState('');
   const [name, setName] = useState('');
-  //const [groupName, setGroupName] = useState('');
-
   const [dimensions, setDimensions] = useState({ window });
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions({ window });
     });
     return () => subscription?.remove();
@@ -66,46 +68,46 @@ export default function JoinGroup({ navigation }) {
     }, [])
   );
 
-  const onJoinGroup = (navigation) => {
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
+  };
+
+  const onJoinGroup = async (navigation) => {
     console.log('group code', groupCode);
+    if (groupCode == '') {
+      toggleSnackBar();
+      setSnackMessage('Enter group code');
+      return;
+    }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
     const userRef = firebase
       .firestore()
       .collection('users')
       .doc(firebase.auth().currentUser.uid);
 
-    //Max 12 people in a group
-    groupRef
-      .collection('members')
-      .get()
-      .then((collSnap) => {
-        if (collSnap.size > 12) {
-          console.log('Group is full');
-          return;
-        }
-      });
-
-    //checks to make sure user isn't already in group
-    groupRef
-      .collection('members')
-      .doc()
-      .get(firebase.auth().currentUser.uid)
-      .then((docSnap) => {
-        if (docSnap.exists) {
-          console.log('User already in group');
-          return;
-        }
-      });
-
     //checks to make sure entered group code exists
-    groupRef.get().then((docSnapshot) => {
+    await groupRef.get().then(async (docSnapshot) => {
+      console.log("Group exists: ", docSnapshot.exists);
       if (docSnapshot.exists) {
+        //Max 12 people in a group
+        await groupRef
+          .collection('members')
+          .get()
+          .then((collSnap) => {
+            if (collSnap.size > 12) {
+              console.log('Group is full');
+              toggleSnackBar();
+              setSnackMessage('Group already full');
+              return;
+            }
+          });
         groupName = docSnapshot.data().name;
         dispatch(setGroupCode(groupCode));
         dispatch(setUserName(name));
         dispatch(setGroupName(groupName));
+        dispatch(setTentType(docSnapshot.data().tentType));
         //updates current user's info
-        firebase
+        await firebase
           .firestore()
           .collection('users')
           .doc(firebase.auth().currentUser.uid)
@@ -116,7 +118,7 @@ export default function JoinGroup({ navigation }) {
             }),
           });
         //adds current user to member list
-        groupRef
+        await groupRef
           .collection('members')
           .doc(firebase.auth().currentUser.uid)
           .set({
@@ -126,136 +128,99 @@ export default function JoinGroup({ navigation }) {
             availability: availability,
             scheduledHrs: 0,
           });
+        await userRef
+          .get()
+          .then((snapshot) => {
+            if (snapshot.exists) {
+              dispatch(setCurrentUser(snapshot.data()));
+            } else {
+              console.log('does not exist');
+            }
+            return snapshot;
+          })
+          .then((snapshot) => {
+            navigation.navigate('GroupInfo', {
+              groupCode: groupCode,
+              groupName: groupName,
+            });
+          });
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
         console.log('No group exists');
-        //maybe add snack bar for this
+        toggleSnackBar();
+        setSnackMessage('Invalid group code: group doesn\'t exist');
+        return;
       }
     });
-
-    userRef
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          dispatch(setCurrentUser(snapshot.data()));
-        } else {
-          console.log('does not exist');
-        }
-        return snapshot;
-      })
-      .then((snapshot) => {
-        navigation.navigate('GroupInfo', {
-          groupCode: groupCode,
-          groupName: groupName,
-        });
-      });
   };
 
   return (
-    <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <View style={styles.topBanner}>
-          <TouchableOpacity
-            onPress={() => {
-              onJoinGroup(navigation);
-              //navigation.navigate("GroupNavigator");
+    <View style={{ flex: 1, backgroundColor: '#C2C6D0' }}>
+      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.topBanner}>
+            <TouchableOpacity
+              onPress={() => {
+                onJoinGroup(navigation);
+                //navigation.navigate("GroupNavigator");
+              }}
+            >
+              <View>
+                <Text
+                  style={[
+                    styles.groupText,
+                    {
+                      fontSize: 20,
+                      fontWeight: '700',
+                      color: '#1f509a',
+                      width: '100%',
+                      //borderWidth: 2
+                    },
+                  ]}
+                >
+                  Join Group
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '90%',
+              marginBottom: 10,
             }}
           >
-            <View>
-              <Text
-                style={[
-                  styles.groupText,
-                  {
-                    fontSize: 20,
-                    fontWeight: '700',
-                    color: '#1f509a',
-                    width: '100%',
-                    //borderWidth: 2
-                  },
-                ]}
-              >
-                Join Group
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.groupText}>Group Code</Text>
+          </View>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '90%',
-            marginBottom: 10,
-          }}
-        >
-          <Text style={styles.groupText}>Group Code</Text>
-        </View>
-
-        <TextInput
-          style={[styles.textInput, styles.shadowProp]}
-          autoFocus={true}
-          onChangeText={(code) => setInputGroupCode(code.trim())}
-          value={groupCode}
-          placeholder='Enter Group Code'
-        />
-
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '90%',
-            marginBottom: 10,
-            marginTop: 55,
-          }}
-        >
-          <Text style={styles.groupText}>Username</Text>
-        </View>
-
-        <TextInput
-          style={[styles.textInput, styles.shadowProp]}
-          value={name}
-          placeholder={name}
-          onChangeText={(name) => setName(name)}
-        />
-
-        <View
-          style={{
-            /* position: "absolute",
-            bottom: 0, */
-            marginTop: 'auto',
-            width: "100%"
-          }}
-        >
-          <View
-            style={[
-              styles.triangle,
-              {
-                borderRightWidth: dimensions.window.width,
-                borderTopWidth: dimensions.window.height / 5
-              }
-            ]}
-          ></View>
-          {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
-          <Image
-            source={coachKLogo}
-            style={{
-              position: "absolute",
-              marginVertical: 20,
-              zIndex: 1,
-              height: 161,
-              width: 140,
-              alignSelf: "center"
-            }}
+          <TextInput
+            style={[styles.textInput, styles.shadowProp]}
+            autoFocus={true}
+            onChangeText={(code) => setInputGroupCode(code.trim())}
+            value={groupCode}
+            placeholder='Enter Group Code'
           />
+
           <View
             style={{
-              width: "100%",
-              height: dimensions.window.height / 10,
-              backgroundColor: "#1F509A"
+              flexDirection: 'row',
+              width: '90%',
+              marginBottom: 10,
+              marginTop: 55,
             }}
-          ></View>
-        </View>
+          >
+            <Text style={styles.groupText}>Username</Text>
+          </View>
 
-        {/* <TouchableOpacity
+          <TextInput
+            style={[styles.textInput, styles.shadowProp]}
+            value={name}
+            placeholder={name}
+            onChangeText={(name) => setName(name)}
+          />
+          {/* <TouchableOpacity
         style={styles.button}
         onPress={() => {
           onJoinGroup(navigation);
@@ -264,8 +229,56 @@ export default function JoinGroup({ navigation }) {
           >
         <Text style={styles.buttonText}>Join Group</Text>
       </TouchableOpacity> */}
+        </View>
+      </KeyboardAvoidingView>
+      <View
+        style={{
+          /* position: "absolute",
+            bottom: 0, */
+          marginTop: 'auto',
+          width: '100%',
+        }}
+      >
+        <View
+          style={[
+            styles.triangle,
+            {
+              borderRightWidth: dimensions.window.width,
+              borderTopWidth: dimensions.window.height / 5,
+            },
+          ]}
+        ></View>
+        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
+        <Image
+          source={coachKLogo}
+          style={{
+            position: 'absolute',
+            marginVertical: 20,
+            zIndex: 1,
+            height: 161,
+            width: 140,
+            alignSelf: 'center',
+          }}
+        />
+        <View
+          style={{
+            width: '100%',
+            height: dimensions.window.height / 10,
+            backgroundColor: '#1F509A',
+          }}
+        ></View>
       </View>
-    </KeyboardAvoidingView>
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <View style={{ width: '100%' }}>
+          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
+        </View>
+      </Snackbar>
+    </View>
   );
 }
 
@@ -331,11 +344,11 @@ const styles = StyleSheet.create({
     height: 0,
     width: 0,
     borderTopWidth: 150,
-    borderRightColor: "#1F509A",
+    borderRightColor: '#1F509A',
     //borderRightColor: 'transparent',
     //borderBottomColor: "#f5f5f5",
-    borderTopColor: "transparent",
-    transform: [{ scaleX: -1 }]
+    borderTopColor: 'transparent',
+    transform: [{ scaleX: -1 }],
   },
 });
 
