@@ -55,6 +55,7 @@ export default function Availability({ route }) {
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -74,6 +75,27 @@ export default function Availability({ route }) {
     .collection('members')
     .doc(firebase.auth().currentUser.uid);
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+  const toggleDeleteModal = () => {
+    setDeleteModalVisible(!isDeleteModalVisible);
+  };
+  const toggleConfirmation = () => {
+    setConfirmationVisible(!isConfirmationVisible);
+  };
+
+  const element = (data, index) => (
+    <TouchableOpacity
+      style={styles.btn}
+      onPress={() => {
+        console.log(index);
+        toggleDeleteModal();
+        currIndex = index;
+      }}
+    ></TouchableOpacity>
+  );
+
   const updateAvailability = () => {
     let startIdx =
       parseInt(selectedDay) * 48 +
@@ -89,37 +111,25 @@ export default function Availability({ route }) {
       availability[i] = false;
     }
     console.log('availability', availability);
-    memberRef.update({
-      availability: availability,
-    });
+    // memberRef.update({
+    //   availability: availability,
+    // });
     toggleModal();
   };
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-  const toggleDeleteModal = () => {
-    setDeleteModalVisible(!isDeleteModalVisible);
-  };
-
-  const element = (data, index) => (
-    <TouchableOpacity
-      style={styles.btn}
-      onPress={() => {
-        console.log(index);
-        toggleDeleteModal();
-        currIndex = index;
-      }}
-    ></TouchableOpacity>
-  );
 
   const deleteCell = () => {
     console.log(currIndex);
     availability[currIndex] = true;
+    // memberRef.update({
+    //   availability: availability,
+    // });
+    toggleDeleteModal();
+  };
+
+  const pushEdits = () => {
     memberRef.update({
       availability: availability,
-    })
-    toggleDeleteModal();
+    });
   };
 
   useEffect(() => {
@@ -162,39 +172,19 @@ export default function Availability({ route }) {
   if (!isReady) {
     return null;
   }
+
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <View>
-        <Modal
-          animationType='slide'
-          visible={isDeleteModalVisible}
-          onBackdropPress={toggleDeleteModal}
-        >
-          <View
-            style={{
-              position: 'absolute',
-              alignSelf: 'center',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              backgroundColor: '#C2C6D0',
-              shadowColor: '#171717',
-              shadowOffset: { width: 0, height: -5 },
-              shadowOpacity: 0.5,
-              shadowRadius: 20,
-              elevation: 5,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              width: window.width,
-              height: window.height * 0.1,
-              marginTop: window.height * 0.9,
-            }}
-          >
-            <TouchableOpacity onPress={deleteCell}>
-              <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
+    <View style={styles.container}>
+      <Modal
+        animationType='slide'
+        visible={isDeleteModalVisible}
+        onBackdropPress={toggleDeleteModal}
+        style={styles.deleteModal}
+      >
+        <TouchableOpacity onPress={deleteCell}>
+          <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+        </TouchableOpacity>
+      </Modal>
 
       <Modal
         animationType='slide'
@@ -358,6 +348,59 @@ export default function Availability({ route }) {
           textStyle={StyleSheet.flatten(styles.text)}
         />
       </Table>
+      <View>
+        <Modal
+          isVisible={isConfirmationVisible}
+          onBackdropPress={toggleConfirmation}
+          //style={styles.confirmationPop}
+          //customBackdrop={<View style={{ flex: 1 }} />}
+        >
+          <View style={styles.confirmationPop}>
+            <Text style={styles.confirmationHeader}>Save</Text>
+            <Text style={styles.confirmationText}>
+              Are you sure you want to save changes?
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => {
+                pushEdits(); //if confirmed, push edits and dismiss popUp
+                toggleConfirmation();
+              }}
+              style={styles.confirmationBottomBtn}
+            >
+              <Text
+                style={{
+                  fontSize: 'auto',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  color: 'white',
+                }}
+              >
+                Yes I'm Sure
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+      <View style={styles.saveContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            toggleConfirmation();
+          }}
+          style={styles.saveBtn}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 16,
+              fontWeight: '500',
+              color: '',
+            }}
+          >
+            Save
+          </Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Table
           borderStyle={{ borderWidth: 1 }}
@@ -370,6 +413,7 @@ export default function Availability({ route }) {
               textStyle={StyleSheet.flatten(styles.text)}
             />
           </TableWrapper>
+
           <TableWrapper style={{ flex: 1 }}>
             {tableData.map((rowData, index) => (
               <TableWrapper
@@ -503,6 +547,73 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 0,
     bottom: 0,
+  },
+  deleteModal: {
+    margin: 0,
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#C2C6D0',
+    shadowColor: '#171717',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 5,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    width: '100%',
+    height: '10%',
+    bottom: '0',
+  },
+  saveContainer: {
+    //flexDirection: 'row',
+  },
+  saveBtn: {
+    backgroundColor: '#c9c9c9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 20,
+    // shadowColor: '#171717',
+    // shadowOffset: { width: -3, height: 5 },
+    // shadowOpacity: 0.4,
+    // shadowRadius: 3,
+    // elevation: 5,
+  },
+  confirmationPop: {
+    width: '90%',
+    height: 175,
+    backgroundColor: '#1E3F66',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderRadius: 20,
+    margin: 15,
+  },
+  confirmationHeader: {
+    //style for text at the top of the popup
+    fontWeight: '600',
+    color: 'white',
+    //height: 30,
+    //borderWidth:2,
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  confirmationText: {
+    backgroundColor: '#2E5984',
+    color: 'white',
+    textAlign: 'center',
+    width: '90%',
+    padding: 5,
+    borderRadius: 15,
+  },
+  confirmationBottomBtn: {
+    //color: 'white',
+    backgroundColor: '#000',
+    width: '60%',
+    borderRadius: 8,
+    justifyContent: 'center',
+    height: 26,
   },
 });
 
