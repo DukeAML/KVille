@@ -45,7 +45,11 @@ for (let i = 0; i < 48; i += 1) {
 }
 
 let availability;
+let availabilityUI;
 let currIndex;
+
+availabilityUI = new Array(336);
+availabilityUI.fill([true, 0]);
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -88,6 +92,7 @@ export default function Availability({ route }) {
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
+    availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
     console.log('availability', availability);
     memberRef.update({
       availability: availability,
@@ -104,7 +109,7 @@ export default function Availability({ route }) {
 
   const element = (data, index) => (
     <TouchableOpacity
-      style={styles.btn}
+      style={[styles.btn, { height: 40 * parseInt(availabilityUI[index][1]) }]}
       onPress={() => {
         console.log(index);
         toggleDeleteModal();
@@ -114,11 +119,16 @@ export default function Availability({ route }) {
   );
 
   const deleteCell = () => {
-    console.log(currIndex);
-    availability[currIndex] = true;
+    console.log('currIndex', currIndex);
+    let startIdx = currIndex - availabilityUI[currIndex][1];
+    console.log('startIdx', startIdx);
+    for (let i = startIdx; i <= currIndex; i++) {
+      availability[i] = true;
+    }
+    availabilityUI[currIndex] = [true, 0];
     memberRef.update({
       availability: availability,
-    })
+    });
     toggleDeleteModal();
   };
 
@@ -139,6 +149,21 @@ export default function Availability({ route }) {
           await memberRef.get().then((doc) => {
             availability = doc.data().availability;
           });
+          for (let i = 0; i < availability.length; i++) {
+            if (!availability[i]) {
+              let j = i;
+              while (j < availability.length && !availability[j]) {
+                availabilityUI[j] = [true, 0];
+                j++;
+              }
+              availabilityUI[j - 1] = [false, j - i];
+              i = j;
+              console.log(availabilityUI[j - 1]);
+            } else {
+              availabilityUI[i] = [true, 0];
+            }
+          }
+          console.log(availabilityUI);
         } catch (e) {
           console.warn(e);
         } finally {
@@ -165,8 +190,7 @@ export default function Availability({ route }) {
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
       <Modal
-        animationType='slide'
-        visible={isDeleteModalVisible}
+        isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
         style={styles.deleteModal}
       >
@@ -175,11 +199,7 @@ export default function Availability({ route }) {
         </TouchableOpacity>
       </Modal>
 
-      <Modal
-        animationType='slide'
-        visible={isModalVisible}
-        onBackdropPress={toggleModal}
-      >
+      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerText}>Add New Busy Time</Text>
@@ -362,10 +382,14 @@ export default function Availability({ route }) {
                   <Cell
                     key={cellIndex}
                     data={
-                      availability[48 * cellIndex + index]
+                      availabilityUI[48 * cellIndex + index][0]
                         ? cellData
                         : element(cellData, 48 * cellIndex + index)
                     }
+                    style={[
+                      styles.cell,
+                      { width: dimensions.window.width / 8 },
+                    ]}
                     textStyle={StyleSheet.flatten(styles.text)}
                   />
                 ))}
@@ -408,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#C2C6D0',
   },
   modalHeader: {
     //borderWidth: 1,
@@ -482,6 +506,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 0,
     bottom: 0,
+  },
+  deleteModal: {
+    margin: 0,
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#C2C6D0',
+    shadowColor: '#171717',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 5,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    width: '100%',
+    height: '10%',
+    bottom: '0',
   },
 });
 
