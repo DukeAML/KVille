@@ -164,37 +164,16 @@ export default function Availability({ route }) {
   }
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <View>
-        <Modal
-          animationType='slide'
-          visible={isDeleteModalVisible}
-          onBackdropPress={toggleDeleteModal}
-        >
-          <View
-            style={{
-              position: 'absolute',
-              alignSelf: 'center',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              backgroundColor: '#C2C6D0',
-              shadowColor: '#171717',
-              shadowOffset: { width: 0, height: -5 },
-              shadowOpacity: 0.5,
-              shadowRadius: 20,
-              elevation: 5,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              width: window.width,
-              height: window.height * 0.1,
-              marginTop: window.height * 0.9,
-            }}
-          >
-            <TouchableOpacity onPress={deleteCell}>
-              <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
+      <Modal
+        animationType='slide'
+        visible={isDeleteModalVisible}
+        onBackdropPress={toggleDeleteModal}
+        style={styles.deleteModal}
+      >
+        <TouchableOpacity onPress={deleteCell}>
+          <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+        </TouchableOpacity>
+      </Modal>
 
       <Modal
         animationType='slide'
