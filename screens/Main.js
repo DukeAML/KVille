@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Text } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
+import Icon from 'react-native-vector-icons/Ionicons';
 import * as SplashScreen from 'expo-splash-screen';
+/* import Modal from "../component/Modal.js";
+import ModalHeader from "../component/Modal.js";
+import ModalBody from "../component/Modal.js"; */
+import Modal from 'react-native-modal';
 
 import StartScreen from "./Start";
 import CreateGroupScreen from "./CreateGroup";
@@ -29,12 +34,81 @@ import { setCurrentUser, reset } from "../redux/reducers/userSlice";
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
+const AvailabilityText = () => (
+  <View>
+    <Text style={styles.InfoText}>
+      This page is for your availability throughout the week. You will input what times of the week you are not
+      available for tenting.
+    </Text>
+    <Text style={styles.InfoText}>
+      To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
+      end time.
+    </Text>
+    <Text style={styles.InfoText}>
+      Do this for your entire weekly schedule. You can delete blocks to edit your times.
+    </Text>
+    <Text style={styles.InfoText}>
+      This schedule should remain saved from week to week, but you may edit every week if you have changes 
+      to your schedule.
+    </Text>
+    <Text style={styles.InfoText}>
+      Make sure to fill out your availability every week before you Create a New Group Schedule or your 
+      busy times will not be accounted for in the group schedule.
+    </Text>
+  </View>
+);
+
+const ScheduleText = () => (
+  <View>
+    <Text style={styles.InfoText}>
+      This page is for your group schedule for the week.
+    </Text>
+    <Text style={styles.InfoText}>
+      Tip1
+    </Text>
+    <Text style={styles.InfoText}>
+      Tip2
+    </Text>
+    <Text style={styles.InfoText}>
+      Tip3
+    </Text>
+    <Text style={styles.InfoText}>
+      Tip4
+    </Text>
+  </View>
+);
+
+
 export default function Main() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
+  const [isInfoVisible, setInfoVisible] = useState(false);
+
+  const toggleInfo = () => {
+    setInfoVisible(!isInfoVisible);
+  };
+
+  const InformationModal = ({header, content}) => {
+    return(
+      <View>
+        <Modal
+          isVisible = {isInfoVisible}
+          onBackdropPress={() => setInfoVisible(false)}
+        >
+          <View style={styles.InfoPop}>
+            <Text style={styles.InfoHeader}>{header}</Text>
+            <ScrollView style = {styles.InfoTextView}>
+              {content}
+            </ScrollView>
+          </View>
+        </Modal>
+      </View>
+      
+    );
+  }
 
   const dispatch = useDispatch();
 
@@ -221,6 +295,21 @@ export default function Main() {
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
             ),
+            headerRight: () => (
+              <View>
+                <TouchableOpacity
+                  onPress ={toggleInfo}
+                  style = {{marginRight: 20}}
+                >
+                  <Icon
+                    name='information-circle-outline'
+                    color={'black'}
+                    size={30}
+                  />
+                </TouchableOpacity>
+                <InformationModal header = 'How to use the Availability Page' content={<AvailabilityText/>}/>
+              </View>
+            ),
           })}
         />
         <Drawer.Screen
@@ -239,6 +328,21 @@ export default function Main() {
                 size={25}
                 onPress={() => navigation.openDrawer()}
               ></IconButton>
+            ),
+            headerRight: () => (
+              <View>
+                <TouchableOpacity
+                  onPress ={toggleInfo}
+                  style = {{marginRight: 20}}
+                >
+                  <Icon
+                    name='information-circle-outline'
+                    color={'black'}
+                    size={30}
+                  />
+                </TouchableOpacity>
+                <InformationModal header = 'How to use the Schedule Page' content={<ScheduleText/>}/>
+              </View>
             ),
           })}
         />
@@ -303,3 +407,72 @@ export default function Main() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  InfoPop: {
+    width: '80%',
+    height: 350,
+    backgroundColor: '#1E3F66',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderRadius: 20,
+    margin: 15,
+  },
+  InfoHeader: {
+    //style for text at the top of the popup
+    fontWeight: '600',
+    color: 'white',
+    marginTop: 15,
+    marginBottom: 8,
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  InfoTextView:{
+    backgroundColor: '#2E5984',
+    width: '90%',
+    padding: 5,
+    borderRadius: 15,
+    marginBottom: 10
+  },
+  InfoText: {
+    //backgroundColor: '#2E5984',
+    color: 'white',
+    marginVertical: 5,
+    textAlign: 'left',
+    //width: '90%',
+    //padding: 5,
+    borderRadius: 15,
+  },
+
+});
+
+{/*  <Modal
+                  isVisible = {isAvailInfoVisible}
+                  onBackdropPress={() => setAvailInfoVisible(false)}
+                >
+                  <View style={styles.InfoPop}>
+                    <Text style={styles.InfoHeader}>How to use the Availability page</Text>
+                    <ScrollView style = {styles.InfoTextView}>
+                      <Text style={styles.InfoText}>
+                        This page is for your availability throughout the week. You will input what times of the week you are not
+                        available for tenting.
+                      </Text>
+                      <Text style={styles.InfoText}>
+                        To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
+                        end time.
+                      </Text>
+                      <Text style={styles.InfoText}>
+                        Do this for your entire weekly schedule. You can delete blocks to edit your times.
+                      </Text>
+                      <Text style={styles.InfoText}>
+                        This schedule should remain saved from week to week, but you may edit every week if you have changes 
+                        to your schedule.
+                      </Text>
+                      <Text style={styles.InfoText}>
+                        Make sure to fill out your availability every week before you Create a New Group Schedule or your 
+                        busy times will not be accounted for in the group schedule.
+                      </Text>
+                    </ScrollView>
+                  </View>
+                </Modal> */}
