@@ -100,7 +100,10 @@ export default function Main() {
         >
           <View style={styles.InfoPop}>
             <Text style={styles.InfoHeader}>{header}</Text>
-            <ScrollView style = {styles.InfoTextView}>
+            <ScrollView 
+              style = {styles.InfoTextView}
+              showsVerticalScrollIndicator={false}
+            >
               {content}
             </ScrollView>
           </View>
@@ -412,32 +415,33 @@ const styles = StyleSheet.create({
   InfoPop: {
     width: '80%',
     height: 350,
-    backgroundColor: '#1E3F66',
+    backgroundColor: '#6a6a6a',
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     borderRadius: 20,
     margin: 15,
+    paddingVertical: 15,
   },
   InfoHeader: {
     //style for text at the top of the popup
-    fontWeight: '600',
+    fontWeight: '700',
     color: 'white',
-    marginTop: 15,
+    //marginTop: 15,
     marginBottom: 8,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 16,
   },
   InfoTextView:{
-    backgroundColor: '#2E5984',
+    backgroundColor: '#bebebe',
     width: '90%',
-    padding: 5,
+    padding: 18,
     borderRadius: 15,
     marginBottom: 10
   },
   InfoText: {
     //backgroundColor: '#2E5984',
-    color: 'white',
+    color: 'black',
     marginVertical: 5,
     textAlign: 'left',
     //width: '90%',
@@ -448,31 +452,31 @@ const styles = StyleSheet.create({
 });
 
 {/*  <Modal
-                  isVisible = {isAvailInfoVisible}
-                  onBackdropPress={() => setAvailInfoVisible(false)}
-                >
-                  <View style={styles.InfoPop}>
-                    <Text style={styles.InfoHeader}>How to use the Availability page</Text>
-                    <ScrollView style = {styles.InfoTextView}>
-                      <Text style={styles.InfoText}>
-                        This page is for your availability throughout the week. You will input what times of the week you are not
-                        available for tenting.
-                      </Text>
-                      <Text style={styles.InfoText}>
-                        To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
-                        end time.
-                      </Text>
-                      <Text style={styles.InfoText}>
-                        Do this for your entire weekly schedule. You can delete blocks to edit your times.
-                      </Text>
-                      <Text style={styles.InfoText}>
-                        This schedule should remain saved from week to week, but you may edit every week if you have changes 
-                        to your schedule.
-                      </Text>
-                      <Text style={styles.InfoText}>
-                        Make sure to fill out your availability every week before you Create a New Group Schedule or your 
-                        busy times will not be accounted for in the group schedule.
-                      </Text>
-                    </ScrollView>
-                  </View>
-                </Modal> */}
+        isVisible = {isAvailInfoVisible}
+        onBackdropPress={() => setAvailInfoVisible(false)}
+      >
+        <View style={styles.InfoPop}>
+          <Text style={styles.InfoHeader}>How to use the Availability page</Text>
+          <ScrollView style = {styles.InfoTextView}>
+            <Text style={styles.InfoText}>
+              This page is for your availability throughout the week. You will input what times of the week you are not
+              available for tenting.
+            </Text>
+            <Text style={styles.InfoText}>
+              To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
+              end time.
+            </Text>
+            <Text style={styles.InfoText}>
+              Do this for your entire weekly schedule. You can delete blocks to edit your times.
+            </Text>
+            <Text style={styles.InfoText}>
+              This schedule should remain saved from week to week, but you may edit every week if you have changes 
+              to your schedule.
+            </Text>
+            <Text style={styles.InfoText}>
+              Make sure to fill out your availability every week before you Create a New Group Schedule or your 
+              busy times will not be accounted for in the group schedule.
+            </Text>
+          </ScrollView>
+        </View>
+      </Modal> */}

@@ -247,15 +247,15 @@ const styles = StyleSheet.create({
   },
   listItem: {
     backgroundColor: '#1f509a',
-    padding: 8,
-    marginVertical: 4,
+    padding: 4,
+    marginVertical: 3,
     borderRadius: 7,
     width: '80%',
     alignSelf: 'center',
     alignItems: 'center',
   },
   listText: {
-    fontSize: 16,
+    fontSize: 14,
     //fontFamily: 'sans-serif',
     fontWeight: '500',
     color: 'white',
