@@ -372,7 +372,6 @@ export default function Settings({ route, navigation }) {
         }
         itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
       >
-        <Picker.Item label='' value='' />
         <Picker.Item label='Black' value='Black' />
         <Picker.Item label='Blue' value='Blue' />
         <Picker.Item label='White' value='White' />

@@ -10,10 +10,12 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
+import { Snackbar } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+
+import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 
 const window = Dimensions.get('window');
 
@@ -22,6 +24,8 @@ export default function Login(props) {
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [dimensions, setDimensions] = useState({ window });
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -30,8 +34,33 @@ export default function Login(props) {
     return () => subscription?.remove();
   });
 
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
+  };
+
   const onSignUp = () => {
-    firebase.auth().signInWithEmailAndPassword(email, password);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log('login successful');
+      })
+      .catch((error) => {
+        console.log(error);
+        let message = 'Login unsuccessful';
+        if (error.message.includes('The email address is badly formatted')) {
+          message = 'Not a valid email';
+        }
+        if (error.message.includes('There is no user record')) {
+          message = 'Account does not exist'
+        } 
+        if (error.message.includes('The password is invalid')) {
+          message = 'Incorrect password';
+        } 
+        toggleSnackBar();
+        setSnackMessage(message);
+        return;
+      });
     //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     // firebase
     //   .auth()
@@ -145,6 +174,16 @@ export default function Login(props) {
           Sign Up
         </Text>
       </View>
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <View style={{ width: '100%' }}>
+          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
+        </View>
+      </Snackbar>
     </View>
   );
 }
