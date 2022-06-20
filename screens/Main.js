@@ -55,6 +55,10 @@ const AvailabilityText = () => (
       Make sure to fill out your availability every week before you Create a New Group Schedule or your 
       busy times will not be accounted for in the group schedule.
     </Text>
+    <Text style={styles.InfoText}>
+      NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole noght shift
+      from 1am to 7am
+    </Text>
   </View>
 );
 
