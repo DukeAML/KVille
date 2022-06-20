@@ -6,7 +6,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 /* import Modal from "../component/Modal.js";
 import ModalHeader from "../component/Modal.js";
@@ -61,19 +61,26 @@ const AvailabilityText = () => (
 const ScheduleText = () => (
   <View>
     <Text style={styles.InfoText}>
-      This page is for your group schedule for the week.
+      This page is for your group schedule for the week (from Sunday to Saturday midnight).
     </Text>
     <Text style={styles.InfoText}>
-      Tip1
+      Groups should aim to create a new weekly schedule every week after every member fills out their availability 
+      for that week
     </Text>
     <Text style={styles.InfoText}>
-      Tip2
+      Once all members of the group have filled out their availability for the week, one member should tap the 
+      ‘Create New Schedule’ button to automatically generate a schedule that optimizes for equal distribution of time.
     </Text>
     <Text style={styles.InfoText}>
-      Tip3
+      After the schedule is made, edits can be made by clicking on the time slot and changing the member for that time. 
+      After making your edits, make sure to tap ‘Push Edits’ so that all other group members see the changes.
     </Text>
     <Text style={styles.InfoText}>
-      Tip4
+      Note: You can’t make edits to the schedule at the same time.
+    </Text>
+    <Text style={styles.InfoText}>
+      The number of scheduled hours for each member should be displayed on the group information page to make sure hours 
+      are distributed evenly.
     </Text>
   </View>
 );
@@ -305,7 +312,7 @@ export default function Main() {
                   style = {{marginRight: 20}}
                 >
                   <Icon
-                    name='information-circle-outline'
+                    name='help-circle-outline'
                     color={'black'}
                     size={30}
                   />
@@ -339,7 +346,7 @@ export default function Main() {
                   style = {{marginRight: 20}}
                 >
                   <Icon
-                    name='information-circle-outline'
+                    name='help-circle-outline'
                     color={'black'}
                     size={30}
                   />

@@ -42,8 +42,8 @@ export async function createGroupSchedule(groupCode, tentType) {
   //adds each member as an object to the memberArr 
   await firebase
     .firestore()
-    //.collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
-    .collection('groupsTest')
+    .collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
+    //.collection('groupsTest')
     .doc(groupCode)
     .collection("members")
     .get()
@@ -189,8 +189,8 @@ export async function createGroupSchedule(groupCode, tentType) {
     }).then((collSnap) => {   //to update the number of scheduled hours for each member
       firebase
         .firestore()
-        //.collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
-        .collection('groupsTest')
+        .collection("groups")     //UPDATE THIS TO 'groups' in real cases ******!!!
+        //.collection('groupsTest')
         .doc(groupCode)
         .collection("members")
         .get()

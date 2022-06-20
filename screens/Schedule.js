@@ -54,13 +54,7 @@ const TimeColumn = () => {
   );
 };
 
-//function for editing the schedule based on old member and new member to replace
-const editCell = (index, oldMember, newMember) => {
-  //must delete from 'schedule' and update the string within
-  schedule[index] = schedule[index].replace(oldMember, newMember);
-  console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
-  //console.log(schedule);
-};
+
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
@@ -82,11 +76,11 @@ export default function Schedule({ route }) {
   const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
 
   //FIREBASE REFERENCE for group
-  const groupRef = firebase
+  /* const groupRef = firebase
     .firestore()
     .collection('groupsTest')
-    .doc('BtycLIprkN3EmC9wmpaE');
-  //const groupRef = firebase.firestore().collection("groups").doc(code);
+    .doc('BtycLIprkN3EmC9wmpaE'); */
+  const groupRef = firebase.firestore().collection("groups").doc(code);
 
   /* let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
   const ref = useRef(); //creates reference for scrollView */
@@ -124,12 +118,16 @@ export default function Schedule({ route }) {
       numberForNight = 2;
   }
 
-  //console.log('numberDay and Night values: ', numberForDay, numberForNight);
+
+  //function for editing the schedule based on old member and new member to replace
+  const editCell = (index, oldMember, newMember) => {
+    //must delete from 'schedule' and update the string within
+    schedule[index] = schedule[index].replace(oldMember, newMember);
+    console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
+  };
 
   //Component for the popup list of members for each member
   const Member = ({ name }) => {
-    /* let indexOfUser = colorCodes.findIndex((member) =>  member.name === name);
-    let backgroundColor = (indexOfUser%2 == 1) ? "#656565": "#555555"; //alternates the colors of list */
     return (
       <View>
         <TouchableOpacity
@@ -444,7 +442,7 @@ export default function Schedule({ route }) {
 
   //sets up the color assignment for each user
   for (let i = 0; i < schedule.length; i++) {
-    if (colorCodes.length >= 14) break; //CHANGE THIS TO 13 FOR REAL GROUP
+    if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
     if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
     const people = schedule[i].split(' ');
     for (let j = 0; j < people.length; j++) {
@@ -569,6 +567,30 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
+        {/* <TouchableOpacity
+          onPress={() => {
+            if (weekDisplay == "Current Week") {
+              setWeekDisplay("Previous Week");
+              setGroup(group2);
+            } else {
+              setWeekDisplay("Current Week");
+              setGroup(group1);
+            }
+          }}
+        >
+          <View
+            style={{
+              height: 30,
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: myBtnColor
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>{weekDisplay}</Text>
+          </View>
+        </TouchableOpacity> */}
+
         <View style={styles.buttonContainer}>
           <DayButton day='Sunday' abbrev='Sun' />
           <DayButton day='Monday' abbrev='Mon' />
