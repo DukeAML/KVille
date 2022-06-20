@@ -222,7 +222,7 @@ export default function Availability({ route }) {
           duration={2000}
         >
           <View style={{ width: '100%' }}>
-            <Text style={{textAlign:'center'}}>{snackMessage}</Text>
+            <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
           </View>
         </Snackbar>
         <View style={styles.modalContainer}>
@@ -391,7 +391,7 @@ export default function Availability({ route }) {
             <Col
               data={agenda.tableTime}
               style={StyleSheet.flatten(styles.time)}
-              textStyle={StyleSheet.flatten(styles.text)}
+              textStyle={{ textAlign: 'center', marginBottom: 40 }}
             />
           </TableWrapper>
 
