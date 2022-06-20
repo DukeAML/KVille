@@ -62,7 +62,7 @@ export default function Availability({ route }) {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  const [selectedDay, setSelectedDay] = useState(0);
+  const [selectedDay, setSelectedDay] = useState(7);
   const [startTime, setStartTime] = useState({
     hour: 0,
     minute: 0,
@@ -82,7 +82,7 @@ export default function Availability({ route }) {
     .doc(firebase.auth().currentUser.uid);
 
   const updateAvailability = () => {
-    if (selectedDay == 0) {
+    if (selectedDay == 7) {
       toggleSnackBar();
       setSnackMessage('Please select a day');
       return;
@@ -97,6 +97,9 @@ export default function Availability({ route }) {
       parseInt(endTime.day) +
       parseInt(endTime.minute) +
       parseInt(endTime.hour) * 2;
+    if (endIdx == parseInt(selectedDay) * 48) {
+      endIdx += 48
+    }
     if (startIdx >= endIdx) {
       toggleSnackBar();
       setSnackMessage('Invalid time slot');
@@ -235,16 +238,16 @@ export default function Availability({ route }) {
               <Text>Day: </Text>
               <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
-                placeholder={{ label: 'Select a day...', value: 0 }}
+                placeholder={{ label: 'Select a day...', value: 7 }}
                 style={pickerSelectStyles}
                 items={[
+                  { label: 'Sunday', value: 0 },
                   { label: 'Monday', value: 1 },
                   { label: 'Tuesday', value: 2 },
                   { label: 'Wednesday', value: 3 },
                   { label: 'Thursday', value: 4 },
                   { label: 'Friday', value: 5 },
                   { label: 'Saturday', value: 6 },
-                  { label: 'Sunday', value: 7 },
                 ]}
               />
             </View>
