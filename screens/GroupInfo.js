@@ -148,7 +148,7 @@ export default function GroupInfo({ route }) {
       >
         <View style={[styles.listItem, backgroundColor, styles.shadowProp, {flexDirection: 'row', justifyContent: 'space-evenly'}]}>
           <Text style={styles.listText}>{name}</Text>
-          <Text style={{color: 'white'}}>Scheduled Hrs: {members[currIndex].hours} hrs</Text>
+          <Text style={{color: 'white'}}>Scheduled Hrs: {members[indexOfUser].hours} hrs</Text>
         </View>
       </TouchableOpacity>
     );

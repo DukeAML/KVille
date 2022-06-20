@@ -340,14 +340,14 @@ export default function Schedule({ route }) {
           <TouchableOpacity
             onPress={() => {
               toggleConfirmation();
-              //createGroupSchedule(code, tentType).then(
-              createGroupSchedule('BtycLIprkN3EmC9wmpaE', 'Black').then(
+              createGroupSchedule(code, tentType).then(
+              //createGroupSchedule('BtycLIprkN3EmC9wmpaE', 'Black').then(
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
                   schedule = groupSchedule;
 
-                  groupRef.set({
+                  groupRef.update({
                     groupSchedule: groupSchedule,
                   });
                 }
