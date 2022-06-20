@@ -53,9 +53,12 @@ export default function DrawerContent(props) {
           .doc(firebase.auth().currentUser.uid)
           .get()
           .then((doc) => {
-            if (mounted) {
+            if (mounted && doc.exists) {
+              console.log(doc.data().inTent)
               setStatus(doc.data().inTent);
               console.log('status: ', status);
+            } else {
+              console.log('doc doesn\'t exist');
             }
           });
       }

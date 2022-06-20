@@ -90,27 +90,29 @@ export default function JoinGroup({ navigation }) {
       console.log("Group exists: ", docSnapshot.exists);
       if (docSnapshot.exists) {
         //Max 12 people in a group
-        await groupRef
+        let result = await groupRef
           .collection('members')
           .get()
           .then((collSnap) => {
-            if (collSnap.size > 12) {
+            console.log(collSnap.size);
+            if (collSnap.size == 12) {
               console.log('Group is full');
               toggleSnackBar();
               setSnackMessage('Group already full');
-              return;
+              return 'full';
             }
           });
+        console.log(result);
+        if (result == 'full') {
+          return;
+        }
         groupName = docSnapshot.data().name;
         dispatch(setGroupCode(groupCode));
         dispatch(setUserName(name));
         dispatch(setGroupName(groupName));
         dispatch(setTentType(docSnapshot.data().tentType));
         //updates current user's info
-        await firebase
-          .firestore()
-          .collection('users')
-          .doc(firebase.auth().currentUser.uid)
+        await userRef
           .update({
             groupCode: firebase.firestore.FieldValue.arrayUnion({
               groupCode: groupCode,
@@ -131,11 +133,7 @@ export default function JoinGroup({ navigation }) {
         await userRef
           .get()
           .then((snapshot) => {
-            if (snapshot.exists) {
-              dispatch(setCurrentUser(snapshot.data()));
-            } else {
-              console.log('does not exist');
-            }
+            dispatch(setCurrentUser(snapshot.data()));
             return snapshot;
           })
           .then((snapshot) => {
