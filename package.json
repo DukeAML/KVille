@@ -1,11 +1,14 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "homepage": "https://kevinfu1.github.io/duke-tenting-app-rev2/",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "deploy": "gh-pages -d web-build",
+    "predeploy": "expo build:web"
   },
   "dependencies": {
     "@expo-google-fonts/nova-cut": "^0.2.2",
@@ -40,7 +43,8 @@
     "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "gh-pages": "^4.0.0"
   },
   "private": true
 }

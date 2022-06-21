@@ -7,12 +7,13 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
-  Platform
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
+import { Snackbar } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -30,10 +31,15 @@ export default function Settings({ route, navigation }) {
   const [isCreator, setCreator] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
   const dispatch = useDispatch();
 
   const toggleConfirmation = () => {
     setConfirmationVisible(!isConfirmationVisible);
+  };
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
   };
 
   //gets current user's group code from redux store
@@ -133,22 +139,56 @@ export default function Settings({ route, navigation }) {
         return userDoc;
       })
       .then((doc) => {
-        userRef.update({
-          groupCode: groupCodeArr,
-        });
+        userRef
+          .update({
+            groupCode: groupCodeArr,
+          })
+          .then(() => {
+            console.log('successfully saved groupName');
+          })
+          .catch((error) => {
+            console.log(error);
+            toggleSnackBar();
+            setSnackMessage('Error saving group name');
+            return;
+          });
       });
 
-    groupRef.update({
-      name: currGroupName,
-      tentType: tent,
-    });
-    groupRef.collection('members').doc(firebase.auth().currentUser.uid).update({
-      name: name,
-    });
+    groupRef
+      .update({
+        name: currGroupName,
+        tentType: tent,
+      })
+      .then(() => {
+        console.log('successfully saved groupName');
+      })
+      .catch((error) => {
+        console.log(error);
+        toggleSnackBar();
+        setSnackMessage('Error saving group name');
+        return;
+      });
+    groupRef
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        name: name,
+      })
+      .then(() => {
+        console.log('successfully updated name');
+      })
+      .catch((error) => {
+        console.log(error);
+        toggleSnackBar();
+        setSnackMessage('Error saving user name');
+        return;
+      });
     dispatch(setUserName(name));
     dispatch(setTentType(tent));
     dispatch(setGroupName(currGroupName));
-  };
+    toggleSnackBar();
+    setSnackMessage('Saved');
+  };;
 
   const leaveGroup = () => {
     userRef.update({
@@ -347,36 +387,40 @@ export default function Settings({ route, navigation }) {
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '90%',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Text style={styles.headerText}>Tent Type</Text>
-        <Icon
-          name='home-edit'
-          color={'#656565'}
-          size={20}
-          style={{ marginRight: 8 }}
-        />
-      </View>
-      <Picker
-        selectedValue={tent}
-        onValueChange={(itemValue, itemIndex) => {
-          setTent(itemValue);
-        }}
-        style={
-          Platform.OS === 'ios' ? styles.picker : { width: '90%', height: 30 }
-        }
-        itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
-      >
-        <Picker.Item label='Black' value='Black' />
-        <Picker.Item label='Blue' value='Blue' />
-        <Picker.Item label='White' value='White' />
-        <Picker.Item label='Walk up line' value='Walk up line' />
-      </Picker>
+      {isCreator ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '90%',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text style={styles.headerText}>Tent Type</Text>
+          <Icon
+            name='home-edit'
+            color={'#656565'}
+            size={20}
+            style={{ marginRight: 8 }}
+          />
+        </View>
+      ) : null}
+      {isCreator ? (
+        <Picker
+          selectedValue={tent}
+          onValueChange={(itemValue, itemIndex) => {
+            setTent(itemValue);
+          }}
+          style={
+            Platform.OS === 'ios' ? styles.picker : { width: '90%', height: 30 }
+          }
+          itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+        >
+          <Picker.Item label='Black' value='Black' />
+          <Picker.Item label='Blue' value='Blue' />
+          <Picker.Item label='White' value='White' />
+          <Picker.Item label='Walk up line' value='Walk up line' />
+        </Picker>
+      ) : null}
       {/* <TouchableOpacity
         style={{
           backgroundColor: '#1F509A',
@@ -417,6 +461,17 @@ export default function Settings({ route, navigation }) {
           <ConfirmationModal />
         </Modal>
       </View>
+
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <View style={{ width: '100%' }}>
+          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
+        </View>
+      </Snackbar>
     </View>
   );
 }
