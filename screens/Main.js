@@ -97,25 +97,44 @@ export default function Main() {
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
+  const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+
+  const [typeOfHelp, setTypeOfHelp] = useState('Availability');
 
   const toggleInfo = () => {
     setInfoVisible(!isInfoVisible);
   };
 
-  const InformationModal = ({header, content}) => {
+  const toggleScheduleInfo = () => {
+    setScheduleInfoVisible(!isScheduleInfoVisible);
+  };
+
+
+  const InformationModal = ({page}) => {
+    console.log('infoModal rendered:', typeOfHelp);
     return(
       <View>
         <Modal
+          //isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
           isVisible = {isInfoVisible}
-          onBackdropPress={() => setInfoVisible(false)}
+          onBackdropPress={() =>setInfoVisible(false)}
+          /* onBackdropPress={() => {
+            if (typeOfHelp == 'Availability') setInfoVisible(false);
+            else setScheduleInfoVisible(false);
+          }} */
         >
           <View style={styles.InfoPop}>
-            <Text style={styles.InfoHeader}>{header}</Text>
+            {(typeOfHelp == 'Availability') ? (
+              <Text style={styles.InfoHeader}>How to Use the Availability Page</Text>
+            ): <Text style={styles.InfoHeader}>How to Use the Schedule Page</Text>}
             <ScrollView 
               style = {styles.InfoTextView}
               showsVerticalScrollIndicator={false}
             >
-              {content}
+              {(typeOfHelp == 'Availability') ? (
+                  <AvailabilityText/>
+                ): <ScheduleText/>
+              }
             </ScrollView>
           </View>
         </Modal>
@@ -311,8 +330,13 @@ export default function Main() {
             ),
             headerRight: () => (
               <View>
+                {/* <InformationModal header = 'How to use the Availability Page' children={<AvailabilityText/>}/> */}
+                
                 <TouchableOpacity
-                  onPress ={toggleInfo}
+                  onPress ={ () => {
+                    setTypeOfHelp('Availability');
+                    toggleInfo();
+                  }}
                   style = {{marginRight: 20}}
                 >
                   <Icon
@@ -321,7 +345,22 @@ export default function Main() {
                     size={30}
                   />
                 </TouchableOpacity>
-                <InformationModal header = 'How to use the Availability Page' content={<AvailabilityText/>}/>
+                {/* <InformationModal page = 'Availability'/> */}
+                <InformationModal/>
+               {/*  <Modal
+                  isVisible = {isInfoVisible}
+                  onBackdropPress={() => setInfoVisible(false)}
+                >
+                  <View style={styles.InfoPop}>
+                    <Text style={styles.InfoHeader}>How to use the Availability Page</Text>
+                    <ScrollView 
+                      style = {styles.InfoTextView}
+                      showsVerticalScrollIndicator={false}
+                    >
+                      <AvailabilityText/>
+                    </ScrollView>
+                  </View>
+                </Modal> */}
               </View>
             ),
           })}
@@ -345,8 +384,13 @@ export default function Main() {
             ),
             headerRight: () => (
               <View>
+                {/* <InformationModal header = 'How to use the Schedule Page' children={<ScheduleText/>}/> */}
                 <TouchableOpacity
-                  onPress ={toggleInfo}
+                  onPress ={ () => {
+                    //toggleScheduleInfo();
+                    setTypeOfHelp('Schedule');
+                    toggleInfo();
+                  }}
                   style = {{marginRight: 20}}
                 >
                   <Icon
@@ -355,7 +399,22 @@ export default function Main() {
                     size={30}
                   />
                 </TouchableOpacity>
-                <InformationModal header = 'How to use the Schedule Page' content={<ScheduleText/>}/>
+                {/* <InformationModal page = 'Schedule'/> */}
+                {/* <Modal
+                  isVisible = {isScheduleInfoVisible}
+                  onBackdropPress={() => setScheduleInfoVisible(false)}
+                >
+                  <View style={styles.InfoPop}>
+                    <Text style={styles.InfoHeader}>How to use the Schedule Page</Text>
+                    <ScrollView 
+                      style = {styles.InfoTextView}
+                      showsVerticalScrollIndicator={false}
+                    >
+                      <ScheduleText/>
+                    </ScrollView>
+                  </View>
+                </Modal> */}
+                
               </View>
             ),
           })}

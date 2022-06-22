@@ -34,6 +34,8 @@ export async function createGroupSchedule(groupCode, tentType) {
   let prevMember1 = null;
   let prevMember2 = null;
 
+  let memberIDs = new Array(); //initilaize member IDs array for updating hrs
+
 
   //****input grace periods in groupScheduleArr, "GRACE" at each index****
 
@@ -54,6 +56,15 @@ export async function createGroupSchedule(groupCode, tentType) {
         let name = doc.data().name;
         let hours = 0;
         let consecutive = 0;
+        let id = doc.id;
+
+        //member name and id object (used to update hrs in schedule page)
+        let member = {
+          id,
+          name,
+        }
+
+        memberIDs.push(member);
 
         //member object
         let current = {
@@ -210,6 +221,12 @@ export async function createGroupSchedule(groupCode, tentType) {
           });
           return collSnap;
         })
+    }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
+      console.log(memberIDs);
+      firebase.firestore().collection('groups').doc(groupCode)
+      .update({
+        memberArr: memberIDs,
+      })
     });
     
     

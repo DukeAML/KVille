@@ -63,17 +63,13 @@ export default function GroupInfo({ route }) {
                 //setIsReady(false);
                 querySnapshot.forEach((doc) => {
                   let currName = doc.data().name; //gets current name in list
-                  //console.log("current name:", currName);
-
                   let tentCondition = doc.data().inTent; //gets tent status as well
-                  //console.log("tentcondition:", tentCondition);
-
                   let scheduledHours = doc.data().scheduledHrs;
                   //let scheduledHours = 0;
+                  let memID = doc.id;
 
-                  let current = {
-                    //create new object for the current list item
-                    id: currName,
+                  let current = {     //create new object for the current list item
+                    id: memID,
                     name: currName,
                     inTent: tentCondition,
                     hours: scheduledHours,
@@ -90,15 +86,9 @@ export default function GroupInfo({ route }) {
                     members.push(current);
                   }
 
-                  let indexOfUser = members.findIndex(
-                    (member) => member.id === currName
-                  );
-                  tentStatusChanged = !(
-                    members[indexOfUser].inTent == tentCondition
-                  );
+                  let indexOfUser = members.findIndex((member) => member.id === memID);
+                  tentStatusChanged = !(members[indexOfUser].inTent == tentCondition);
                   // console.log('status1: ', members[indexOfUser].inTent);
-                  // console.log('status: ', tentStatusChanged);
-                  // console.log('ARRAY: ', members);
 
                   // checks if tent status changed after refresh and updates list
                   if (nameExists && tentStatusChanged) {
@@ -109,12 +99,12 @@ export default function GroupInfo({ route }) {
                   // doc.data() is never undefined for query doc snapshots
                 });
                 console.log('done reading members', members);
+                //console.log('ARRAY: ', members);
               }
             });
         } catch (e) {
           console.warn(e);
-        } finally {
-          // Tell the application to render
+        } finally {     // Tell the application to render
           setIsReady(true);
         }
       }
@@ -135,8 +125,8 @@ export default function GroupInfo({ route }) {
   }, [isReady]);
 
   //Render Item for Each List Item of group members
-  const Member = ({ name, backgroundColor }) => {
-    const indexOfUser = members.findIndex((member) => member.id === name);
+  const Member = ({ name, id, backgroundColor }) => {
+    const indexOfUser = members.findIndex((member) => member.id === id);
     //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
       <TouchableOpacity
@@ -146,7 +136,12 @@ export default function GroupInfo({ route }) {
           setCurrIndex(indexOfUser);
         }}
       >
-        <View style={[styles.listItem, backgroundColor, styles.shadowProp, {flexDirection: 'row', justifyContent: 'space-evenly'}]}>
+        <View 
+          style={
+            [styles.listItem, backgroundColor, styles.shadowProp, 
+            {flexDirection: 'row', justifyContent: 'space-evenly'}]
+          }
+        >
           <Text style={styles.listText}>{name}</Text>
           <Text style={{color: 'white'}}>Scheduled Hrs: {members[indexOfUser].hours} hrs</Text>
         </View>
@@ -157,7 +152,7 @@ export default function GroupInfo({ route }) {
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return <Member name={item.name} backgroundColor={{ backgroundColor }} />;
+    return <Member name={item.name} id={item.id} backgroundColor={{ backgroundColor }} />;
   };
 
   if (!isReady) {
@@ -193,7 +188,6 @@ export default function GroupInfo({ route }) {
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
-          //customBackdrop={<View style={{ flex: 1 }} />}
         >
           <View style={styles.popUp}>
             <View
@@ -255,7 +249,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listText: {
-    fontSize: 14,
+    fontSize: 15,
     //fontFamily: 'sans-serif',
     fontWeight: '500',
     color: 'white',
