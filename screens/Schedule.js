@@ -13,6 +13,7 @@ import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
+import { Snackbar } from 'react-native-paper';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -29,14 +30,15 @@ const times = [ //Times for right column of the list of times of the day
 //Colors of each member, first is for 'empty'
 // prettier-ignore
 const colors = ['#D0342C', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
-  '#a4c2f4' , '#9fc5e8', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
+  '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
 
 let colorCodes = [
   //Array for color corresponding to each member
-  { name: 'empty', color: '#D0342C' },
+  { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0},
 ];
 
 let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
+let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
 
 const TimeColumn = () => {
   //component for side table of 12am-12am time segments
@@ -75,6 +77,9 @@ export default function Schedule({ route }) {
 
   const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
 
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState(''); // for temporary popup 
+
   //FIREBASE REFERENCE for group
   /* const groupRef = firebase
     .firestore()
@@ -100,6 +105,10 @@ export default function Schedule({ route }) {
     setConfirmationVisible(!isConfirmationVisible);
   };
 
+  const toggleSnackBar = () => {
+    setSnackVisible(!isSnackVisible);
+  };
+
   //variables to store the # of people needed for the day and night shifts
   let numberForDay, numberForNight;
 
@@ -123,6 +132,11 @@ export default function Schedule({ route }) {
   const editCell = (index, oldMember, newMember) => {
     //must delete from 'schedule' and update the string within
     schedule[index] = schedule[index].replace(oldMember, newMember);
+    const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
+    const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
+    /* colorCodes[indexofOld].changedHrs -= 0.5;
+    colorCodes[indexofNew].changedHrs += 0.5; */
+    console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
     console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
   };
 
@@ -352,6 +366,8 @@ export default function Schedule({ route }) {
                   });
                 }
               );
+              setSnackMessage('New Schedule Created');
+              toggleSnackBar();
             }}
           >
             <View style={styles.confirmationBottomBtn}>
@@ -370,6 +386,8 @@ export default function Schedule({ route }) {
     groupRef.update({
       groupSchedule: schedule,
     });
+    setSnackMessage('Changes Saved');
+    toggleSnackBar();
   };
 
   //to read the current schedule from firebase
@@ -383,34 +401,9 @@ export default function Schedule({ route }) {
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
             schedule = doc.data().groupSchedule;
+            //memberIDArray = doc.data().memberArr;
           });
 
-          /* Old code for accessing firebase to assign color blocks to each member
-            await groupRef
-            .collection('members')
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                //stores each member in colorCodes array
-
-                let currName = doc.data().name; //gets current name in list
-                let current = {
-                  //create new object for the current list item
-                  name: currName,
-                  color: '',
-                };
-                let nameExists;
-                if (colorCodes.length === 0) nameExists = false;
-                else {
-                  nameExists = colorCodes.some((e) => e.name === currName);
-                }
-
-                if (!nameExists) {
-                  // if not already in the colorCodes array, add to the array
-                  colorCodes.push(current);
-                }
-              });
-            }); */
         } catch (e) {
           console.warn(e);
         } finally {
@@ -456,6 +449,18 @@ export default function Schedule({ route }) {
       }
     }
   }
+
+  //For setting up the color codes as well as the updating scheduled hrs
+  /* for (let index = 0; index < memberIDArray.length; index++){
+    if (colorCodes.length >=13) break;
+    colorCodes.push(
+      {
+      id: memberIDArray.id,
+      name: memberIDArray.name,
+      color: colors[i+1],
+      changedHrs: 0,
+    });
+  } */
 
   //initializes the colorCodes so each member has a unique color background
   for (let index = 0; index < colorCodes.length; index++) {
@@ -541,7 +546,6 @@ export default function Schedule({ route }) {
             style={{
               width: '50%',
               borderWidth: 1,
-              //marginTop:win.height *.38 -  25*7,
               marginTop: win.height * 0.3,
             }}
           >
@@ -560,7 +564,6 @@ export default function Schedule({ route }) {
         <Modal
           isVisible={isConfirmationVisible}
           onBackdropPress={() => setConfirmationVisible(false)}
-          //customBackdrop={<View style={{ flex: 1 }} />}
         >
           <ConfirmationModal type={typeOfEdit} />
         </Modal>
@@ -571,10 +574,10 @@ export default function Schedule({ route }) {
           onPress={() => {
             if (weekDisplay == "Current Week") {
               setWeekDisplay("Previous Week");
-              setGroup(group2);
+              setSchedule(lastSchedule);
             } else {
               setWeekDisplay("Current Week");
-              setGroup(group1);
+              setSchedule(thisSchedule);
             }
           }}
         >
@@ -604,8 +607,8 @@ export default function Schedule({ route }) {
         <View style={[styles.buttonContainer, styles.shadowProp]}>
           <TouchableOpacity
             onPress={() => {
-              toggleConfirmation();
               setTypeOfEdit('Push');
+              toggleConfirmation();
             }}
           >
             <View style={[styles.topEditBtn, { backgroundColor: '#5d5d5d' }]}>
@@ -617,23 +620,9 @@ export default function Schedule({ route }) {
 
           <TouchableOpacity
             onPress={() => {
-              toggleConfirmation();
               setTypeOfEdit('Create');
+              toggleConfirmation();
             }}
-            /* onPress={() => {
-              //createGroupSchedule(code, tentType).then(
-              createGroupSchedule('BtycLIprkN3EmC9wmpaE', "Black")
-              .then(
-                (groupSchedule) => {
-                  console.log("Group Schedule", groupSchedule);
-
-                  groupRef
-                    .set({
-                      groupSchedule: groupSchedule,
-                    });
-                }
-              );
-            }} */
           >
             <View style={[styles.topEditBtn, { backgroundColor: '#c9c9c9' }]}>
               <Text style={styles.topEditBtnText}>Create New Schedule</Text>
@@ -653,6 +642,17 @@ export default function Schedule({ route }) {
           />
         </View>
       </ScrollView>
+      
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <View style={{ width: '100%' }}>
+          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
+        </View>
+      </Snackbar>
     </View>
   );
 }
@@ -810,166 +810,35 @@ let group = [
 ];  *
 
 
+/* Old code for accessing firebase to assign color blocks to each member
+  await groupRef
+  .collection('members')
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      //stores each member in colorCodes array
 
-  /* function autoScroll(yPos) { //for auto-scolling to certain y-position
-    ref.current.scrollTo({ x: 0, y: yPos, animated: true });
-  } */
+      let currName = doc.data().name; //gets current name in list
+      let current = {
+        //create new object for the current list item
+        name: currName,
+        color: '',
+      };
+      let nameExists;
+      if (colorCodes.length === 0) nameExists = false;
+      else {
+        nameExists = colorCodes.some((e) => e.name === currName);
+      }
+
+      if (!nameExists) {
+        // if not already in the colorCodes array, add to the array
+        colorCodes.push(current);
+      }
+    });
+  }); */
+
+
+
 
 //const groupRef = firebase.firestore().collection("groups").doc(code);
 
-/* <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              sunPos = layout.y;
-            }}
-          >
-            {" "}
-            SUNDAY{" "}
-          </Text>
-
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Sunday' />
-          </View>
-
-          <Text
-            style={[styles.dayHeader, styles.dayHeaderBox]}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              monPos = layout.y;
-            }}
-          >
-            {" "}
-            MONDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Monday' />
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              tuesPos = layout.y;
-            }}
-          >
-            {" "}
-            TUESDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable numberDay={numberForDay} numberNight={numberForNight} day='Tuesday' />
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              wedPos = layout.y;
-            }}
-          >
-            {"    "}
-            WEDNESDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Wednesday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              thurPos = layout.y;
-            }}
-          >
-            {" "}
-            THURSDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Thursday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              friPos = layout.y;
-            }}
-          >
-            {" "}
-            FRIDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Friday'/>
-          </View>
-
-          <Text
-            style={styles.dayHeader}
-            onLayout={(event) => {
-              const layout = event.nativeEvent.layout;
-              satPos = layout.y;
-            }}
-          >
-            {" "}
-            SATURDAY{" "}
-          </Text>
-          <View style={{ flexDirection: "row" }}>
-            <TimeColumn />
-            <DailyTable  numberDay={numberForDay} numberNight={numberForNight} day='Saturday'/>
-          </View> */
-
-/* <View style={[styles.buttonContainer, styles.shadowProp]}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(sunPos)}
-          >
-            <Text style={styles.buttonText}>Sun</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(monPos)}
-          >
-            <Text style={styles.buttonText}>Mon</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(tuesPos)}
-          >
-            <Text style={styles.buttonText}>Tues</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(wedPos)}
-          >
-            <Text style={styles.buttonText}>Wed</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(thurPos)}
-          >
-            <Text style={styles.buttonText}>Thur</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(friPos)}
-          >
-            <Text style={styles.buttonText}>Fri</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => autoScroll(satPos)}
-          >
-            <Text style={styles.buttonText}>Sat</Text>
-          </TouchableOpacity>
-        </View> */
