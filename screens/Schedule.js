@@ -134,8 +134,8 @@ export default function Schedule({ route }) {
     schedule[index] = schedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
-    /* colorCodes[indexofOld].changedHrs -= 0.5;
-    colorCodes[indexofNew].changedHrs += 0.5; */
+    colorCodes[indexofOld].changedHrs -= 0.5;
+    colorCodes[indexofNew].changedHrs += 0.5;
     console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
     console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
   };
@@ -383,9 +383,41 @@ export default function Schedule({ route }) {
 
   //to push changes made to schedule to firebase
   const pushEdits = () => {
-    groupRef.update({
-      groupSchedule: schedule,
+    groupRef
+    .collection('members')
+    .get()
+    .then((collSnap) => {
+      collSnap.forEach((doc) => {
+        let currName = doc.data().name;
+        let currID = doc.id;    //chose to acces by ID instead just in case member name changes
+        let hours = doc.data().scheduledHrs;
+        let indexOfUser;
+        if ( colorCodes.some((e) => e.id === currID) ) { //if Name is in member array
+          indexOfUser = colorCodes.findIndex( (member) => member.id === currID );
+        }
+        let hoursAdded = colorCodes[indexOfUser].changedHrs;
+        console.log( 'hrs of ',currName,' will be ', hours , '+',hoursAdded);
+        
+        if (hoursAdded !== 0){    //avoids unnecessary writes if the changes hours are 0
+          console.log('changed hrs of', currName);
+          doc.ref.update({
+            scheduledHrs: hours + hoursAdded
+          });
+        }
+      });
+      return collSnap;
+    }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
+      groupRef.update({
+        groupSchedule: schedule,
+      });
+      
+      for (let i = 0; i<colorCodes.length; i++){ //reinitializes the changed hrs to 0
+        colorCodes[i].changedHrs = 0;
+      }
     });
+    /* groupRef.update({
+      groupSchedule: schedule,
+    }); */
     setSnackMessage('Changes Saved');
     toggleSnackBar();
   };
@@ -401,7 +433,7 @@ export default function Schedule({ route }) {
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
             schedule = doc.data().groupSchedule;
-            //memberIDArray = doc.data().memberArr;
+            memberIDArray = doc.data().memberArr;
           });
 
         } catch (e) {
@@ -433,7 +465,7 @@ export default function Schedule({ route }) {
   }
   //console.log('Full Schedule: ', schedule);
 
-  //sets up the color assignment for each user
+  /* //sets up the color assignment for each user
   for (let i = 0; i < schedule.length; i++) {
     if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
     if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
@@ -448,24 +480,26 @@ export default function Schedule({ route }) {
         }
       }
     }
-  }
+  } */
+  console.log('member id array:' , memberIDArray);
 
   //For setting up the color codes as well as the updating scheduled hrs
-  /* for (let index = 0; index < memberIDArray.length; index++){
-    if (colorCodes.length >=13) break;
+  for (let index = 0; index < memberIDArray.length; index++){
+    if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
     colorCodes.push(
       {
-      id: memberIDArray.id,
-      name: memberIDArray.name,
-      color: colors[i+1],
+      id: memberIDArray[index].id,
+      name: memberIDArray[index].name,
+      color: colors[index+1],
       changedHrs: 0,
     });
-  } */
+    //if (colorCodes.length >=13) break;
+  }
 
-  //initializes the colorCodes so each member has a unique color background
+  /* //initializes the colorCodes so each member has a unique color background
   for (let index = 0; index < colorCodes.length; index++) {
     colorCodes[index].color = colors[index];
-  }
+  } */
 
   console.log('colors: ', colorCodes);
 
@@ -553,7 +587,7 @@ export default function Schedule({ route }) {
               <FlatList
                 data={colorCodes}
                 renderItem={renderMember}
-                keyExtractor={(item) => item.color}
+                keyExtractor={(item) => item.id}
               />
             </View>
           </View>
@@ -678,7 +712,7 @@ const styles = StyleSheet.create({
     //for the day buttons at top of screen
     backgroundColor: '#e5e5e5',
     width: win.width / 7,
-    height: 50,
+    height: 42,
     alignItems: 'center',
     justifyContent: 'center',
   },
