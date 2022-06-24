@@ -98,7 +98,7 @@ export default function Availability({ route }) {
       parseInt(endTime.minute) +
       parseInt(endTime.hour) * 2;
     if (endIdx == parseInt(selectedDay) * 48) {
-      endIdx += 48
+      endIdx += 48;
     }
     if (startIdx >= endIdx) {
       toggleSnackBar();
@@ -161,12 +161,14 @@ export default function Availability({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+      
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
 
           await memberRef.get().then((doc) => {
             availability = doc.data().availability;
+            console.log('availability fetched from firebase', availability);
           });
           for (let i = 0; i < availability.length; i++) {
             if (!availability[i]) {
@@ -191,8 +193,11 @@ export default function Availability({ route }) {
       if (mounted) {
         prepare();
       }
-      return () => (mounted = false);
-    }, [])
+      return () => {
+        setIsReady(false);
+        mounted = false;
+      };
+    }, [route.params])
   );
 
   const onLayoutRootView = useCallback(async () => {
@@ -213,7 +218,9 @@ export default function Availability({ route }) {
         style={styles.deleteModal}
       >
         <TouchableOpacity onPress={deleteCell}>
-          <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+          <Text style={{ textAlign: 'center', color: '#c91936', fontSize: 15 }}>
+            Delete
+          </Text>
         </TouchableOpacity>
       </Modal>
 
@@ -548,11 +555,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 20,
     elevation: 5,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    width: '100%',
+    borderRadius: 20,
+    width: '90%',
     height: '10%',
-    bottom: '0',
+    bottom: 20,
   },
 });
 

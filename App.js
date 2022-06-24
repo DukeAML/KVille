@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
-//import * as Font from 'expo-font';
+import { LogBox } from 'react-native';
 
 import firebase from 'firebase/compat/app';
 
@@ -42,6 +42,9 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
+        // LogBox.ignoreLogs([
+        //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
+        // ]);
 
         // await Font.loadAsync({
         //   NovaCut: require('./assets/fonts/NovaCut-Regular.ttf'),
@@ -49,9 +52,9 @@ export default function App() {
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({
-              isReady: true, 
+              isReady: true,
               loggedIn: false,
-            })
+            });
           } else {
             setState({
               isReady: true,
@@ -63,7 +66,7 @@ export default function App() {
         console.warn(e);
       }
     }
-
+    
     prepare();
   }, []);
 
