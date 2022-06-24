@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
-import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Linking, Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IconButton } from "react-native-paper";
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Linking, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 /* import Modal from "../component/Modal.js";
@@ -13,23 +19,24 @@ import ModalHeader from "../component/Modal.js";
 import ModalBody from "../component/Modal.js"; */
 import Modal from 'react-native-modal';
 
-import StartScreen from "./Start";
-import CreateGroupScreen from "./CreateGroup";
-import JoinGroupScreen from "./JoinGroup";
-import GroupInfoScreen from "./GroupInfo";
-import DrawerContent from "./DrawerContent";
-import AvailabilityScreen from "./Availability";
-import ScheduleScreen from "./Schedule";
-import MonitorScreen from "./Monitor";
-import InfoScreen from "./Info";
-import SettingScreen from "./Settings";
+import StartScreen from './Start';
+import CreateGroupScreen from './CreateGroup';
+import JoinGroupScreen from './JoinGroup';
+import GroupInfoScreen from './GroupInfo';
+import DrawerContent from './DrawerContent';
+import AvailabilityScreen from './Availability';
+import ScheduleScreen from './Schedule';
+import MonitorScreen from './Monitor';
+import InfoScreen from './Info';
+import SettingScreen from './Settings';
+import CountdownScreen from './Countdown';
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-import { useDispatch } from "react-redux";
-import { setCurrentUser, reset } from "../redux/reducers/userSlice";
+import { useDispatch } from 'react-redux';
+import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
@@ -37,27 +44,29 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 const AvailabilityText = () => (
   <View>
     <Text style={styles.InfoText}>
-      This page is for your availability throughout the week. You will input what times of the week you are not
-      available for tenting.
+      This page is for your availability throughout the week. You will input
+      what times of the week you are not available for tenting.
     </Text>
     <Text style={styles.InfoText}>
-      To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
-      end time.
+      To do so, click the add button on the bottom right to add a new busy time
+      and input the date, start time, and end time.
     </Text>
     <Text style={styles.InfoText}>
-      Do this for your entire weekly schedule. You can delete blocks to edit your times.
+      Do this for your entire weekly schedule. You can delete blocks to edit
+      your times.
     </Text>
     <Text style={styles.InfoText}>
-      This schedule should remain saved from week to week, but you may edit every week if you have changes 
-      to your schedule.
+      This schedule should remain saved from week to week, but you may edit
+      every week if you have changes to your schedule.
     </Text>
     <Text style={styles.InfoText}>
-      Make sure to fill out your availability every week before you Create a New Group Schedule or your 
-      busy times will not be accounted for in the group schedule.
+      Make sure to fill out your availability every week before you Create a New
+      Group Schedule or your busy times will not be accounted for in the group
+      schedule.
     </Text>
     <Text style={styles.InfoText}>
-      NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole noght shift
-      from 1am to 7am
+      NOTE: If you mark yourself as available at 1am on a day, you will be
+      marked availabile for the whole noght shift from 1am to 7am
     </Text>
   </View>
 );
@@ -65,30 +74,33 @@ const AvailabilityText = () => (
 const ScheduleText = () => (
   <View>
     <Text style={styles.InfoText}>
-      This page is for your group schedule for the week (from Sunday to Saturday midnight).
+      This page is for your group schedule for the week (from Sunday to Saturday
+      midnight).
     </Text>
     <Text style={styles.InfoText}>
-      Groups should aim to create a new weekly schedule every week after every member fills out their availability 
-      for that week
+      Groups should aim to create a new weekly schedule every week after every
+      member fills out their availability for that week
     </Text>
     <Text style={styles.InfoText}>
-      Once all members of the group have filled out their availability for the week, one member should tap the 
-      ‘Create New Schedule’ button to automatically generate a schedule that optimizes for equal distribution of time.
+      Once all members of the group have filled out their availability for the
+      week, one member should tap the ‘Create New Schedule’ button to
+      automatically generate a schedule that optimizes for equal distribution of
+      time.
     </Text>
     <Text style={styles.InfoText}>
-      After the schedule is made, edits can be made by clicking on the time slot and changing the member for that time. 
-      After making your edits, make sure to tap ‘Push Edits’ so that all other group members see the changes.
+      After the schedule is made, edits can be made by clicking on the time slot
+      and changing the member for that time. After making your edits, make sure
+      to tap ‘Push Edits’ so that all other group members see the changes.
     </Text>
     <Text style={styles.InfoText}>
       Note: You can’t make edits to the schedule at the same time.
     </Text>
     <Text style={styles.InfoText}>
-      The number of scheduled hours for each member should be displayed on the group information page to make sure hours 
-      are distributed evenly.
+      The number of scheduled hours for each member should be displayed on the
+      group information page to make sure hours are distributed evenly.
     </Text>
   </View>
 );
-
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -109,39 +121,44 @@ export default function Main() {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
 
-
-  const InformationModal = ({page}) => {
+  const InformationModal = ({ page }) => {
     console.log('infoModal rendered:', typeOfHelp);
-    return(
+    return (
       <View>
         <Modal
           //isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
-          isVisible = {isInfoVisible}
-          onBackdropPress={() =>setInfoVisible(false)}
+          isVisible={isInfoVisible}
+          onBackdropPress={() => setInfoVisible(false)}
           /* onBackdropPress={() => {
             if (typeOfHelp == 'Availability') setInfoVisible(false);
             else setScheduleInfoVisible(false);
           }} */
         >
           <View style={styles.InfoPop}>
-            {(typeOfHelp == 'Availability') ? (
-              <Text style={styles.InfoHeader}>How to Use the Availability Page</Text>
-            ): <Text style={styles.InfoHeader}>How to Use the Schedule Page</Text>}
-            <ScrollView 
-              style = {styles.InfoTextView}
+            {typeOfHelp == 'Availability' ? (
+              <Text style={styles.InfoHeader}>
+                How to Use the Availability Page
+              </Text>
+            ) : (
+              <Text style={styles.InfoHeader}>
+                How to Use the Schedule Page
+              </Text>
+            )}
+            <ScrollView
+              style={styles.InfoTextView}
               showsVerticalScrollIndicator={false}
             >
-              {(typeOfHelp == 'Availability') ? (
-                  <AvailabilityText/>
-                ): <ScheduleText/>
-              }
+              {typeOfHelp == 'Availability' ? (
+                <AvailabilityText />
+              ) : (
+                <ScheduleText />
+              )}
             </ScrollView>
           </View>
         </Modal>
       </View>
-      
     );
-  }
+  };
 
   const dispatch = useDispatch();
 
@@ -189,17 +206,17 @@ export default function Main() {
     dispatch(reset());
     firebase
       .firestore()
-      .collection("users")
+      .collection('users')
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((snapshot) => {
         if (snapshot.exists) {
           dispatch(setCurrentUser(snapshot.data()));
         } else {
-          console.log("does not exist");
+          console.log('does not exist');
         }
       });
-    console.log("cleared data and fetched user");
+    console.log('cleared data and fetched user');
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -209,13 +226,13 @@ export default function Main() {
   }, [isReady]);
 
   if (!isReady) {
-    return null
+    return null;
   }
 
   return (
     <NavigationContainer
       initialState={initialState}
-      onReady ={onLayoutRootView}
+      onReady={onLayoutRootView}
       onStateChange={(state) =>
         AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
       }
@@ -273,7 +290,7 @@ export default function Main() {
           component={JoinGroupScreen}
           options={({ navigation }) => ({
             title: 'Join Group',
-            headerStyle:{
+            headerStyle: {
               backgroundColor: '#C2C6D0',
               borderBottomWidth: 0,
               shadowColor: 'transparent',
@@ -331,23 +348,19 @@ export default function Main() {
             headerRight: () => (
               <View>
                 {/* <InformationModal header = 'How to use the Availability Page' children={<AvailabilityText/>}/> */}
-                
+
                 <TouchableOpacity
-                  onPress ={ () => {
+                  onPress={() => {
                     setTypeOfHelp('Availability');
                     toggleInfo();
                   }}
-                  style = {{marginRight: 20}}
+                  style={{ marginRight: 20 }}
                 >
-                  <Icon
-                    name='help-circle-outline'
-                    color={'black'}
-                    size={30}
-                  />
+                  <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
                 {/* <InformationModal page = 'Availability'/> */}
-                <InformationModal/>
-               {/*  <Modal
+                <InformationModal />
+                {/*  <Modal
                   isVisible = {isInfoVisible}
                   onBackdropPress={() => setInfoVisible(false)}
                 >
@@ -386,18 +399,14 @@ export default function Main() {
               <View>
                 {/* <InformationModal header = 'How to use the Schedule Page' children={<ScheduleText/>}/> */}
                 <TouchableOpacity
-                  onPress ={ () => {
+                  onPress={() => {
                     //toggleScheduleInfo();
                     setTypeOfHelp('Schedule');
                     toggleInfo();
                   }}
-                  style = {{marginRight: 20}}
+                  style={{ marginRight: 20 }}
                 >
-                  <Icon
-                    name='help-circle-outline'
-                    color={'black'}
-                    size={30}
-                  />
+                  <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
                 {/* <InformationModal page = 'Schedule'/> */}
                 {/* <Modal
@@ -414,8 +423,26 @@ export default function Main() {
                     </ScrollView>
                   </View>
                 </Modal> */}
-                
               </View>
+            ),
+          })}
+        />
+        <Drawer.Screen
+          name='CountdownScreen'
+          component={CountdownScreen}
+          options={({ navigation }) => ({
+            title: 'Countdown to UNC',
+            headerStyle: {
+              backgroundColor: '#C2C6D0',
+              borderBottomWidth: 0,
+              shadowColor: 'transparent',
+            },
+            headerLeft: () => (
+              <IconButton
+                icon='menu'
+                size={25}
+                onPress={() => navigation.openDrawer()}
+              ></IconButton>
             ),
           })}
         />
@@ -502,12 +529,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
-  InfoTextView:{
+  InfoTextView: {
     backgroundColor: '#bebebe',
     width: '90%',
     padding: 18,
     borderRadius: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   InfoText: {
     //backgroundColor: '#2E5984',
@@ -518,10 +545,10 @@ const styles = StyleSheet.create({
     //padding: 5,
     borderRadius: 15,
   },
-
 });
 
-{/*  <Modal
+{
+  /*  <Modal
         isVisible = {isAvailInfoVisible}
         onBackdropPress={() => setAvailInfoVisible(false)}
       >
@@ -549,4 +576,5 @@ const styles = StyleSheet.create({
             </Text>
           </ScrollView>
         </View>
-      </Modal> */}
+      </Modal> */
+}
