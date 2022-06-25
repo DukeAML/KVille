@@ -1,9 +1,8 @@
+import 'react-native-gesture-handler'; //must be at top
 import React, { useState, useEffect, useCallback } from 'react';
-import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
-//import * as Font from 'expo-font';
 
 import firebase from 'firebase/compat/app';
 
@@ -28,20 +27,24 @@ import RegisterScreen from './component/auth/Register';
 import LoginScreen from './component/auth/Login';
 import MainScreen from './screens/Main';
 
-import store from './redux/store/index';
+import { persistor, store } from './redux/store/index';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [state, setState] = useState({
     isReady: false,
-  })
+  });
 
   useEffect(() => {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
+        // LogBox.ignoreLogs([
+        //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
+        // ]);
 
         // await Font.loadAsync({
         //   NovaCut: require('./assets/fonts/NovaCut-Regular.ttf'),
@@ -49,9 +52,9 @@ export default function App() {
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({
-              isReady: true, 
+              isReady: true,
               loggedIn: false,
-            })
+            });
           } else {
             setState({
               isReady: true,
@@ -88,20 +91,22 @@ export default function App() {
   if (!state.loggedIn) {
     return (
       <Provider store={store}>
-        <NavigationContainer onReady={onLayoutRootView}>
-          <Stack.Navigator initialRouteName='Login'>
-            <Stack.Screen
-              name='Register'
-              component={RegisterScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name='Login'
-              component={LoginScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer onReady={onLayoutRootView}>
+            <Stack.Navigator initialRouteName='Login'>
+              <Stack.Screen
+                name='Register'
+                component={RegisterScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='Login'
+                component={LoginScreen}
+                options={{ headerShown: false }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PersistGate>
       </Provider>
     );
   }

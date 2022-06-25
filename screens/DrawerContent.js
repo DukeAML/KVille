@@ -149,6 +149,15 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => (
+                <Icon name='timer-outline' color={color} size={size} />
+              )}
+              label='Countdown'
+              onPress={() => {
+                props.navigation.navigate('CountdownScreen');
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
                 <Icon name='alert-outline' color={color} size={size} />
               )}
               label='Line Monitoring'

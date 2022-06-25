@@ -26,6 +26,8 @@ import {
   setTentType,
 } from '../redux/reducers/userSlice';
 
+let prevTentType;
+
 export default function Settings({ route, navigation }) {
   //let isCreator;
   const [isCreator, setCreator] = useState(false);
@@ -160,14 +162,27 @@ export default function Settings({ route, navigation }) {
         tentType: tent,
       })
       .then(() => {
-        console.log('successfully saved groupName');
+        console.log('successfully saved group settings');
       })
       .catch((error) => {
         console.log(error);
         toggleSnackBar();
-        setSnackMessage('Error saving group name');
+        setSnackMessage('Error saving group settings');
         return;
       });
+    
+    console.log('prevTentType', prevTentType);
+    console.log('currTentType', tent);
+    if (prevTentType !== tent) {
+      groupRef.update({
+        groupSchedule: []
+      }).then(()=> {
+        console.log('cleared group schedule');
+      }).catch((error)=> {
+        console.log(error);
+      })
+    }
+    
     groupRef
       .collection('members')
       .doc(firebase.auth().currentUser.uid)
@@ -408,6 +423,7 @@ export default function Settings({ route, navigation }) {
         <Picker
           selectedValue={tent}
           onValueChange={(itemValue, itemIndex) => {
+            prevTentType = tent;
             setTent(itemValue);
           }}
           style={

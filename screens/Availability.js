@@ -18,7 +18,7 @@ import {
 } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import RNPickerSelect from 'react-native-picker-select';
+//import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
@@ -98,7 +98,7 @@ export default function Availability({ route }) {
       parseInt(endTime.minute) +
       parseInt(endTime.hour) * 2;
     if (endIdx == parseInt(selectedDay) * 48) {
-      endIdx += 48
+      endIdx += 48;
     }
     if (startIdx >= endIdx) {
       toggleSnackBar();
@@ -161,12 +161,14 @@ export default function Availability({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+      
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
 
           await memberRef.get().then((doc) => {
             availability = doc.data().availability;
+            console.log('availability fetched from firebase', availability);
           });
           for (let i = 0; i < availability.length; i++) {
             if (!availability[i]) {
@@ -191,8 +193,11 @@ export default function Availability({ route }) {
       if (mounted) {
         prepare();
       }
-      return () => (mounted = false);
-    }, [])
+      return () => {
+        setIsReady(false);
+        mounted = false;
+      };
+    }, [route.params])
   );
 
   const onLayoutRootView = useCallback(async () => {
@@ -213,7 +218,9 @@ export default function Availability({ route }) {
         style={styles.deleteModal}
       >
         <TouchableOpacity onPress={deleteCell}>
-          <Text style={{ textAlign: 'center' }}>Delete Cell</Text>
+          <Text style={{ textAlign: 'center', color: '#c91936', fontSize: 15 }}>
+            Delete
+          </Text>
         </TouchableOpacity>
       </Modal>
 
@@ -236,7 +243,7 @@ export default function Availability({ route }) {
           <View style={styles.modalBody}>
             <View style={styles.selectDay}>
               <Text>Day: </Text>
-              <RNPickerSelect
+              {/* <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
                 placeholder={{ label: 'Select a day...', value: 7 }}
                 style={pickerSelectStyles}
@@ -249,7 +256,7 @@ export default function Availability({ route }) {
                   { label: 'Friday', value: 5 },
                   { label: 'Saturday', value: 6 },
                 ]}
-              />
+              /> */}
             </View>
             <Text>Start Time: </Text>
             <View style={styles.selectTime}>
@@ -548,11 +555,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 20,
     elevation: 5,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    width: '100%',
+    borderRadius: 20,
+    width: '90%',
     height: '10%',
-    bottom: '0',
+    bottom: 20,
   },
 });
 

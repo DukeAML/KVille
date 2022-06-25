@@ -179,9 +179,7 @@ export default function Schedule({ route }) {
   */
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
-    const indexofUser = colorCodes.findIndex(
-      (object) => object.name === person
-    );
+    const indexofUser = colorCodes.findIndex((object) => object.name === person);
     const backgroundColor = colorCodes[indexofUser].color; //gets background color from the colorCodes Array
     return (
       <View style={{ flex: 1 }}>
@@ -260,6 +258,7 @@ export default function Schedule({ route }) {
   };
   //Component for the table for one day's schedule
   const DailyTable = ({ numberDay, numberNight, day }) => {
+    //if (schedule == undefined) return null;
     let indexAdder = 0;
     //depending on day parameter, change index in GLOBAL schedule array
     switch (day) {
@@ -382,6 +381,7 @@ export default function Schedule({ route }) {
   };
 
   //to push changes made to schedule to firebase
+  //updates the scheduled hours for each user
   const pushEdits = () => {
     groupRef
     .collection('members')
@@ -430,11 +430,28 @@ export default function Schedule({ route }) {
         try {
           await SplashScreen.preventAutoHideAsync();
 
+          colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
             schedule = doc.data().groupSchedule;
             memberIDArray = doc.data().memberArr;
-          });
+          })
+          console.log('member id array:' , memberIDArray);
+
+          //For setting up the color codes as well as the updating scheduled hrs
+          for (let index = 0; index < memberIDArray.length; index++){
+            if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+            colorCodes.push(
+              {
+              id: memberIDArray[index].id,
+              name: memberIDArray[index].name,
+              color: colors[index+1],
+              changedHrs: 0,
+            });
+            //if (colorCodes.length >=13) break;
+          }
+
 
         } catch (e) {
           console.warn(e);
@@ -449,8 +466,9 @@ export default function Schedule({ route }) {
       }
       return () => {
         mounted = false;
+        setIsReady(false);
       };
-    }, [])
+    }, [route.params])
   );
 
   const onLayoutRootView = useCallback(async () => {
@@ -481,25 +499,30 @@ export default function Schedule({ route }) {
       }
     }
   } */
-  console.log('member id array:' , memberIDArray);
-
-  //For setting up the color codes as well as the updating scheduled hrs
-  for (let index = 0; index < memberIDArray.length; index++){
-    if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-    colorCodes.push(
-      {
-      id: memberIDArray[index].id,
-      name: memberIDArray[index].name,
-      color: colors[index+1],
-      changedHrs: 0,
-    });
-    //if (colorCodes.length >=13) break;
-  }
-
   /* //initializes the colorCodes so each member has a unique color background
   for (let index = 0; index < colorCodes.length; index++) {
     colorCodes[index].color = colors[index];
   } */
+
+/*   console.log('member id array:' , memberIDArray);
+
+  //For setting up the color codes as well as the updating scheduled hrs
+  if (memberIDArray !== undefined){
+    for (let index = 0; index < memberIDArray.length; index++){
+      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+      colorCodes.push(
+        {
+        id: memberIDArray[index].id,
+        name: memberIDArray[index].name,
+        color: colors[index+1],
+        changedHrs: 0,
+      });
+      //if (colorCodes.length >=13) break;
+    }
+  } */
+  
+
+  
 
   console.log('colors: ', colorCodes);
 

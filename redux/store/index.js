@@ -1,26 +1,27 @@
-import { configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
-import { combineReducers } from "redux";
-import { persistReducer } from "redux-persist";
-import thunk from "redux-thunk";
+import { configureStore } from '@reduxjs/toolkit';
+//import storage from "redux-persist/lib/storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { combineReducers } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist';
+import thunk from 'redux-thunk';
 
-import userReducer from "../reducers/userSlice";
+import userReducer from '../reducers/userSlice';
 
 const reducers = combineReducers({
   user: userReducer,
 });
 
 const persistConfig = {
-  key: "root",
-  storage,
+  key: 'root',
+  storage: AsyncStorage,
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
-const store = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   //devTools: process.env.NODE_ENV !== "production",
   middleware: [thunk],
 });
 
-export default store;
+export const persistor = persistStore(store);
