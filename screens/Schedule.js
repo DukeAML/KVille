@@ -70,6 +70,8 @@ export default function Schedule({ route }) {
 
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
+  //const [schedule,setSchedule] = useState(currSchedule);
+
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
@@ -358,10 +360,12 @@ export default function Schedule({ route }) {
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
-                  schedule = groupSchedule;
+                  //prevSchedule = currSchedule;
+                  schedule = groupSchedule; //change **
 
                   groupRef.update({
                     groupSchedule: groupSchedule,
+                    //prevSchedule: prevSchedule
                   });
                 }
               );
@@ -408,7 +412,7 @@ export default function Schedule({ route }) {
       return collSnap;
     }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
       groupRef.update({
-        groupSchedule: schedule,
+        groupSchedule: schedule, //change**
       });
       
       for (let i = 0; i<colorCodes.length; i++){ //reinitializes the changed hrs to 0
@@ -434,7 +438,7 @@ export default function Schedule({ route }) {
 
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
-            schedule = doc.data().groupSchedule;
+            schedule = doc.data().groupSchedule; //change**
             memberIDArray = doc.data().memberArr;
           })
           console.log('member id array:' , memberIDArray);
