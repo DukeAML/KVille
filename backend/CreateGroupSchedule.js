@@ -139,7 +139,96 @@ export async function createGroupSchedule(groupCode, tentType) {
         //deals with blocking so members have consecutive shifts of 30 min
         if (prevMember1 && prevMember2) { //if previous shifts were not 'empty' continue
           //switches prev1 and prev2 if first person is not available and second person is for the new time so that only have to consider one case
-          if (  //If black tent (numDay=2), and previous1 is not available but previous2 is, switch variables so rest of code works
+
+          console.log(time + ': ' + prevMember1.name + ' consecutive hours '  + prevMember1.consecutive + ' with ' + prevMember1.hours + ' scheduled');
+          console.log(time + ': ' + prevMember2.name + ' consecutive hours '  + prevMember2.consecutive + ' with ' + prevMember2.hours + ' scheduled');
+          if (prevMember1.availability[time] && prevMember1.consecutive < MAXBLOCK) { //If prev1 is available, add them in. Otherwise, resort and add next available person
+            groupScheduleArr[time] = prevMember1.name;
+            prevMember1.hours++;
+            prevMember1.consecutive++;
+          } else {
+            prevMember1.consecutive = 0;
+            sortMembers(time); //sort array by total hours and availability
+            //console.log("members array", memberArr);
+            /* if (memberArr[0].availability[time]) {
+              //if first index is available, add to current block in group schedule
+              groupScheduleArr[time] = memberArr[0].name;
+              memberArr[0].hours++;
+            } else {
+              //otherwise, add empty
+              groupScheduleArr[time] = 'empty';
+            }
+            prevMember1 = memberArr[0];
+            if (numDay == 1) {
+              continue;
+            } */
+            if (memberArr[0] == prevMember2) {
+              if (memberArr[1].availability[time]) {
+                //if index 1 is available add that instead
+                groupScheduleArr[time] = memberArr[1].name;
+                memberArr[1].hours++;
+                //memberArr[1].consecutive++;
+                prevMember1 = memberArr[1];
+              } else {
+                //otherwise no one is available and add empty
+                groupScheduleArr[time] = 'empty';
+              }
+            } else {
+              //If the first index does not equal the previous1 member
+              if (memberArr[0].availability[time]) {
+                //then add the first index instead
+                groupScheduleArr[time] = memberArr[0].name;
+                memberArr[0].hours++;
+                //memberArr[0].consecutive++;
+                prevMember1 = memberArr[0];
+              } else {
+                //if not available, no one is available so add empty
+                groupScheduleArr[time] = 'empty';
+              }
+            }
+          }
+
+          if (numDay == 2){
+            if ( prevMember2.availability[time] && prevMember2.consecutive < MAXBLOCK) {
+              //If prev2 is available, add them in. Otherwise, resort and add next available person
+              groupScheduleArr[time] += ' ' + prevMember2.name;
+              prevMember2.hours++;
+              prevMember2.consecutive++;
+            } else {
+              prevMember2.consecutive = 0;
+              sortMembers(time); //sort array by total hours and availability
+              //console.log("members array", memberArr);
+              if (memberArr[0] == prevMember1) {
+                if (memberArr[1].availability[time]) {
+                  //if index 1 is available add that instead
+                  groupScheduleArr[time] += ' ' + memberArr[1].name;
+                  memberArr[1].hours++;
+                  //memberArr[1].consecutive++;
+                  prevMember2 = memberArr[1];
+                } else {
+                  //otherwise no one is available and add empty
+                  groupScheduleArr[time] += ' empty';
+                }
+              } else {
+                //If the first index does not equal the previous1 member
+                if (memberArr[0].availability[time]) {
+                  //then add the first index instead
+                  groupScheduleArr[time] += ' ' + memberArr[0].name;
+                  memberArr[0].hours++;
+                  //memberArr[0].consecutive++;
+                  prevMember2 = memberArr[0];
+                } else {
+                  //if not available, no one is available so add empty
+                  groupScheduleArr[time] += ' empty';
+                }
+              }
+              
+            }
+            continue;
+          }
+
+          
+          /* if (  //If black tent (numDay=2), and previous1 is not available but previous2 is, switch variables so rest of code works
             numDay == 2 &&
             (!prevMember1.availability[time] || prevMember1.consecutive > MAXBLOCK) &&
             prevMember2.availability[time]
@@ -191,15 +280,15 @@ export async function createGroupSchedule(groupCode, tentType) {
             }
            
             continue; //continue to the next iteration of the large for loop
-          }
-          prevMember1.consecutive = 0; //reset counter for consecutive hours if no blocks are continued
+          }*/
+/*           prevMember1.consecutive = 0; //reset counter for consecutive hours if no blocks are continued
 
           if (prevMember2.consecutive >= MAXBLOCK) {
             prevMember2.consecutive = 0;
           }
           if (numDay == 2 && !prevMember2.availability[time]) {
             prevMember2.consecutive = 0;
-          }
+          } */
           //might need to set prevMember2.consecutive, if tenttype is black
         }
 

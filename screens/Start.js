@@ -193,7 +193,7 @@ export default function Start({ navigation }) {
       <View
         style={{
           flexDirection: 'row',
-          justifyContent: "space-between",
+          justifyContent: 'space-between',
           width: '90%',
           alignItems: 'center',
           marginBottom: 5,
@@ -286,15 +286,22 @@ export default function Start({ navigation }) {
           </View>
         </Modal>
         {/* <Button
-              title="Create Group Schedule"
-              onPress={() =>
-                createGroupSchedule("BtycLIprkN3EmC9wmpaE", "blue").then(
-                  (groupSchedule) => {
-                    console.log(groupSchedule);
-                  }
-                )
-              }
-            /> */}
+          title='Create Group Schedule'
+          onPress={() =>
+            createGroupSchedule('sX5bkvgE', 'Black').then((groupSchedule) => {
+              firebase
+                .firestore()
+                .collection('groups')
+                .doc('sX5bkvgE')
+                .update({
+                  groupSchedule: groupSchedule,
+                })
+                .then(() => console.log('update successfull'))
+                .catch((error) => console.log(error));
+              console.log(groupSchedule);
+            })
+          }
+        /> */}
         {/* <Button
               title="Add test case"
               onPress={() => createTestCases()}
