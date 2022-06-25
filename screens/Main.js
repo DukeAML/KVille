@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler'; //must be at top
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
@@ -6,11 +7,10 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Linking, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
@@ -39,7 +39,7 @@ import { useDispatch } from 'react-redux';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 
 const Drawer = createDrawerNavigator();
-const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
+//const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 const AvailabilityText = () => (
   <View>
@@ -121,18 +121,18 @@ export default function Main() {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
 
-  /* const InformationModal = ({ page }) => {
+  const InformationModal = ({ page }) => {
     console.log('infoModal rendered:', typeOfHelp);
     return (
       <View>
         <Modal
-          isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
-          //isVisible={isInfoVisible}
-          //onBackdropPress={() => setInfoVisible(false)}
-          onBackdropPress={() => {
+          //isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
+          isVisible={isInfoVisible}
+          onBackdropPress={() => setInfoVisible(false)}
+          /* onBackdropPress={() => {
             if (typeOfHelp == 'Availability') setInfoVisible(false);
             else setScheduleInfoVisible(false);
-          }}
+          }} */
         >
           <View style={styles.InfoPop}>
             {typeOfHelp == 'Availability' ? (
@@ -158,34 +158,34 @@ export default function Main() {
         </Modal>
       </View>
     );
-  }; */
+  };
 
   const dispatch = useDispatch();
 
   //Navigation State persistence, saves user's location in app
   useEffect(() => {
-    const restoreState = async () => {
-      try {
-        const initialUrl = await Linking.getInitialURL();
+    //   const restoreState = async () => {
+    //     try {
+    //       const initialUrl = await Linking.getInitialURL();
 
-        if (initialUrl == null) {
-          // Only restore state if there's no deep link and we're not on web
-          const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
-          const state = savedStateString
-            ? JSON.parse(savedStateString)
-            : undefined;
+    //       if (initialUrl == null) {
+    //         // Only restore state if there's no deep link and we're not on web
+    //         const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+    //         const state = savedStateString
+    //           ? JSON.parse(savedStateString)
+    //           : undefined;
 
-          if (state !== undefined) {
-            setInitialState(state);
-          }
-        }
-      } finally {
-        setIsReady(true);
-      }
-    };
-    if (!isReady) {
-      restoreState();
-    }
+    //         if (state !== undefined) {
+    //           setInitialState(state);
+    //         }
+    //       }
+    //     } finally {
+    //       setIsReady(true);
+    //     }
+    //   };
+    // if (!isReady) {
+    //   restoreState();
+    // }
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
@@ -233,9 +233,9 @@ export default function Main() {
     <NavigationContainer
       initialState={initialState}
       onReady={onLayoutRootView}
-      onStateChange={(state) =>
-        AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-      }
+      // onStateChange={(state) =>
+      //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+      // }
     >
       <Drawer.Navigator
         initialRouteName='Start'
@@ -347,17 +347,20 @@ export default function Main() {
             ),
             headerRight: () => (
               <View>
+                {/* <InformationModal header = 'How to use the Availability Page' children={<AvailabilityText/>}/> */}
+
                 <TouchableOpacity
                   onPress={() => {
-                    //setTypeOfHelp('Availability');
+                    setTypeOfHelp('Availability');
                     toggleInfo();
                   }}
                   style={{ marginRight: 20 }}
                 >
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
-                {/* <InformationModal /> */}
-                 <Modal
+                {/* <InformationModal page = 'Availability'/> */}
+                <InformationModal />
+                {/*  <Modal
                   isVisible = {isInfoVisible}
                   onBackdropPress={() => setInfoVisible(false)}
                 >
@@ -370,7 +373,7 @@ export default function Main() {
                       <AvailabilityText/>
                     </ScrollView>
                   </View>
-                </Modal>
+                </Modal> */}
               </View>
             ),
           })}
@@ -394,18 +397,19 @@ export default function Main() {
             ),
             headerRight: () => (
               <View>
+                {/* <InformationModal header = 'How to use the Schedule Page' children={<ScheduleText/>}/> */}
                 <TouchableOpacity
                   onPress={() => {
-                    toggleScheduleInfo();
-                    //setTypeOfHelp('Schedule');
-                    //toggleInfo();
+                    //toggleScheduleInfo();
+                    setTypeOfHelp('Schedule');
+                    toggleInfo();
                   }}
                   style={{ marginRight: 20 }}
                 >
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
-                {/* <InformationModal/> */}
-                <Modal
+                {/* <InformationModal page = 'Schedule'/> */}
+                {/* <Modal
                   isVisible = {isScheduleInfoVisible}
                   onBackdropPress={() => setScheduleInfoVisible(false)}
                 >
@@ -418,7 +422,7 @@ export default function Main() {
                       <ScheduleText/>
                     </ScrollView>
                   </View>
-                </Modal>
+                </Modal> */}
               </View>
             ),
           })}

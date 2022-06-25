@@ -18,7 +18,7 @@ import {
 } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import RNPickerSelect from 'react-native-picker-select';
+//import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
@@ -243,7 +243,7 @@ export default function Availability({ route }) {
           <View style={styles.modalBody}>
             <View style={styles.selectDay}>
               <Text>Day: </Text>
-              <RNPickerSelect
+              {/* <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
                 placeholder={{ label: 'Select a day...', value: 7 }}
                 style={pickerSelectStyles}
@@ -256,7 +256,7 @@ export default function Availability({ route }) {
                   { label: 'Friday', value: 5 },
                   { label: 'Saturday', value: 6 },
                 ]}
-              />
+              /> */}
             </View>
             <Text>Start Time: </Text>
             <View style={styles.selectTime}>

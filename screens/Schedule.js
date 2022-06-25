@@ -7,7 +7,6 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
-  useWindowDimensions
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 
@@ -41,7 +40,21 @@ let colorCodes = [
 let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
 
-
+const TimeColumn = () => {
+  //component for side table of 12am-12am time segments
+  return (
+    <Table>
+      <Col
+        data={times}
+        heightArr={[
+          62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
+          62, 62, 62, 62, 62, 62, 62,
+        ]}
+        textStyle={StyleSheet.flatten(styles.timesText)}
+      />
+    </Table>
+  );
+};
 
 
 
@@ -57,8 +70,6 @@ export default function Schedule({ route }) {
 
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
-  //const [schedule,setSchedule] = useState(currSchedule);
-
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
@@ -69,12 +80,11 @@ export default function Schedule({ route }) {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState(''); // for temporary popup 
 
-
-  /* const window = useWindowDimensions();
-  const styles= makeStyles(window.fontScale); */
-
   //FIREBASE REFERENCE for group
-  /* const groupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE'); */
+  /* const groupRef = firebase
+    .firestore()
+    .collection('groupsTest')
+    .doc('BtycLIprkN3EmC9wmpaE'); */
   const groupRef = firebase.firestore().collection("groups").doc(code);
 
   /* let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
@@ -130,21 +140,6 @@ export default function Schedule({ route }) {
     console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
   };
 
-  const TimeColumn = () => {
-    //component for side table of 12am-12am time segments
-    return (
-      <Table>
-        <Col
-          data={times}
-          heightArr={[
-            62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
-            62, 62, 62, 62, 62, 62, 62,
-          ]}
-          textStyle={StyleSheet.flatten(styles.timesText)}
-        />
-      </Table>
-    );
-  };
   //Component for the popup list of members for each member
   const Member = ({ name }) => {
     return (
@@ -192,14 +187,14 @@ export default function Schedule({ route }) {
           onPress={() => {
             setEditIndex(index);
             setOldMember(person);
-            console.log('index: ', index);
+            console.log('index: ', editIndex);
             toggleModal();
           }}
         >
           <View
             style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
           >
-            <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={.5}>{person}</Text>
+            <Text style={styles.btnText}>{person}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -363,12 +358,10 @@ export default function Schedule({ route }) {
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
-                  //prevSchedule = currSchedule;
-                  schedule = groupSchedule; //change **
+                  schedule = groupSchedule;
 
                   groupRef.update({
                     groupSchedule: groupSchedule,
-                    //prevSchedule: prevSchedule
                   });
                 }
               );
@@ -415,7 +408,7 @@ export default function Schedule({ route }) {
       return collSnap;
     }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
       groupRef.update({
-        groupSchedule: schedule, //change**
+        groupSchedule: schedule,
       });
       
       for (let i = 0; i<colorCodes.length; i++){ //reinitializes the changed hrs to 0
@@ -441,7 +434,7 @@ export default function Schedule({ route }) {
 
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
-            schedule = doc.data().groupSchedule; //change**
+            schedule = doc.data().groupSchedule;
             memberIDArray = doc.data().memberArr;
           })
           console.log('member id array:' , memberIDArray);
@@ -456,15 +449,8 @@ export default function Schedule({ route }) {
               color: colors[index+1],
               changedHrs: 0,
             });
+            //if (colorCodes.length >=13) break;
           }
-
-          //check the state of the schedule and if it is prevSchedule--> chnage colorcodes to be accessed by schedule
-          /* {
-            id: index+1,
-            name: ,
-            color: '',
-
-          } */
 
 
         } catch (e) {
@@ -497,9 +483,7 @@ export default function Schedule({ route }) {
   }
   //console.log('Full Schedule: ', schedule);
 
-  /* 
-  if ()
-  //sets up the color assignment for each user
+  /* //sets up the color assignment for each user
   for (let i = 0; i < schedule.length; i++) {
     if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
     if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
@@ -730,7 +714,6 @@ export default function Schedule({ route }) {
   );
 }
 
-//const makeStyles = (fontScale) => StyleSheet.create({
 const styles = StyleSheet.create({
   bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
   text: { margin: 3 }, //text within cells
@@ -839,8 +822,8 @@ const styles = StyleSheet.create({
     //Text within one cell button
     textAlign: 'center',
     color: 'black',
-    fontWeight: '400',
-    fontSize: 'auto',
+    fontWeight: '500',
+    fontSize: 10,
   },
   shadowProp: {
     //shadows to apply

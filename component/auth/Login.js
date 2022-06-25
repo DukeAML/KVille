@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     height: '100%',
-    outlineWidth: 0,
+    //outlineWidth: 0,
     //justifyContent: "center",
   },
   button: {

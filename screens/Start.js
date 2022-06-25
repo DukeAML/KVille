@@ -13,7 +13,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
+//import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import Modal from 'react-native-modal';
