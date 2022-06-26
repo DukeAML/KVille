@@ -161,7 +161,7 @@ export default function Availability({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
-      
+
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
@@ -243,6 +243,26 @@ export default function Availability({ route }) {
           <View style={styles.modalBody}>
             <View style={styles.selectDay}>
               <Text>Day: </Text>
+              <Picker
+                selectedValue={selectedDay}
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedDay(itemValue);
+                }}
+                style={
+                  Platform.OS === 'ios'
+                    ? { height: '100%', width: '80%' }
+                    : { height: 30, width: '70%' }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+              >
+                <Picker.Item label='Sunday' value={0} />
+                <Picker.Item label='Monday' value={1} />
+                <Picker.Item label='Tuesday' value={2} />
+                <Picker.Item label='Wednesday' value={3} />
+                <Picker.Item label='Thursday' value={4} />
+                <Picker.Item label='Friday' value={5} />
+                <Picker.Item label='Saturday' value={6} />
+              </Picker>
               {/* <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
                 placeholder={{ label: 'Select a day...', value: 7 }}
