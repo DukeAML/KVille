@@ -26,6 +26,7 @@ if (firebase.apps.length === 0) {
 import RegisterScreen from './component/auth/Register';
 import LoginScreen from './component/auth/Login';
 import MainScreen from './screens/Main';
+import ForgotPasswordScreen from './component/auth/ForgotPassword';
 
 import { persistor, store } from './redux/store/index';
 import { Provider } from 'react-redux';
@@ -103,6 +104,28 @@ export default function App() {
                 name='Login'
                 component={LoginScreen}
                 options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='ForgotPassword'
+                component={ForgotPasswordScreen}
+                options={({ navigation }) => ({
+                  title: '',
+                  headerStyle: {
+                    backgroundColor: '#f5f5f5',
+                    borderBottomWidth: 0,
+                    shadowColor: 'transparent',
+                  },
+                  headerTitleStyle: {
+                    fontSize: 28,
+                  },
+                  // headerLeft: () => (
+                  //   <IconButton
+                  //     icon='menu'
+                  //     size={25}
+                  //     onPress={() => navigation.openDrawer()}
+                  //   ></IconButton>
+                  // ),
+                })}
               />
             </Stack.Navigator>
           </NavigationContainer>

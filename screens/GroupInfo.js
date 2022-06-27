@@ -103,6 +103,7 @@ export default function GroupInfo({ route }) {
                 //console.log('ARRAY: ', members);
               }
             });
+          setCurrIndex(0);
         } catch (e) {
           console.warn(e);
         } finally {
