@@ -148,6 +148,7 @@ export default function CreateGroup({ navigation }) {
         navigation.navigate('GroupInfo', {
           groupCode: group.groupCode,
           groupName: group.groupName,
+          groupRole: 'Creator',
         });
       });
   };

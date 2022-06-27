@@ -24,7 +24,7 @@ export default function DrawerContent(props) {
   const groupName = useSelector((state) => state.user.currGroupName);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
-
+  const groupRole = useSelector((state) => state.user.currGroupRole);
   useEffect(() => {
     let mounted = true;
     if (mounted && groupCode != '') {
@@ -121,6 +121,7 @@ export default function DrawerContent(props) {
                 props.navigation.navigate('GroupInfo', {
                   groupCode: groupCode,
                   groupName: groupName,
+                  groupRole: groupRole,
                 });
               }}
             />
@@ -198,17 +199,6 @@ export default function DrawerContent(props) {
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>
-      {/* <Drawer.Section style={styles.bottomDrawerSection}>
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Icon name="exit-to-app" color={color} size={size} />
-          )}
-          label="Sign Out"
-          onPress={() => {
-            signOut();
-          }}
-        />
-      </Drawer.Section> */}
     </View>
   );
 }

@@ -35,11 +35,7 @@ export default function GroupInfo({ route }) {
   const [currMember, setCurrMember] = useState('');
   const [currIndex, setCurrIndex] = useState(0);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
-  const { groupCode, groupName } = route.params; // take in navigation parameters
+  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   console.log('route params: ', route.params);
 
   const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -48,7 +44,7 @@ export default function GroupInfo({ route }) {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
-      console.log("GroupRef", route.params.groupCode);
+      console.log('GroupRef', route.params.groupCode);
       //const GroupRef = firebase.firestore().collection('groups').doc(route.params.groupCode);
 
       async function prepare() {
@@ -68,7 +64,8 @@ export default function GroupInfo({ route }) {
                   //let scheduledHours = 0;
                   let memID = doc.id;
 
-                  let current = {     //create new object for the current list item
+                  let current = {
+                    //create new object for the current list item
                     id: memID,
                     name: currName,
                     inTent: tentCondition,
@@ -86,8 +83,12 @@ export default function GroupInfo({ route }) {
                     members.push(current);
                   }
 
-                  let indexOfUser = members.findIndex((member) => member.id === memID);
-                  tentStatusChanged = !(members[indexOfUser].inTent == tentCondition);
+                  let indexOfUser = members.findIndex(
+                    (member) => member.id === memID
+                  );
+                  tentStatusChanged = !(
+                    members[indexOfUser].inTent == tentCondition
+                  );
                   // console.log('status1: ', members[indexOfUser].inTent);
 
                   // checks if tent status changed after refresh and updates list
@@ -104,7 +105,8 @@ export default function GroupInfo({ route }) {
             });
         } catch (e) {
           console.warn(e);
-        } finally {     // Tell the application to render
+        } finally {
+          // Tell the application to render
           setIsReady(true);
         }
       }
@@ -115,8 +117,26 @@ export default function GroupInfo({ route }) {
         setIsReady(false);
         mounted = false;
       };
-    }, [groupCode])
+    }, [route.params])
   );
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const removeMember = () => {
+    console.log('current member being deleted', members[currIndex].id);
+    GroupRef.collection('members')
+      .doc(members[currIndex].id)
+      .delete()
+      .then(() => {
+        console.log(members[currIndex].id + ' removed from group');
+      })
+      .catch((error) => {
+        console.error('Error removing member: ', error);
+      });
+      toggleModal();
+  };
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
@@ -136,14 +156,18 @@ export default function GroupInfo({ route }) {
           setCurrIndex(indexOfUser);
         }}
       >
-        <View 
-          style={
-            [styles.listItem, backgroundColor, styles.shadowProp, 
-            {flexDirection: 'row', justifyContent: 'space-evenly'}]
-          }
+        <View
+          style={[
+            styles.listItem,
+            backgroundColor,
+            styles.shadowProp,
+            { flexDirection: 'row', justifyContent: 'space-evenly' },
+          ]}
         >
           <Text style={styles.listText}>{name}</Text>
-          <Text style={{color: 'white'}}>Scheduled Hrs: {members[indexOfUser].hours} hrs</Text>
+          <Text style={{ color: 'white' }}>
+            Scheduled Hrs: {members[indexOfUser].hours} hrs
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -152,7 +176,13 @@ export default function GroupInfo({ route }) {
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return <Member name={item.name} id={item.id} backgroundColor={{ backgroundColor }} />;
+    return (
+      <Member
+        name={item.name}
+        id={item.id}
+        backgroundColor={{ backgroundColor }}
+      />
+    );
   };
 
   if (!isReady) {
@@ -211,6 +241,20 @@ export default function GroupInfo({ route }) {
             <Text style={styles.popUpText}>
               Scheduled Hrs: {members[currIndex].hours} hrs
             </Text>
+            {groupRole === 'Creator' &&
+            members[currIndex].id != firebase.auth().currentUser.uid ? (
+              <TouchableOpacity onPress={removeMember}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#c91936',
+                    fontSize: 15,
+                  }}
+                >
+                  Remove
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </Modal>
       </View>
@@ -269,7 +313,7 @@ const styles = StyleSheet.create({
   },
   popUp: {
     width: '90%',
-    height: 100,
+    height: '15%',
     backgroundColor: '#1E3F66',
     alignSelf: 'center',
     alignItems: 'center',

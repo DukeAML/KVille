@@ -142,6 +142,7 @@ export default function JoinGroup({ navigation }) {
             navigation.navigate('GroupInfo', {
               groupCode: groupCode,
               groupName: groupName,
+              groupRole: 'Member'
             });
           });
         // dispatch(inGroup());

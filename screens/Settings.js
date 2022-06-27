@@ -29,8 +29,6 @@ import {
 let prevTentType;
 
 export default function Settings({ route, navigation }) {
-  //let isCreator;
-  const [isCreator, setCreator] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
@@ -51,6 +49,7 @@ export default function Settings({ route, navigation }) {
   const [currGroupName, setCurrGroupName] = useState(groupName);
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
 
   console.log('Settings route params', route.params);
   //gets current user's group role from redux store
@@ -78,25 +77,6 @@ export default function Settings({ route, navigation }) {
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
-          //console.log('groupCode used', groupCode);
-          await groupRef
-            .collection('members')
-            .doc(firebase.auth().currentUser.uid)
-            .get()
-            .then((snapshot) => {
-              if (mounted) {
-                //console.log('GroupRole', snapshot.data().groupRole);
-                if (snapshot.data().groupRole == 'Creator') {
-                  //isCreator = true;
-                  setCreator(true);
-                  //console.log('set isCreator true');
-                } else {
-                  //isCreator = false;
-                  setCreator(false);
-                  //console.log('set isCreator false');
-                }
-              }
-            });
 
           setCurrGroupName(groupName);
           setName(userName);
@@ -118,9 +98,9 @@ export default function Settings({ route, navigation }) {
         setName(userName);
         setTent(tentType);
         setIsReady(false);
-        setCreator(false);
+        //setCreator(false);
       };
-    }, [route])
+    }, [route.params])
   );
 
   const onSave = () => {
@@ -212,7 +192,7 @@ export default function Settings({ route, navigation }) {
         groupName: currGroupName,
       }),
     });
-    if (isCreator) {
+    if (groupRole === 'Creator') {
       groupRef
         .delete()
         .then(() => {
@@ -253,12 +233,12 @@ export default function Settings({ route, navigation }) {
             style={{ marginTop: 3, marginRight: 10 }}
           />
         </TouchableOpacity>
-        {isCreator ? (
+        {groupRole === 'Creator' ? (
           <Text style={styles.confirmationHeader}>Delete Group</Text>
         ) : (
           <Text style={styles.confirmationHeader}>Leave Group</Text>
         )}
-        {isCreator ? (
+        {groupRole === 'Creator' ? (
           <Text style={styles.confirmationText}>
             Are you sure you want to DELETE this group? This will delete it for
             everyone in this group and CANNOT be undone.
@@ -279,7 +259,7 @@ export default function Settings({ route, navigation }) {
           //onPress= {toggleConfirmation}
           style={styles.confirmationBottomBtn}
         >
-          {isCreator ? (
+          {groupRole === 'Creator' ? (
             <Text style={[styles.buttonText, { color: 'white' }]}>
               Yes, Delete This Group
             </Text>
@@ -304,7 +284,7 @@ export default function Settings({ route, navigation }) {
   }
 
   return (
-    <View style={styles.settingsContainer}>
+    <View style={styles.settingsContainer} onLayout={onLayoutRootView}>
       <View style={styles.topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon name='cog-outline' color={'#fff'} size={35} />
@@ -355,29 +335,7 @@ export default function Settings({ route, navigation }) {
         placeholder={name}
         onChangeText={(name) => setName(name)}
       />
-
-      {/* <View style={styles.header}>
-        <Icon name='cog-outline' color={'#fff'} size={50} />
-        <Text style={{ color: '#fff' }}>Settings</Text>
-      </View>
-      <Text style={{ color: '#fff' }}>Name:</Text>
-      <TextInput
-        style={styles.textInput}
-        value={name}
-        placeholder={name}
-        onChangeText={(name) => setName(name)}
-      />
-      {isCreator ? <Text style={{ color: '#fff' }}>Group Name:</Text> : null}
-      {isCreator ? (
-        <TextInput
-          style={styles.textInput}
-          value={currGroupName}
-          placeholder={currGroupName}
-          onChangeText={(groupName) => setCurrGroupName(groupName)}
-        />
-      ) : null}
-      <Text style={{ color: '#fff' }}>Tent Type: </Text> */}
-      {isCreator ? (
+      {groupRole === 'Creator' ? (
         <View
           style={{
             flexDirection: 'row',
@@ -394,7 +352,7 @@ export default function Settings({ route, navigation }) {
           />
         </View>
       ) : null}
-      {isCreator ? (
+      {groupRole === 'Creator' ? (
         <TextInput
           style={[styles.textInput, styles.shadowProp]}
           value={currGroupName}
@@ -402,7 +360,7 @@ export default function Settings({ route, navigation }) {
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
-      {isCreator ? (
+      {groupRole === 'Creator' ? (
         <View
           style={{
             flexDirection: 'row',
@@ -419,7 +377,7 @@ export default function Settings({ route, navigation }) {
           />
         </View>
       ) : null}
-      {isCreator ? (
+      {groupRole === 'Creator' ? (
         <Picker
           selectedValue={tent}
           onValueChange={(itemValue, itemIndex) => {
@@ -437,28 +395,11 @@ export default function Settings({ route, navigation }) {
           <Picker.Item label='Walk up line' value='Walk up line' />
         </Picker>
       ) : null}
-      {/* <TouchableOpacity
-        style={{
-          backgroundColor: '#1F509A',
-          padding: 15,
-          position: 'absolute',
-          bottom: 50,
-          width: '100%',
-          alignItems: 'center',
-        }}
-        onPress={onSave}
-      >
-        <Text style={{ color: '#fff' }}>Save</Text>
-      </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.button}
-        /* onPress={() => {
-          leaveGroup();
-          navigation.navigate('Start');
-        }} */
         onPress={toggleConfirmation}
       >
-        {isCreator ? (
+        {groupRole === 'Creator' ? (
           <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
             Delete Group
           </Text>
@@ -591,37 +532,3 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
 });
-
-/* const styles = StyleSheet.create({
-  settingsContainer: {
-    flexDirection: 'column',
-    flex: 1,
-    alignItems: 'center',
-    //backgroundColor: "#1f509a",
-    backgroundColor: '#C2C6D0',
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    height: '100%',
-    width: '100%',
-    resizeMode: 'cover',
-    //opacity: 0.4,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    left: 0,
-  },
-  button: {
-    backgroundColor: '#1F509A',
-    padding: 15,
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    alignItems: 'center',
-  },
-});
- */
