@@ -23,6 +23,7 @@ import {
   setGroupName,
   setUserName,
   setTentType,
+  setGroupRole,
 } from '../redux/reducers/userSlice';
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 import coachKLogo from '../assets/coachKLogo.png';
@@ -111,6 +112,7 @@ export default function JoinGroup({ navigation }) {
         dispatch(setUserName(name));
         dispatch(setGroupName(groupName));
         dispatch(setTentType(docSnapshot.data().tentType));
+        dispatch(setGroupRole('Member'));
         //updates current user's info
         await userRef
           .update({

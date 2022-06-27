@@ -26,6 +26,7 @@ import {
   setGroupName,
   setUserName,
   setTentType,
+  setGroupRole
 } from '../redux/reducers/userSlice';
 
 import coachKLogo from '../assets/coachKLogo.png';
@@ -132,6 +133,7 @@ export default function CreateGroup({ navigation }) {
     dispatch(setGroupName(group.groupName));
     dispatch(setUserName(group.userName));
     dispatch(setTentType(group.tentType));
+    dispatch(setGroupRole('Creator'));
     userRef
       .get()
       .then((snapshot) => {
