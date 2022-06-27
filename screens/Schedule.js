@@ -7,6 +7,7 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
+  useWindowDimensions
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 
@@ -37,24 +38,13 @@ let colorCodes = [
   { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0},
 ];
 
-let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
+//let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
 
-const TimeColumn = () => {
-  //component for side table of 12am-12am time segments
-  return (
-    <Table>
-      <Col
-        data={times}
-        heightArr={[
-          62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
-          62, 62, 62, 62, 62, 62, 62,
-        ]}
-        textStyle={StyleSheet.flatten(styles.timesText)}
-      />
-    </Table>
-  );
-};
+let currSchedule = new Array();
+let prevSchedule = new Array();
+
+
 
 
 
@@ -70,6 +60,11 @@ export default function Schedule({ route }) {
 
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
+  const [weekDisplay, setWeekDisplay] = useState('Current Week');
+  const [schedule,setSchedule] = useState(currSchedule);
+  let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
+  
+
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
@@ -80,15 +75,14 @@ export default function Schedule({ route }) {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState(''); // for temporary popup 
 
+
+  /* const window = useWindowDimensions();
+  const styles= makeStyles(window.fontScale); */
+
   //FIREBASE REFERENCE for group
-  /* const groupRef = firebase
-    .firestore()
-    .collection('groupsTest')
-    .doc('BtycLIprkN3EmC9wmpaE'); */
+  /* const groupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE'); */
   const groupRef = firebase.firestore().collection("groups").doc(code);
 
-  /* let sunPos, monPos, tuesPos, wedPos, thurPos, friPos, satPos; //vars for autoscroll y positions
-  const ref = useRef(); //creates reference for scrollView */
 
   const toggleModal = () => {
     //to toggle the edit cell popup
@@ -131,13 +125,30 @@ export default function Schedule({ route }) {
   //function for editing the schedule based on old member and new member to replace
   const editCell = (index, oldMember, newMember) => {
     //must delete from 'schedule' and update the string within
-    schedule[index] = schedule[index].replace(oldMember, newMember);
+    //schedule[index] = schedule[index].replace(oldMember, newMember);
+    currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
     colorCodes[indexofOld].changedHrs -= 0.5;
     colorCodes[indexofNew].changedHrs += 0.5;
     console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
     console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
+  };
+
+  const TimeColumn = () => {
+    //component for side table of 12am-12am time segments
+    return (
+      <Table>
+        <Col
+          data={times}
+          heightArr={[
+            62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
+            62, 62, 62, 62, 62, 62, 62,
+          ]}
+          textStyle={StyleSheet.flatten(styles.timesText)}
+        />
+      </Table>
+    );
   };
 
   //Component for the popup list of members for each member
@@ -172,33 +183,44 @@ export default function Schedule({ route }) {
     return <Member name={item.name} />;
   };
 
-  /* Component for each single cell timeslot 
-        Parameters:
-          index: index of cell within the entire schedule array
-          person: string holding the person currently scheduled for the time cell
-  */
+  // Component for each single cell timeslot 
+  //    Parameters:
+  //      index: index of cell within the entire schedule array
+  //      person: string holding the person currently scheduled for the time cell
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
     const indexofUser = colorCodes.findIndex((object) => object.name === person);
     const backgroundColor = colorCodes[indexofUser].color; //gets background color from the colorCodes Array
-    return (
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          onPress={() => {
-            setEditIndex(index);
-            setOldMember(person);
-            console.log('index: ', editIndex);
-            toggleModal();
-          }}
-        >
-          <View
-            style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
+    if (weekDisplay == 'Current Week'){
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            onPress={() => {
+              setEditIndex(index);
+              setOldMember(person);
+              console.log('index: ', index);
+              toggleModal();
+            }}
           >
-            <Text style={styles.btnText}>{person}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
+            <View
+              style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
+            >
+              <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={.5}>{person}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (weekDisplay == 'Previous Week'){
+      return (
+        <View style={{ flex: 1 }}>
+            <View
+              style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
+            >
+              <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={.5}>{person}</Text>
+            </View>
+        </View>
+      );
+    }
   };
 
   /*Component for each row to list the people in that time shift
@@ -208,8 +230,7 @@ export default function Schedule({ route }) {
         arrayIndex: index of cell in the entire schedule array (range from 0-337)
         members: string of one time shift (ex. "member1 member2 member3 member4 ")
         numDay: the number of people required for a day shift
-        numNight: the number of people required for a night shift
-  */
+        numNight: the number of people required for a night shift  */
   const RenderCell = (data, index, arrayIndex, members, numDay, numNight) => {
     const people = members.split(' '); //stores the string as an array of single members
     //console.log('people: ', people);
@@ -256,6 +277,7 @@ export default function Schedule({ route }) {
       );
     }
   };
+
   //Component for the table for one day's schedule
   const DailyTable = ({ numberDay, numberNight, day }) => {
     //if (schedule == undefined) return null;
@@ -358,10 +380,13 @@ export default function Schedule({ route }) {
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
-                  schedule = groupSchedule;
+                  prevSchedule = currSchedule;
+                  currSchedule = groupSchedule
+                  //schedule = groupSchedule; //change **
 
                   groupRef.update({
                     groupSchedule: groupSchedule,
+                    previousSchedule: prevSchedule,
                   });
                 }
               );
@@ -408,7 +433,8 @@ export default function Schedule({ route }) {
       return collSnap;
     }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
       groupRef.update({
-        groupSchedule: schedule,
+        //groupSchedule: schedule, //change**
+        groupSchedule: currSchedule
       });
       
       for (let i = 0; i<colorCodes.length; i++){ //reinitializes the changed hrs to 0
@@ -434,23 +460,57 @@ export default function Schedule({ route }) {
 
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
-            schedule = doc.data().groupSchedule;
+            //schedule = doc.data().groupSchedule; //change**
+            currSchedule = doc.data().groupSchedule;
+            prevSchedule = doc.data().previousSchedule;
             memberIDArray = doc.data().memberArr;
           })
+
+          setSchedule(currSchedule); //force refresh 
           console.log('member id array:' , memberIDArray);
 
-          //For setting up the color codes as well as the updating scheduled hrs
-          for (let index = 0; index < memberIDArray.length; index++){
-            if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-            colorCodes.push(
-              {
-              id: memberIDArray[index].id,
-              name: memberIDArray[index].name,
-              color: colors[index+1],
-              changedHrs: 0,
-            });
-            //if (colorCodes.length >=13) break;
-          }
+          //if (weekDisplay == 'Current Week'){
+            //For setting up the color codes as well as the updating scheduled hrs
+            for (let index = 0; index < memberIDArray.length; index++){
+              if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+              colorCodes.push(
+                {
+                id: memberIDArray[index].id,
+                name: memberIDArray[index].name,
+                color: colors[index+1],
+                changedHrs: 0,
+              });
+            }
+          //}
+          /* else {
+            for (let i = 0; i < schedule.length; i++) {
+              if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
+              if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
+              const people = schedule[i].split(' ');
+              for (let j = 0; j < people.length; j++) {
+                if (!colorCodes.some((e) => e.name === people[j])) {
+                  if (people[j] !== '') {
+                    colorCodes.push({
+                      name: people[j],
+                      color: '',
+                    });
+                  }
+                }
+              }
+            } 
+            for (let index = 0; index < colorCodes.length; index++) {
+              colorCodes[index].color = colors[index];
+            }
+          } */
+          
+
+          //check the state of the schedule and if it is prevSchedule--> chnage colorcodes to be accessed by schedule
+          /* {
+            id: index+1,
+            name: ,
+            color: '',
+
+          } */
 
 
         } catch (e) {
@@ -483,26 +543,33 @@ export default function Schedule({ route }) {
   }
   //console.log('Full Schedule: ', schedule);
 
-  /* //sets up the color assignment for each user
-  for (let i = 0; i < schedule.length; i++) {
-    if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
-    if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
-    const people = schedule[i].split(' ');
-    for (let j = 0; j < people.length; j++) {
-      if (!colorCodes.some((e) => e.name === people[j])) {
-        if (people[j] !== '') {
-          colorCodes.push({
-            name: people[j],
-            color: '',
-          });
+  
+  if (weekDisplay == 'Previous Week'){
+    //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+    for (let k = 1; k<colorCodes.length;k++){colorCodes[k].name = ''} //reset names to empty
+    let index = 1;
+    for (let i = 0; i < schedule.length; i++) { //sets up the color assignment for each user
+      if (index >= colorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
+      if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
+      const people = schedule[i].split(' ');
+      for (let j = 0; j < people.length; j++) {
+        if (!colorCodes.some((e) => e.name === people[j])) {
+          colorCodes[index].name=people[j];
+          index++;
+          /* if (people[j] !== '') {
+            colorCodes.push({
+              name: people[j],
+              color: '',
+            });
+          } */
         }
       }
     }
-  } */
-  /* //initializes the colorCodes so each member has a unique color background
-  for (let index = 0; index < colorCodes.length; index++) {
-    colorCodes[index].color = colors[index];
-  } */
+    //initializes the colorCodes so each member has a unique color background
+    for (let index = 0; index < colorCodes.length; index++) {
+      colorCodes[index].color = colors[index];
+    }
+  }
 
 /*   console.log('member id array:' , memberIDArray);
 
@@ -627,14 +694,14 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           onPress={() => {
             if (weekDisplay == "Current Week") {
               setWeekDisplay("Previous Week");
-              setSchedule(lastSchedule);
+              setSchedule(prevSchedule);
             } else {
               setWeekDisplay("Current Week");
-              setSchedule(thisSchedule);
+              setSchedule(currSchedule);
             }
           }}
         >
@@ -647,9 +714,9 @@ export default function Schedule({ route }) {
               backgroundColor: myBtnColor
             }}
           >
-            <Text style={{ fontSize: 16 }}>{weekDisplay}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay}</Text>
           </View>
-        </TouchableOpacity> */}
+        </TouchableOpacity> 
 
         <View style={styles.buttonContainer}>
           <DayButton day='Sunday' abbrev='Sun' />
@@ -661,6 +728,7 @@ export default function Schedule({ route }) {
           <DayButton day='Saturday' abbrev='Sat' />
         </View>
 
+        {weekDisplay == 'Current Week' ? (
         <View style={[styles.buttonContainer, styles.shadowProp]}>
           <TouchableOpacity
             onPress={() => {
@@ -686,7 +754,9 @@ export default function Schedule({ route }) {
             </View>
           </TouchableOpacity>
         </View>
+        ) : null}
       </View>
+      
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.dayHeader}>{renderDay}</Text>
@@ -714,6 +784,7 @@ export default function Schedule({ route }) {
   );
 }
 
+//const makeStyles = (fontScale) => StyleSheet.create({
 const styles = StyleSheet.create({
   bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
   text: { margin: 3 }, //text within cells
@@ -822,8 +893,8 @@ const styles = StyleSheet.create({
     //Text within one cell button
     textAlign: 'center',
     color: 'black',
-    fontWeight: '500',
-    fontSize: 10,
+    fontWeight: '400',
+    fontSize: 'auto',
   },
   shadowProp: {
     //shadows to apply
