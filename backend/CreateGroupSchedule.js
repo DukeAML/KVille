@@ -5,6 +5,11 @@ import "firebase/compat/firestore";
 let GRACE;
 const MAXBLOCK = 8; //max half hours minus one (not including current time block) person can be scheduled for 
 
+//Colors of each member, first is for 'empty'
+// prettier-ignore
+const colors = ['#D0342C', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
+  '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
+
 
 export async function createGroupSchedule(groupCode, tentType) {
   let numDay;
@@ -34,7 +39,9 @@ export async function createGroupSchedule(groupCode, tentType) {
   let prevMember1 = null;
   let prevMember2 = null;
 
-  let memberIDs = new Array(); //initilaize member IDs array for updating hrs
+  //initialize member IDs array for updating hrs and colors
+  let memberIDs = [{ id: '12345', name: 'empty', color: '#D0342C', changedHrs: 0}]; 
+  
 
 
   //****input grace periods in groupScheduleArr, "GRACE" at each index****
@@ -62,8 +69,10 @@ export async function createGroupSchedule(groupCode, tentType) {
         let member = {
           id,
           name,
+          color: '',
+          changedHrs: 0,
         }
-
+        
         memberIDs.push(member);
 
         //member object
@@ -125,7 +134,8 @@ export async function createGroupSchedule(groupCode, tentType) {
                   memberArr[memberIdx].name + " ";
                 memberArr[memberIdx].hours++;
               } else { //otherwise, input empty to that empty spot
-                groupScheduleArr[nightHour + time] += "empty ";
+                if (memberIdx == numNight-1) groupScheduleArr[nightHour + time] += "empty";
+                else groupScheduleArr[nightHour + time] += "empty ";
               }
             }
           }
@@ -149,20 +159,8 @@ export async function createGroupSchedule(groupCode, tentType) {
           } else {
             prevMember1.consecutive = 0;
             sortMembers(time); //sort array by total hours and availability
-            //console.log("members array", memberArr);
-            /* if (memberArr[0].availability[time]) {
-              //if first index is available, add to current block in group schedule
-              groupScheduleArr[time] = memberArr[0].name;
-              memberArr[0].hours++;
-            } else {
-              //otherwise, add empty
-              groupScheduleArr[time] = 'empty';
-            }
-            prevMember1 = memberArr[0];
-            if (numDay == 1) {
-              continue;
-            } */
-            if (memberArr[0] == prevMember2) {
+
+            if (numDay == 2 && memberArr[0] == prevMember2) {
               if (memberArr[1].availability[time]) {
                 //if index 1 is available add that instead
                 groupScheduleArr[time] = memberArr[1].name;
@@ -186,7 +184,10 @@ export async function createGroupSchedule(groupCode, tentType) {
                 groupScheduleArr[time] = 'empty';
               }
             }
+            
           }
+
+          //if(numDay==1) continue;
 
           if (numDay == 2){
             if ( prevMember2.availability[time] && prevMember2.consecutive < MAXBLOCK) {
@@ -203,7 +204,6 @@ export async function createGroupSchedule(groupCode, tentType) {
                   //if index 1 is available add that instead
                   groupScheduleArr[time] += ' ' + memberArr[1].name;
                   memberArr[1].hours++;
-                  //memberArr[1].consecutive++;
                   prevMember2 = memberArr[1];
                 } else {
                   //otherwise no one is available and add empty
@@ -215,7 +215,6 @@ export async function createGroupSchedule(groupCode, tentType) {
                   //then add the first index instead
                   groupScheduleArr[time] += ' ' + memberArr[0].name;
                   memberArr[0].hours++;
-                  //memberArr[0].consecutive++;
                   prevMember2 = memberArr[0];
                 } else {
                   //if not available, no one is available so add empty
@@ -224,71 +223,10 @@ export async function createGroupSchedule(groupCode, tentType) {
               }
               
             }
-            continue;
+            
           }
 
-          
-          /* if (  //If black tent (numDay=2), and previous1 is not available but previous2 is, switch variables so rest of code works
-            numDay == 2 &&
-            (!prevMember1.availability[time] || prevMember1.consecutive > MAXBLOCK) &&
-            prevMember2.availability[time]
-          ) {
-            let temp = prevMember1;
-            prevMember1 = prevMember2;
-            prevMember2 = temp;
-            console.log('switched, prevMember1: ' + prevMember1.name + '; prevMember2: ' + prevMember2.name);
-          }
-
-          //if the previous member had the last shift and has not reached a 4hr shift, add them to the current block
-          console.log(time + ': ' + prevMember1.name + ' consecutive hours '  + prevMember1.consecutive + ' with ' + prevMember1.hours + ' scheduled');
-          console.log(time + ': ' + prevMember2.name + ' consecutive hours '  + prevMember2.consecutive + ' with ' + prevMember2.hours + ' scheduled');
-          if (prevMember1.availability[time] && prevMember1.consecutive < MAXBLOCK) {
-            groupScheduleArr[time] = prevMember1.name + " ";
-            prevMember1.hours++;
-            prevMember1.consecutive++;
-            if (numDay == 2) { //if it is a 'black' tent
-              if (prevMember2.availability[time] && prevMember2.consecutive < MAXBLOCK) { //if previous2 is available, add them to this block as well
-                groupScheduleArr[time] += prevMember2.name + " ";
-                prevMember2.hours++;
-                prevMember2.consecutive++;
-              } else { //otherwise, sort array and add next member with least # of hours
-                //reset counter for consecutive hours for second member b/c they will not their block
-                prevMember2.consecutive = 0; 
-                sortMembers(time);
-                //if index 0 is equal to the 1st previous member (already added to the schedule for the current block)
-                if (memberArr[0] == prevMember1) { 
-                  if (memberArr[1].availability[time]) { //if index 1 is available add that instead
-                    groupScheduleArr[time] += memberArr[1].name + " ";
-                    memberArr[1].hours++;
-                    memberArr[1].consecutive++;
-                    prevMember2 = memberArr[1];
-                  } else { //otherwise no one is available and add empty
-                    groupScheduleArr[time] += "empty ";
-                  }
-                } else { //If the first index does not equal the previous1 member
-                  if (memberArr[0].availability[time]) { //then add the first index instead
-                    groupScheduleArr[time] += memberArr[0].name + " ";
-                    memberArr[0].hours++;
-                    memberArr[0].consecutive++;
-                    prevMember2 = memberArr[0];
-                  } else { //if not available, no one is available so add empty
-                    groupScheduleArr[time] += "empty ";
-                  }
-                }
-                
-              }
-            }
-           
-            continue; //continue to the next iteration of the large for loop
-          }*/
-/*           prevMember1.consecutive = 0; //reset counter for consecutive hours if no blocks are continued
-
-          if (prevMember2.consecutive >= MAXBLOCK) {
-            prevMember2.consecutive = 0;
-          }
-          if (numDay == 2 && !prevMember2.availability[time]) {
-            prevMember2.consecutive = 0;
-          } */
+          continue;
           //might need to set prevMember2.consecutive, if tenttype is black
         }
 
@@ -344,6 +282,9 @@ export async function createGroupSchedule(groupCode, tentType) {
           return collSnap;
         })
     }).then((collSnap)=>{   //To update memberArr in group with their unique id and name that corresponds with the schedule
+      for (let index = 1; index < memberIDs.length; index++) {
+        memberIDs[index].color = colors[index];
+      }
       console.log(memberIDs);
       firebase.firestore().collection('groups').doc(groupCode)
       .update({

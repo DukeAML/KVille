@@ -38,6 +38,8 @@ let colorCodes = [
   { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0},
 ];
 
+let prevColorCodes;
+
 //let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
 let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
 
@@ -189,8 +191,9 @@ export default function Schedule({ route }) {
   //      person: string holding the person currently scheduled for the time cell
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
-    const indexofUser = colorCodes.findIndex((object) => object.name === person);
-    const backgroundColor = colorCodes[indexofUser].color; //gets background color from the colorCodes Array
+    const indexofUser = (weekDisplay == 'Current Week') ? colorCodes.findIndex((object) => object.name === person):
+      prevColorCodes.findIndex((object) => object.name === person);
+    const backgroundColor = (weekDisplay == 'Current Week') ? colorCodes[indexofUser].color : prevColorCodes[indexofUser].color; //gets background color from the colorCodes Array
     if (weekDisplay == 'Current Week'){
       return (
         <View style={{ flex: 1 }}>
@@ -380,18 +383,25 @@ export default function Schedule({ route }) {
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
-                  prevSchedule = currSchedule;
-                  currSchedule = groupSchedule
+                  if (currSchedule !== undefined) prevSchedule = currSchedule; //If current schedule is blank, no need to update
+                  //else ;
+                  prevColorCodes = colorCodes;
+                  currSchedule = groupSchedule;
                   //schedule = groupSchedule; //change **
 
                   groupRef.update({
                     groupSchedule: groupSchedule,
                     previousSchedule: prevSchedule,
+                    previousMemberArr: colorCodes,
                   });
+                  setSnackMessage('New Schedule Created');
+                  toggleSnackBar();
                 }
-              );
-              setSnackMessage('New Schedule Created');
-              toggleSnackBar();
+              ).catch ((error) => {
+                console.error(error);
+                setSnackMessage('Not enough members');
+                toggleSnackBar();
+              });  
             }}
           >
             <View style={styles.confirmationBottomBtn}>
@@ -441,9 +451,6 @@ export default function Schedule({ route }) {
         colorCodes[i].changedHrs = 0;
       }
     });
-    /* groupRef.update({
-      groupSchedule: schedule,
-    }); */
     setSnackMessage('Changes Saved');
     toggleSnackBar();
   };
@@ -456,61 +463,59 @@ export default function Schedule({ route }) {
         try {
           await SplashScreen.preventAutoHideAsync();
 
-          colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+          //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+          prevColorCodes = new Array();
 
           //stores group schedule in global variable
           await groupRef.get().then((doc) => {
             //schedule = doc.data().groupSchedule; //change**
             currSchedule = doc.data().groupSchedule;
             prevSchedule = doc.data().previousSchedule;
-            memberIDArray = doc.data().memberArr;
+            //memberIDArray = doc.data().memberArr;
+            colorCodes = doc.data().memberArr;
+            prevColorCodes = doc.data().previousMemberArr;
           })
 
           setSchedule(currSchedule); //force refresh 
           console.log('member id array:' , memberIDArray);
 
           //if (weekDisplay == 'Current Week'){
-            //For setting up the color codes as well as the updating scheduled hrs
-            for (let index = 0; index < memberIDArray.length; index++){
-              if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-              colorCodes.push(
-                {
-                id: memberIDArray[index].id,
-                name: memberIDArray[index].name,
-                color: colors[index+1],
-                changedHrs: 0,
-              });
-            }
-          //}
-          /* else {
-            for (let i = 0; i < schedule.length; i++) {
-              if (colorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
-              if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
-              const people = schedule[i].split(' ');
-              for (let j = 0; j < people.length; j++) {
-                if (!colorCodes.some((e) => e.name === people[j])) {
-                  if (people[j] !== '') {
-                    colorCodes.push({
-                      name: people[j],
-                      color: '',
-                    });
-                  }
+          //For setting up the color codes as well as the updating scheduled hrs
+          /* for (let index = 0; index < memberIDArray.length; index++){
+            if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+            colorCodes.push(
+              {
+              id: memberIDArray[index].id,
+              name: memberIDArray[index].name,
+              color: colors[index+1],
+              changedHrs: 0,
+            });
+          } */
+
+          //prevColorCodes = [...colorCodes];
+          /* let counterIndex = new Array();
+          for (let i = 0; i < prevSchedule.length; i++) {
+            //if (prevColorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
+            if (counterIndex.length >= prevColorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
+            if (prevSchedule[i] === prevSchedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
+            const people = prevSchedule[i].split(' ');
+            for (let j = 0; j < people.length; j++) {
+              let currentPerson = people[j];
+              let added = (counterIndex.some((e) => e === currentPerson));
+              
+              if (prevColorCodes.some((e) => e.name === currentPerson)) {
+                continue;
+              } else {
+                for (let k = 0; k < prevColorCodes.length; k++){
+                  if (!(counterIndex.some((e) => e === prevColorCodes[k]))
+                    && prevColorCodes[k].name != currentPerson && currentPerson!='') prevColorCodes[k].name = currentPerson;
                 }
               }
+              if (!added && currentPerson !== '') counterIndex.push(currentPerson);
             } 
-            for (let index = 0; index < colorCodes.length; index++) {
-              colorCodes[index].color = colors[index];
-            }
-          } */
+          }
+          console.log('counter index: ', counterIndex); */
           
-
-          //check the state of the schedule and if it is prevSchedule--> chnage colorcodes to be accessed by schedule
-          /* {
-            id: index+1,
-            name: ,
-            color: '',
-
-          } */
 
 
         } catch (e) {
@@ -543,8 +548,30 @@ export default function Schedule({ route }) {
   }
   //console.log('Full Schedule: ', schedule);
 
-  
   if (weekDisplay == 'Previous Week'){
+    const arrayLength = prevSchedule[3].split(' ').length;
+    switch (arrayLength) {
+      case 10:
+        numberForDay = 2;
+        numberForNight = 10;
+        break;
+      case 6:
+        numberForDay = 1;
+        numberForNight = 6;
+        break;
+      default:
+        numberForDay = 1;
+        numberForNight = 2;
+    }
+    console.log('new number parameters',numberForDay, numberForNight);
+  }
+
+  //Possible Ideas:
+  //Make a prevMemberArr in firebase, so its not so janky
+  //Make ColorCodes a state like the schedule
+  //Before updating prevSchedule, check if the current one is blank, if it is don't update
+
+/*   if (weekDisplay == 'Previous Week'){
     //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
     for (let k = 1; k<colorCodes.length;k++){colorCodes[k].name = ''} //reset names to empty
     let index = 1;
@@ -556,20 +583,25 @@ export default function Schedule({ route }) {
         if (!colorCodes.some((e) => e.name === people[j])) {
           colorCodes[index].name=people[j];
           index++;
-          /* if (people[j] !== '') {
-            colorCodes.push({
-              name: people[j],
-              color: '',
-            });
-          } */
         }
       }
-    }
-    //initializes the colorCodes so each member has a unique color background
+    } //initializes the colorCodes so each member has a unique color background
     for (let index = 0; index < colorCodes.length; index++) {
       colorCodes[index].color = colors[index];
     }
-  }
+  } else if (weekDisplay == 'Current Week'){
+    colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+    for (let index = 0; index < memberIDArray.length; index++){
+      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+      colorCodes.push(
+        {
+        id: memberIDArray[index].id,
+        name: memberIDArray[index].name,
+        color: colors[index+1],
+        changedHrs: 0,
+      });
+    }
+  } */
 
 /*   console.log('member id array:' , memberIDArray);
 
@@ -592,6 +624,7 @@ export default function Schedule({ route }) {
   
 
   console.log('colors: ', colorCodes);
+  console.log('previous colors: ', prevColorCodes);
 
   return (
     <View style={styles.bigContainer} onLayout={onLayoutRootView}>

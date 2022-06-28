@@ -114,6 +114,7 @@ export default function CreateGroup({ navigation }) {
       groupSchedule: [],
       memberArr: [],
       previousSchedule: [],
+      previousMemberArr: [],
     });
     //adds current user to collection of members in the group
     groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
