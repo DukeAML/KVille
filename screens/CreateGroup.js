@@ -256,7 +256,14 @@ export default function CreateGroup({ navigation }) {
             value={group.userName}
             placeholder={group.userName}
             onChangeText={(userName) =>
-              setGroup({ ...group, userName: userName })
+              setGroup({
+                ...group,
+                userName: userName
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, ''),
+              })
             }
           />
         </View>

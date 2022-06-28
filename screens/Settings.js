@@ -153,7 +153,7 @@ export default function Settings({ route, navigation }) {
     
     console.log('prevTentType', prevTentType);
     console.log('currTentType', tent);
-    if (prevTentType !== tent) {
+    if (prevTentType) {
       groupRef.update({
         groupSchedule: []
       }).then(()=> {
@@ -333,7 +333,15 @@ export default function Settings({ route, navigation }) {
         style={[styles.textInput, styles.shadowProp]}
         value={name}
         placeholder={name}
-        onChangeText={(name) => setName(name)}
+        onChangeText={(name) =>
+          setName(
+            name
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/\s+/g, '')
+              .replace(/[^a-z0-9]/gi, '')
+          )
+        }
       />
       {groupRole === 'Creator' ? (
         <View
@@ -395,10 +403,7 @@ export default function Settings({ route, navigation }) {
           <Picker.Item label='Walk up line' value='Walk up line' />
         </Picker>
       ) : null}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={toggleConfirmation}
-      >
+      <TouchableOpacity style={styles.button} onPress={toggleConfirmation}>
         {groupRole === 'Creator' ? (
           <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
             Delete Group
