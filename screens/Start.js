@@ -337,7 +337,8 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 35,
     width: '90%',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   topText: {
     //"welcome to kville" text

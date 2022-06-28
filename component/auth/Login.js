@@ -52,11 +52,11 @@ export default function Login(props) {
           message = 'Not a valid email';
         }
         if (error.message.includes('There is no user record')) {
-          message = 'Account does not exist'
-        } 
+          message = 'Account does not exist';
+        }
         if (error.message.includes('The password is invalid')) {
           message = 'Incorrect password';
-        } 
+        }
         toggleSnackBar();
         setSnackMessage(message);
         return;
@@ -165,13 +165,27 @@ export default function Login(props) {
         </View>
       </KeyboardAvoidingView>
       <View style={styles.bottomButton}>
-        <Text>Don't have an account? </Text>
-        <Text
-          title='Register'
-          onPress={() => props.navigation.navigate('Register')}
-          style={{ textAlign: 'center', color: '#0FA4DC' }}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignContent: 'center',
+            justifyContent: 'center',
+          }}
         >
-          Sign Up
+          <Text>Don't have an account? </Text>
+          <Text
+            title='Register'
+            onPress={() => props.navigation.navigate('Register')}
+            style={{ textAlign: 'center', color: '#0FA4DC' }}
+          >
+            Sign Up
+          </Text>
+        </View>
+        <Text
+          style={{ margin: 10, color: '#0FA4DC' }}
+          onPress={() => props.navigation.navigate('ForgotPassword')}
+        >
+          Forgot Password?
         </Text>
       </View>
       <Snackbar
@@ -306,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   bottomButton: {
-    flexDirection: 'row',
+    //flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'center',
     borderTopColor: 'gray',

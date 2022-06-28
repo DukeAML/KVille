@@ -219,7 +219,15 @@ export default function JoinGroup({ navigation }) {
             style={[styles.textInput, styles.shadowProp]}
             value={name}
             placeholder={name}
-            onChangeText={(name) => setName(name)}
+            onChangeText={(name) =>
+              setName(
+                name
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, '')
+              )
+            }
           />
           {/* <TouchableOpacity
         style={styles.button}
