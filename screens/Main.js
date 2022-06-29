@@ -203,6 +203,7 @@ export default function Main() {
   useEffect(() => {
     // clearData(dispatch);
     // fetchUser(dispatch);
+    let mounted = true;
     dispatch(reset());
     firebase
       .firestore()
@@ -210,13 +211,19 @@ export default function Main() {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((snapshot) => {
-        if (snapshot.exists) {
+        if (mounted && snapshot.exists) {
           dispatch(setCurrentUser(snapshot.data()));
         } else {
           console.log('does not exist');
         }
+      }).then(()=>{
+        console.log('cleared data and fetched user');
+      }).catch((error)=> {
+        console.error(error)
       });
-    console.log('cleared data and fetched user');
+    
+      return () => (mounted=false);
+
   }, []);
 
   const onLayoutRootView = useCallback(async () => {

@@ -40,6 +40,7 @@ export default function App() {
   });
 
   useEffect(() => {
+    let mounted = true;
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
@@ -67,8 +68,11 @@ export default function App() {
         console.warn(e);
       }
     }
+    if (mounted) {
+      prepare();
+    }
 
-    prepare();
+    return () => (mounted = false);
   }, []);
 
   const onLayoutRootView = useCallback(async () => {

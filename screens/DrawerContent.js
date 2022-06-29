@@ -36,6 +36,10 @@ export default function DrawerContent(props) {
         .doc(firebase.auth().currentUser.uid)
         .update({
           inTent: status,
+        }).then(()=>{
+          console.log('successfully updated tent status');
+        }).catch((error)=>{
+          console.error(error);
         });
     }
     return () => (mounted = false);
@@ -60,6 +64,8 @@ export default function DrawerContent(props) {
             } else {
               console.log('doc doesn\'t exist');
             }
+          }).catch((error)=>{
+            console.error(error);
           });
       }
       return () => (mounted = false);

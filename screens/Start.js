@@ -85,6 +85,8 @@ export default function Start({ navigation }) {
               .then((doc) => {
                 console.log('tent type', doc.data().tentType);
                 dispatch(setTentType(doc.data().tentType));
+              }).catch((e) =>{
+                console.error(e);
               });
             await firebase
               .firestore()
@@ -97,16 +99,22 @@ export default function Start({ navigation }) {
                 groupRole = memDoc.data().groupRole;
                 dispatch(setUserName(memDoc.data().name));
                 dispatch(setGroupRole(groupRole));
-              });
-
+              }).catch((e) =>{
+                console.error(e);
+              });;
+            
             dispatch(setGroupCode(item.code));
             dispatch(setGroupName(item.groupName));
-            navigation.navigate('GroupInfo', {
-              //pass groupcode and group name parameters
-              groupCode: item.code,
-              groupName: item.groupName,
-              groupRole: groupRole,
-            });
+            try {
+              navigation.navigate('GroupInfo', {
+                //pass groupcode and group name parameters
+                groupCode: item.code,
+                groupName: item.groupName,
+                groupRole: groupRole,
+              });
+            } catch (error) {
+              console.error(error);
+            }
           };
           updateRedux();
         }}
@@ -120,14 +128,15 @@ export default function Start({ navigation }) {
     .collection('users')
     .doc(firebase.auth().currentUser.uid);
 
-  let mounted;
   useFocusEffect(
     useCallback(() => {
-      mounted = true;
+      let mounted = true;
 
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
+
+          GROUPS = [];
 
           //Accesses Names of Members from firebase and adds them to the array
           await userRef.get().then((doc) => {
@@ -154,6 +163,8 @@ export default function Start({ navigation }) {
                 });
               }
             }
+          }).catch((error) => {
+            console.error(error);
           });
         } catch (e) {
           console.warn(e);
@@ -165,10 +176,10 @@ export default function Start({ navigation }) {
       prepare();
 
       return () => {
-        mounted = false;
-        GROUPS = [];
-        setIsReady(false);
+        //GROUPS = [];
+        //setIsReady(false);
         console.log('start screen was unfocused');
+        mounted = false;
       };
     }, [])
   );

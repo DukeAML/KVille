@@ -8,11 +8,14 @@ export default function Monitor() {
   const [time, setTime] = useState();
 
   useEffect(() => {
+    let mounted = true;
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
 
-        setTime(Math.round((new Date(2023, 1, 5).getTime() - Date.now())/1000));
+        setTime(
+          Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000)
+        );
       } catch (e) {
         console.warn(e);
       } finally {
@@ -20,8 +23,10 @@ export default function Monitor() {
         setIsReady(true);
       }
     }
-
-    prepare();
+    if (mounted) {
+      prepare();
+    }
+    return () => (mounted = false);
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -35,7 +40,10 @@ export default function Monitor() {
   }
 
   return (
-    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }} onLayout={onLayoutRootView}>
+    <View
+      style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+      onLayout={onLayoutRootView}
+    >
       <CountDown
         size={30}
         until={time}

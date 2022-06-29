@@ -51,6 +51,7 @@ export default function GroupInfo({ route }) {
         try {
           await SplashScreen.preventAutoHideAsync();
 
+          members = [];
           //Accesses Names of Members from firebase and adds them to the array
           await GroupRef.collection('members')
             .get()
@@ -114,8 +115,8 @@ export default function GroupInfo({ route }) {
       prepare();
 
       return () => {
-        members = [];
-        setIsReady(false);
+        //members = [];
+        //setIsReady(false);
         mounted = false;
       };
     }, [route.params])

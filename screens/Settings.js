@@ -77,10 +77,12 @@ export default function Settings({ route, navigation }) {
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
-
-          setCurrGroupName(groupName);
-          setName(userName);
-          setTent(tentType);
+          
+          if (mounted) {
+            setCurrGroupName(groupName);
+            setName(userName);
+            setTent(tentType);
+          }
           //console.log('fetched isCreator from firebase', isCreator);
         } catch (e) {
           console.warn(e);
@@ -89,16 +91,16 @@ export default function Settings({ route, navigation }) {
           setIsReady(true);
         }
       }
-
-      prepare();
-
+      if (mounted) {
+        prepare();
+      } 
+      
       return () => {
-        mounted = false;
         setCurrGroupName(groupName);
         setName(userName);
         setTent(tentType);
         setIsReady(false);
-        //setCreator(false);
+        mounted = false;
       };
     }, [route.params])
   );
