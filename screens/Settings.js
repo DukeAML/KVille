@@ -94,12 +94,12 @@ export default function Settings({ route, navigation }) {
       if (mounted) {
         prepare();
       } 
-      
+
       return () => {
         setCurrGroupName(groupName);
         setName(userName);
         setTent(tentType);
-        setIsReady(false);
+        //setIsReady(false);
         mounted = false;
       };
     }, [route.params])

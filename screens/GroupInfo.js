@@ -46,12 +46,16 @@ export default function GroupInfo({ route }) {
       let mounted = true;
       console.log('GroupRef', route.params.groupCode);
       //const GroupRef = firebase.firestore().collection('groups').doc(route.params.groupCode);
-
+      if (mounted) {
+        members = [];
+        setCurrIndex(0);
+        //setIsReady(false);
+      }
       async function prepare() {
+        console.log('Group info screen is ready: ', isReady);
         try {
           await SplashScreen.preventAutoHideAsync();
 
-          members = [];
           //Accesses Names of Members from firebase and adds them to the array
           await GroupRef.collection('members')
             .get()
@@ -103,20 +107,26 @@ export default function GroupInfo({ route }) {
                 console.log('done reading members', members);
                 //console.log('ARRAY: ', members);
               }
+            })
+            .catch((error) => {
+              console.error(error);
             });
-          setCurrIndex(0);
+          //setCurrIndex(0);
         } catch (e) {
           console.warn(e);
         } finally {
           // Tell the application to render
+          console.log('Group Info screen is now ready', members);
           setIsReady(true);
         }
       }
-      prepare();
+      if (mounted) {
+        prepare();
+      }
 
       return () => {
-        //members = [];
-        //setIsReady(false);
+        //setCurrIndex(0);
+        setIsReady(false);
         mounted = false;
       };
     }, [route.params])
@@ -137,7 +147,7 @@ export default function GroupInfo({ route }) {
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
-      toggleModal();
+    toggleModal();
   };
 
   const onLayoutRootView = useCallback(async () => {

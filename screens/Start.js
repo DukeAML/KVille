@@ -132,11 +132,15 @@ export default function Start({ navigation }) {
     useCallback(() => {
       let mounted = true;
 
+      if (mounted) {
+        //setIsReady(false);
+        console.log('Start screen is ready: ', isReady);
+        GROUPS = [];
+      }
+
       async function prepare() {
         try {
           await SplashScreen.preventAutoHideAsync();
-
-          GROUPS = [];
 
           //Accesses Names of Members from firebase and adds them to the array
           await userRef.get().then((doc) => {
@@ -173,12 +177,14 @@ export default function Start({ navigation }) {
           setIsReady(true);
         }
       }
-      prepare();
+
+      if (mounted) {
+        prepare();
+      }
 
       return () => {
-        //GROUPS = [];
-        //setIsReady(false);
-        console.log('start screen was unfocused');
+        setIsReady(false);
+        //console.log('start screen was unfocused');
         mounted = false;
       };
     }, [])

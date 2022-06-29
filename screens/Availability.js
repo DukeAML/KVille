@@ -194,7 +194,7 @@ export default function Availability({ route }) {
         prepare();
       }
       return () => {
-        setIsReady(false);
+        //setIsReady(false);
         mounted = false;
       };
     }, [route.params])
