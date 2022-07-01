@@ -1,0 +1,309 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.alvinhong.duketentingandroidv1"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="31" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:4:3-75
+11-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:4:20-73
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:2:3-64
+12-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:2:20-62
+13    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+13-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:3:3-77
+13-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:3:20-75
+14    <uses-permission android:name="android.permission.VIBRATE" />
+14-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:5:3-63
+14-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:5:20-61
+15    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+15-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:6:3-78
+15-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:6:20-76
+16
+17    <queries>
+17-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:7:3-13:13
+18        <intent>
+18-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:8:5-12:14
+19            <action android:name="android.intent.action.VIEW" />
+19-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:7-58
+19-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:15-56
+20
+21            <category android:name="android.intent.category.BROWSABLE" />
+21-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:7-67
+21-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:17-65
+22
+23            <data android:scheme="https" />
+23-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:7-37
+23-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:13-35
+24        </intent>
+25        <!-- Query open documents -->
+26        <intent>
+26-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:17:9-19:18
+27            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+27-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:18:13-79
+27-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:18:21-76
+28        </intent>
+29    </queries>
+30
+31    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+31-->[com.facebook.flipper:flipper:0.125.0] C:\Users\ahong\.gradle\caches\transforms-3\3ea372bf8c6a71c26b954756a594a11e\transformed\jetified-flipper-0.125.0\AndroidManifest.xml:16:5-76
+31-->[com.facebook.flipper:flipper:0.125.0] C:\Users\ahong\.gradle\caches\transforms-3\3ea372bf8c6a71c26b954756a594a11e\transformed\jetified-flipper-0.125.0\AndroidManifest.xml:16:22-73
+32    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+32-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:24:5-79
+32-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:24:22-76
+33    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+33-->[com.android.installreferrer:installreferrer:1.0] C:\Users\ahong\.gradle\caches\transforms-3\2738a97cbbccc21cdd9a901070863d93\transformed\jetified-installreferrer-1.0\AndroidManifest.xml:9:5-110
+33-->[com.android.installreferrer:installreferrer:1.0] C:\Users\ahong\.gradle\caches\transforms-3\2738a97cbbccc21cdd9a901070863d93\transformed\jetified-installreferrer-1.0\AndroidManifest.xml:9:22-107
+34
+35    <application
+35-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:3-33:17
+36        android:name="com.alvinhong.duketentingandroidv1.MainApplication"
+36-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:16-47
+37        android:allowBackup="true"
+37-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:162-188
+38        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+38-->[androidx.core:core:1.6.0] C:\Users\ahong\.gradle\caches\transforms-3\adc1edb53fe1447a753a1b9f3cac5fbd\transformed\core-1.6.0\AndroidManifest.xml:24:18-86
+39        android:debuggable="true"
+40        android:icon="@mipmap/ic_launcher"
+40-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:81-115
+41        android:label="@string/app_name"
+41-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:48-80
+42        android:roundIcon="@mipmap/ic_launcher_round"
+42-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:116-161
+43        android:theme="@style/AppTheme"
+43-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:189-220
+44        android:usesCleartextTraffic="true" >
+44-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:14:221-256
+45        <meta-data
+45-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:15:5-82
+46            android:name="expo.modules.updates.ENABLED"
+46-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:15:16-59
+47            android:value="true" />
+47-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:15:60-80
+48        <meta-data
+48-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:16:5-93
+49            android:name="expo.modules.updates.EXPO_SDK_VERSION"
+49-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:16:16-68
+50            android:value="45.0.0" />
+50-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:16:69-91
+51        <meta-data
+51-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:17:5-105
+52            android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH"
+52-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:17:16-80
+53            android:value="ALWAYS" />
+53-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:17:81-103
+54        <meta-data
+54-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:18:5-99
+55            android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS"
+55-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:18:16-79
+56            android:value="0" />
+56-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:18:80-97
+57        <meta-data
+57-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:19:5-135
+58            android:name="expo.modules.updates.EXPO_UPDATE_URL"
+58-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:19:16-67
+59            android:value="https://exp.host/@anonymous/duke-tenting-app-rev3" />
+59-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:19:68-133
+60
+61        <activity
+61-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:5-31:16
+62            android:name="com.alvinhong.duketentingandroidv1.MainActivity"
+62-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:15-43
+63            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+63-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:77-154
+64            android:exported="true"
+64-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:276-299
+65            android:label="@string/app_name"
+65-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:44-76
+66            android:launchMode="singleTask"
+66-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:155-186
+67            android:screenOrientation="portrait"
+67-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:300-336
+68            android:theme="@style/Theme.App.SplashScreen"
+68-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:230-275
+69            android:windowSoftInputMode="adjustResize" >
+69-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:20:187-229
+70            <intent-filter>
+70-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:21:7-24:23
+71                <action android:name="android.intent.action.MAIN" />
+71-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:22:9-60
+71-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:22:17-58
+72
+73                <category android:name="android.intent.category.LAUNCHER" />
+73-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:23:9-68
+73-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:23:19-66
+74            </intent-filter>
+75            <intent-filter>
+75-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:25:7-30:23
+76                <action android:name="android.intent.action.VIEW" />
+76-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:7-58
+76-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:15-56
+77
+78                <category android:name="android.intent.category.DEFAULT" />
+78-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:9-67
+78-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:19-65
+79                <category android:name="android.intent.category.BROWSABLE" />
+79-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:7-67
+79-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:17-65
+80
+81                <data android:scheme="com.alvinhong.duketentingandroidv1" />
+81-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:7-37
+81-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:13-35
+82            </intent-filter>
+83        </activity>
+84        <activity
+84-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:32:5-106
+85            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+85-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:32:15-79
+86            android:exported="false" />
+86-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:32:80-104
+87
+88        <provider
+88-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:23:9-32:20
+89            android:name="expo.modules.filesystem.FileSystemFileProvider"
+89-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:24:13-74
+90            android:authorities="com.alvinhong.duketentingandroidv1.FileSystemFileProvider"
+90-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:25:13-74
+91            android:exported="false"
+91-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:26:13-37
+92            android:grantUriPermissions="true" >
+92-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:27:13-47
+93            <meta-data
+93-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:29:13-31:70
+94                android:name="android.support.FILE_PROVIDER_PATHS"
+94-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:30:17-67
+95                android:resource="@xml/file_system_provider_paths" />
+95-->[:expo-file-system] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-file-system\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:31:17-67
+96        </provider>
+97
+98        <meta-data
+98-->[:expo-modules-core] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-12:89
+99            android:name="org.unimodules.core.AppLoader#react-native-headless"
+99-->[:expo-modules-core] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-79
+100            android:value="expo.modules.adapters.react.apploader.RNHeadlessAppLoader" />
+100-->[:expo-modules-core] C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-86
+101
+102        <activity
+102-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:27:9-44:20
+103            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+103-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:28:13-80
+104            android:excludeFromRecents="true"
+104-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:29:13-46
+105            android:exported="true"
+105-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:30:13-36
+106            android:launchMode="singleTask"
+106-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:31:13-44
+107            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+107-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:32:13-72
+108            <intent-filter>
+108-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:33:13-43:29
+109                <action android:name="android.intent.action.VIEW" />
+109-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:7-58
+109-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:15-56
+110
+111                <category android:name="android.intent.category.DEFAULT" />
+111-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:9-67
+111-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:19-65
+112                <category android:name="android.intent.category.BROWSABLE" />
+112-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:7-67
+112-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:17-65
+113
+114                <data
+114-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:7-37
+115                    android:host="firebase.auth"
+116                    android:path="/"
+117                    android:scheme="genericidp" />
+117-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:13-35
+118            </intent-filter>
+119        </activity>
+120        <activity
+120-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:45:9-62:20
+121            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+121-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:46:13-79
+122            android:excludeFromRecents="true"
+122-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:47:13-46
+123            android:exported="true"
+123-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:48:13-36
+124            android:launchMode="singleTask"
+124-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:49:13-44
+125            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+125-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:50:13-72
+126            <intent-filter>
+126-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:51:13-61:29
+127                <action android:name="android.intent.action.VIEW" />
+127-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:7-58
+127-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:9:15-56
+128
+129                <category android:name="android.intent.category.DEFAULT" />
+129-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:9-67
+129-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:27:19-65
+130                <category android:name="android.intent.category.BROWSABLE" />
+130-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:7-67
+130-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:10:17-65
+131
+132                <data
+132-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:7-37
+133                    android:host="firebase.auth"
+134                    android:path="/"
+135                    android:scheme="recaptcha" />
+135-->C:\Users\ahong\Documents\Projects\duke-tenting-app-rev2\android\app\src\main\AndroidManifest.xml:11:13-35
+136            </intent-filter>
+137        </activity>
+138
+139        <service
+139-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:64:9-70:19
+140            android:name="com.google.firebase.components.ComponentDiscoveryService"
+140-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:65:13-84
+141            android:directBootAware="true"
+141-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:35:13-43
+142            android:exported="false" >
+142-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:66:13-37
+143            <meta-data
+143-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:67:13-69:85
+144                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+144-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:68:17-109
+145                android:value="com.google.firebase.components.ComponentRegistrar" />
+145-->[com.google.firebase:firebase-auth:21.0.5] C:\Users\ahong\.gradle\caches\transforms-3\73977c837e9d475d7f2d3ed37cf39f8c\transformed\jetified-firebase-auth-21.0.5\AndroidManifest.xml:69:17-82
+146            <meta-data
+146-->[com.google.firebase:firebase-firestore:24.1.2] C:\Users\ahong\.gradle\caches\transforms-3\91ec6a3eaf5ef21cbd140ad4ba140c6a\transformed\jetified-firebase-firestore-24.1.2\AndroidManifest.xml:20:13-22:85
+147                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
+147-->[com.google.firebase:firebase-firestore:24.1.2] C:\Users\ahong\.gradle\caches\transforms-3\91ec6a3eaf5ef21cbd140ad4ba140c6a\transformed\jetified-firebase-firestore-24.1.2\AndroidManifest.xml:21:17-111
+148                android:value="com.google.firebase.components.ComponentRegistrar" />
+148-->[com.google.firebase:firebase-firestore:24.1.2] C:\Users\ahong\.gradle\caches\transforms-3\91ec6a3eaf5ef21cbd140ad4ba140c6a\transformed\jetified-firebase-firestore-24.1.2\AndroidManifest.xml:22:17-82
+149        </service>
+150
+151        <provider
+151-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:26:9-31:39
+152            android:name="com.google.firebase.provider.FirebaseInitProvider"
+152-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:27:13-77
+153            android:authorities="com.alvinhong.duketentingandroidv1.firebaseinitprovider"
+153-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:28:13-72
+154            android:directBootAware="true"
+154-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:29:13-43
+155            android:exported="false"
+155-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:30:13-37
+156            android:initOrder="100" />
+156-->[com.google.firebase:firebase-common:20.1.1] C:\Users\ahong\.gradle\caches\transforms-3\5c95f7c956cecb1609053a342d9e3576\transformed\jetified-firebase-common-20.1.1\AndroidManifest.xml:31:13-36
+157
+158        <activity
+158-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\ahong\.gradle\caches\transforms-3\dfeee12f217856b1796e1bda7e913005\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:20:9-22:45
+159            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+159-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\ahong\.gradle\caches\transforms-3\dfeee12f217856b1796e1bda7e913005\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:20:19-85
+160            android:exported="false"
+160-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\ahong\.gradle\caches\transforms-3\dfeee12f217856b1796e1bda7e913005\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:22:19-43
+161            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+161-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\ahong\.gradle\caches\transforms-3\dfeee12f217856b1796e1bda7e913005\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:21:19-78
+162
+163        <meta-data
+163-->[com.google.android.gms:play-services-basement:18.0.0] C:\Users\ahong\.gradle\caches\transforms-3\0a35c9d8e7c2f658a57b4d5ea126ae7b\transformed\jetified-play-services-basement-18.0.0\AndroidManifest.xml:21:9-23:69
+164            android:name="com.google.android.gms.version"
+164-->[com.google.android.gms:play-services-basement:18.0.0] C:\Users\ahong\.gradle\caches\transforms-3\0a35c9d8e7c2f658a57b4d5ea126ae7b\transformed\jetified-play-services-basement-18.0.0\AndroidManifest.xml:22:13-58
+165            android:value="@integer/google_play_services_version" />
+165-->[com.google.android.gms:play-services-basement:18.0.0] C:\Users\ahong\.gradle\caches\transforms-3\0a35c9d8e7c2f658a57b4d5ea126ae7b\transformed\jetified-play-services-basement-18.0.0\AndroidManifest.xml:23:13-66
+166    </application>
+167
+168</manifest>
