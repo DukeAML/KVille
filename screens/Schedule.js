@@ -60,22 +60,25 @@ export default function Schedule({ route }) {
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
 
+  const [isSnackVisible, setSnackVisible] = useState(false); // for temporary popup 
+  const [snackMessage, setSnackMessage] = useState(''); //message for the temporary popup
+
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
+  //Hooks and data for changing between the current weeks schedule and the previous one
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
   const [schedule,setSchedule] = useState(currSchedule);
   let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
-  
 
+  const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
+  
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
   const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
 
-  const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
 
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState(''); // for temporary popup 
+  
 
 
   /* const window = useWindowDimensions();
@@ -383,11 +386,15 @@ export default function Schedule({ route }) {
                 (groupSchedule) => {
                   console.log('Group Schedule', groupSchedule);
 
-                  if (currSchedule !== undefined) prevSchedule = currSchedule; //If current schedule is blank, no need to update
-                  //else ;
+                  //If current schedule is blank, no need to update
+                  if (currSchedule[0] !== undefined) prevSchedule = currSchedule; 
+                  
+                  //Update previous colorCodes to current and update current schedule to the groupSchedule
                   prevColorCodes = colorCodes;
                   currSchedule = groupSchedule;
                   //schedule = groupSchedule; //change **
+
+                  //in settings when changing tent type, do you store the current schedule into the previous?
 
                   groupRef.update({
                     groupSchedule: groupSchedule,
@@ -477,44 +484,8 @@ export default function Schedule({ route }) {
           })
 
           setSchedule(currSchedule); //force refresh 
-          console.log('member id array:' , memberIDArray);
+          //console.log('member id array:' , memberIDArray);
 
-          //if (weekDisplay == 'Current Week'){
-          //For setting up the color codes as well as the updating scheduled hrs
-          /* for (let index = 0; index < memberIDArray.length; index++){
-            if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-            colorCodes.push(
-              {
-              id: memberIDArray[index].id,
-              name: memberIDArray[index].name,
-              color: colors[index+1],
-              changedHrs: 0,
-            });
-          } */
-
-          //prevColorCodes = [...colorCodes];
-          /* let counterIndex = new Array();
-          for (let i = 0; i < prevSchedule.length; i++) {
-            //if (prevColorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
-            if (counterIndex.length >= prevColorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
-            if (prevSchedule[i] === prevSchedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
-            const people = prevSchedule[i].split(' ');
-            for (let j = 0; j < people.length; j++) {
-              let currentPerson = people[j];
-              let added = (counterIndex.some((e) => e === currentPerson));
-              
-              if (prevColorCodes.some((e) => e.name === currentPerson)) {
-                continue;
-              } else {
-                for (let k = 0; k < prevColorCodes.length; k++){
-                  if (!(counterIndex.some((e) => e === prevColorCodes[k]))
-                    && prevColorCodes[k].name != currentPerson && currentPerson!='') prevColorCodes[k].name = currentPerson;
-                }
-              }
-              if (!added && currentPerson !== '') counterIndex.push(currentPerson);
-            } 
-          }
-          console.log('counter index: ', counterIndex); */
           
 
 
@@ -548,7 +519,9 @@ export default function Schedule({ route }) {
   }
   //console.log('Full Schedule: ', schedule);
 
-  if (weekDisplay == 'Previous Week'){
+  //This is for changing the table parameters given that the previous week is a different tent type  
+  //than the current one
+  if (prevSchedule[3] !== undefined && weekDisplay == 'Previous Week'){
     const arrayLength = prevSchedule[3].split(' ').length;
     switch (arrayLength) {
       case 10:
@@ -563,67 +536,16 @@ export default function Schedule({ route }) {
         numberForDay = 1;
         numberForNight = 2;
     }
-    console.log('new number parameters',numberForDay, numberForNight);
+    console.log('Switched to Previous Schedule, new number parameters (day night):',numberForDay, numberForNight);
   }
 
   //Possible Ideas:
   //Make a prevMemberArr in firebase, so its not so janky
-  //Make ColorCodes a state like the schedule
   //Before updating prevSchedule, check if the current one is blank, if it is don't update
 
-/*   if (weekDisplay == 'Previous Week'){
-    //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
-    for (let k = 1; k<colorCodes.length;k++){colorCodes[k].name = ''} //reset names to empty
-    let index = 1;
-    for (let i = 0; i < schedule.length; i++) { //sets up the color assignment for each user
-      if (index >= colorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
-      if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
-      const people = schedule[i].split(' ');
-      for (let j = 0; j < people.length; j++) {
-        if (!colorCodes.some((e) => e.name === people[j])) {
-          colorCodes[index].name=people[j];
-          index++;
-        }
-      }
-    } //initializes the colorCodes so each member has a unique color background
-    for (let index = 0; index < colorCodes.length; index++) {
-      colorCodes[index].color = colors[index];
-    }
-  } else if (weekDisplay == 'Current Week'){
-    colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
-    for (let index = 0; index < memberIDArray.length; index++){
-      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-      colorCodes.push(
-        {
-        id: memberIDArray[index].id,
-        name: memberIDArray[index].name,
-        color: colors[index+1],
-        changedHrs: 0,
-      });
-    }
-  } */
-
-/*   console.log('member id array:' , memberIDArray);
-
-  //For setting up the color codes as well as the updating scheduled hrs
-  if (memberIDArray !== undefined){
-    for (let index = 0; index < memberIDArray.length; index++){
-      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
-      colorCodes.push(
-        {
-        id: memberIDArray[index].id,
-        name: memberIDArray[index].name,
-        color: colors[index+1],
-        changedHrs: 0,
-      });
-      //if (colorCodes.length >=13) break;
-    }
-  } */
   
 
-  
-
-  console.log('colors: ', colorCodes);
+  console.log('current colors: ', colorCodes);
   console.log('previous colors: ', prevColorCodes);
 
   return (
@@ -807,7 +729,7 @@ export default function Schedule({ route }) {
         visible={isSnackVisible}
         onDismiss={() => setSnackVisible(false)}
         wrapperStyle={{ top: 0 }}
-        duration={2000}
+        duration={1300}
       >
         <View style={{ width: '100%' }}>
           <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
@@ -971,6 +893,43 @@ let group = [
 ];  *
 
 
+          //if (weekDisplay == 'Current Week'){
+          //For setting up the color codes as well as the updating scheduled hrs
+          /* for (let index = 0; index < memberIDArray.length; index++){
+            if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+            colorCodes.push(
+              {
+              id: memberIDArray[index].id,
+              name: memberIDArray[index].name,
+              color: colors[index+1],
+              changedHrs: 0,
+            });
+          } */
+
+          //prevColorCodes = [...colorCodes];
+          /* let counterIndex = new Array();
+          for (let i = 0; i < prevSchedule.length; i++) {
+            //if (prevColorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
+            if (counterIndex.length >= prevColorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
+            if (prevSchedule[i] === prevSchedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
+            const people = prevSchedule[i].split(' ');
+            for (let j = 0; j < people.length; j++) {
+              let currentPerson = people[j];
+              let added = (counterIndex.some((e) => e === currentPerson));
+              
+              if (prevColorCodes.some((e) => e.name === currentPerson)) {
+                continue;
+              } else {
+                for (let k = 0; k < prevColorCodes.length; k++){
+                  if (!(counterIndex.some((e) => e === prevColorCodes[k]))
+                    && prevColorCodes[k].name != currentPerson && currentPerson!='') prevColorCodes[k].name = currentPerson;
+                }
+              }
+              if (!added && currentPerson !== '') counterIndex.push(currentPerson);
+            } 
+          }
+          console.log('counter index: ', counterIndex); */
+
 /* Old code for accessing firebase to assign color blocks to each member
   await groupRef
   .collection('members')
@@ -1002,4 +961,57 @@ let group = [
 
 
 //const groupRef = firebase.firestore().collection("groups").doc(code);
+
+
+/*   if (weekDisplay == 'Previous Week'){
+    //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+    for (let k = 1; k<colorCodes.length;k++){colorCodes[k].name = ''} //reset names to empty
+    let index = 1;
+    for (let i = 0; i < schedule.length; i++) { //sets up the color assignment for each user
+      if (index >= colorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
+      if (schedule[i] === schedule[i - 1]) continue; //if the past line is the same, skip as members will not be new
+      const people = schedule[i].split(' ');
+      for (let j = 0; j < people.length; j++) {
+        if (!colorCodes.some((e) => e.name === people[j])) {
+          colorCodes[index].name=people[j];
+          index++;
+        }
+      }
+    } //initializes the colorCodes so each member has a unique color background
+    for (let index = 0; index < colorCodes.length; index++) {
+      colorCodes[index].color = colors[index];
+    }
+  } else if (weekDisplay == 'Current Week'){
+    colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
+    for (let index = 0; index < memberIDArray.length; index++){
+      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+      colorCodes.push(
+        {
+        id: memberIDArray[index].id,
+        name: memberIDArray[index].name,
+        color: colors[index+1],
+        changedHrs: 0,
+      });
+    }
+  } */
+
+/*   console.log('member id array:' , memberIDArray);
+
+  //For setting up the color codes as well as the updating scheduled hrs
+  if (memberIDArray !== undefined){
+    for (let index = 0; index < memberIDArray.length; index++){
+      if (colorCodes.length >=13 || colorCodes.length - 1 == memberIDArray.length) break;
+      colorCodes.push(
+        {
+        id: memberIDArray[index].id,
+        name: memberIDArray[index].name,
+        color: colors[index+1],
+        changedHrs: 0,
+      });
+      //if (colorCodes.length >=13) break;
+    }
+  } */
+  
+
+
 
