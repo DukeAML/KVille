@@ -29,6 +29,7 @@ import {
   setGroupName,
   setUserName,
   setTentType,
+  setGroupRole
 } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
@@ -75,6 +76,7 @@ export default function Start({ navigation }) {
         groupCode={item.code}
         onPress={() => {
           const updateRedux = async () => {
+            let groupRole;
             await firebase
               .firestore()
               .collection('groups')
@@ -83,6 +85,8 @@ export default function Start({ navigation }) {
               .then((doc) => {
                 console.log('tent type', doc.data().tentType);
                 dispatch(setTentType(doc.data().tentType));
+              }).catch((e) =>{
+                console.error(e);
               });
             await firebase
               .firestore()
@@ -92,23 +96,25 @@ export default function Start({ navigation }) {
               .doc(firebase.auth().currentUser.uid)
               .get()
               .then((memDoc) => {
+                groupRole = memDoc.data().groupRole;
                 dispatch(setUserName(memDoc.data().name));
-              });
-
+                dispatch(setGroupRole(groupRole));
+              }).catch((e) =>{
+                console.error(e);
+              });;
+            
             dispatch(setGroupCode(item.code));
             dispatch(setGroupName(item.groupName));
-            // navigation.dispatch(
-            //   StackActions.replace('GroupInfo', {
-            //     //pass groupcode and group name parameters
-            //     groupCode: item.code,
-            //     groupName: item.groupName,
-            //   })
-            // );
-            navigation.navigate('GroupInfo', {
-              //pass groupcode and group name parameters
-              groupCode: item.code,
-              groupName: item.groupName,
-            });
+            try {
+              navigation.navigate('GroupInfo', {
+                //pass groupcode and group name parameters
+                groupCode: item.code,
+                groupName: item.groupName,
+                groupRole: groupRole,
+              });
+            } catch (error) {
+              console.error(error);
+            }
           };
           updateRedux();
         }}
@@ -122,10 +128,15 @@ export default function Start({ navigation }) {
     .collection('users')
     .doc(firebase.auth().currentUser.uid);
 
-  let mounted;
   useFocusEffect(
     useCallback(() => {
-      mounted = true;
+      let mounted = true;
+
+      if (mounted) {
+        //setIsReady(false);
+        console.log('Start screen is ready: ', isReady);
+        GROUPS = [];
+      }
 
       async function prepare() {
         try {
@@ -156,6 +167,8 @@ export default function Start({ navigation }) {
                 });
               }
             }
+          }).catch((error) => {
+            console.error(error);
           });
         } catch (e) {
           console.warn(e);
@@ -164,16 +177,22 @@ export default function Start({ navigation }) {
           setIsReady(true);
         }
       }
-      prepare();
+
+      if (mounted) {
+        prepare();
+      }
 
       return () => {
-        mounted = false;
-        GROUPS = [];
         setIsReady(false);
-        console.log('start screen was unfocused');
+        //console.log('start screen was unfocused');
+        mounted = false;
       };
     }, [])
   );
+
+  const onLogout = () => {
+    firebase.auth().signOut();
+  };
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
@@ -188,6 +207,11 @@ export default function Start({ navigation }) {
     <View style={styles.startContainer} onLayout={onLayoutRootView}>
       <View style={styles.topBanner}>
         <Text style={styles.topText}>Welcome to Krzyzewskiville!</Text>
+        <TouchableOpacity onPress={onLogout}>
+          <Text style={{ textAlign: 'center', color: '#000', fontSize: 15 }}>
+            Log out
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View
@@ -330,20 +354,17 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 35,
     width: '90%',
-    //borderWidth: 2
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   topText: {
     //"welcome to kville" text
-    //fontFamily: 'Arial',
     textAlign: 'left',
     fontWeight: '800',
     fontSize: 28,
   },
   groupText: {
     //text for 'Groups' and '+ Add Group'
-    //fontFamily: 'sans-serif',
-    //textAlign: 'left',
-    //width: '90%',
     fontSize: 24,
     fontWeight: '700',
     color: '#656565',
@@ -360,7 +381,6 @@ const styles = StyleSheet.create({
   },
   popUpHeader: {
     //style for text at the top of the popup
-    //fontFamily: 'Arial',
     fontWeight: '600',
     color: 'white',
     height: 40,
@@ -368,7 +388,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     textAlign: 'center',
     fontSize: 24,
-    //borderWidth: 1
   },
   popButton: {
     //style for the buttons in the popup
@@ -380,7 +399,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E5984',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    //borderWidth: 1
   },
   buttonText: {
     //popup buttons' text
@@ -401,7 +419,6 @@ const styles = StyleSheet.create({
     width: 45,
     height: 39,
     alignSelf: 'center',
-    //borderWidth: 1,
     marginLeft: 10,
     marginRight: 20,
   },
@@ -418,7 +435,6 @@ const styles = StyleSheet.create({
   listText: {
     //for the text inside the group cards
     fontSize: 15,
-    //fontFamily: "sans-serif",
     fontWeight: '500',
     color: 'black',
   },

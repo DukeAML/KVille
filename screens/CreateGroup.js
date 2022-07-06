@@ -26,6 +26,7 @@ import {
   setGroupName,
   setUserName,
   setTentType,
+  setGroupRole
 } from '../redux/reducers/userSlice';
 
 import coachKLogo from '../assets/coachKLogo.png';
@@ -112,6 +113,8 @@ export default function CreateGroup({ navigation }) {
       tentType: group.tentType,
       groupSchedule: [],
       memberArr: [],
+      previousSchedule: [],
+      previousMemberArr: [],
     });
     //adds current user to collection of members in the group
     groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
@@ -132,6 +135,7 @@ export default function CreateGroup({ navigation }) {
     dispatch(setGroupName(group.groupName));
     dispatch(setUserName(group.userName));
     dispatch(setTentType(group.tentType));
+    dispatch(setGroupRole('Creator'));
     userRef
       .get()
       .then((snapshot) => {
@@ -146,6 +150,7 @@ export default function CreateGroup({ navigation }) {
         navigation.navigate('GroupInfo', {
           groupCode: group.groupCode,
           groupName: group.groupName,
+          groupRole: 'Creator',
         });
       });
   };
@@ -252,7 +257,14 @@ export default function CreateGroup({ navigation }) {
             value={group.userName}
             placeholder={group.userName}
             onChangeText={(userName) =>
-              setGroup({ ...group, userName: userName })
+              setGroup({
+                ...group,
+                userName: userName
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, ''),
+              })
             }
           />
         </View>

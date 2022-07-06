@@ -9,15 +9,16 @@ import firebase from 'firebase/compat/app';
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0',
-  authDomain: 'duke-tenting-app-cc15b.firebaseapp.com',
-  databaseURL: 'https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com',
-  projectId: 'duke-tenting-app-cc15b',
-  storageBucket: 'duke-tenting-app-cc15b.appspot.com',
-  messagingSenderId: '391061238630',
-  appId: '1:391061238630:web:40b3664d20c6a247dc8ea7',
-  measurementId: 'G-54X8RY8NHT',
+  apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
+  authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
+  databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
+  projectId: "duke-tenting-app-cc15b",
+  storageBucket: "duke-tenting-app-cc15b.appspot.com",
+  messagingSenderId: "391061238630",
+  appId: "1:391061238630:web:85fbc00e4babf43cdc8ea7",
+  measurementId: "G-6QNGDGFLHZ"
 };
+
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -26,6 +27,7 @@ if (firebase.apps.length === 0) {
 import RegisterScreen from './component/auth/Register';
 import LoginScreen from './component/auth/Login';
 import MainScreen from './screens/Main';
+import ForgotPasswordScreen from './component/auth/ForgotPassword';
 
 import { persistor, store } from './redux/store/index';
 import { Provider } from 'react-redux';
@@ -39,6 +41,7 @@ export default function App() {
   });
 
   useEffect(() => {
+    let mounted = true;
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
@@ -66,8 +69,11 @@ export default function App() {
         console.warn(e);
       }
     }
+    if (mounted) {
+      prepare();
+    }
 
-    prepare();
+    return () => (mounted = false);
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -103,6 +109,28 @@ export default function App() {
                 name='Login'
                 component={LoginScreen}
                 options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='ForgotPassword'
+                component={ForgotPasswordScreen}
+                options={({ navigation }) => ({
+                  title: '',
+                  headerStyle: {
+                    backgroundColor: '#f5f5f5',
+                    borderBottomWidth: 0,
+                    shadowColor: 'transparent',
+                  },
+                  headerTitleStyle: {
+                    fontSize: 28,
+                  },
+                  // headerLeft: () => (
+                  //   <IconButton
+                  //     icon='menu'
+                  //     size={25}
+                  //     onPress={() => navigation.openDrawer()}
+                  //   ></IconButton>
+                  // ),
+                })}
               />
             </Stack.Navigator>
           </NavigationContainer>

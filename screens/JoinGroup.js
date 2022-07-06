@@ -23,6 +23,7 @@ import {
   setGroupName,
   setUserName,
   setTentType,
+  setGroupRole,
 } from '../redux/reducers/userSlice';
 // import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 import coachKLogo from '../assets/coachKLogo.png';
@@ -111,6 +112,7 @@ export default function JoinGroup({ navigation }) {
         dispatch(setUserName(name));
         dispatch(setGroupName(groupName));
         dispatch(setTentType(docSnapshot.data().tentType));
+        dispatch(setGroupRole('Member'));
         //updates current user's info
         await userRef
           .update({
@@ -140,6 +142,7 @@ export default function JoinGroup({ navigation }) {
             navigation.navigate('GroupInfo', {
               groupCode: groupCode,
               groupName: groupName,
+              groupRole: 'Member'
             });
           });
         // dispatch(inGroup());
@@ -216,7 +219,15 @@ export default function JoinGroup({ navigation }) {
             style={[styles.textInput, styles.shadowProp]}
             value={name}
             placeholder={name}
-            onChangeText={(name) => setName(name)}
+            onChangeText={(name) =>
+              setName(
+                name
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, '')
+              )
+            }
           />
           {/* <TouchableOpacity
         style={styles.button}
