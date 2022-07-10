@@ -37,6 +37,7 @@ import 'firebase/compat/firestore';
 
 import { useDispatch } from 'react-redux';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
+import {useTheme} from '../context/ThemeProvider';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
@@ -110,6 +111,7 @@ export default function Main() {
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  const { theme } = useTheme();
 
   //const [typeOfHelp, setTypeOfHelp] = useState('Availability');
 
@@ -273,7 +275,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Create Group',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -284,7 +286,7 @@ export default function Main() {
             presentation: 'modal',
             headerLeft: () => (
               <Text
-                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
+                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel
@@ -298,14 +300,14 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Join Group',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
             headerTitleAlign: 'center',
             headerLeft: () => (
               <Text
-                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
+                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel
@@ -319,7 +321,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Group Overview',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -341,7 +343,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Availability',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -388,7 +390,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Group Schedule',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -436,7 +438,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Countdown to UNC',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -455,7 +457,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: '',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -474,7 +476,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Tent Details',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -493,7 +495,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: '',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },

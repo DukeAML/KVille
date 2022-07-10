@@ -27,6 +27,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import { useTheme } from '../context/ThemeProvider';
+
 const window = Dimensions.get('window');
 
 // prettier-ignore
@@ -73,6 +75,7 @@ export default function Availability({ route }) {
     minute: 0,
     day: 0,
   });
+  const { theme } = useTheme();
 
   const memberRef = firebase
     .firestore()
@@ -128,7 +131,10 @@ export default function Availability({ route }) {
 
   const element = (data, index) => (
     <TouchableOpacity
-      style={[styles.btn, { height: 40 * parseInt(availabilityUI[index][1]) }]}
+      style={[
+        styles(theme).btn,
+        { height: 40 * parseInt(availabilityUI[index][1]) },
+      ]}
       onPress={() => {
         console.log(index);
         toggleDeleteModal();
@@ -211,14 +217,16 @@ export default function Availability({ route }) {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <View style={styles(theme).container} onLayout={onLayoutRootView}>
       <Modal
         isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
-        style={styles.deleteModal}
+        style={styles(theme).deleteModal}
       >
         <TouchableOpacity onPress={deleteCell}>
-          <Text style={{ textAlign: 'center', color: '#c91936', fontSize: 15 }}>
+          <Text
+            style={{ textAlign: 'center', color: theme.error, fontSize: 15 }}
+          >
             Delete
           </Text>
         </TouchableOpacity>
@@ -235,13 +243,13 @@ export default function Availability({ route }) {
             <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
           </View>
         </Snackbar>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.headerText}>Add New Busy Time</Text>
+        <View style={styles(theme).modalContainer}>
+          <View style={styles(theme).modalHeader}>
+            <Text style={styles(theme).headerText}>Add New Busy Time</Text>
           </View>
 
-          <View style={styles.modalBody}>
-            <View style={styles.selectDay}>
+          <View style={styles(theme).modalBody}>
+            <View style={styles(theme).selectDay}>
               <Text>Day: </Text>
               <Picker
                 selectedValue={selectedDay}
@@ -253,7 +261,9 @@ export default function Availability({ route }) {
                     ? { height: '100%', width: '80%' }
                     : { height: 30, width: '70%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='Sunday' value={0} />
                 <Picker.Item label='Monday' value={1} />
@@ -279,7 +289,7 @@ export default function Availability({ route }) {
               /> */}
             </View>
             <Text>Start Time: </Text>
-            <View style={styles.selectTime}>
+            <View style={styles(theme).selectTime}>
               <Picker
                 selectedValue={startTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
@@ -287,10 +297,12 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='12' value={0} />
                 <Picker.Item label='1' value={1} />
@@ -312,10 +324,12 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='00' value={0} />
                 <Picker.Item label='30' value={1} />
@@ -327,17 +341,19 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='AM' value={0} />
                 <Picker.Item label='PM' value={24} />
               </Picker>
             </View>
             <Text>End Time: </Text>
-            <View style={styles.selectTime}>
+            <View style={styles(theme).selectTime}>
               <Picker
                 selectedValue={endTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
@@ -345,10 +361,12 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='12' value={0} />
                 <Picker.Item label='1' value={1} />
@@ -370,10 +388,12 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='00' value={0} />
                 <Picker.Item label='30' value={1} />
@@ -385,22 +405,24 @@ export default function Availability({ route }) {
                 }}
                 style={
                   Platform.OS === 'ios'
-                    ? styles.picker
+                    ? styles(theme).picker
                     : { height: 30, width: '30%' }
                 }
-                itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+                itemStyle={
+                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
+                }
               >
                 <Picker.Item label='AM' value={0} />
                 <Picker.Item label='PM' value={24} />
               </Picker>
             </View>
           </View>
-          <View style={styles.modalFooter}>
+          <View style={styles(theme).modalFooter}>
             <TouchableOpacity
-              style={styles.addBtn}
+              style={styles(theme).addBtn}
               onPress={updateAvailability}
             >
-              <Text style={styles.btnText}>Add</Text>
+              <Text style={styles(theme).btnText}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -408,8 +430,8 @@ export default function Availability({ route }) {
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
           data={agenda.tableHead}
-          style={StyleSheet.flatten(styles.head)}
-          textStyle={StyleSheet.flatten(styles.text)}
+          style={StyleSheet.flatten(styles(theme).head)}
+          textStyle={StyleSheet.flatten(styles(theme).text)}
         />
       </Table>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -420,7 +442,7 @@ export default function Availability({ route }) {
           <TableWrapper style={{ width: dimensions.window.width / 8 }}>
             <Col
               data={agenda.tableTime}
-              style={StyleSheet.flatten(styles.time)}
+              style={StyleSheet.flatten(styles(theme).time)}
               textStyle={{ textAlign: 'center', marginBottom: 40 }}
             />
           </TableWrapper>
@@ -430,7 +452,7 @@ export default function Availability({ route }) {
               <TableWrapper
                 key={index}
                 style={[
-                  styles.row,
+                  styles(theme).row,
                   index % 2 && { backgroundColor: '#F7F6E7' },
                 ]}
               >
@@ -443,10 +465,10 @@ export default function Availability({ route }) {
                         : element(cellData, 48 * cellIndex + index)
                     }
                     style={[
-                      styles.cell,
+                      styles(theme).cell,
                       { width: dimensions.window.width / 8 },
                     ]}
-                    textStyle={StyleSheet.flatten(styles.text)}
+                    textStyle={StyleSheet.flatten(styles(theme).text)}
                   />
                 ))}
               </TableWrapper>
@@ -455,132 +477,136 @@ export default function Availability({ route }) {
         </Table>
       </ScrollView>
       <View
-        style={[styles.addContainer, { width: dimensions.window.width / 8 }]}
+        style={[
+          styles(theme).addContainer,
+          { width: dimensions.window.width / 8 },
+        ]}
       >
         <TouchableOpacity onPress={toggleModal}>
-          <Icon name={'plus-circle'} color={'#1F509A'} size={40} />
+          <Icon name={'plus-circle'} color={theme.primary} size={40} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 0,
-    //backgroundColor: '#C2C6D0',
-  },
-  row: {
-    height: 40,
-    backgroundColor: '#E7E6E1',
-    flexDirection: 'row',
-  },
-  text: {
-    textAlign: 'center',
-  },
-  modalContainer: {
-    width: '90%',
-    height: '80%',
-    borderRadius: 25,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#C2C6D0',
-  },
-  modalHeader: {
-    //borderWidth: 1,
-  },
-  headerText: {
-    fontSize: 20,
-  },
-  modalBody: {
-    alignItems: 'center',
-    width: '100%',
-    height: '80%',
-    justifyContent: 'space-evenly',
-  },
-  picker: {
-    height: '100%',
-    width: '35%',
-  },
-  pickerItem: {
-    height: '100%',
-  },
-  selectDay: {
-    alignItems: 'center',
-    width: '70%',
-    height: '20%',
-  },
-  selectTime: {
-    //flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    height: '30%',
-    width: '90%',
-  },
-  modalFooter: {
-    width: '100%',
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addBtn: {
-    width: '95%',
-    height: '50%',
-    backgroundColor: '#1F509A',
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnText: {
-    color: '#fff',
-    textAlign: 'center',
-  },
-  cell: {
-    height: 40,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    margin: 0,
-  },
-  btn: {
-    //margin: 0,
-    width: '95%',
-    height: 42,
-    backgroundColor: '#1F509A',
-    borderRadius: 5,
-    alignSelf: 'center',
-  },
-  addContainer: {
-    position: 'absolute',
-    backgroundColor: '#00000000',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    right: 0,
-    bottom: 0,
-  },
-  deleteModal: {
-    margin: 0,
-    position: 'absolute',
-    alignSelf: 'center',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: '#C2C6D0',
-    shadowColor: '#171717',
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 5,
-    borderRadius: 20,
-    width: '90%',
-    height: '10%',
-    bottom: 20,
-  },
-});
+const styles = (theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 0,
+      //backgroundColor: theme.background,
+    },
+    row: {
+      height: 40,
+      backgroundColor: '#E7E6E1',
+      flexDirection: 'row',
+    },
+    text: {
+      textAlign: 'center',
+    },
+    modalContainer: {
+      width: '90%',
+      height: '80%',
+      borderRadius: 25,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      alignItems: 'center',
+      alignSelf: 'center',
+      justifyContent: 'space-around',
+      backgroundColor: theme.background,
+    },
+    modalHeader: {
+      //borderWidth: 1,
+    },
+    headerText: {
+      fontSize: 20,
+    },
+    modalBody: {
+      alignItems: 'center',
+      width: '100%',
+      height: '80%',
+      justifyContent: 'space-evenly',
+    },
+    picker: {
+      height: '100%',
+      width: '35%',
+    },
+    pickerItem: {
+      height: '100%',
+    },
+    selectDay: {
+      alignItems: 'center',
+      width: '70%',
+      height: '20%',
+    },
+    selectTime: {
+      //flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      height: '30%',
+      width: '90%',
+    },
+    modalFooter: {
+      width: '100%',
+      height: '10%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addBtn: {
+      width: '95%',
+      height: '50%',
+      backgroundColor: theme.primary,
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    btnText: {
+      color: theme.text1,
+      textAlign: 'center',
+    },
+    cell: {
+      height: 40,
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      margin: 0,
+    },
+    btn: {
+      //margin: 0,
+      width: '95%',
+      height: 42,
+      backgroundColor: theme.primary,
+      borderRadius: 5,
+      alignSelf: 'center',
+    },
+    addContainer: {
+      position: 'absolute',
+      backgroundColor: '#00000000',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      right: 0,
+      bottom: 0,
+    },
+    deleteModal: {
+      margin: 0,
+      position: 'absolute',
+      alignSelf: 'center',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      backgroundColor: theme.background,
+      shadowColor: '#171717',
+      shadowOffset: { width: 0, height: -5 },
+      shadowOpacity: 0.5,
+      shadowRadius: 20,
+      elevation: 5,
+      borderRadius: 20,
+      width: '90%',
+      height: '10%',
+      bottom: 20,
+    },
+  });
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {

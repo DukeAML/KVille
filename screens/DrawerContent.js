@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text, } from 'react-native';
 import {
   Title,
   Drawer,
-  Text,
-  TouchableRipple,
   Switch,
 } from 'react-native-paper';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
@@ -199,7 +197,7 @@ export default function DrawerContent(props) {
           </Drawer.Section>
           <Drawer.Section title='Preferences'>
             <View style={styles.preference}>
-              <Text>Status</Text>
+              <Text style={{color:'#000'}}>In Tent</Text>
               <Switch value={status} onValueChange={onToggleSwitch} />
             </View>
           </Drawer.Section>
