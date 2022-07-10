@@ -160,7 +160,7 @@ export default function CreateGroup({ navigation }) {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
         <View style={styles(theme).groupContainer}>
-          <View style={styles(theme).topBanner}>
+          {/* <View style={styles(theme).topBanner}>
             <TouchableOpacity
               onPress={() => {
                 onCreateGroup();
@@ -186,7 +186,7 @@ export default function CreateGroup({ navigation }) {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           <View style={{ width: '90%' }}>
             <Text style={styles(theme).headerText}>Group Name</Text>
@@ -275,6 +275,20 @@ export default function CreateGroup({ navigation }) {
               })
             }
           />
+          <TouchableOpacity
+            onPress={() => {
+              onCreateGroup();
+              console.log(group.groupCode);
+              console.log(groupRole);
+            }}
+            style = {styles(theme).createBtn}
+          >
+            <Text
+              style={styles(theme).btnTxt}
+            >
+              Create
+            </Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
       <View
@@ -294,9 +308,7 @@ export default function CreateGroup({ navigation }) {
             },
           ]}
         ></View>
-        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
         <Image
-          //source={coachKFaceLogo}
           source={coachKLogo}
           style={{
             position: 'absolute',
@@ -304,8 +316,6 @@ export default function CreateGroup({ navigation }) {
             zIndex: 1,
             height: 129,
             width: 113,
-            //height: 135,
-            //width: 135,
             alignSelf: 'center',
           }}
         />
@@ -314,8 +324,6 @@ export default function CreateGroup({ navigation }) {
             width: '100%',
             height: dimensions.window.height / 15,
             backgroundColor: theme.primary,
-            /* borderTopWidth: 2, //for hiding faint white line
-              borderTopColor: '#1F509A' */
           }}
         ></View>
       </View>
@@ -366,7 +374,7 @@ const styles = (theme) =>
       fontSize: 20,
       marginBottom: 10,
       fontWeight: '700',
-      //color: '#656565'
+      color: theme.grey2,
     },
     textContainer: {
       height: '70%',
@@ -386,16 +394,15 @@ const styles = (theme) =>
       textAlign: 'center',
     },
     textInput: {
-      //backgroundColor: "#FFFFFF",
+      backgroundColor: theme.white2,
       padding: 10,
       width: '90%',
       fontSize: 20,
       fontWeight: '400',
-      textAlign: 'left',
+      textAlign: 'center',
       borderRadius: 15,
-      //borderColor: '',
-      //borderWidth: 2
-      //height: '7%',
+      borderColor: theme.grey2,
+      borderWidth: 2,
     },
     picker: {
       width: '90%',
@@ -405,28 +412,18 @@ const styles = (theme) =>
     pickerItem: {
       height: '100%',
     },
-    /* btnContainer: {
-    alignItems: 'center',
-    width: '90%'
-  },
-  cancelBtn: {
-    borderRadius: 30,
-    backgroundColor: '#000',
-    padding: 15,
-    width: '45%'
-  },
-  createBtn: {
-    borderRadius: 30,
-    backgroundColor: '#1F509A',
-    padding: 15,
-    width: '45%'
-  },
-  btnTxt: {
-    fontWeight: '700',
-    color: '#fff',
-    fontSize: 36,
-    textAlign: 'center'
-  }, */
+    createBtn: {
+      backgroundColor: theme.primary,
+      padding: 15,
+      borderRadius: 30,
+      marginTop: 30,
+      width: '50%',
+    },
+    btnTxt: {
+      fontSize: 20,
+      color: theme.text1,
+      textAlign: 'center',
+    },
     triangle: {
       //position: "relative",
       //zIndex: 1,

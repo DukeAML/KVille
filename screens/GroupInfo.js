@@ -179,7 +179,7 @@ export default function GroupInfo({ route }) {
           ]}
         >
           <Text style={styles(theme).listText}>{name}</Text>
-          <Text style={{ color: 'white' }}>
+          <Text style={{ color: theme.text1}}>
             Scheduled Hrs: {members[indexOfUser].hours} hrs
           </Text>
         </View>
@@ -261,7 +261,7 @@ export default function GroupInfo({ route }) {
                 <Text
                   style={{
                     textAlign: 'center',
-                    color: '#c91936',
+                    color: theme.error,
                     fontSize: 15,
                   }}
                 >
@@ -310,7 +310,7 @@ const styles = (theme) => StyleSheet.create({
     fontSize: 15,
     //fontFamily: 'sans-serif',
     fontWeight: '500',
-    color: 'white',
+    color: theme.text1,
   },
   boxText: {
     marginBottom: 10,
@@ -336,7 +336,7 @@ const styles = (theme) => StyleSheet.create({
   },
   popUpHeader: {
     fontWeight: '600',
-    color: 'white',
+    color: theme.text1,
     marginBottom: 5,
     textAlign: 'center',
     fontSize: 16,
@@ -344,7 +344,7 @@ const styles = (theme) => StyleSheet.create({
   },
   popUpText: {
     backgroundColor: theme.tertiary,
-    color: 'white',
+    color: theme.text1,
     textAlign: 'center',
     width: '90%',
     marginVertical: 8,

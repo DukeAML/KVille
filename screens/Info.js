@@ -336,7 +336,7 @@ export default function Info() {
           style={[
             styles(theme).header,
             styles(theme).tentHeaderBox,
-            { backgroundColor: 'black', color: 'white' },
+            { backgroundColor: theme.text2, color: theme.text1},
           ]}
           onLayout={(event) => {
             const layout = event.nativeEvent.layout;
@@ -370,7 +370,7 @@ export default function Info() {
           style={[
             styles(theme).header,
             styles(theme).tentHeaderBox,
-            { backgroundColor: 'blue', color: 'white' },
+            { backgroundColor: 'blue', color: theme.text1 },
           ]}
         >
           Blue Tent
@@ -503,7 +503,7 @@ const styles = (theme) =>
       justifyContent: 'center',
     },
     buttonText: {
-      fontSize: 'auto',
+      //fontSize: 'auto',
       fontWeight: '500',
       textAlign: 'center',
       color: theme.text1,

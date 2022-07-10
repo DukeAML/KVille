@@ -26,7 +26,6 @@ import {
   setGroupRole,
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-// import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
 import coachKLogo from '../assets/coachKLogo.png';
 
 let availability = new Array(336);
@@ -161,30 +160,6 @@ export default function JoinGroup({ navigation }) {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
         <View style={styles(theme).container}>
-          <View style={styles(theme).topBanner}>
-            <TouchableOpacity
-              onPress={() => {
-                onJoinGroup(navigation);
-                //navigation.navigate("GroupNavigator");
-              }}
-            >
-              <Text
-                style={[
-                  styles(theme).groupText,
-                  {
-                    fontSize: 20,
-                    fontWeight: '700',
-                    color: theme.primary,
-                    width: '100%',
-                    //borderWidth: 2
-                  },
-                ]}
-              >
-                Join Group
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           <View
             style={{
               flexDirection: 'row',
@@ -228,25 +203,17 @@ export default function JoinGroup({ navigation }) {
               )
             }
           />
-          {/* <TouchableOpacity
-        style={styles(theme).button}
-        onPress={() => {
-          onJoinGroup(navigation);
-          //navigation.navigate("GroupNavigator");
-        }}
+          <TouchableOpacity
+            style={styles(theme).button}
+            onPress={() => {
+              onJoinGroup(navigation);
+            }}
           >
-        <Text style={styles(theme).buttonText}>Join Group</Text>
-      </TouchableOpacity> */}
+            <Text style={styles(theme).buttonText}>Join</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <View
-        style={{
-          /* position: "absolute",
-            bottom: 0, */
-          marginTop: 'auto',
-          width: '100%',
-        }}
-      >
+      <View style={{ marginTop: 'auto', width: '100%', backgroundColor: theme.background }} >
         <View
           style={[
             styles(theme).triangle,
@@ -256,7 +223,6 @@ export default function JoinGroup({ navigation }) {
             },
           ]}
         ></View>
-        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
         <Image
           source={coachKLogo}
           style={{
@@ -305,11 +271,10 @@ const styles = (theme) =>
       width: '90%',
       fontSize: 20,
       fontWeight: '500',
-      textAlign: 'left',
+      textAlign: 'center',
       borderRadius: 8,
       borderColor: theme.grey2,
       borderWidth: 2,
-      //height: "7%",
     },
     groupText: {
       //text for 'Groups' and '+ Add Group'
@@ -319,23 +284,15 @@ const styles = (theme) =>
       fontWeight: '700',
       color: theme.grey2,
     },
-    topBanner: {
-      //for the top container holding "join group button"
-      //alignItems: 'flex-end',
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginTop: 15,
-      marginBottom: 40,
-      width: '90%',
-      //borderWidth: 2
-    },
     button: {
-      backgroundColor: '#000',
+      backgroundColor: theme.primary,
       padding: 15,
       borderRadius: 30,
+      marginTop: 50,
+      width: '50%',
     },
     buttonText: {
-      fontSize: 15,
+      fontSize: 20,
       color: theme.text1,
       textAlign: 'center',
     },
@@ -348,14 +305,10 @@ const styles = (theme) =>
       elevation: 20,
     },
     triangle: {
-      //position: "relative",
-      //zIndex: 1,
       height: 0,
       width: 0,
       borderTopWidth: 150,
       borderRightColor: theme.primary,
-      //borderRightColor: 'transparent',
-      //borderBottomColor: "#f5f5f5",
       borderTopColor: 'transparent',
       transform: [{ scaleX: -1 }],
     },

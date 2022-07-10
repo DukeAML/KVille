@@ -12,12 +12,12 @@ import {
   Button,
   SafeAreaView,
 } from 'react-native';
-
 //import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
+import { Menu, Provider } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -45,6 +45,7 @@ export default function Start({ navigation }) {
   }); */
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isMenuVisible, setMenuVisible] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const { theme } = useTheme();
 
@@ -53,6 +54,9 @@ export default function Start({ navigation }) {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const openMenu = () => setMenuVisible(true);
+
+  const closeMenu = () => setMenuVisible(false);
 
   //const for list Items of Groups List
   const Group = ({ groupName, groupCode, onPress }) => (
@@ -215,112 +219,125 @@ export default function Start({ navigation }) {
     return null;
   }
   return (
-    <View style={styles(theme).startContainer} onLayout={onLayoutRootView}>
-      <View style={styles(theme).topBanner}>
-        <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
-        <TouchableOpacity onPress={onLogout}>
-          <Text style={{ textAlign: 'center', color: '#000', fontSize: 15 }}>
-            Log out
-          </Text>
-        </TouchableOpacity>
-      </View>
+    <Provider>
+      <View style={styles(theme).startContainer} onLayout={onLayoutRootView}>
+        <View style={styles(theme).topBanner}>
+          <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
+          <Menu
+            visible={isMenuVisible}
+            onDismiss={closeMenu}
+            anchor={
+              <TouchableOpacity onPress={openMenu}>
+                <Icon
+                  name='dots-vertical'
+                  color={theme.icon2}
+                  size={25}
+                />
+              </TouchableOpacity>
+            }
+          >
+            <Menu.Item icon={'logout'} onPress={onLogout} title='Log Out' />
+          </Menu>
+        </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          width: '90%',
-          alignItems: 'center',
-          marginBottom: 5,
-        }}
-      >
-        <Text style={styles(theme).groupText}>Groups</Text>
-        <TouchableOpacity onPress={toggleModal}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Icon name='add-circle-outline' color={theme.primary} size={20} />
-            <Text
-              style={[
-                styles(theme).groupText,
-                {
-                  fontSize: 16,
-                  fontWeight: '700',
-                  color: theme.primary,
-                  marginLeft: 4,
-                },
-              ]}
-            >
-              Add Group
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      {/* 
-      <ScrollView showsVerticalScrollIndicator={false}> */}
-      <SafeAreaView>
-        <FlatList
-          data={GROUPS}
-          renderItem={renderGroup}
-          keyExtractor={(item) => item.code}
-        />
-      </SafeAreaView>
-      {/* </ScrollView> */}
-
-      <View>
-        <Modal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          //customBackdrop={<View style={{ flex: 1 }} />}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '90%',
+            alignItems: 'center',
+            marginBottom: 5,
+          }}
         >
-          <View style={styles(theme).popUp}>
-            <Text style={styles(theme).popUpHeader}>Add Group</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('JoinGroup')}>
-              <View
+          <Text style={styles(theme).groupText}>Groups</Text>
+          <TouchableOpacity onPress={toggleModal}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Icon name='plus-circle-outline' color={theme.primary} size={20} />
+              <Text
                 style={[
-                  styles(theme).popButton,
+                  styles(theme).groupText,
                   {
-                    borderBottomLeftRadius: 3,
-                    borderBottomRightRadius: 3,
-                    borderTopLeftRadius: 11,
-                    borderTopRightRadius: 11,
+                    fontSize: 16,
+                    fontWeight: '700',
+                    color: theme.primary,
+                    marginLeft: 4,
                   },
                 ]}
               >
-                <Icon
-                  name='person-add-outline'
-                  color={'white'}
-                  size={20}
-                  style={{ marginLeft: 10 }}
-                />
-                <Text style={styles(theme).buttonText}>Join Group</Text>
-              </View>
-            </TouchableOpacity>
+                Add Group
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        {/* 
+      <ScrollView showsVerticalScrollIndicator={false}> */}
+        <SafeAreaView>
+          <FlatList
+            data={GROUPS}
+            renderItem={renderGroup}
+            keyExtractor={(item) => item.code}
+          />
+        </SafeAreaView>
+        {/* </ScrollView> */}
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate('CreateGroup')}
-            >
-              <View
-                style={[
-                  styles(theme).popButton,
-                  {
-                    borderBottomLeftRadius: 11,
-                    borderBottomRightRadius: 11,
-                    borderTopLeftRadius: 3,
-                    borderTopRightRadius: 3,
-                  },
-                ]}
+        <View>
+          <Modal
+            isVisible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+            //customBackdrop={<View style={{ flex: 1 }} />}
+          >
+            <View style={styles(theme).popUp}>
+              <Text style={styles(theme).popUpHeader}>Add Group</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('JoinGroup')}
               >
-                <Icon
-                  name='people-circle-outline'
-                  color={'white'}
-                  size={20}
-                  style={{ marginLeft: 10 }}
-                />
-                <Text style={styles(theme).buttonText}>Create New Group</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-        {/* <Button
+                <View
+                  style={[
+                    styles(theme).popButton,
+                    {
+                      borderBottomLeftRadius: 3,
+                      borderBottomRightRadius: 3,
+                      borderTopLeftRadius: 11,
+                      borderTopRightRadius: 11,
+                    },
+                  ]}
+                >
+                  <Icon
+                    name='account-plus-outline'
+                    color={'white'}
+                    size={20}
+                    style={{ marginLeft: 10 }}
+                  />
+                  <Text style={styles(theme).buttonText}>Join Group</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate('CreateGroup')}
+              >
+                <View
+                  style={[
+                    styles(theme).popButton,
+                    {
+                      borderBottomLeftRadius: 11,
+                      borderBottomRightRadius: 11,
+                      borderTopLeftRadius: 3,
+                      borderTopRightRadius: 3,
+                    },
+                  ]}
+                >
+                  <Icon
+                    name='account-circle-outline'
+                    color={'white'}
+                    size={20}
+                    style={{ marginLeft: 10 }}
+                  />
+                  <Text style={styles(theme).buttonText}>Create New Group</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+          {/* <Button
           title='Create Group Schedule'
           onPress={() =>
             createGroupSchedule('sX5bkvgE', 'Black').then((groupSchedule) => {
@@ -337,124 +354,126 @@ export default function Start({ navigation }) {
             })
           }
         /> */}
-        {/* <Button
+          {/* <Button
               title="Add test case"
               onPress={() => createTestCases()}
             /> */}
+        </View>
       </View>
-    </View>
+    </Provider>
   );
 }
 
-const styles = (theme) => StyleSheet.create({
-  startContainer: {
-    //Overarching Container
-    flexDirection: 'column',
-    flex: 1,
-    backgroundColor: theme.background,
-    alignItems: 'center',
-    marginTop: '0%',
-  },
-  /*   header: {
+const styles = (theme) =>
+  StyleSheet.create({
+    startContainer: {
+      //Overarching Container
+      flexDirection: 'column',
+      flex: 1,
+      backgroundColor: theme.background,
+      alignItems: 'center',
+      marginTop: '0%',
+    },
+    /*   header: {
   left: "0%",
   width: "100%"
 }, */
-  topBanner: {
-    //for the top container holding "welcome to k-ville"
-    alignItems: 'flex-start',
-    marginTop: 50,
-    marginBottom: 35,
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  topText: {
-    //"welcome to kville" text
-    textAlign: 'left',
-    fontWeight: '800',
-    fontSize: 28,
-  },
-  groupText: {
-    //text for 'Groups' and '+ Add Group'
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.grey2,
-  },
-  popUp: {
-    //style for popup menu of add group
-    width: '90%',
-    height: 160,
-    backgroundColor: theme.secondary,
-    alignSelf: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    margin: 15,
-  },
-  popUpHeader: {
-    //style for text at the top of the popup
-    fontWeight: '600',
-    color: 'white',
-    height: 40,
-    width: window.width * 0.8,
-    marginTop: 15,
-    textAlign: 'center',
-    fontSize: 24,
-  },
-  popButton: {
-    //style for the buttons in the popup
-    flexDirection: 'row',
-    width: window.width * 0.7,
-    height: 40,
-    marginVertical: 2,
-    alignSelf: 'stretch',
-    backgroundColor: theme.tertiary,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  buttonText: {
-    //popup buttons' text
-    fontSize: 16,
-    color: 'white',
-    textAlign: 'left',
-    marginLeft: 15,
-  },
+    topBanner: {
+      //for the top container holding "welcome to k-ville"
+      alignItems: 'center',
+      marginTop: 50,
+      marginBottom: 35,
+      width: '90%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    topText: {
+      //"welcome to kville" text
+      textAlign: 'left',
+      fontWeight: '800',
+      fontSize: 28,
+    },
+    groupText: {
+      //text for 'Groups' and '+ Add Group'
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    popUp: {
+      //style for popup menu of add group
+      width: '90%',
+      height: 160,
+      backgroundColor: theme.secondary,
+      alignSelf: 'center',
+      alignItems: 'center',
+      borderRadius: 20,
+      margin: 15,
+    },
+    popUpHeader: {
+      //style for text at the top of the popup
+      fontWeight: '600',
+      color: theme.text1,
+      height: 40,
+      width: window.width * 0.8,
+      marginTop: 15,
+      textAlign: 'center',
+      fontSize: 24,
+    },
+    popButton: {
+      //style for the buttons in the popup
+      flexDirection: 'row',
+      width: window.width * 0.7,
+      height: 40,
+      marginVertical: 2,
+      alignSelf: 'stretch',
+      backgroundColor: theme.tertiary,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+    buttonText: {
+      //popup buttons' text
+      fontSize: 16,
+      color: theme.text1,
+      textAlign: 'left',
+      marginLeft: 15,
+    },
 
-  /*   banner: {
+    /*   banner: {
   color: "#fff",
   fontFamily: "NovaCut_400Regular",
   fontSize: 36,
   left: "0%"
 }, */
-  image: {
-    //for the duke basketball logos
-    width: 45,
-    height: 39,
-    alignSelf: 'center',
-    marginLeft: 10,
-    marginRight: 20,
-  },
+    image: {
+      //for the duke basketball logos
+      width: 45,
+      height: 39,
+      alignSelf: 'center',
+      marginLeft: 10,
+      marginRight: 20,
+    },
 
-  listItem: {
-    //for the items for each group
-    backgroundColor: theme.grey3,
-    padding: 8,
-    marginVertical: 7,
-    borderRadius: 10,
-    width: window.width * 0.9,
-    justifyContent: 'flex-start',
-  },
-  listText: {
-    //for the text inside the group cards
-    fontSize: 15,
-    fontWeight: '500',
-    color: 'black',
-  },
-  shadowProp: {
-    //shadow for the group cards
-    shadowColor: '#171717',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 20,
-  },
-});
+    listItem: {
+      //for the items for each group
+      backgroundColor: theme.grey3,
+      padding: 8,
+      marginVertical: 7,
+      borderRadius: 10,
+      width: window.width * 0.9,
+      justifyContent: 'flex-start',
+    },
+    listText: {
+      //for the text inside the group cards
+      fontSize: 15,
+      fontWeight: '500',
+      color: theme.text2,
+    },
+    shadowProp: {
+      //shadow for the group cards
+      shadowColor: '#171717',
+      shadowOffset: { width: -2, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 20,
+    },
+  });

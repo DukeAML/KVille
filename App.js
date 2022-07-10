@@ -38,7 +38,6 @@ export default function App() {
   const [state, setState] = useState({
     isReady: false,
   });
-  const [theme, setTheme] = useState(theme);
 
   useEffect(() => {
     let mounted = true;
@@ -117,7 +116,7 @@ export default function App() {
                   options={({ navigation }) => ({
                     title: '',
                     headerStyle: {
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: '#f6f6f6',
                       borderBottomWidth: 0,
                       shadowColor: 'transparent',
                     },

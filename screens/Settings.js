@@ -263,11 +263,11 @@ export default function Settings({ route, navigation }) {
           style={styles(theme).confirmationBottomBtn}
         >
           {groupRole === 'Creator' ? (
-            <Text style={[styles(theme).buttonText, { color: 'white' }]}>
+            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
               Yes, Delete This Group
             </Text>
           ) : (
-            <Text style={[styles(theme).buttonText, { color: 'white' }]}>
+            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
               Yes, Leave This Group
             </Text>
           )}
@@ -288,9 +288,9 @@ export default function Settings({ route, navigation }) {
 
   return (
     <View style={styles(theme).settingsContainer} onLayout={onLayoutRootView}>
-      <View style={styles(theme).topBanner}>
+      {/* <View style={styles(theme).topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Icon name='cog-outline' color={theme.icon} size={35} />
+          <Icon name='cog-outline' color={theme.icon1} size={35} />
           <Text
             style={[
               styles(theme).headerText,
@@ -307,7 +307,7 @@ export default function Settings({ route, navigation }) {
                 styles(theme).groupText,
                 {
                   fontSize: 21,
-                  fontWeight: 700,
+                  fontWeight: '700',
                   color: theme.primary,
                 },
               ]}
@@ -316,7 +316,7 @@ export default function Settings({ route, navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View
         style={{
           flexDirection: 'row',
@@ -508,20 +508,20 @@ const styles = (theme) =>
     confirmationHeader: {
       //style for text at the top of the popup
       fontWeight: '600',
-      color: 'white',
+      color: theme.text1,
       textAlign: 'center',
       fontSize: 18,
     },
     confirmationText: {
       backgroundColor: theme.tertiary,
-      color: 'white',
+      color: theme.text1,
       textAlign: 'center',
       width: '90%',
       padding: 5,
       borderRadius: 15,
     },
     confirmationBottomBtn: {
-      color: 'white',
+      color: theme.text1,
       backgroundColor: 'black',
       width: '50%',
       borderRadius: 8,

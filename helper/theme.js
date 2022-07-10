@@ -5,6 +5,7 @@ export const lightTheme = {
   primaryContainer: '#C2C6D0',
   secondary: '#1E3F66',
   tertiary: '#2E5984',
+  quaternary: '#0FA4DC',
   white1: '#FFFAFACC',
   white2: '#f6f6f6',
   grey1: '#3a3b3c',
@@ -15,7 +16,8 @@ export const lightTheme = {
   grey6: '#a9a9a9',
   text1: '#fff',
   text2: '#000',
-  icon: '#fff',
+  icon1: '#fff',
+  icon2: '#000',
   error: '#E01805',
 };
 
