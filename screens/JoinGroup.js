@@ -25,7 +25,7 @@ import {
   setTentType,
   setGroupRole,
 } from '../redux/reducers/userSlice';
-// import { inGroup, setGroupInfo } from "../redux/reducers/userSlice";
+import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 
 let availability = new Array(336);
@@ -39,6 +39,7 @@ export default function JoinGroup({ navigation }) {
   const [dimensions, setDimensions] = useState({ window });
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
+  const { theme } = useTheme();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -88,7 +89,7 @@ export default function JoinGroup({ navigation }) {
 
     //checks to make sure entered group code exists
     await groupRef.get().then(async (docSnapshot) => {
-      console.log("Group exists: ", docSnapshot.exists);
+      console.log('Group exists: ', docSnapshot.exists);
       if (docSnapshot.exists) {
         //Max 12 people in a group
         let result = await groupRef
@@ -114,13 +115,12 @@ export default function JoinGroup({ navigation }) {
         dispatch(setTentType(docSnapshot.data().tentType));
         dispatch(setGroupRole('Member'));
         //updates current user's info
-        await userRef
-          .update({
-            groupCode: firebase.firestore.FieldValue.arrayUnion({
-              groupCode: groupCode,
-              groupName: docSnapshot.data().name,
-            }),
-          });
+        await userRef.update({
+          groupCode: firebase.firestore.FieldValue.arrayUnion({
+            groupCode: groupCode,
+            groupName: docSnapshot.data().name,
+          }),
+        });
         //adds current user to member list
         await groupRef
           .collection('members')
@@ -142,7 +142,7 @@ export default function JoinGroup({ navigation }) {
             navigation.navigate('GroupInfo', {
               groupCode: groupCode,
               groupName: groupName,
-              groupRole: 'Member'
+              groupRole: 'Member',
             });
           });
         // dispatch(inGroup());
@@ -150,42 +150,16 @@ export default function JoinGroup({ navigation }) {
       } else {
         console.log('No group exists');
         toggleSnackBar();
-        setSnackMessage('Invalid group code: group doesn\'t exist');
+        setSnackMessage("Invalid group code: group doesn't exist");
         return;
       }
     });
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#C2C6D0' }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <View style={styles.topBanner}>
-            <TouchableOpacity
-              onPress={() => {
-                onJoinGroup(navigation);
-                //navigation.navigate("GroupNavigator");
-              }}
-            >
-              <View>
-                <Text
-                  style={[
-                    styles.groupText,
-                    {
-                      fontSize: 20,
-                      fontWeight: '700',
-                      color: '#1f509a',
-                      width: '100%',
-                      //borderWidth: 2
-                    },
-                  ]}
-                >
-                  Join Group
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
+        <View style={styles(theme).container}>
           <View
             style={{
               flexDirection: 'row',
@@ -193,11 +167,11 @@ export default function JoinGroup({ navigation }) {
               marginBottom: 10,
             }}
           >
-            <Text style={styles.groupText}>Group Code</Text>
+            <Text style={styles(theme).groupText}>Group Code</Text>
           </View>
 
           <TextInput
-            style={[styles.textInput, styles.shadowProp]}
+            style={[styles(theme).textInput, styles(theme).shadowProp]}
             autoFocus={true}
             onChangeText={(code) => setInputGroupCode(code.trim())}
             value={groupCode}
@@ -212,11 +186,11 @@ export default function JoinGroup({ navigation }) {
               marginTop: 55,
             }}
           >
-            <Text style={styles.groupText}>Username</Text>
+            <Text style={styles(theme).groupText}>Username</Text>
           </View>
 
           <TextInput
-            style={[styles.textInput, styles.shadowProp]}
+            style={[styles(theme).textInput, styles(theme).shadowProp]}
             value={name}
             placeholder={name}
             onChangeText={(name) =>
@@ -229,35 +203,26 @@ export default function JoinGroup({ navigation }) {
               )
             }
           />
-          {/* <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          onJoinGroup(navigation);
-          //navigation.navigate("GroupNavigator");
-        }}
+          <TouchableOpacity
+            style={styles(theme).button}
+            onPress={() => {
+              onJoinGroup(navigation);
+            }}
           >
-        <Text style={styles.buttonText}>Join Group</Text>
-      </TouchableOpacity> */}
+            <Text style={styles(theme).buttonText}>Join</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <View
-        style={{
-          /* position: "absolute",
-            bottom: 0, */
-          marginTop: 'auto',
-          width: '100%',
-        }}
-      >
+      <View style={{ marginTop: 'auto', width: '100%', backgroundColor: theme.background }} >
         <View
           style={[
-            styles.triangle,
+            styles(theme).triangle,
             {
               borderRightWidth: dimensions.window.width,
               borderTopWidth: dimensions.window.height / 5,
             },
           ]}
         ></View>
-        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
         <Image
           source={coachKLogo}
           style={{
@@ -273,7 +238,7 @@ export default function JoinGroup({ navigation }) {
           style={{
             width: '100%',
             height: dimensions.window.height / 10,
-            backgroundColor: '#1F509A',
+            backgroundColor: theme.primary,
           }}
         ></View>
       </View>
@@ -291,101 +256,60 @@ export default function JoinGroup({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    flex: 1,
-    backgroundColor: '#C2C6D0',
-    alignItems: 'center',
-    marginTop: '0%',
-  },
-  textInput: {
-    backgroundColor: '#f6f6f6',
-    padding: 10,
-    width: '90%',
-    fontSize: 20,
-    fontWeight: '500',
-    textAlign: 'left',
-    borderRadius: 8,
-    borderColor: '#656565',
-    borderWidth: 2,
-    //height: "7%",
-  },
-  groupText: {
-    //text for 'Groups' and '+ Add Group'
-    //fontFamily: "sans-serif",
-    width: '90%',
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#656565',
-  },
-  topBanner: {
-    //for the top container holding "join group button"
-    //alignItems: 'flex-end',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 15,
-    marginBottom: 40,
-    width: '90%',
-    //borderWidth: 2
-  },
-  button: {
-    backgroundColor: '#000',
-    padding: 15,
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: '#fff',
-    textAlign: 'center',
-  },
-  shadowProp: {
-    //shadow for the text input and image
-    shadowColor: '#171717',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 20,
-  },
-  triangle: {
-    //position: "relative",
-    //zIndex: 1,
-    height: 0,
-    width: 0,
-    borderTopWidth: 150,
-    borderRightColor: '#1F509A',
-    //borderRightColor: 'transparent',
-    //borderBottomColor: "#f5f5f5",
-    borderTopColor: 'transparent',
-    transform: [{ scaleX: -1 }],
-  },
-});
-
-/*
-
-
-<View style={styles.container}>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(code) => setInputGroupCode(code.trim())}
-        value={groupCode}
-        placeholder="Enter Group Code"
-      />
-      <TextInput
-        style={styles.textInput}
-        value={name}
-        placeholder={name}
-        onChangeText={(name) => setName(name)}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          onJoinGroup(navigation);
-          //navigation.navigate("GroupNavigator");
-        }}
-      >
-        <Text style={styles.buttonText}>Join Group</Text>
-      </TouchableOpacity>
-    </View>
-
-*/
+const styles = (theme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'column',
+      flex: 1,
+      backgroundColor: theme.background,
+      alignItems: 'center',
+      marginTop: '0%',
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      padding: 10,
+      width: '90%',
+      fontSize: 20,
+      fontWeight: '500',
+      textAlign: 'center',
+      borderRadius: 8,
+      borderColor: theme.grey2,
+      borderWidth: 2,
+    },
+    groupText: {
+      //text for 'Groups' and '+ Add Group'
+      //fontFamily: "sans-serif",
+      width: '90%',
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    button: {
+      backgroundColor: theme.primary,
+      padding: 15,
+      borderRadius: 30,
+      marginTop: 50,
+      width: '50%',
+    },
+    buttonText: {
+      fontSize: 20,
+      color: theme.text1,
+      textAlign: 'center',
+    },
+    shadowProp: {
+      //shadow for the text input and image
+      shadowColor: '#171717',
+      shadowOffset: { width: -2, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 20,
+    },
+    triangle: {
+      height: 0,
+      width: 0,
+      borderTopWidth: 150,
+      borderRightColor: theme.primary,
+      borderTopColor: 'transparent',
+      transform: [{ scaleX: -1 }],
+    },
+  });

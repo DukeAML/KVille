@@ -37,70 +37,11 @@ import 'firebase/compat/firestore';
 
 import { useDispatch } from 'react-redux';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
+import {useTheme} from '../context/ThemeProvider';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-const AvailabilityText = () => (
-  <View>
-    <Text style={styles.InfoText}>
-      This page is for your availability throughout the week. You will input
-      what times of the week you are not available for tenting.
-    </Text>
-    <Text style={styles.InfoText}>
-      To do so, click the add button on the bottom right to add a new busy time
-      and input the date, start time, and end time.
-    </Text>
-    <Text style={styles.InfoText}>
-      Do this for your entire weekly schedule. You can delete blocks to edit
-      your times.
-    </Text>
-    <Text style={styles.InfoText}>
-      This schedule should remain saved from week to week, but you may edit
-      every week if you have changes to your schedule.
-    </Text>
-    <Text style={styles.InfoText}>
-      Make sure to fill out your availability every week before you Create a New
-      Group Schedule or your busy times will not be accounted for in the group
-      schedule.
-    </Text>
-    <Text style={styles.InfoText}>
-      NOTE: If you mark yourself as available at 1am on a day, you will be
-      marked availabile for the whole noght shift from 1am to 7am
-    </Text>
-  </View>
-);
-
-const ScheduleText = () => (
-  <View>
-    <Text style={styles.InfoText}>
-      This page is for your group schedule for the week (from Sunday to Saturday
-      midnight).
-    </Text>
-    <Text style={styles.InfoText}>
-      Groups should aim to create a new weekly schedule every week after every
-      member fills out their availability for that week
-    </Text>
-    <Text style={styles.InfoText}>
-      Once all members of the group have filled out their availability for the
-      week, one member should tap the ‘Create New Schedule’ button to
-      automatically generate a schedule that optimizes for equal distribution of
-      time.
-    </Text>
-    <Text style={styles.InfoText}>
-      After the schedule is made, edits can be made by clicking on the time slot
-      and changing the member for that time. After making your edits, make sure
-      to tap ‘Push Edits’ so that all other group members see the changes.
-    </Text>
-    <Text style={styles.InfoText}>
-      Note: You can’t make edits to the schedule at the same time.
-    </Text>
-    <Text style={styles.InfoText}>
-      The number of scheduled hours for each member should be displayed on the
-      group information page to make sure hours are distributed evenly.
-    </Text>
-  </View>
-);
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -110,6 +51,7 @@ export default function Main() {
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  const { theme } = useTheme();
 
   //const [typeOfHelp, setTypeOfHelp] = useState('Availability');
 
@@ -120,6 +62,68 @@ export default function Main() {
   const toggleScheduleInfo = () => {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
+  
+  const AvailabilityText = () => (
+    <View>
+      <Text style={styles(theme).InfoText}>
+        This page is for your availability throughout the week. You will input
+        what times of the week you are not available for tenting.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        To do so, click the add button on the bottom right to add a new busy
+        time and input the date, start time, and end time.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Do this for your entire weekly schedule. You can delete blocks to edit
+        your times.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        This schedule should remain saved from week to week, but you may edit
+        every week if you have changes to your schedule.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Make sure to fill out your availability every week before you Create a
+        New Group Schedule or your busy times will not be accounted for in the
+        group schedule.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        NOTE: If you mark yourself as available at 1am on a day, you will be
+        marked availabile for the whole noght shift from 1am to 7am
+      </Text>
+    </View>
+  );
+
+  const ScheduleText = () => (
+    <View>
+      <Text style={styles(theme).InfoText}>
+        This page is for your group schedule for the week (from Sunday to
+        Saturday midnight).
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Groups should aim to create a new weekly schedule every week after every
+        member fills out their availability for that week
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Once all members of the group have filled out their availability for the
+        week, one member should tap the ‘Create New Schedule’ button to
+        automatically generate a schedule that optimizes for equal distribution
+        of time.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        After the schedule is made, edits can be made by clicking on the time
+        slot and changing the member for that time. After making your edits,
+        make sure to tap ‘Push Edits’ so that all other group members see the
+        changes.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Note: You can’t make edits to the schedule at the same time.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        The number of scheduled hours for each member should be displayed on the
+        group information page to make sure hours are distributed evenly.
+      </Text>
+    </View>
+  );
 
   const InformationModal = () => {
     console.log('infoModal rendered:', typeOfHelp);
@@ -134,18 +138,18 @@ export default function Main() {
             else setScheduleInfoVisible(false);
           }} */
         >
-          <View style={styles.InfoPop}>
+          <View style={styles(theme).InfoPop}>
             {typeOfHelp == 'Availability' ? (
-              <Text style={styles.InfoHeader}>
+              <Text style={styles(theme).InfoHeader}>
                 How to Use the Availability Page
               </Text>
             ) : (
-              <Text style={styles.InfoHeader}>
+              <Text style={styles(theme).InfoHeader}>
                 How to Use the Schedule Page
               </Text>
             )}
             <ScrollView
-              style={styles.InfoTextView}
+              style={styles(theme).InfoTextView}
               showsVerticalScrollIndicator={false}
             >
               {typeOfHelp == 'Availability' ? (
@@ -203,6 +207,7 @@ export default function Main() {
   useEffect(() => {
     // clearData(dispatch);
     // fetchUser(dispatch);
+    let mounted = true;
     dispatch(reset());
     firebase
       .firestore()
@@ -210,13 +215,19 @@ export default function Main() {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((snapshot) => {
-        if (snapshot.exists) {
+        if (mounted && snapshot.exists) {
           dispatch(setCurrentUser(snapshot.data()));
         } else {
           console.log('does not exist');
         }
+      }).then(()=>{
+        console.log('cleared data and fetched user');
+      }).catch((error)=> {
+        console.error(error)
       });
-    console.log('cleared data and fetched user');
+    
+      return () => (mounted=false);
+
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -266,18 +277,18 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Create Group',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
             headerTitleStyle: {
-              color: 'black',
+              color: theme.text2,
             },
             headerTitleAlign: 'center',
             presentation: 'modal',
             headerLeft: () => (
               <Text
-                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
+                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel
@@ -291,14 +302,14 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Join Group',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
             headerTitleAlign: 'center',
             headerLeft: () => (
               <Text
-                style={{ color: '#1F509A', marginLeft: 10, fontWeight: '600' }}
+                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
                 onPress={() => navigation.goBack()}
               >
                 Cancel
@@ -312,7 +323,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Group Overview',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -334,7 +345,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Availability',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -361,10 +372,10 @@ export default function Main() {
                   isVisible = {isInfoVisible}
                   onBackdropPress={() => setInfoVisible(false)}
                 >
-                  <View style={styles.InfoPop}>
-                    <Text style={styles.InfoHeader}>How to use the Availability Page</Text>
+                  <View style={styles(theme).InfoPop}>
+                    <Text style={styles(theme).InfoHeader}>How to use the Availability Page</Text>
                     <ScrollView 
-                      style = {styles.InfoTextView}
+                      style = {styles(theme).InfoTextView}
                       showsVerticalScrollIndicator={false}
                     >
                       <AvailabilityText/>
@@ -381,7 +392,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Group Schedule',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -409,10 +420,10 @@ export default function Main() {
                   isVisible = {isScheduleInfoVisible}
                   onBackdropPress={() => setScheduleInfoVisible(false)}
                 >
-                  <View style={styles.InfoPop}>
-                    <Text style={styles.InfoHeader}>How to use the Schedule Page</Text>
+                  <View style={styles(theme).InfoPop}>
+                    <Text style={styles(theme).InfoHeader}>How to use the Schedule Page</Text>
                     <ScrollView 
-                      style = {styles.InfoTextView}
+                      style = {styles(theme).InfoTextView}
                       showsVerticalScrollIndicator={false}
                     >
                       <ScheduleText/>
@@ -429,7 +440,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Countdown to UNC',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -448,7 +459,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: '',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -467,7 +478,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Tent Details',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -484,9 +495,9 @@ export default function Main() {
           name='SettingScreen'
           component={SettingScreen}
           options={({ navigation }) => ({
-            title: '',
+            title: 'Settings',
             headerStyle: {
-              backgroundColor: '#C2C6D0',
+              backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -504,7 +515,7 @@ export default function Main() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
   InfoPop: {
     width: '80%',
     height: 350,
@@ -519,7 +530,7 @@ const styles = StyleSheet.create({
   InfoHeader: {
     //style for text at the top of the popup
     fontWeight: '700',
-    color: 'white',
+    color: theme.text1,
     //marginTop: 15,
     marginBottom: 8,
     textAlign: 'center',
@@ -534,7 +545,7 @@ const styles = StyleSheet.create({
   },
   InfoText: {
     //backgroundColor: '#2E5984',
-    color: 'black',
+    color: theme.text2,
     marginVertical: 5,
     textAlign: 'left',
     //width: '90%',
@@ -548,25 +559,25 @@ const styles = StyleSheet.create({
         isVisible = {isAvailInfoVisible}
         onBackdropPress={() => setAvailInfoVisible(false)}
       >
-        <View style={styles.InfoPop}>
-          <Text style={styles.InfoHeader}>How to use the Availability page</Text>
-          <ScrollView style = {styles.InfoTextView}>
-            <Text style={styles.InfoText}>
+        <View style={styles(theme).InfoPop}>
+          <Text style={styles(theme).InfoHeader}>How to use the Availability page</Text>
+          <ScrollView style = {styles(theme).InfoTextView}>
+            <Text style={styles(theme).InfoText}>
               This page is for your availability throughout the week. You will input what times of the week you are not
               available for tenting.
             </Text>
-            <Text style={styles.InfoText}>
+            <Text style={styles(theme).InfoText}>
               To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
               end time.
             </Text>
-            <Text style={styles.InfoText}>
+            <Text style={styles(theme).InfoText}>
               Do this for your entire weekly schedule. You can delete blocks to edit your times.
             </Text>
-            <Text style={styles.InfoText}>
+            <Text style={styles(theme).InfoText}>
               This schedule should remain saved from week to week, but you may edit every week if you have changes 
               to your schedule.
             </Text>
-            <Text style={styles.InfoText}>
+            <Text style={styles(theme).InfoText}>
               Make sure to fill out your availability every week before you Create a New Group Schedule or your 
               busy times will not be accounted for in the group schedule.
             </Text>

@@ -222,7 +222,7 @@ export default function Schedule({ route }) {
             <View
               style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
             >
-              <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={.5}>{person}</Text>
+              <Text style={styles.btnText} adjustsFontSizeToFit={true} minimumFontScale={.5}>{person}</Text>
             </View>
         </View>
       );

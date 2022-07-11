@@ -25,6 +25,7 @@ import {
   setUserName,
   setTentType,
 } from '../redux/reducers/userSlice';
+import { useTheme } from '../context/ThemeProvider';
 
 let prevTentType;
 
@@ -34,6 +35,12 @@ export default function Settings({ route, navigation }) {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const dispatch = useDispatch();
+  const { theme } = useTheme();
+  const { groupCode, groupName, userName, tentType } = route.params;
+  const [currGroupName, setCurrGroupName] = useState(groupName);
+  const [name, setName] = useState(userName);
+  const [tent, setTent] = useState(tentType);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
 
   const toggleConfirmation = () => {
     setConfirmationVisible(!isConfirmationVisible);
@@ -41,15 +48,6 @@ export default function Settings({ route, navigation }) {
   const toggleSnackBar = () => {
     setSnackVisible(!isSnackVisible);
   };
-
-  //gets current user's group code from redux store
-  //const groupCode = useSelector((state) => state.user.currGroupCode);
-
-  const { groupCode, groupName, userName, tentType } = route.params;
-  const [currGroupName, setCurrGroupName] = useState(groupName);
-  const [name, setName] = useState(userName);
-  const [tent, setTent] = useState(tentType);
-  const groupRole = useSelector((state) => state.user.currGroupRole);
 
   console.log('Settings route params', route.params);
   //gets current user's group role from redux store
@@ -78,9 +76,11 @@ export default function Settings({ route, navigation }) {
         try {
           await SplashScreen.preventAutoHideAsync();
 
-          setCurrGroupName(groupName);
-          setName(userName);
-          setTent(tentType);
+          if (mounted) {
+            setCurrGroupName(groupName);
+            setName(userName);
+            setTent(tentType);
+          }
           //console.log('fetched isCreator from firebase', isCreator);
         } catch (e) {
           console.warn(e);
@@ -89,16 +89,16 @@ export default function Settings({ route, navigation }) {
           setIsReady(true);
         }
       }
-
-      prepare();
+      if (mounted) {
+        prepare();
+      }
 
       return () => {
-        mounted = false;
         setCurrGroupName(groupName);
         setName(userName);
         setTent(tentType);
-        setIsReady(false);
-        //setCreator(false);
+        //setIsReady(false);
+        mounted = false;
       };
     }, [route.params])
   );
@@ -150,19 +150,22 @@ export default function Settings({ route, navigation }) {
         setSnackMessage('Error saving group settings');
         return;
       });
-    
+
     console.log('prevTentType', prevTentType);
     console.log('currTentType', tent);
     if (prevTentType) {
-      groupRef.update({
-        groupSchedule: []
-      }).then(()=> {
-        console.log('cleared group schedule');
-      }).catch((error)=> {
-        console.log(error);
-      })
+      groupRef
+        .update({
+          groupSchedule: [],
+        })
+        .then(() => {
+          console.log('cleared group schedule');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
-    
+
     groupRef
       .collection('members')
       .doc(firebase.auth().currentUser.uid)
@@ -183,7 +186,7 @@ export default function Settings({ route, navigation }) {
     dispatch(setGroupName(currGroupName));
     toggleSnackBar();
     setSnackMessage('Saved');
-  };;
+  };
 
   const leaveGroup = () => {
     userRef.update({
@@ -217,7 +220,7 @@ export default function Settings({ route, navigation }) {
 
   const ConfirmationModal = () => {
     return (
-      <View style={styles.confirmationPop}>
+      <View style={styles(theme).confirmationPop}>
         <TouchableOpacity
           onPress={toggleConfirmation}
           style={{
@@ -234,17 +237,17 @@ export default function Settings({ route, navigation }) {
           />
         </TouchableOpacity>
         {groupRole === 'Creator' ? (
-          <Text style={styles.confirmationHeader}>Delete Group</Text>
+          <Text style={styles(theme).confirmationHeader}>Delete Group</Text>
         ) : (
-          <Text style={styles.confirmationHeader}>Leave Group</Text>
+          <Text style={styles(theme).confirmationHeader}>Leave Group</Text>
         )}
         {groupRole === 'Creator' ? (
-          <Text style={styles.confirmationText}>
+          <Text style={styles(theme).confirmationText}>
             Are you sure you want to DELETE this group? This will delete it for
             everyone in this group and CANNOT be undone.
           </Text>
         ) : (
-          <Text style={styles.confirmationText}>
+          <Text style={styles(theme).confirmationText}>
             Are you sure you want to LEAVE this group? This will delete all your
             information in this group and CANNOT be undone.
           </Text>
@@ -257,14 +260,14 @@ export default function Settings({ route, navigation }) {
             toggleConfirmation();
           }}
           //onPress= {toggleConfirmation}
-          style={styles.confirmationBottomBtn}
+          style={styles(theme).confirmationBottomBtn}
         >
           {groupRole === 'Creator' ? (
-            <Text style={[styles.buttonText, { color: 'white' }]}>
+            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
               Yes, Delete This Group
             </Text>
           ) : (
-            <Text style={[styles.buttonText, { color: 'white' }]}>
+            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
               Yes, Leave This Group
             </Text>
           )}
@@ -284,14 +287,14 @@ export default function Settings({ route, navigation }) {
   }
 
   return (
-    <View style={styles.settingsContainer} onLayout={onLayoutRootView}>
-      <View style={styles.topBanner}>
+    <View style={styles(theme).settingsContainer} onLayout={onLayoutRootView}>
+      {/* <View style={styles(theme).topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Icon name='cog-outline' color={'#fff'} size={35} />
+          <Icon name='cog-outline' color={theme.icon1} size={35} />
           <Text
             style={[
-              styles.headerText,
-              { color: '#fff', width: '100%', marginLeft: 6 },
+              styles(theme).headerText,
+              { color: theme.text1, width: '100%', marginLeft: 6 },
             ]}
           >
             Settings
@@ -301,11 +304,11 @@ export default function Settings({ route, navigation }) {
           <View>
             <Text
               style={[
-                styles.groupText,
+                styles(theme).groupText,
                 {
                   fontSize: 21,
-                  fontWeight: 700,
-                  color: '#1F509A',
+                  fontWeight: '700',
+                  color: theme.primary,
                 },
               ]}
             >
@@ -313,7 +316,7 @@ export default function Settings({ route, navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View
         style={{
           flexDirection: 'row',
@@ -321,16 +324,16 @@ export default function Settings({ route, navigation }) {
           justifyContent: 'space-between',
         }}
       >
-        <Text style={styles.headerText}>Name</Text>
+        <Text style={styles(theme).headerText}>Name</Text>
         <Icon
           name='account-edit'
-          color={'#656565'}
+          color={theme.grey2}
           size={20}
           style={{ marginRight: 8 }}
         />
       </View>
       <TextInput
-        style={[styles.textInput, styles.shadowProp]}
+        style={[styles(theme).textInput, styles(theme).shadowProp]}
         value={name}
         placeholder={name}
         onChangeText={(name) =>
@@ -351,10 +354,10 @@ export default function Settings({ route, navigation }) {
             justifyContent: 'space-between',
           }}
         >
-          <Text style={styles.headerText}>Group Name</Text>
+          <Text style={styles(theme).headerText}>Group Name</Text>
           <Icon
             name='circle-edit-outline'
-            color={'#656565'}
+            color={theme.grey2}
             size={20}
             style={{ marginRight: 8 }}
           />
@@ -362,7 +365,7 @@ export default function Settings({ route, navigation }) {
       ) : null}
       {groupRole === 'Creator' ? (
         <TextInput
-          style={[styles.textInput, styles.shadowProp]}
+          style={[styles(theme).textInput, styles(theme).shadowProp]}
           value={currGroupName}
           placeholder={currGroupName}
           onChangeText={(groupName) => setCurrGroupName(groupName)}
@@ -376,10 +379,10 @@ export default function Settings({ route, navigation }) {
             justifyContent: 'space-between',
           }}
         >
-          <Text style={styles.headerText}>Tent Type</Text>
+          <Text style={styles(theme).headerText}>Tent Type</Text>
           <Icon
             name='home-edit'
-            color={'#656565'}
+            color={theme.grey2}
             size={20}
             style={{ marginRight: 8 }}
           />
@@ -393,9 +396,11 @@ export default function Settings({ route, navigation }) {
             setTent(itemValue);
           }}
           style={
-            Platform.OS === 'ios' ? styles.picker : { width: '90%', height: 30 }
+            Platform.OS === 'ios'
+              ? styles(theme).picker
+              : { width: '90%', height: 30 }
           }
-          itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+          itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
         >
           <Picker.Item label='Black' value='Black' />
           <Picker.Item label='Blue' value='Blue' />
@@ -403,13 +408,16 @@ export default function Settings({ route, navigation }) {
           <Picker.Item label='Walk up line' value='Walk up line' />
         </Picker>
       ) : null}
-      <TouchableOpacity style={styles.button} onPress={toggleConfirmation}>
+      <TouchableOpacity
+        style={styles(theme).button}
+        onPress={toggleConfirmation}
+      >
         {groupRole === 'Creator' ? (
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
+          <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '500' }}>
             Delete Group
           </Text>
         ) : (
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '500' }}>
+          <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '500' }}>
             Leave Group
           </Text>
         )}
@@ -438,102 +446,103 @@ export default function Settings({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  settingsContainer: {
-    flexDirection: 'column',
-    flex: 1,
-    alignItems: 'center',
-    //backgroundColor: "#1f509a",
-    backgroundColor: '#C2C6D0',
-  },
-  topBanner: {
-    //for the top container holding top 'settings' and save button
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    marginTop: 25,
-    marginBottom: 30,
-    width: '90%',
-    //borderWidth: 2
-  },
-  headerText: {
-    //text for different setting headers
-    textAlign: 'left',
-    width: '90%',
-    fontSize: 20,
-    marginBottom: 10,
-    fontWeight: '700',
-    color: '#656565',
-  },
-  textInput: {
-    backgroundColor: '#f6f6f6',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    width: '90%',
-    fontSize: 18,
-    fontWeight: '500',
-    textAlign: 'left',
-    borderRadius: 15,
-    marginBottom: 23,
-    borderColor: '#656565',
-    borderWidth: 2,
-  },
-  picker: {
-    height: '25%',
-    width: '90%',
-    //borderWidth: 2,
-  },
-  pickerItem: {
-    height: '100%',
-  },
-  confirmationPop: {
-    width: '90%',
-    height: 173,
-    backgroundColor: '#1E3F66',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderRadius: 20,
-    margin: 15,
-  },
-  confirmationHeader: {
-    //style for text at the top of the popup
-    fontWeight: '600',
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  confirmationText: {
-    backgroundColor: '#2E5984',
-    color: 'white',
-    textAlign: 'center',
-    width: '90%',
-    padding: 5,
-    borderRadius: 15,
-  },
-  confirmationBottomBtn: {
-    color: 'white',
-    backgroundColor: 'black',
-    width: '50%',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 26,
-  },
-  button: {
-    backgroundColor: '#1F509A',
-    padding: 15,
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    alignItems: 'center',
-  },
-  shadowProp: {
-    //shadow for the text input and image
-    shadowColor: '#171717',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 20,
-  },
-});
+const styles = (theme) =>
+  StyleSheet.create({
+    settingsContainer: {
+      flexDirection: 'column',
+      flex: 1,
+      alignItems: 'center',
+      //backgroundColor: "#1f509a",
+      backgroundColor: theme.background,
+    },
+    topBanner: {
+      //for the top container holding top 'settings' and save button
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      marginTop: 25,
+      marginBottom: 30,
+      width: '90%',
+      //borderWidth: 2
+    },
+    headerText: {
+      //text for different setting headers
+      textAlign: 'left',
+      width: '90%',
+      fontSize: 20,
+      marginBottom: 10,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      width: '90%',
+      fontSize: 18,
+      fontWeight: '500',
+      textAlign: 'left',
+      borderRadius: 15,
+      marginBottom: 23,
+      borderColor: theme.grey2,
+      borderWidth: 2,
+    },
+    picker: {
+      height: '25%',
+      width: '90%',
+      //borderWidth: 2,
+    },
+    pickerItem: {
+      height: '100%',
+    },
+    confirmationPop: {
+      width: '90%',
+      height: 173,
+      backgroundColor: theme.primary,
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'space-evenly',
+      borderRadius: 20,
+      margin: 15,
+    },
+    confirmationHeader: {
+      //style for text at the top of the popup
+      fontWeight: '600',
+      color: theme.text1,
+      textAlign: 'center',
+      fontSize: 18,
+    },
+    confirmationText: {
+      backgroundColor: theme.tertiary,
+      color: theme.text1,
+      textAlign: 'center',
+      width: '90%',
+      padding: 5,
+      borderRadius: 15,
+    },
+    confirmationBottomBtn: {
+      color: theme.text1,
+      backgroundColor: 'black',
+      width: '50%',
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 26,
+    },
+    button: {
+      backgroundColor: theme.primary,
+      padding: 15,
+      position: 'absolute',
+      bottom: 0,
+      width: '100%',
+      alignItems: 'center',
+    },
+    shadowProp: {
+      //shadow for the text input and image
+      shadowColor: '#171717',
+      shadowOffset: { width: -2, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 20,
+    },
+  });

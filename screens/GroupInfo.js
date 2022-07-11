@@ -16,6 +16,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import {useTheme} from '../context/ThemeProvider';
 /* let currentUserName;
 
 firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
@@ -37,6 +38,7 @@ export default function GroupInfo({ route }) {
 
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   console.log('route params: ', route.params);
+  const { theme } = useTheme();
 
   const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
   //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
@@ -46,8 +48,13 @@ export default function GroupInfo({ route }) {
       let mounted = true;
       console.log('GroupRef', route.params.groupCode);
       //const GroupRef = firebase.firestore().collection('groups').doc(route.params.groupCode);
-
+      if (mounted) {
+        members = [];
+        setCurrIndex(0);
+        //setIsReady(false);
+      }
       async function prepare() {
+        console.log('Group info screen is ready: ', isReady);
         try {
           await SplashScreen.preventAutoHideAsync();
 
@@ -102,19 +109,25 @@ export default function GroupInfo({ route }) {
                 console.log('done reading members', members);
                 //console.log('ARRAY: ', members);
               }
+            })
+            .catch((error) => {
+              console.error(error);
             });
-          setCurrIndex(0);
+          //setCurrIndex(0);
         } catch (e) {
           console.warn(e);
         } finally {
           // Tell the application to render
+          console.log('Group Info screen is now ready', members);
           setIsReady(true);
         }
       }
-      prepare();
+      if (mounted) {
+        prepare();
+      }
 
       return () => {
-        members = [];
+        //setCurrIndex(0);
         setIsReady(false);
         mounted = false;
       };
@@ -136,7 +149,7 @@ export default function GroupInfo({ route }) {
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
-      toggleModal();
+    toggleModal();
   };
 
   const onLayoutRootView = useCallback(async () => {
@@ -159,14 +172,14 @@ export default function GroupInfo({ route }) {
       >
         <View
           style={[
-            styles.listItem,
+            styles(theme).listItem,
             backgroundColor,
-            styles.shadowProp,
+            styles(theme).shadowProp,
             { flexDirection: 'row', justifyContent: 'space-evenly' },
           ]}
         >
-          <Text style={styles.listText}>{name}</Text>
-          <Text style={{ color: 'white' }}>
+          <Text style={styles(theme).listText}>{name}</Text>
+          <Text style={{ color: theme.text1}}>
             Scheduled Hrs: {members[indexOfUser].hours} hrs
           </Text>
         </View>
@@ -192,19 +205,19 @@ export default function GroupInfo({ route }) {
   }
   return (
     <View
-      style={styles.container}
+      style={styles(theme).container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.header}>Group Name</Text>
+      <Text style={styles(theme).header}>Group Name</Text>
 
-      <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupName}</Text>
+      <View style={styles(theme).boxText}>
+        <Text style={styles(theme).contentText}>{groupName}</Text>
       </View>
 
-      <Text style={styles.header}>Group Code</Text>
-      <View style={styles.boxText}>
-        <Text style={styles.contentText}>{groupCode}</Text>
+      <Text style={styles(theme).header}>Group Code</Text>
+      <View style={styles(theme).boxText}>
+        <Text selectable={true} style={styles(theme).contentText}>{groupCode}</Text>
       </View>
 
       <View>
@@ -220,7 +233,7 @@ export default function GroupInfo({ route }) {
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
         >
-          <View style={styles.popUp}>
+          <View style={styles(theme).popUp}>
             <View
               style={{
                 flexDirextion: 'row',
@@ -238,8 +251,8 @@ export default function GroupInfo({ route }) {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.popUpHeader}>{currMember} Information</Text>
-            <Text style={styles.popUpText}>
+            <Text style={styles(theme).popUpHeader}>{currMember} Information</Text>
+            <Text style={styles(theme).popUpText}>
               Scheduled Hrs: {members[currIndex].hours} hrs
             </Text>
             {groupRole === 'Creator' &&
@@ -248,7 +261,7 @@ export default function GroupInfo({ route }) {
                 <Text
                   style={{
                     textAlign: 'center',
-                    color: '#c91936',
+                    color: theme.error,
                     fontSize: 15,
                   }}
                 >
@@ -263,17 +276,17 @@ export default function GroupInfo({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#C2C6D0',
+    backgroundColor: theme.primaryContainer,
   },
   header: {
     marginBottom: 10,
     marginTop: 4,
     alignSelf: 'center',
     //borderWidth: 2,
-    color: '#3a3b3c',
+    color: theme.greyPrimary,
     width: '90%',
     fontSize: 22,
     fontWeight: '700',
@@ -285,10 +298,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   listItem: {
-    backgroundColor: '#1f509a',
+    backgroundColor: theme.primary,
     padding: 4,
     marginVertical: 3,
-    borderRadius: 7,
+    borderRadius: 15,
     width: '80%',
     alignSelf: 'center',
     alignItems: 'center',
@@ -297,12 +310,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     //fontFamily: 'sans-serif',
     fontWeight: '500',
-    color: 'white',
+    color: theme.text1,
   },
   boxText: {
     marginBottom: 10,
     width: '90%',
-    backgroundColor: '#FFFAFACC',
+    backgroundColor: theme.white1,
     borderRadius: 8,
     alignSelf: 'center',
   },
@@ -315,7 +328,7 @@ const styles = StyleSheet.create({
   popUp: {
     width: '90%',
     height: '15%',
-    backgroundColor: '#1E3F66',
+    backgroundColor: theme.secondary,
     alignSelf: 'center',
     alignItems: 'center',
     borderRadius: 20,
@@ -323,15 +336,15 @@ const styles = StyleSheet.create({
   },
   popUpHeader: {
     fontWeight: '600',
-    color: 'white',
+    color: theme.text1,
     marginBottom: 5,
     textAlign: 'center',
     fontSize: 16,
     //borderWidth: 1
   },
   popUpText: {
-    backgroundColor: '#2E5984',
-    color: 'white',
+    backgroundColor: theme.tertiary,
+    color: theme.text1,
     textAlign: 'center',
     width: '90%',
     marginVertical: 8,
