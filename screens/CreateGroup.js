@@ -281,13 +281,9 @@ export default function CreateGroup({ navigation }) {
               console.log(group.groupCode);
               console.log(groupRole);
             }}
-            style = {styles(theme).createBtn}
+            style={styles(theme).createBtn}
           >
-            <Text
-              style={styles(theme).btnTxt}
-            >
-              Create
-            </Text>
+            <Text style={styles(theme).btnTxt}>Create</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -333,9 +329,7 @@ export default function CreateGroup({ navigation }) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <View style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-        </View>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
       </Snackbar>
     </View>
   );

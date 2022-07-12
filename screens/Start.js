@@ -54,11 +54,6 @@ export default function Start({ navigation }) {
   useRefreshOnFocus(refetch);
   //console.log(isLoading);
 
-  //firebase reference to current user
-  const userRef = firebase
-    .firestore()
-    .collection('users')
-    .doc(firebase.auth().currentUser.uid);
   async function fetchGroups() {
     let data;
     await SplashScreen.preventAutoHideAsync();
@@ -86,7 +81,6 @@ export default function Start({ navigation }) {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const { theme } = useTheme();
 
   const dispatch = useDispatch();
@@ -179,7 +173,7 @@ export default function Start({ navigation }) {
   };
 
   const onLayoutRootView = useCallback(async () => {
-    if (isLoading) {
+    if (!isLoading) {
       await SplashScreen.hideAsync();
     }
   }, [isLoading]);

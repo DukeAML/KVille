@@ -219,11 +219,14 @@ export default function Register(props) {
         <Snackbar
           visible={isValid.boolSnack}
           duration={2000}
+          wrapperStyle={{ top: 0 }}
           onDismiss={() => {
             setIsValid({ boolSnack: false });
           }}
         >
-          {isValid.message}
+          <Text style={{ textAlign: 'center', color: theme.text1 }}>
+            {isValid.message}
+          </Text>
         </Snackbar>
       </KeyboardAvoidingView>
       <View style={styles(theme).bottomButton}>

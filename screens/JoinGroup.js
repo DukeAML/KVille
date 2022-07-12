@@ -213,7 +213,13 @@ export default function JoinGroup({ navigation }) {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <View style={{ marginTop: 'auto', width: '100%', backgroundColor: theme.background }} >
+      <View
+        style={{
+          marginTop: 'auto',
+          width: '100%',
+          backgroundColor: theme.background,
+        }}
+      >
         <View
           style={[
             styles(theme).triangle,
@@ -248,9 +254,9 @@ export default function JoinGroup({ navigation }) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <View style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-        </View>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>
+          {snackMessage}
+        </Text>
       </Snackbar>
     </View>
   );

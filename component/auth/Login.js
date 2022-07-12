@@ -125,7 +125,11 @@ export default function Login(props) {
         <View style={styles(theme).formCenter}>
           <View style={styles(theme).section}>
             <View style={styles(theme).icon}>
-              <Icon name='account-circle-outline' color={theme.icon2} size={25} />
+              <Icon
+                name='account-circle-outline'
+                color={theme.icon2}
+                size={25}
+              />
             </View>
             <TextInput
               style={styles(theme).textInput}
@@ -197,9 +201,9 @@ export default function Login(props) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <View style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-        </View>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>
+          {snackMessage}
+        </Text>
       </Snackbar>
     </View>
   );

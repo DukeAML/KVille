@@ -22,12 +22,14 @@ import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 
 const window = Dimensions.get('window');
 
@@ -47,16 +49,15 @@ for (let i = 0; i < 48; i += 1) {
   tableData.push(rowData);
 }
 
-let availability;
-let availabilityUI;
 let currIndex;
 
-availabilityUI = new Array(336);
-availabilityUI.fill([true, 0]);
+let availability
+// let availabilityUI = new Array(336);
+// availabilityUI.fill([true, 0]);
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
-  console.log('availability params', route.params);
+  //console.log('availability params', route.params);
 
   const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState({ window });
@@ -76,15 +77,69 @@ export default function Availability({ route }) {
     day: 0,
   });
   const { theme } = useTheme();
+  const { isLoading, isError, error, data, refetch } = useQuery(
+    ['availability', firebase.auth().currentUser.uid, groupCode],
+    () => fetchAvailability(groupCode)
+  );
+  useRefreshOnFocus(refetch);
 
-  const memberRef = firebase
-    .firestore()
-    .collection('groups')
-    .doc(groupCode)
-    .collection('members')
-    .doc(firebase.auth().currentUser.uid);
+  async function fetchAvailability(groupCode) {
+    await SplashScreen.preventAutoHideAsync();
+    //let availability;
+    let availabilityUI = new Array(336);
+    availabilityUI.fill([true, 0]);
+    await firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        availability = doc.data().availability;
+        console.log('availability fetched from firebase', availability);
+      });
+    for (let i = 0; i < availability.length; i++) {
+      if (!availability[i]) {
+        let j = i;
+        while (j < availability.length && !availability[j]) {
+          availabilityUI[j] = [true, 0];
+          j++;
+        }
+        availabilityUI[j - 1] = [false, j - i];
+        i = j;
+      } else {
+        availabilityUI[i] = [true, 0];
+      }
+    }
+    return availabilityUI;
+  }
 
-  const updateAvailability = () => {
+  const useUpdateAvailability = (groupCode) => {
+    const queryClient = useQueryClient();
+    return useMutation(() => updateAvailability(groupCode), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          'availability',
+          firebase.auth().currentUser.uid,
+          groupCode,
+        ]);
+      },
+    });
+  };
+
+  const postAvailability = useUpdateAvailability(groupCode);
+
+  const updateAvailability = (groupCode) => {
+    const memberRef = firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid);
     if (selectedDay == 7) {
       toggleSnackBar();
       setSnackMessage('Please select a day');
@@ -111,12 +166,50 @@ export default function Availability({ route }) {
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
-    availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
+    //availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
     console.log('availability', availability);
     memberRef.update({
       availability: availability,
     });
     toggleModal();
+  };
+
+  //const queryClient = useQueryClient();
+  const useDeleteAvailability = (groupCode) => {
+    const queryClient = useQueryClient();
+    return useMutation(() => deleteCell(groupCode), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          'availability',
+          firebase.auth().currentUser.uid,
+          groupCode,
+        ]);
+      },
+    });
+  };
+
+  const deleteAvailability = useDeleteAvailability(groupCode);
+
+  const deleteCell = (groupCode) => {
+    const memberRef = firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid);
+    console.log('currIndex', currIndex);
+    let startIdx = currIndex - data[currIndex][1];
+    console.log('startIdx', startIdx);
+    for (let i = startIdx; i <= currIndex; i++) {
+      availability[i] = true;
+    }
+    memberRef.update({
+      availability: availability,
+    });
+    toggleDeleteModal();
   };
 
   const toggleModal = () => {
@@ -129,11 +222,11 @@ export default function Availability({ route }) {
     setSnackVisible(!isSnackVisible);
   };
 
-  const element = (data, index) => (
+  const element = (cellData, index, availability) => (
     <TouchableOpacity
       style={[
         styles(theme).btn,
-        { height: 40 * parseInt(availabilityUI[index][1]) },
+        { height: 40 * parseInt(availability[index][1]) },
       ]}
       onPress={() => {
         console.log(index);
@@ -143,20 +236,6 @@ export default function Availability({ route }) {
     ></TouchableOpacity>
   );
 
-  const deleteCell = () => {
-    console.log('currIndex', currIndex);
-    let startIdx = currIndex - availabilityUI[currIndex][1];
-    console.log('startIdx', startIdx);
-    for (let i = startIdx; i <= currIndex; i++) {
-      availability[i] = true;
-    }
-    availabilityUI[currIndex] = [true, 0];
-    memberRef.update({
-      availability: availability,
-    });
-    toggleDeleteModal();
-  };
-
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions({ window });
@@ -164,55 +243,18 @@ export default function Availability({ route }) {
     return () => subscription?.remove();
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      let mounted = true;
-
-      async function prepare() {
-        try {
-          await SplashScreen.preventAutoHideAsync();
-
-          await memberRef.get().then((doc) => {
-            availability = doc.data().availability;
-            console.log('availability fetched from firebase', availability);
-          });
-          for (let i = 0; i < availability.length; i++) {
-            if (!availability[i]) {
-              let j = i;
-              while (j < availability.length && !availability[j]) {
-                availabilityUI[j] = [true, 0];
-                j++;
-              }
-              availabilityUI[j - 1] = [false, j - i];
-              i = j;
-            } else {
-              availabilityUI[i] = [true, 0];
-            }
-          }
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          // Tell the application to render
-          setIsReady(true);
-        }
-      }
-      if (mounted) {
-        prepare();
-      }
-      return () => {
-        //setIsReady(false);
-        mounted = false;
-      };
-    }, [route.params])
-  );
-
   const onLayoutRootView = useCallback(async () => {
-    if (isReady) {
+    if (!isLoading) {
       await SplashScreen.hideAsync();
     }
-  }, [isReady]);
+  }, [isLoading]);
 
-  if (!isReady) {
+  if (isLoading) {
+    return null;
+  }
+
+  if (isError) {
+    console.error(error);
     return null;
   }
 
@@ -223,7 +265,7 @@ export default function Availability({ route }) {
         onBackdropPress={toggleDeleteModal}
         style={styles(theme).deleteModal}
       >
-        <TouchableOpacity onPress={deleteCell}>
+        <TouchableOpacity onPress={()=>deleteAvailability.mutate()}>
           <Text
             style={{ textAlign: 'center', color: theme.error, fontSize: 15 }}
           >
@@ -239,9 +281,9 @@ export default function Availability({ route }) {
           wrapperStyle={{ top: 0 }}
           duration={2000}
         >
-          <View style={{ width: '100%' }}>
-            <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-          </View>
+          <Text style={{ textAlign: 'center', color: theme.text1 }}>
+            {snackMessage}
+          </Text>
         </Snackbar>
         <View style={styles(theme).modalContainer}>
           <View style={styles(theme).modalHeader}>
@@ -420,7 +462,7 @@ export default function Availability({ route }) {
           <View style={styles(theme).modalFooter}>
             <TouchableOpacity
               style={styles(theme).addBtn}
-              onPress={updateAvailability}
+              onPress={() => postAvailability.mutate()}
             >
               <Text style={styles(theme).btnText}>Add</Text>
             </TouchableOpacity>
@@ -431,7 +473,7 @@ export default function Availability({ route }) {
         <Row
           data={agenda.tableHead}
           style={StyleSheet.flatten(styles(theme).head)}
-          textStyle={StyleSheet.flatten(styles(theme).text)}
+          textStyle={{ textAlign: 'center' }}
         />
       </Table>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -439,7 +481,9 @@ export default function Availability({ route }) {
           borderStyle={{ borderWidth: 1 }}
           style={{ flexDirection: 'row' }}
         >
-          <TableWrapper style={{ width: dimensions.window.width / 8 }}>
+          <TableWrapper
+            style={StyleSheet.flatten([{ width: dimensions.window.width / 8 }])}
+          >
             <Col
               data={agenda.tableTime}
               style={StyleSheet.flatten(styles(theme).time)}
@@ -451,24 +495,25 @@ export default function Availability({ route }) {
             {tableData.map((rowData, index) => (
               <TableWrapper
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles(theme).row,
                   index % 2 && { backgroundColor: '#F7F6E7' },
-                ]}
+                ])}
               >
                 {rowData.map((cellData, cellIndex) => (
                   <Cell
                     key={cellIndex}
                     data={
-                      availabilityUI[48 * cellIndex + index][0]
+                      data[48 * cellIndex + index][0]
                         ? cellData
-                        : element(cellData, 48 * cellIndex + index)
+                        : element(cellData, 48 * cellIndex + index, data)
                     }
-                    style={[
+                    //{data[48 * cellIndex + index].toString()}
+
+                    style={StyleSheet.flatten([
                       styles(theme).cell,
                       { width: dimensions.window.width / 8 },
-                    ]}
-                    textStyle={StyleSheet.flatten(styles(theme).text)}
+                    ])}
                   />
                 ))}
               </TableWrapper>

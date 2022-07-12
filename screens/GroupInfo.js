@@ -45,8 +45,8 @@ export default function GroupInfo({ route }) {
   //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
 
   const { isLoading, isError, error, data, refetch } = useQuery(
-    ['group', route.params.groupCode],
-    ()=>fetchGroupMembers(route.params.groupCode), {initialData: []}
+    ['group', groupCode],
+    ()=>fetchGroupMembers(groupCode), {initialData: []}
   );
   useRefreshOnFocus(refetch)
 
@@ -101,7 +101,7 @@ export default function GroupInfo({ route }) {
   };
 
   const onLayoutRootView = useCallback(async () => {
-    if (isLoading) {
+    if (!isLoading) {
       await SplashScreen.hideAsync();
     }
   }, [isLoading]);
