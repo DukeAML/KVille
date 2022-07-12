@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 
@@ -33,6 +34,8 @@ import { persistor, store } from './redux/store/index';
 import ThemeProvider from './context/ThemeProvider';
 
 const Stack = createNativeStackNavigator();
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [state, setState] = useState({
@@ -142,10 +145,12 @@ export default function App() {
 
   //Main screen, after landing
   return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <MainScreen />
-      </ThemeProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <ThemeProvider>
+          <MainScreen />
+        </ThemeProvider>
+      </Provider>
+    </QueryClientProvider>
   );
 }

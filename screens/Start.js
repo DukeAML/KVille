@@ -18,6 +18,7 @@ import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
 import { Menu, Provider } from 'react-native-paper';
+import { useQuery } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -34,6 +35,7 @@ import {
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 
 const window = Dimensions.get('window');
 
@@ -43,6 +45,44 @@ export default function Start({ navigation }) {
   /* let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
   }); */
+  const { isLoading, isError, error, refetch, data } = useQuery(
+    ['groups', firebase.auth().currentUser.uid],
+    fetchGroups,
+    { initialData: [] }
+  );
+  //console.log('useQuery data:', data);
+  useRefreshOnFocus(refetch);
+  //console.log(isLoading);
+
+  //firebase reference to current user
+  const userRef = firebase
+    .firestore()
+    .collection('users')
+    .doc(firebase.auth().currentUser.uid);
+  async function fetchGroups() {
+    let data;
+    await SplashScreen.preventAutoHideAsync();
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        let currGroup = doc.data().groupCode;
+        console.log("Current user's groups", currGroup);
+        data = currGroup.map((group) => ({
+          code: group.groupCode,
+          groupName: group.groupName,
+        }));
+
+        //return [];
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      });
+    return data;
+  }
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -134,88 +174,21 @@ export default function Start({ navigation }) {
     );
   };
 
-  //firebase reference to current user
-  const userRef = firebase
-    .firestore()
-    .collection('users')
-    .doc(firebase.auth().currentUser.uid);
-
-  useFocusEffect(
-    useCallback(() => {
-      let mounted = true;
-
-      if (mounted) {
-        //setIsReady(false);
-        console.log('Start screen is ready: ', isReady);
-        GROUPS = [];
-      }
-
-      async function prepare() {
-        try {
-          await SplashScreen.preventAutoHideAsync();
-
-          //Accesses Names of Members from firebase and adds them to the array
-          await userRef
-            .get()
-            .then((doc) => {
-              if (mounted) {
-                //setIsReady(false);
-                let currGroup = doc.data().groupCode;
-                console.log("Current user's groups", currGroup);
-
-                if (mounted && currGroup.length !== 0) {
-                  currGroup.forEach((group) => {
-                    let current = {
-                      code: group.groupCode,
-                      groupName: group.groupName,
-                    };
-                    let codeExists;
-                    if (GROUPS.length === 0) codeExists = false;
-                    else {
-                      codeExists = GROUPS.some((e) => e.code === group.code);
-                    }
-
-                    if (mounted && !codeExists) {
-                      GROUPS.push(current);
-                    }
-                  });
-                }
-              }
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          // Tell the application to render
-          setIsReady(true);
-        }
-      }
-
-      if (mounted) {
-        prepare();
-      }
-
-      return () => {
-        setIsReady(false);
-        //console.log('start screen was unfocused');
-        mounted = false;
-      };
-    }, [])
-  );
-
   const onLogout = () => {
     firebase.auth().signOut();
   };
 
   const onLayoutRootView = useCallback(async () => {
-    if (isReady) {
+    if (isLoading) {
       await SplashScreen.hideAsync();
     }
-  }, [isReady]);
+  }, [isLoading]);
 
-  if (!isReady) {
+  if (isLoading) {
+    return null;
+  }
+  if (isError) {
+    console.error(error);
     return null;
   }
   return (
@@ -228,11 +201,7 @@ export default function Start({ navigation }) {
             onDismiss={closeMenu}
             anchor={
               <TouchableOpacity onPress={openMenu}>
-                <Icon
-                  name='dots-vertical'
-                  color={theme.icon2}
-                  size={25}
-                />
+                <Icon name='dots-vertical' color={theme.icon2} size={25} />
               </TouchableOpacity>
             }
           >
@@ -252,7 +221,11 @@ export default function Start({ navigation }) {
           <Text style={styles(theme).groupText}>Groups</Text>
           <TouchableOpacity onPress={toggleModal}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Icon name='plus-circle-outline' color={theme.primary} size={20} />
+              <Icon
+                name='plus-circle-outline'
+                color={theme.primary}
+                size={20}
+              />
               <Text
                 style={[
                   styles(theme).groupText,
@@ -273,7 +246,7 @@ export default function Start({ navigation }) {
       <ScrollView showsVerticalScrollIndicator={false}> */}
         <SafeAreaView>
           <FlatList
-            data={GROUPS}
+            data={data}
             renderItem={renderGroup}
             keyExtractor={(item) => item.code}
           />
@@ -289,7 +262,10 @@ export default function Start({ navigation }) {
             <View style={styles(theme).popUp}>
               <Text style={styles(theme).popUpHeader}>Add Group</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('JoinGroup')}
+                onPress={() => {
+                  toggleModal();
+                  navigation.navigate('JoinGroup');
+                }}
               >
                 <View
                   style={[
@@ -313,7 +289,10 @@ export default function Start({ navigation }) {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate('CreateGroup')}
+                onPress={() => {
+                  toggleModal();
+                  navigation.navigate('CreateGroup')
+                }}
               >
                 <View
                   style={[

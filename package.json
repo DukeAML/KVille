@@ -38,6 +38,7 @@
     "react-native-screens": "~3.11.1",
     "react-native-table-component": "^1.2.2",
     "react-native-web": "0.17.7",
+    "react-query": "^4.0.0-beta.23",
     "react-redux": "^8.0.2",
     "redux-persist": "^6.0.0",
     "yup": "^0.32.11"

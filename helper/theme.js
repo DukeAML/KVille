@@ -1,5 +1,4 @@
 export const lightTheme = {
-  roundness: 5,
   background: '#C2C6D0',
   primary: '#1F509A',
   primaryContainer: '#C2C6D0',
@@ -25,4 +24,6 @@ export const generalTheme = {
   roundness: 5,
 };
 
-export const darkTheme = {}
+export const darkTheme = {
+  
+}
