@@ -7,10 +7,9 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
-import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import { Snackbar } from 'react-native-paper';
@@ -35,7 +34,7 @@ const colors = ['#D0342C', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8'
 
 let colorCodes = [
   //Array for color corresponding to each member
-  { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0},
+  { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 },
 ];
 
 let prevColorCodes;
@@ -50,8 +49,8 @@ const win = Dimensions.get('window'); //Global Var for screen size
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
-  console.log('Schedule screen params', route.params);
-  const [isReady, setIsReady] = useState(false); // for checking if firebase is read before rendering
+  //console.log('Schedule screen params', route.params);
+
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -74,62 +73,39 @@ export default function Schedule({ route }) {
   const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
 
   const { isLoading, isError, error, refetch, data } = useQuery(
-    ['group schedule', firebase.auth().currentUser.uid, code],
+    ['groupSchedule', firebase.auth().currentUser.uid, code],
     () => fetchGroupSchedule(code),
     { initialData: [] }
   );
 
   async function fetchGroupSchedule(groupCode) {
-    
+    await SplashScreen.preventAutoHideAsync();
+
+    await firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .get()
+      .then((doc) => {
+        currSchedule = doc.data().groupSchedule;
+        prevSchedule = doc.data().previousSchedule;
+        colorCodes = doc.data().memberArr;
+        prevColorCodes = doc.data().previousMemberArr;
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      });
+    return currSchedule;
   }
-
-  //to read the current schedule from firebase
-  useFocusEffect(
-    useCallback(() => {
-      let mounted = true;
-      async function prepare() {
-        try {
-          await SplashScreen.preventAutoHideAsync();
-
-          //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
-          prevColorCodes = new Array();
-
-          //stores group schedule in global variable
-          await groupRef.get().then((doc) => {
-            //schedule = doc.data().groupSchedule; //change**
-            currSchedule = doc.data().groupSchedule;
-            prevSchedule = doc.data().previousSchedule;
-            //memberIDArray = doc.data().memberArr;
-            colorCodes = doc.data().memberArr;
-            prevColorCodes = doc.data().previousMemberArr;
-          });
-
-          setSchedule(currSchedule); //force refresh
-          //console.log('member id array:' , memberIDArray);
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          // Tell the application to render
-          setIsReady(true);
-        }
-      }
-
-      if (mounted) {
-        prepare();
-      }
-      return () => {
-        mounted = false;
-        setIsReady(false);
-      };
-    }, [route.params])
-  );
+  console.log('query data', data);
 
   /* const window = useWindowDimensions();
   const styles= makeStyles(window.fontScale); */
 
   //FIREBASE REFERENCE for group
   /* const groupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE'); */
-  //const groupRef = firebase.firestore().collection('groups').doc(code);
+  const groupRef = firebase.firestore().collection('groups').doc(code);
 
   const toggleModal = () => {
     //to toggle the edit cell popup
@@ -373,7 +349,7 @@ export default function Schedule({ route }) {
       default:
         indexAdder = 0;
     }
-    let dayArr = schedule.slice(indexAdder, indexAdder + 48);
+    let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
       <View style={{ marginTop: 30 }}>
@@ -539,16 +515,6 @@ export default function Schedule({ route }) {
       await SplashScreen.hideAsync();
     }
   }, [isLoading]);
-
-  if (!isLoading) {
-    //if firebase reading is done, then can render
-    return null;
-  }
-
-  if (isError) {
-    console.error(error);
-    return null;
-  }
   //console.log('Full Schedule: ', schedule);
 
   //This is for changing the table parameters given that the previous week is a different tent type
@@ -581,6 +547,15 @@ export default function Schedule({ route }) {
 
   console.log('current colors: ', colorCodes);
   console.log('previous colors: ', prevColorCodes);
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (isError) {
+    console.error(error);
+    return null;
+  }
 
   return (
     <View style={styles.bigContainer} onLayout={onLayoutRootView}>
@@ -697,10 +672,10 @@ export default function Schedule({ route }) {
           <View
             style={{
               height: 28,
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: myBtnColor
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: myBtnColor,
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '500' }}>
@@ -944,8 +919,8 @@ let group = [
             });
           } */
 
-          //prevColorCodes = [...colorCodes];
-          /* let counterIndex = new Array();
+//prevColorCodes = [...colorCodes];
+/* let counterIndex = new Array();
           for (let i = 0; i < prevSchedule.length; i++) {
             //if (prevColorCodes.length >= 13) break; //CHANGE THIS TO 13 FOR REAL GROUP
             if (counterIndex.length >= prevColorCodes.length) break; //CHANGE THIS TO 13 FOR REAL GROUP
@@ -995,11 +970,7 @@ let group = [
     });
   }); */
 
-
-
-
 //const groupRef = firebase.firestore().collection("groups").doc(code);
-
 
 /*   if (weekDisplay == 'Previous Week'){
     //colorCodes = [{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0}]; //reintialize colors
@@ -1049,7 +1020,3 @@ let group = [
       //if (colorCodes.length >=13) break;
     }
   } */
-  
-
-
-

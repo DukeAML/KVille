@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, Text, } from 'react-native';
-import {
-  Title,
-  Drawer,
-  Switch,
-} from 'react-native-paper';
+import { View, StyleSheet, Text } from 'react-native';
+import { Title, Drawer, Switch } from 'react-native-paper';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -19,33 +16,47 @@ export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
 
   const groupCode = useSelector((state) => state.user.currGroupCode);
+  console.log('group code', groupCode);
   const groupName = useSelector((state) => state.user.currGroupName);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
   const groupRole = useSelector((state) => state.user.currGroupRole);
-  useEffect(() => {
-    let mounted = true;
-    if (mounted && groupCode != '') {
-      firebase
-        .firestore()
-        .collection('groups')
-        .doc(groupCode)
-        .collection('members')
-        .doc(firebase.auth().currentUser.uid)
-        .update({
-          inTent: status,
-        }).then(()=>{
-          console.log('successfully updated tent status');
-        }).catch((error)=>{
-          console.error(error);
-        });
-    }
-    return () => (mounted = false);
-  }, [status]);
+
+  const useUpdateTentStatus = (groupCode) => {
+    const queryClient = useQueryClient();
+    return useMutation((status) => updateTentStatus(groupCode, status), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['group', groupCode]);
+      },
+    });
+  };
+  const updateTentStatus = (groupCode, status) => {
+    firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        inTent: status,
+      })
+      .then(() => {
+        console.log('successfully updated tent status: ', status);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const postTentStatus = useUpdateTentStatus(groupCode);
 
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
+      console.log('useFocusEffect triggered');
       if (mounted && groupCode != '') {
         firebase
           .firestore()
@@ -56,13 +67,14 @@ export default function DrawerContent(props) {
           .get()
           .then((doc) => {
             if (mounted && doc.exists) {
-              console.log(doc.data().inTent)
+              console.log(doc.data().inTent);
               setStatus(doc.data().inTent);
               console.log('status: ', status);
             } else {
-              console.log('doc doesn\'t exist');
+              console.log("doc doesn't exist");
             }
-          }).catch((error)=>{
+          })
+          .catch((error) => {
             console.error(error);
           });
       }
@@ -70,8 +82,9 @@ export default function DrawerContent(props) {
     }, [groupCode])
   );
 
-  const onToggleSwitch = () => {
+  const onToggleSwitch = async () => {
     setStatus(!status);
+    postTentStatus.mutate(!status);
   };
 
   //const dispatch = useDispatch();
@@ -197,7 +210,7 @@ export default function DrawerContent(props) {
           </Drawer.Section>
           <Drawer.Section title='Preferences'>
             <View style={styles.preference}>
-              <Text style={{color:'#000'}}>In Tent</Text>
+              <Text style={{ color: '#000' }}>In Tent</Text>
               <Switch value={status} onValueChange={onToggleSwitch} />
             </View>
           </Drawer.Section>
