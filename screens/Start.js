@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect, StackActions } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -9,7 +8,6 @@ import {
   ScrollView,
   Dimensions,
   FlatList,
-  Button,
   SafeAreaView,
 } from 'react-native';
 //import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';

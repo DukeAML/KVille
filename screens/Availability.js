@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -81,7 +80,7 @@ export default function Availability({ route }) {
     ['availability', firebase.auth().currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)
   );
-  useRefreshOnFocus(refetch);
+  //useRefreshOnFocus(refetch);
 
   async function fetchAvailability(groupCode) {
     await SplashScreen.preventAutoHideAsync();

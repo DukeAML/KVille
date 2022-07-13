@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -41,14 +40,14 @@ export default function GroupInfo({ route }) {
   //console.log('route params: ', route.params);
   const { theme } = useTheme();
 
-  const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
+  //const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
   //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
     ()=>fetchGroupMembers(groupCode), {initialData: []}
   );
-  useRefreshOnFocus(refetch)
+  //useRefreshOnFocus(refetch)
 
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
@@ -86,9 +85,13 @@ export default function GroupInfo({ route }) {
     setModalVisible(!isModalVisible);
   };
 
-  const removeMember = () => {
+  const removeMember = (groupCode) => {
     console.log('current member being deleted', currMember.id);
-    GroupRef.collection('members')
+    firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
       .doc(currMember.id)
       .delete()
       .then(() => {
@@ -213,7 +216,7 @@ export default function GroupInfo({ route }) {
             </Text>
             {groupRole === 'Creator' &&
             currMember.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={removeMember}>
+              <TouchableOpacity onPress={()=>removeMember(groupCode)}>
                 <Text
                   style={{
                     textAlign: 'center',
