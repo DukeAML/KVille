@@ -696,11 +696,11 @@ export default function Schedule({ route }) {
         >
           <View
             style={{
-              height: 30,
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: myBtnColor,
+              height: 28,
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: myBtnColor
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '500' }}>
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     //for the day buttons at top of screen
     backgroundColor: '#e5e5e5',
     width: win.width / 7,
-    height: 42,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -808,17 +808,20 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   topEditBtn: {
+    //for top edit buttons below daybuttons
     width: win.width * 0.5,
     backgroundColor: 'white',
     justifyContent: 'center',
-    height: 40,
+    height: 32,
   },
   topEditBtnText: {
+    //text for the edit buttons
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
   },
   confirmationPop: {
+    //style for confirmations popups for editting and changing group schedule
     width: '90%',
     height: 175,
     backgroundColor: '#1E3F66',
@@ -884,7 +887,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     fontWeight: '400',
-    fontSize: 'auto',
+    fontSize: 11,
   },
   shadowProp: {
     //shadows to apply
