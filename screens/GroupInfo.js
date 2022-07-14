@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from '
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -11,6 +11,7 @@ import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+
 /* let currentUserName;
 
 firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
@@ -41,18 +42,15 @@ export default function GroupInfo({ route }) {
     () => fetchGroupMembers(groupCode),
     { initialData: [] }
   );
-  //useRefreshOnFocus(refetch)
+  useRefreshOnFocus(refetch)
 
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
-    const memberRef = firebase
-      .firestore()
-      .collection('groups')
-      .doc(groupCode)
-      .collection('members');
+    const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
     let data = [{}];
     await SplashScreen.preventAutoHideAsync();
-    await memberRef.where('inTent', '==', true)
+    await memberRef
+      .where('inTent', '==', true)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -81,7 +79,8 @@ export default function GroupInfo({ route }) {
         console.error(error);
         throw error;
       });
-    await memberRef.where('inTent', '!=', true)
+    await memberRef
+      .where('inTent', '!=', true)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -118,7 +117,21 @@ export default function GroupInfo({ route }) {
     setModalVisible(!isModalVisible);
   };
 
-  const removeMember = (groupCode) => {
+  const postRemoveMember = useRemoveMember(groupCode);
+
+  function useRemoveMember(groupCode) {
+    const queryClient = useQueryClient();
+    return useMutation(() => removeMember(groupCode), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['group', groupCode]);
+      },
+    });
+  }
+
+  const removeMember = async (groupCode) => {
     console.log('current member being deleted', currMember.id);
     firebase
       .firestore()
@@ -133,6 +146,28 @@ export default function GroupInfo({ route }) {
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
+    let groups;
+    await firebase
+      .firestore()
+      .collection('users')
+      .doc(currMember.id)
+      .get()
+      .then((doc) => {
+        groups = doc.data().groupCode;
+        for (let i=0; i<groups.length; i++) {
+          if (groups[i].groupCode == groupCode) {
+            groups.splice(i, 1);
+            break;
+          }
+        }
+        console.log('groups', groups);
+      })
+      .catch((error) => {
+        console.error('Error removing member: ', error);
+      });
+    firebase.firestore().collection('users').doc(currMember.id).update({
+      groupCode: groups,
+    });
     toggleModal();
   };
 
@@ -223,7 +258,7 @@ export default function GroupInfo({ route }) {
             <Text style={styles(theme).popUpHeader}>{currMember.name} Information</Text>
             <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
             {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={() => removeMember(groupCode)}>
+              <TouchableOpacity onPress={()=>postRemoveMember.mutate()}>
                 <Text
                   style={{
                     textAlign: 'center',
