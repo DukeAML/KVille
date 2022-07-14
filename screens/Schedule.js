@@ -13,14 +13,17 @@ import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import { Snackbar } from 'react-native-paper';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-// prettier-ignore
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { color } from 'react-native-reanimated';
+
+//prettier-ignore
 const times = [ //Times for right column of the list of times of the day
   '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
   '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
@@ -28,9 +31,8 @@ const times = [ //Times for right column of the list of times of the day
 ];
 
 //Colors of each member, first is for 'empty'
-// prettier-ignore
-const colors = ['#D0342C', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
-  '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
+//prettier-ignore
+const colors = ['#D0342C','#dd7e6b','#ea9999','#f9cb9c','#ffe599','#b6d7a8','#a2c4c9','#a4c2f4','#fed9c9','#b4a7d6','#d5a6bd','#e69138','#6aa84f',];
 
 let colorCodes = [
   //Array for color corresponding to each member
@@ -40,12 +42,16 @@ let colorCodes = [
 let prevColorCodes;
 
 //let schedule = new Array(); //GLOBAL VARIABLE for the entire group schedule
-let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
+//let memberIDArray = new Array(); //GLOBAL Variable to store the members, their id and name in schedule
 
-let currSchedule = new Array();
+//let currSchedule = new Array();
 let prevSchedule = new Array();
+//let weekDisplay = 'Current Week';
 
 const win = Dimensions.get('window'); //Global Var for screen size
+
+//variables to store the # of people needed for the day and night shifts
+//let numberForDay, numberForNight;
 
 export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
@@ -61,8 +67,10 @@ export default function Schedule({ route }) {
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
   //Hooks and data for changing between the current weeks schedule and the previous one
-  const [weekDisplay, setWeekDisplay] = useState('Current Week');
-  const [schedule, setSchedule] = useState(currSchedule);
+  //const [weekDisplay, setWeekDisplay] = useState('Current Week');
+  const weekDisplay = useRef('Current Week');
+
+  //const [schedule, setSchedule] = useState(currSchedule);
   let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
 
   const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
@@ -70,17 +78,23 @@ export default function Schedule({ route }) {
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
-  const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
+  const editIndex = useRef(0);
+
+  const newSchedule = useRef([]);
+  //const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
 
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, code],
     () => fetchGroupSchedule(code),
     { initialData: [] }
   );
+  //useRefreshOnFocus(refetch);
 
   async function fetchGroupSchedule(groupCode) {
+    console.log('query initiated');
     await SplashScreen.preventAutoHideAsync();
 
+    let currSchedule;
     await firebase
       .firestore()
       .collection('groups')
@@ -96,16 +110,21 @@ export default function Schedule({ route }) {
         console.error(error);
         throw error;
       });
-    return currSchedule;
+    if (weekDisplay.current == 'Current Week') {
+      console.log('current week returned', currSchedule);
+      return currSchedule;
+    }
+    console.log('previous week returned', prevSchedule);
+    return prevSchedule;
   }
-  console.log('query data', data);
+  //console.log('query data', data);
 
   /* const window = useWindowDimensions();
   const styles= makeStyles(window.fontScale); */
 
   //FIREBASE REFERENCE for group
   /* const groupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE'); */
-  const groupRef = firebase.firestore().collection('groups').doc(code);
+  //const groupRef = firebase.firestore().collection('groups').doc(code);
 
   const toggleModal = () => {
     //to toggle the edit cell popup
@@ -126,39 +145,87 @@ export default function Schedule({ route }) {
     setSnackVisible(!isSnackVisible);
   };
 
-  //variables to store the # of people needed for the day and night shifts
-  let numberForDay, numberForNight;
+  //to push changes made to schedule to firebase
+  //updates the scheduled hours for each user
+  // const pushEdits = () => {
+  //   groupRef
+  //     .collection('members')
+  //     .get()
+  //     .then((collSnap) => {
+  //       collSnap.forEach((doc) => {
+  //         let currName = doc.data().name;
+  //         let currID = doc.id; //chose to acces by ID instead just in case member name changes
+  //         let hours = doc.data().scheduledHrs;
+  //         let indexOfUser;
+  //         if (colorCodes.some((e) => e.id === currID)) {
+  //           //if Name is in member array
+  //           indexOfUser = colorCodes.findIndex(
+  //             (member) => member.id === currID
+  //           );
+  //         }
+  //         let hoursAdded = colorCodes[indexOfUser].changedHrs;
+  //         console.log('hrs of ', currName, ' will be ', hours, '+', hoursAdded);
 
-  //based on tent type, sets the number of people needed for day and night shifts
-  switch (tentType) {
-    case 'Black':
-      numberForDay = 2;
-      numberForNight = 10;
-      break;
-    case 'Blue':
-      numberForDay = 1;
-      numberForNight = 6;
-      break;
-    default:
-      numberForDay = 1;
-      numberForNight = 2;
-  }
+  //         if (hoursAdded !== 0) {
+  //           //avoids unnecessary writes if the changes hours are 0
+  //           console.log('changed hrs of', currName);
+  //           doc.ref.update({
+  //             scheduledHrs: hours + hoursAdded,
+  //           });
+  //         }
+  //       });
+  //       return collSnap;
+  //     })
+  //     .then((collSnap) => {
+  //       //To update memberArr in group with their unique id and name that corresponds with the schedule
+  //       groupRef.update({
+  //         //groupSchedule: schedule, //change**
+  //         groupSchedule: currSchedule,
+  //       });
+
+          //doesn't work b/c colorCodes is updated from firebase after each query, need to also update this in firebase
+  //       for (let i = 0; i < colorCodes.length; i++) {
+  //         //reinitializes the changed hrs to 0
+  //         colorCodes[i].changedHrs = 0;
+  //       }
+  //     });
+  //   setSnackMessage('Changes Saved');
+  //   toggleSnackBar();
+  // };
+
+  const useEditCell = (groupCode) => {
+    const queryClient = useQueryClient();
+    return useMutation((options) => editCell(options), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode], newSchedule.current);
+      },
+    });
+  };
+
+  const postEditCell = useEditCell(code);
 
   //function for editing the schedule based on old member and new member to replace
-  const editCell = (index, oldMember, newMember) => {
+  const editCell = async (options) => {
+    const { index, oldMember, newMember, groupCode } = options
+    let currSchedule = data;
     //must delete from 'schedule' and update the string within
     //schedule[index] = schedule[index].replace(oldMember, newMember);
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
-    const indexofOld = colorCodes.findIndex(
-      (object) => object.name === oldMember
-    );
-    const indexofNew = colorCodes.findIndex(
-      (object) => object.name === newMember
-    );
-    colorCodes[indexofOld].changedHrs -= 0.5;
-    colorCodes[indexofNew].changedHrs += 0.5;
+    const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
+    const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
+    //colorCodes[indexofOld].changedHrs -= 0.5;
+    //colorCodes[indexofNew].changedHrs += 0.5;
     console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
     console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
+
+    firebase.firestore().collection('groups').doc(groupCode).update({
+      groupSchedule: currSchedule
+    })
+
+    newSchedule.current = currSchedule;
   };
 
   const TimeColumn = () => {
@@ -167,10 +234,7 @@ export default function Schedule({ route }) {
       <Table>
         <Col
           data={times}
-          heightArr={[
-            62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62,
-            62, 62, 62, 62, 62, 62, 62,
-          ]}
+          heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
           textStyle={StyleSheet.flatten(styles.timesText)}
         />
       </Table>
@@ -216,49 +280,41 @@ export default function Schedule({ route }) {
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
     const indexofUser =
-      weekDisplay == 'Current Week'
-        ? colorCodes.findIndex((object) => object.name === person)
-        : prevColorCodes.findIndex((object) => object.name === person);
+      weekDisplay.current == 'Current Week'
+        ? colorCodes.findIndex((object) => object.name == person)
+        : prevColorCodes.findIndex((object) => object.name == person);
+    //console.log(colorCodes);
+    //console.log('indexOfUser', indexofUser);
     const backgroundColor =
-      weekDisplay == 'Current Week'
-        ? colorCodes[indexofUser].color
-        : prevColorCodes[indexofUser].color; //gets background color from the colorCodes Array
-    if (weekDisplay == 'Current Week') {
+      indexofUser != -1
+        ? weekDisplay.current == 'Current Week'
+          ? colorCodes[indexofUser].color
+          : prevColorCodes[indexofUser].color
+        : '#fff'; //gets background color from the colorCodes Array
+    if (weekDisplay.current == 'Current Week') {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             onPress={() => {
-              setEditIndex(index);
+              editIndex.current = index;
               setOldMember(person);
               console.log('index: ', index);
               toggleModal();
             }}
           >
-            <View
-              style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
-            >
-              <Text
-                style={styles.btnText}
-                adjustsFontSizeToFit
-                minimumFontScale={0.5}
-              >
+            <View style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}>
+              <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={0.5}>
                 {person}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
       );
-    } else if (weekDisplay == 'Previous Week') {
+    } else if (weekDisplay.current == 'Previous Week') {
       return (
         <View style={{ flex: 1 }}>
-          <View
-            style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}
-          >
-            <Text
-              style={styles.btnText}
-              adjustsFontSizeToFit={true}
-              minimumFontScale={0.5}
-            >
+          <View style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}>
+            <Text style={styles.btnText} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
               {person}
             </Text>
           </View>
@@ -275,55 +331,29 @@ export default function Schedule({ route }) {
         members: string of one time shift (ex. "member1 member2 member3 member4 ")
         numDay: the number of people required for a day shift
         numNight: the number of people required for a night shift  */
-  const RenderCell = (data, index, arrayIndex, members, numDay, numNight) => {
-    const people = members.split(' '); //stores the string as an array of single members
-    //console.log('people: ', people);
-    const isNight = index >= 2 && index <= 13;
 
-    if (!isNight && numDay === 1) {
-      return (
-        <View style={styles.row}>
-          <OneCell index={arrayIndex} person={people[0]} />
-        </View>
-      );
-    } else if ((isNight && numNight === 2) || (!isNight && numDay === 2)) {
-      return (
-        <View style={styles.row}>
-          <OneCell index={arrayIndex} person={people[0]} />
-          <OneCell index={arrayIndex} person={people[1]} />
-        </View>
-      );
-    } else if (isNight && numNight === 6) {
-      return (
-        <View style={styles.row}>
-          <OneCell index={arrayIndex} person={people[0]} />
-          <OneCell index={arrayIndex} person={people[1]} />
-          <OneCell index={arrayIndex} person={people[2]} />
-          <OneCell index={arrayIndex} person={people[3]} />
-          <OneCell index={arrayIndex} person={people[4]} />
-          <OneCell index={arrayIndex} person={people[5]} />
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.row}>
-          <OneCell index={arrayIndex} person={people[0]} />
-          <OneCell index={arrayIndex} person={people[1]} />
-          <OneCell index={arrayIndex} person={people[2]} />
-          <OneCell index={arrayIndex} person={people[3]} />
-          <OneCell index={arrayIndex} person={people[4]} />
-          <OneCell index={arrayIndex} person={people[5]} />
-          <OneCell index={arrayIndex} person={people[6]} />
-          <OneCell index={arrayIndex} person={people[7]} />
-          <OneCell index={arrayIndex} person={people[8]} />
-          <OneCell index={arrayIndex} person={people[9]} />
-        </View>
-      );
-    }
+  const RenderCell = (index, arrayIndex, members) => {
+    const people = members.trim().split(' '); //stores the string as an array of single members
+    //console.log('people: ', people);
+
+    return (
+      <View style={styles.row}>
+        <OneCell index={arrayIndex} person={people[0]} />
+        {people.length > 1 ? <OneCell index={arrayIndex} person={people[1]} /> : null}
+        {people.length > 2 ? <OneCell index={arrayIndex} person={people[2]} /> : null}
+        {people.length > 2 ? <OneCell index={arrayIndex} person={people[3]} /> : null}
+        {people.length > 2 ? <OneCell index={arrayIndex} person={people[4]} /> : null}
+        {people.length > 2 ? <OneCell index={arrayIndex} person={people[5]} /> : null}
+        {people.length > 6 ? <OneCell index={arrayIndex} person={people[6]} /> : null}
+        {people.length > 6 ? <OneCell index={arrayIndex} person={people[7]} /> : null}
+        {people.length > 6 ? <OneCell index={arrayIndex} person={people[8]} /> : null}
+        {people.length > 6 ? <OneCell index={arrayIndex} person={people[9]} /> : null}
+      </View>
+    );
   };
 
   //Component for the table for one day's schedule
-  const DailyTable = ({ numberDay, numberNight, day }) => {
+  const DailyTable = ({ day }) => {
     //if (schedule == undefined) return null;
     let indexAdder = 0;
     //depending on day parameter, change index in GLOBAL schedule array
@@ -357,14 +387,7 @@ export default function Schedule({ route }) {
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
               <Cell
-                data={RenderCell(
-                  1,
-                  index,
-                  index + indexAdder,
-                  dayArr[index],
-                  numberDay,
-                  numberNight
-                )}
+                data={RenderCell(index, index + indexAdder, dayArr[index])}
                 textStyle={StyleSheet.flatten(styles.text)}
               />
             </TableWrapper>
@@ -390,11 +413,10 @@ export default function Schedule({ route }) {
         <View style={styles.confirmationPop}>
           <Text style={styles.confirmationHeader}>Push Changes</Text>
           <Text style={styles.confirmationText}>
-            Are you sure you want to push changes? This will change the schedule
-            for everyone in your group.
+            Are you sure you want to push changes? This will change the schedule for everyone in your group.
           </Text>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               pushEdits(); //if confirmed, push edits and dismiss popUp
               toggleConfirmation();
@@ -405,7 +427,7 @@ export default function Schedule({ route }) {
                 Yes I'm Sure
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       );
     } else if (type == 'Create') {
@@ -413,49 +435,19 @@ export default function Schedule({ route }) {
         <View style={styles.confirmationPop}>
           <Text style={styles.confirmationHeader}>Create New Schedule</Text>
           <Text style={styles.confirmationText}>
-            Are you sure you want to create a new schedule? This will erase the
-            current schedule for all group members and cannot be undone.
+            Are you sure you want to create a new schedule? This will erase the current schedule for all group members
+            and cannot be undone.
           </Text>
           <TouchableOpacity
             onPress={() => {
               toggleConfirmation();
-              createGroupSchedule(code, tentType)
-                .then(
-                  //createGroupSchedule('BtycLIprkN3EmC9wmpaE', 'Black').then(
-                  (groupSchedule) => {
-                    console.log('Group Schedule', groupSchedule);
-
-                    //If current schedule is blank, no need to update
-                    if (currSchedule[0] !== undefined)
-                      prevSchedule = currSchedule;
-
-                    //Update previous colorCodes to current and update current schedule to the groupSchedule
-                    prevColorCodes = colorCodes;
-                    currSchedule = groupSchedule;
-                    //schedule = groupSchedule; //change **
-
-                    //in settings when changing tent type, do you store the current schedule into the previous?
-
-                    groupRef.update({
-                      groupSchedule: groupSchedule,
-                      previousSchedule: prevSchedule,
-                      previousMemberArr: colorCodes,
-                    });
-                    setSnackMessage('New Schedule Created');
-                    toggleSnackBar();
-                  }
-                )
-                .catch((error) => {
-                  console.error(error);
-                  setSnackMessage('Not enough members');
-                  toggleSnackBar();
-                });
+              postSchedule.mutate();
+              setSnackMessage('New Schedule Created');
+              toggleSnackBar();
             }}
           >
             <View style={styles.confirmationBottomBtn}>
-              <Text style={[styles.buttonText, { color: 'white' }]}>
-                Yes I'm Sure
-              </Text>
+              <Text style={[styles.buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -463,51 +455,47 @@ export default function Schedule({ route }) {
     }
   };
 
-  //to push changes made to schedule to firebase
-  //updates the scheduled hours for each user
-  const pushEdits = () => {
-    groupRef
-      .collection('members')
-      .get()
-      .then((collSnap) => {
-        collSnap.forEach((doc) => {
-          let currName = doc.data().name;
-          let currID = doc.id; //chose to acces by ID instead just in case member name changes
-          let hours = doc.data().scheduledHrs;
-          let indexOfUser;
-          if (colorCodes.some((e) => e.id === currID)) {
-            //if Name is in member array
-            indexOfUser = colorCodes.findIndex(
-              (member) => member.id === currID
-            );
-          }
-          let hoursAdded = colorCodes[indexOfUser].changedHrs;
-          console.log('hrs of ', currName, ' will be ', hours, '+', hoursAdded);
+  const useUpdateSchedule = (groupCode, tentType) => {
+    const queryClient = useQueryClient();
+    return useMutation(() => createNewGroupSchedule(groupCode, tentType), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        //console.log('newSchedule', newSchedule);
+        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode], newSchedule.current);
+      },
+    });
+  };
 
-          if (hoursAdded !== 0) {
-            //avoids unnecessary writes if the changes hours are 0
-            console.log('changed hrs of', currName);
-            doc.ref.update({
-              scheduledHrs: hours + hoursAdded,
-            });
-          }
-        });
-        return collSnap;
+  const postSchedule = useUpdateSchedule(code, tentType);
+  //const queryClient = useQueryClient();
+  //const postSchedule = useMutation()
+
+  const createNewGroupSchedule = async (code, tentType) => {
+    //let newSchedule;
+    await createGroupSchedule(code, tentType)
+      .then((groupSchedule) => {
+        console.log('Group Schedule', groupSchedule);
+        newSchedule.current = groupSchedule;
+
+        //If current schedule is blank, no need to update
+        if (data[0] !== undefined) prevSchedule = data;
+
+        //Update previous colorCodes to current and update current schedule to the groupSchedule
+        prevColorCodes = colorCodes;
       })
-      .then((collSnap) => {
-        //To update memberArr in group with their unique id and name that corresponds with the schedule
-        groupRef.update({
-          //groupSchedule: schedule, //change**
-          groupSchedule: currSchedule,
-        });
-
-        for (let i = 0; i < colorCodes.length; i++) {
-          //reinitializes the changed hrs to 0
-          colorCodes[i].changedHrs = 0;
-        }
+      .catch((error) => {
+        console.error(error);
+        setSnackMessage('Not enough members');
+        toggleSnackBar();
       });
-    setSnackMessage('Changes Saved');
-    toggleSnackBar();
+    console.log('create new schedule', newSchedule);
+    return firebase.firestore().collection('groups').doc(code).update({
+      groupSchedule: newSchedule.current,
+      previousSchedule: prevSchedule,
+      previousMemberArr: colorCodes,
+    });
   };
 
   const onLayoutRootView = useCallback(async () => {
@@ -515,38 +503,6 @@ export default function Schedule({ route }) {
       await SplashScreen.hideAsync();
     }
   }, [isLoading]);
-  //console.log('Full Schedule: ', schedule);
-
-  //This is for changing the table parameters given that the previous week is a different tent type
-  //than the current one
-  if (prevSchedule[3] !== undefined && weekDisplay == 'Previous Week') {
-    const arrayLength = prevSchedule[3].split(' ').length;
-    switch (arrayLength) {
-      case 10:
-        numberForDay = 2;
-        numberForNight = 10;
-        break;
-      case 6:
-        numberForDay = 1;
-        numberForNight = 6;
-        break;
-      default:
-        numberForDay = 1;
-        numberForNight = 2;
-    }
-    console.log(
-      'Switched to Previous Schedule, new number parameters (day night):',
-      numberForDay,
-      numberForNight
-    );
-  }
-
-  //Possible Ideas:
-  //Make a prevMemberArr in firebase, so its not so janky
-  //Before updating prevSchedule, check if the current one is blank, if it is don't update
-
-  console.log('current colors: ', colorCodes);
-  console.log('previous colors: ', prevColorCodes);
 
   if (isLoading) {
     return null;
@@ -560,10 +516,7 @@ export default function Schedule({ route }) {
   return (
     <View style={styles.bigContainer} onLayout={onLayoutRootView}>
       <View>
-        <Modal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-        >
+        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
           <View style={styles.deletePopup}>
             <Text
               style={{
@@ -587,9 +540,7 @@ export default function Schedule({ route }) {
                   justifyContent: 'center',
                 }}
               >
-                <Text style={{ textAlign: 'center', fontSize: 20 }}>
-                  {newMember}
-                </Text>
+                <Text style={{ textAlign: 'center', fontSize: 20 }}>{newMember}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -598,7 +549,8 @@ export default function Schedule({ route }) {
                   toggleModal();
                 } else {
                   toggleModal();
-                  editCell(editIndex, oldMember, newMember);
+                  //editCell(editIndex.current, oldMember, newMember);
+                  postEditCell.mutate({index:editIndex.current, oldMember: oldMember, newMember: newMember, groupCode: code});
                 }
               }}
             >
@@ -626,10 +578,7 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
-        <Modal
-          isVisible={isMemberModalVisible}
-          onBackdropPress={() => setMemberModalVisible(false)}
-        >
+        <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
           <View
             style={{
               width: '50%',
@@ -638,21 +587,14 @@ export default function Schedule({ route }) {
             }}
           >
             <View>
-              <FlatList
-                data={colorCodes}
-                renderItem={renderMember}
-                keyExtractor={(item) => item.id}
-              />
+              <FlatList data={colorCodes} renderItem={renderMember} keyExtractor={(item) => item.id} />
             </View>
           </View>
         </Modal>
       </View>
 
       <View>
-        <Modal
-          isVisible={isConfirmationVisible}
-          onBackdropPress={() => setConfirmationVisible(false)}
-        >
+        <Modal isVisible={isConfirmationVisible} onBackdropPress={() => setConfirmationVisible(false)}>
           <ConfirmationModal type={typeOfEdit} />
         </Modal>
       </View>
@@ -660,12 +602,19 @@ export default function Schedule({ route }) {
       <View>
         <TouchableOpacity
           onPress={() => {
-            if (weekDisplay == 'Current Week') {
-              setWeekDisplay('Previous Week');
-              setSchedule(prevSchedule);
+            if (weekDisplay.current == 'Current Week') {
+              console.log('showing previous week', weekDisplay.current);
+              weekDisplay.current = 'Previous Week';
+              console.log(weekDisplay.current);
+              refetch();
+              //setWeekDisplay('Previous Week');
+              //setSchedule(prevSchedule);
             } else {
-              setWeekDisplay('Current Week');
-              setSchedule(currSchedule);
+              console.log('showing current week');
+              weekDisplay.current = 'Current Week';
+              refetch();
+              //setWeekDisplay('Current Week');
+              //setSchedule(currSchedule);
             }
           }}
         >
@@ -678,9 +627,7 @@ export default function Schedule({ route }) {
               backgroundColor: myBtnColor,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '500' }}>
-              {weekDisplay}
-            </Text>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay.current}</Text>
           </View>
         </TouchableOpacity>
 
@@ -694,7 +641,7 @@ export default function Schedule({ route }) {
           <DayButton day='Saturday' abbrev='Sat' />
         </View>
 
-        {weekDisplay == 'Current Week' ? (
+        {weekDisplay.current == 'Current Week' ? (
           <View style={[styles.buttonContainer, styles.shadowProp]}>
             <TouchableOpacity
               onPress={() => {
@@ -703,9 +650,7 @@ export default function Schedule({ route }) {
               }}
             >
               <View style={[styles.topEditBtn, { backgroundColor: '#5d5d5d' }]}>
-                <Text style={[styles.topEditBtnText, { color: 'white' }]}>
-                  Push Changes
-                </Text>
+                <Text style={[styles.topEditBtnText, { color: 'white' }]}>Push Changes</Text>
               </View>
             </TouchableOpacity>
 
@@ -727,11 +672,7 @@ export default function Schedule({ route }) {
         <Text style={styles.dayHeader}>{renderDay}</Text>
         <View style={{ flexDirection: 'row' }}>
           <TimeColumn />
-          <DailyTable
-            numberDay={numberForDay}
-            numberNight={numberForNight}
-            day={renderDay}
-          />
+          <DailyTable day={renderDay} />
         </View>
       </ScrollView>
 
