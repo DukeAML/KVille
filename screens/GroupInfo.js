@@ -1,12 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -45,19 +38,21 @@ export default function GroupInfo({ route }) {
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
-    ()=>fetchGroupMembers(groupCode), {initialData: []}
+    () => fetchGroupMembers(groupCode),
+    { initialData: [] }
   );
   //useRefreshOnFocus(refetch)
 
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
-    let data = [];
-    await SplashScreen.preventAutoHideAsync();
-    await firebase
+    const memberRef = firebase
       .firestore()
       .collection('groups')
       .doc(groupCode)
-      .collection('members')
+      .collection('members');
+    let data = [{}];
+    await SplashScreen.preventAutoHideAsync();
+    await memberRef.where('inTent', '==', true)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -65,12 +60,50 @@ export default function GroupInfo({ route }) {
           let tentCondition = doc.data().inTent; //gets tent status as well
           let scheduledHours = doc.data().scheduledHrs;
           let memID = doc.id;
-          data.push({
-            id: memID,
-            name: currName,
-            inTent: tentCondition,
-            hours: scheduledHours,
-          });
+          if (doc.id == firebase.auth().currentUser.uid) {
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+            };
+          } else {
+            data.push({
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      });
+    await memberRef.where('inTent', '!=', true)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let currName = doc.data().name; //gets current name in list
+          let tentCondition = doc.data().inTent; //gets tent status as well
+          let scheduledHours = doc.data().scheduledHrs;
+          let memID = doc.id;
+          if (doc.id == firebase.auth().currentUser.uid) {
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+            };
+          } else {
+            data.push({
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+            });
+          }
         });
       })
       .catch((error) => {
@@ -117,7 +150,7 @@ export default function GroupInfo({ route }) {
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          setCurrMember({name: name, id: id, hours: hours});
+          setCurrMember({ name: name, id: id, hours: hours });
           //setCurrIndex(indexOfUser);
         }}
       >
@@ -130,9 +163,7 @@ export default function GroupInfo({ route }) {
           ]}
         >
           <Text style={styles(theme).listText}>{name}</Text>
-          <Text style={{ color: theme.text1 }}>
-            Scheduled Hrs: {hours} hrs
-          </Text>
+          <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
         </View>
       </TouchableOpacity>
     );
@@ -141,14 +172,7 @@ export default function GroupInfo({ route }) {
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return (
-      <Member
-        name={item.name}
-        id={item.id}
-        hours={item.hours}
-        backgroundColor={{ backgroundColor }}
-      />
-    );
+    return <Member name={item.name} id={item.id} hours={item.hours} backgroundColor={{ backgroundColor }} />;
   };
 
   if (isLoading) {
@@ -178,18 +202,11 @@ export default function GroupInfo({ route }) {
       </View>
 
       <View>
-        <FlatList
-          data={data}
-          renderItem={renderMember}
-          keyExtractor={(item) => item.id}
-        />
+        <FlatList data={data} renderItem={renderMember} keyExtractor={(item) => item.id} />
       </View>
 
       <View>
-        <Modal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-        >
+        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
           <View style={styles(theme).popUp}>
             <View
               style={{
@@ -199,24 +216,14 @@ export default function GroupInfo({ route }) {
               }}
             >
               <TouchableOpacity onPress={toggleModal}>
-                <Icon
-                  name='close'
-                  color={'white'}
-                  size={15}
-                  style={{ marginTop: 5 }}
-                />
+                <Icon name='close' color={'white'} size={15} style={{ marginTop: 5 }} />
               </TouchableOpacity>
             </View>
 
-            <Text style={styles(theme).popUpHeader}>
-              {currMember.name} Information
-            </Text>
-            <Text style={styles(theme).popUpText}>
-              Scheduled Hrs: {currMember.hours} hrs
-            </Text>
-            {groupRole === 'Creator' &&
-            currMember.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={()=>removeMember(groupCode)}>
+            <Text style={styles(theme).popUpHeader}>{currMember.name} Information</Text>
+            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
+            {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
+              <TouchableOpacity onPress={() => removeMember(groupCode)}>
                 <Text
                   style={{
                     textAlign: 'center',
