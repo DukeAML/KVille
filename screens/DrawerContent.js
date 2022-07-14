@@ -34,7 +34,7 @@ export default function DrawerContent(props) {
     });
   };
   const updateTentStatus = (groupCode, status) => {
-    firebase
+    return firebase
       .firestore()
       .collection('groups')
       .doc(groupCode)
@@ -43,12 +43,12 @@ export default function DrawerContent(props) {
       .update({
         inTent: status,
       })
-      .then(() => {
-        console.log('successfully updated tent status: ', status);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      // .then(() => {
+      //   console.log('successfully updated tent status: ', status);
+      // })
+      // .catch((error) => {
+      //   console.error(error);
+      // });
   };
 
   const postTentStatus = useUpdateTentStatus(groupCode);

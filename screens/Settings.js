@@ -153,18 +153,18 @@ export default function Settings({ route, navigation }) {
 
     console.log('prevTentType', prevTentType);
     console.log('currTentType', tent);
-    if (prevTentType) {
-      groupRef
-        .update({
-          groupSchedule: [],
-        })
-        .then(() => {
-          console.log('cleared group schedule');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    // if (prevTentType) {
+    //   groupRef
+    //     .update({
+    //       groupSchedule: [],
+    //     })
+    //     .then(() => {
+    //       console.log('cleared group schedule');
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // }
 
     groupRef
       .collection('members')
