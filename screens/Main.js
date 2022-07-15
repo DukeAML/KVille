@@ -369,19 +369,23 @@ export default function Main() {
                 </TouchableOpacity>
                 {/* <InformationModal /> */}
                  <Modal
-                  isVisible = {isInfoVisible}
-                  onBackdropPress={() => setInfoVisible(false)}
-                >
-                  <View style={styles(theme).InfoPop}>
-                    <Text style={styles(theme).InfoHeader}>How to use the Availability Page</Text>
-                    <ScrollView 
-                      style = {styles(theme).InfoTextView}
-                      showsVerticalScrollIndicator={false}
-                    >
-                      <AvailabilityText/>
-                    </ScrollView>
-                  </View>
-                </Modal>
+                    isVisible = {isInfoVisible}
+                    onBackdropPress={() => setInfoVisible(false)}
+                    style={styles(theme).BottomModalView}
+                    onSwipeComplete={toggleInfo}
+                    swipeDirection={['down']}
+                  >
+                    <View style={styles(theme).InfoPop}>
+                      <View style={styles(theme).modalBar}></View>
+                      <Text style={styles(theme).InfoHeader}>How to use the Availability Page</Text>
+                      <ScrollView 
+                        style = {styles(theme).InfoTextView}
+                        showsVerticalScrollIndicator={false}
+                      >
+                        <AvailabilityText/>
+                      </ScrollView>
+                    </View>                    
+                  </Modal>
               </View>
             ),
           })}
@@ -419,16 +423,20 @@ export default function Main() {
                 <Modal
                   isVisible = {isScheduleInfoVisible}
                   onBackdropPress={() => setScheduleInfoVisible(false)}
+                  style={styles(theme).BottomModalView}
+                  onSwipeComplete={toggleScheduleInfo}
+                  swipeDirection={['down']}
                 >
-                  <View style={styles(theme).InfoPop}>
-                    <Text style={styles(theme).InfoHeader}>How to use the Schedule Page</Text>
-                    <ScrollView 
-                      style = {styles(theme).InfoTextView}
-                      showsVerticalScrollIndicator={false}
-                    >
-                      <ScheduleText/>
-                    </ScrollView>
-                  </View>
+                    <View style={styles(theme).InfoPop}>
+                      <View style={styles(theme).modalBar}></View>
+                      <Text style={styles(theme).InfoHeader}>How to use the Schedule Page</Text>
+                      <ScrollView 
+                        style = {styles(theme).InfoTextView}
+                        showsVerticalScrollIndicator={false}
+                      >
+                        <ScheduleText/>
+                      </ScrollView>
+                    </View>
                 </Modal>
               </View>
             ),
@@ -516,41 +524,60 @@ export default function Main() {
 }
 
 const styles = (theme) => StyleSheet.create({
+  BottomModalView:{
+    margin: 0,
+    //position: 'absolute',
+    justifyContent: 'flex-end',
+  },
+  modalBar:{
+    height: 4,
+    marginTop: 8,
+    //marginBottom: 4,
+    width: '22%',
+    borderRadius: 25,
+    backgroundColor: 'white', //theme.grey1,
+  },
   InfoPop: {
-    width: '80%',
-    height: 350,
-    backgroundColor: '#6a6a6a',
-    alignSelf: 'center',
+    width: '100%',
+    height: '45%',
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    backgroundColor: '#424242',//'#6a6a6a',
+    //alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    borderRadius: 20,
-    margin: 15,
-    paddingVertical: 15,
+    //borderRadius: 20,
+    //margin: 15,
+    //paddingVertical: 15,
   },
   InfoHeader: {
     //style for text at the top of the popup
     fontWeight: '700',
-    color: theme.text1,
+    color:'white', //theme.text2,
     //marginTop: 15,
-    marginBottom: 8,
+    marginVertical: 10,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 20,
   },
   InfoTextView: {
-    backgroundColor: '#bebebe',
-    width: '90%',
-    padding: 18,
-    borderRadius: 15,
-    marginBottom: 10,
+    backgroundColor: '#757575', //'#bebebe',
+    width: '100%',
+    height: '80%',
+    paddingHorizontal: 35,
+    paddingVertical: 20,
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+    //marginBottom: 10,
   },
   InfoText: {
     //backgroundColor: '#2E5984',
-    color: theme.text2,
+    color:'white', //theme.text2,
     marginVertical: 5,
     textAlign: 'left',
+    fontSize: 16,
     //width: '90%',
     //padding: 5,
-    borderRadius: 15,
+    //borderRadius: 15,
   },
 });
 
