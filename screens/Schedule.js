@@ -67,8 +67,8 @@ export default function Schedule({ route }) {
   const [typeOfEdit, setTypeOfEdit] = useState('Push'); //either 'Push' (for edits) or 'Create' (for making a new schedule)
 
   //Hooks and data for changing between the current weeks schedule and the previous one
-  //const [weekDisplay, setWeekDisplay] = useState('Current Week');
-  const weekDisplay = useRef('Current Week');
+  const [weekDisplay, setWeekDisplay] = useState('Current Week');
+  //const weekDisplay = useRef('Current Week');
 
   //const [schedule, setSchedule] = useState(currSchedule);
   let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
@@ -84,13 +84,13 @@ export default function Schedule({ route }) {
   //const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
 
   const { isLoading, isError, error, refetch, data } = useQuery(
-    ['groupSchedule', firebase.auth().currentUser.uid, code],
-    () => fetchGroupSchedule(code),
+    ['groupSchedule', firebase.auth().currentUser.uid, code, weekDisplay],
+    () => fetchGroupSchedule(code, weekDisplay),
     { initialData: [] }
   );
   //useRefreshOnFocus(refetch);
 
-  async function fetchGroupSchedule(groupCode) {
+  async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
     await SplashScreen.preventAutoHideAsync();
 
@@ -110,7 +110,7 @@ export default function Schedule({ route }) {
         console.error(error);
         throw error;
       });
-    if (weekDisplay.current == 'Current Week') {
+    if (weekDisplay == 'Current Week') {
       console.log('current week returned', currSchedule);
       return currSchedule;
     }
@@ -193,19 +193,19 @@ export default function Schedule({ route }) {
   //   toggleSnackBar();
   // };
 
-  const useEditCell = (groupCode) => {
+  const useEditCell = (groupCode, weekDisplay) => {
     const queryClient = useQueryClient();
     return useMutation((options) => editCell(options), {
       onError: (error) => {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode], newSchedule.current);
+        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay], newSchedule.current);
       },
     });
   };
 
-  const postEditCell = useEditCell(code);
+  const postEditCell = useEditCell(code, weekDisplay);
 
   //function for editing the schedule based on old member and new member to replace
   const editCell = async (options) => {
@@ -280,18 +280,18 @@ export default function Schedule({ route }) {
   const OneCell = ({ index, person }) => {
     //changes background based on who the member is
     const indexofUser =
-      weekDisplay.current == 'Current Week'
+      weekDisplay == 'Current Week'
         ? colorCodes.findIndex((object) => object.name == person)
         : prevColorCodes.findIndex((object) => object.name == person);
     //console.log(colorCodes);
     //console.log('indexOfUser', indexofUser);
     const backgroundColor =
       indexofUser != -1
-        ? weekDisplay.current == 'Current Week'
+        ? weekDisplay == 'Current Week'
           ? colorCodes[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
-    if (weekDisplay.current == 'Current Week') {
+    if (weekDisplay == 'Current Week') {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
@@ -310,7 +310,7 @@ export default function Schedule({ route }) {
           </TouchableOpacity>
         </View>
       );
-    } else if (weekDisplay.current == 'Previous Week') {
+    } else if (weekDisplay == 'Previous Week') {
       return (
         <View style={{ flex: 1 }}>
           <View style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}>
@@ -455,7 +455,7 @@ export default function Schedule({ route }) {
     }
   };
 
-  const useUpdateSchedule = (groupCode, tentType) => {
+  const useUpdateSchedule = (groupCode, tentType, weekDisplay) => {
     const queryClient = useQueryClient();
     return useMutation(() => createNewGroupSchedule(groupCode, tentType), {
       onError: (error) => {
@@ -463,12 +463,12 @@ export default function Schedule({ route }) {
       },
       onSuccess: () => {
         //console.log('newSchedule', newSchedule);
-        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode], newSchedule.current);
+        queryClient.setQueryData(['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay], newSchedule.current);
       },
     });
   };
 
-  const postSchedule = useUpdateSchedule(code, tentType);
+  const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
   //const queryClient = useQueryClient();
   //const postSchedule = useMutation()
 
@@ -602,18 +602,17 @@ export default function Schedule({ route }) {
       <View>
         <TouchableOpacity
           onPress={() => {
-            if (weekDisplay.current == 'Current Week') {
-              console.log('showing previous week', weekDisplay.current);
-              weekDisplay.current = 'Previous Week';
-              console.log(weekDisplay.current);
+            if (weekDisplay == 'Current Week') {
+              console.log('showing previous week', weekDisplay);
+              setWeekDisplay('Previous Week');
+              console.log(weekDisplay);
               refetch();
-              //setWeekDisplay('Previous Week');
+              //
               //setSchedule(prevSchedule);
             } else {
               console.log('showing current week');
-              weekDisplay.current = 'Current Week';
+              setWeekDisplay('Current Week');
               refetch();
-              //setWeekDisplay('Current Week');
               //setSchedule(currSchedule);
             }
           }}
@@ -627,7 +626,7 @@ export default function Schedule({ route }) {
               backgroundColor: myBtnColor,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay.current}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay}</Text>
           </View>
         </TouchableOpacity>
 
@@ -641,7 +640,7 @@ export default function Schedule({ route }) {
           <DayButton day='Saturday' abbrev='Sat' />
         </View>
 
-        {weekDisplay.current == 'Current Week' ? (
+        {weekDisplay == 'Current Week' ? (
           <View style={[styles.buttonContainer, styles.shadowProp]}>
             <TouchableOpacity
               onPress={() => {
