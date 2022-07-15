@@ -153,18 +153,18 @@ export default function Settings({ route, navigation }) {
 
     console.log('prevTentType', prevTentType);
     console.log('currTentType', tent);
-    if (prevTentType) {
-      groupRef
-        .update({
-          groupSchedule: [],
-        })
-        .then(() => {
-          console.log('cleared group schedule');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    // if (prevTentType) {
+    //   groupRef
+    //     .update({
+    //       groupSchedule: [],
+    //     })
+    //     .then(() => {
+    //       console.log('cleared group schedule');
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // }
 
     groupRef
       .collection('members')
@@ -313,7 +313,7 @@ export default function Settings({ route, navigation }) {
 
   return (
     <View style={styles(theme).settingsContainer} onLayout={onLayoutRootView}>
-      {/* <View style={styles(theme).topBanner}>
+      <View style={styles(theme).topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon name='cog-outline' color={theme.icon1} size={35} />
           <Text
@@ -341,7 +341,7 @@ export default function Settings({ route, navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-      </View> */}
+      </View>
       <View
         style={{
           flexDirection: 'row',
