@@ -3,22 +3,24 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
-  authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
-  databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
-  projectId: "duke-tenting-app-cc15b",
-  storageBucket: "duke-tenting-app-cc15b.appspot.com",
-  messagingSenderId: "391061238630",
-  appId: "1:391061238630:web:85fbc00e4babf43cdc8ea7",
-  measurementId: "G-6QNGDGFLHZ"
+  apiKey: 'AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0',
+  authDomain: 'duke-tenting-app-cc15b.firebaseapp.com',
+  databaseURL: 'https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com',
+  projectId: 'duke-tenting-app-cc15b',
+  storageBucket: 'duke-tenting-app-cc15b.appspot.com',
+  messagingSenderId: '391061238630',
+  appId: '1:391061238630:web:85fbc00e4babf43cdc8ea7',
+  measurementId: 'G-6QNGDGFLHZ',
 };
-
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -28,12 +30,12 @@ import RegisterScreen from './component/auth/Register';
 import LoginScreen from './component/auth/Login';
 import MainScreen from './screens/Main';
 import ForgotPasswordScreen from './component/auth/ForgotPassword';
-
 import { persistor, store } from './redux/store/index';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import ThemeProvider from './context/ThemeProvider';
 
 const Stack = createNativeStackNavigator();
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [state, setState] = useState({
@@ -98,42 +100,44 @@ export default function App() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <NavigationContainer onReady={onLayoutRootView}>
-            <Stack.Navigator initialRouteName='Login'>
-              <Stack.Screen
-                name='Register'
-                component={RegisterScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name='Login'
-                component={LoginScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name='ForgotPassword'
-                component={ForgotPasswordScreen}
-                options={({ navigation }) => ({
-                  title: '',
-                  headerStyle: {
-                    backgroundColor: '#f5f5f5',
-                    borderBottomWidth: 0,
-                    shadowColor: 'transparent',
-                  },
-                  headerTitleStyle: {
-                    fontSize: 28,
-                  },
-                  // headerLeft: () => (
-                  //   <IconButton
-                  //     icon='menu'
-                  //     size={25}
-                  //     onPress={() => navigation.openDrawer()}
-                  //   ></IconButton>
-                  // ),
-                })}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
+          <ThemeProvider>
+            <NavigationContainer onReady={onLayoutRootView}>
+              <Stack.Navigator initialRouteName='Login'>
+                <Stack.Screen
+                  name='Register'
+                  component={RegisterScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='Login'
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='ForgotPassword'
+                  component={ForgotPasswordScreen}
+                  options={({ navigation }) => ({
+                    title: '',
+                    headerStyle: {
+                      backgroundColor: '#f6f6f6',
+                      borderBottomWidth: 0,
+                      shadowColor: 'transparent',
+                    },
+                    headerTitleStyle: {
+                      fontSize: 28,
+                    },
+                    // headerLeft: () => (
+                    //   <IconButton
+                    //     icon='menu'
+                    //     size={25}
+                    //     onPress={() => navigation.openDrawer()}
+                    //   ></IconButton>
+                    // ),
+                  })}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </ThemeProvider>
         </PersistGate>
       </Provider>
     );
@@ -141,8 +145,12 @@ export default function App() {
 
   //Main screen, after landing
   return (
-    <Provider store={store}>
-      <MainScreen />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <ThemeProvider>
+          <MainScreen />
+        </ThemeProvider>
+      </Provider>
+    </QueryClientProvider>
   );
 }

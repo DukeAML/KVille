@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import RNModal from 'react-native-modal';
 
+
 const Modal = ({ isVisible = false, children, ...props }) => {
   {
     return (
@@ -19,7 +20,7 @@ const Modal = ({ isVisible = false, children, ...props }) => {
   }
 };
 
-const ModalContainer = ({ children }) => (
+const ModalContainer = ({ children, theme }) => (
   <View style={styles.container}>{children}</View>
 );
 const ModalHeader = ({ title }) => (
@@ -30,13 +31,13 @@ const ModalHeader = ({ title }) => (
 
 const ModalBody = ({ children }) => <View style={styles.body}>{children}</View>;
 
-const ModalFooter = ({ children }) => (
-  <View style={styles.footer}>{children}</View>
+const ModalFooter = ({ children, theme }) => (
+  <View style={ styles(theme).footer }>{children}</View>
 );
 
-const styles = StyleSheet.create({
+const styles = (theme) = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.primary,
     borderRadius: 25,
     borderWidth: 1,
     borderColor: '#000',

@@ -17,6 +17,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import {useTheme} from '../../context/ThemeProvider'
+
 const window = Dimensions.get('window');
 
 export default function Register(props) {
@@ -27,6 +29,7 @@ export default function Register(props) {
   const [isValid, setIsValid] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [dimensions, setDimensions] = useState({ window });
+  const {theme} = useTheme();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -107,16 +110,16 @@ export default function Register(props) {
   };
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView behavior='padding' style={styles.container}>
-        <View style={styles.banner}>
-          <Text style={{ color: '#f5f5f5', fontSize: 35, marginTop: 50 }}>
+    <View style={styles(theme).container}>
+      <KeyboardAvoidingView behavior='padding' style={styles(theme).container}>
+        <View style={styles(theme).banner}>
+          <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>
             REGISTER
           </Text>
-          <View style={styles.imageContainer}>
+          <View style={styles(theme).imageContainer}>
             <Image
               style={[
-                styles.logo,
+                styles(theme).logo,
                 {
                   flex: 1,
                   tintColor: '#D9D9D9',
@@ -129,13 +132,13 @@ export default function Register(props) {
               ]}
               source={DukeBasketballLogo}
             />
-            <View style={styles.boldImage}>
-              <Image style={styles.logo} source={DukeBasketballLogo} />
+            <View style={styles(theme).boldImage}>
+              <Image style={styles(theme).logo} source={DukeBasketballLogo} />
             </View>
           </View>
           <View
             style={[
-              styles.slant,
+              styles(theme).slant,
               {
                 borderRightWidth: dimensions.window.width,
                 borderTopWidth: dimensions.window.height / 5,
@@ -144,13 +147,17 @@ export default function Register(props) {
           ></View>
         </View>
 
-        <View style={styles.formCenter}>
-          <View style={styles.section}>
-            <View style={styles.icon}>
-              <Icon name='account-circle-outline' color='#000' size={25} />
+        <View style={styles(theme).formCenter}>
+          <View style={styles(theme).section}>
+            <View style={styles(theme).icon}>
+              <Icon
+                name='account-circle-outline'
+                color={theme.icon2}
+                size={25}
+              />
             </View>
             <TextInput
-              style={styles.textInput}
+              style={styles(theme).textInput}
               placeholder='Username'
               value={username}
               //keyboardType='twitter'
@@ -166,12 +173,12 @@ export default function Register(props) {
             />
           </View>
 
-          <View style={styles.section}>
-            <View style={styles.icon}>
-              <Icon name='email-outline' color='#000' size={25} />
+          <View style={styles(theme).section}>
+            <View style={styles(theme).icon}>
+              <Icon name='email-outline' color={theme.icon2} size={25} />
             </View>
             <TextInput
-              style={styles.textInput}
+              style={styles(theme).textInput}
               placeholder='Email'
               value={email}
               keyboardType={'email-address'}
@@ -179,12 +186,12 @@ export default function Register(props) {
             />
           </View>
 
-          <View style={styles.section}>
-            <View style={styles.icon}>
-              <Icon name='lock-outline' color='#000' size={25} />
+          <View style={styles(theme).section}>
+            <View style={styles(theme).icon}>
+              <Icon name='lock-outline' color={theme.icon2} size={25} />
             </View>
             <TextInput
-              style={styles.textInput}
+              style={styles(theme).textInput}
               placeholder='Password'
               value={password}
               secureTextEntry={secureTextEntry}
@@ -199,30 +206,33 @@ export default function Register(props) {
             >
               <Icon
                 name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-                color='#000'
+                color={theme.icon2}
                 size={20}
               />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={onRegister}>
-            <Text style={{ color: '#fff' }}>Register</Text>
+          <TouchableOpacity style={styles(theme).button} onPress={onRegister}>
+            <Text style={{ color: theme.text1 }}>Register</Text>
           </TouchableOpacity>
         </View>
         <Snackbar
           visible={isValid.boolSnack}
           duration={2000}
+          wrapperStyle={{ top: 0 }}
           onDismiss={() => {
             setIsValid({ boolSnack: false });
           }}
         >
-          {isValid.message}
+          <Text style={{ textAlign: 'center', color: theme.text1 }}>
+            {isValid.message}
+          </Text>
         </Snackbar>
       </KeyboardAvoidingView>
-      <View style={styles.bottomButton}>
+      <View style={styles(theme).bottomButton}>
         <Text>Already have an account? </Text>
         <Text
-          style={{ textAlign: 'center', color: '#0FA4DC' }}
+          style={{ textAlign: 'center', color: theme.quaternary }}
           onPress={() => props.navigation.navigate('Login')}
         >
           Sign In
@@ -232,14 +242,14 @@ export default function Register(props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.white2,
   },
   banner: {
     //position: 'absolute',
-    backgroundColor: '#1F509A',
+    backgroundColor: theme.primary,
     width: '100%',
     height: '50%',
     //justifyContent: 'center',
@@ -266,7 +276,7 @@ const styles = StyleSheet.create({
   boldImage: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.white2,
     borderRadius: 15,
     width: 90,
     height: 70,
@@ -289,13 +299,14 @@ const styles = StyleSheet.create({
     width: 0,
     borderStyle: 'solid',
     borderTopWidth: 150,
-    borderRightColor: '#f5f5f5',
-    borderBottomColor: '#f5f5f5',
+    borderRightColor: theme.white2,
+    borderBottomColor: theme.white2,
     borderTopColor: 'transparent',
     //borderLeftColor: 'transparent',
   },
   formCenter: {
-    justifyContent: 'center',
+    justifyContent: 'start',
+    alignContent: 'center',
     flex: 1,
     margin: 25,
   },
@@ -303,11 +314,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     //justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.white2,
     height: 40,
     borderRadius: 20,
     margin: 10,
-    shadowColor: '#1F509A',
+    //marginTop: 10,
+    shadowColor: theme.primary,
     elevation: 20,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -321,8 +333,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
-    shadowColor: '#1F509A',
+    backgroundColor: theme.white2,
+    shadowColor: theme.primary,
     elevation: 20,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -332,7 +344,7 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     flexDirection: 'row',
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.white2,
     padding: 10,
     borderRadius: 20,
     height: '100%',
@@ -344,7 +356,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     width: '100%',
-    backgroundColor: '#1F509A',
+    backgroundColor: theme.primary,
     height: 30,
     marginTop: 40,
     borderRadius: 50,
@@ -357,6 +369,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     padding: 10,
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: 60,
   },
 });

@@ -26,8 +26,9 @@ import {
   setGroupName,
   setUserName,
   setTentType,
-  setGroupRole
+  setGroupRole,
 } from '../redux/reducers/userSlice';
+import { useTheme } from '../context/ThemeProvider';
 
 import coachKLogo from '../assets/coachKLogo.png';
 
@@ -50,7 +51,7 @@ export default function CreateGroup({ navigation }) {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const [dimensions, setDimensions] = useState({ window });
-
+  const { theme } = useTheme();
   const dispatch = useDispatch();
 
   const groupRole = 'Creator';
@@ -156,10 +157,10 @@ export default function CreateGroup({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#C2C6D0' }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-        <View style={styles.groupContainer}>
-          <View style={styles.topBanner}>
+        <View style={styles(theme).groupContainer}>
+          {/* <View style={styles(theme).topBanner}>
             <TouchableOpacity
               onPress={() => {
                 onCreateGroup();
@@ -171,11 +172,11 @@ export default function CreateGroup({ navigation }) {
               <View>
                 <Text
                   style={[
-                    styles.groupText,
+                    styles(theme).groupText,
                     {
                       fontSize: 24,
                       fontWeight: '700',
-                      color: '#1F509A',
+                      color: theme.primary,
                       width: '100%',
                       //borderWidth: 2
                     },
@@ -185,13 +186,13 @@ export default function CreateGroup({ navigation }) {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           <View style={{ width: '90%' }}>
-            <Text style={styles.headerText}>Group Name</Text>
+            <Text style={styles(theme).headerText}>Group Name</Text>
           </View>
           <TextInput
-            style={styles.textInput}
+            style={styles(theme).textInput}
             autoFocus={true}
             placeholder='Enter Group Name'
             value={group.groupName}
@@ -200,12 +201,14 @@ export default function CreateGroup({ navigation }) {
             }
           />
 
-          <Text style={[styles.headerText, { marginTop: 20 }]}>Group Code</Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
+            Group Code
+          </Text>
           <View
             style={[
-              styles.textInput,
+              styles(theme).textInput,
               {
-                backgroundColor: '#ededed',
+                backgroundColor: theme.white1,
                 height: 50,
                 width: '90%',
                 justifyContent: 'center',
@@ -216,6 +219,7 @@ export default function CreateGroup({ navigation }) {
             ]}
           >
             <Text
+              selectable={true}
               style={{
                 textAlign: 'center',
                 fontSize: 26,
@@ -227,7 +231,9 @@ export default function CreateGroup({ navigation }) {
             </Text>
           </View>
 
-          <Text style={[styles.headerText, { marginTop: 20 }]}>Tent Type</Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
+            Tent Type
+          </Text>
           <Picker
             selectedValue={group.tentType}
             onValueChange={(itemValue, itemIndex) => {
@@ -235,10 +241,10 @@ export default function CreateGroup({ navigation }) {
             }}
             style={
               Platform.OS === 'ios'
-                ? styles.picker
+                ? styles(theme).picker
                 : { width: '90%', height: 30 }
             }
-            itemStyle={Platform.OS === 'ios' ? styles.pickerItem : {}}
+            itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
           >
             <Picker.Item label='' value='' />
             <Picker.Item label='Black' value='Black' />
@@ -247,12 +253,14 @@ export default function CreateGroup({ navigation }) {
             <Picker.Item label='Walk up line' value='Walk up line' />
           </Picker>
 
-          <Text style={[styles.headerText, { marginTop: 20 }]}>Username</Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
+            Username
+          </Text>
 
           <TextInput
             style={[
-              styles.textInput,
-              { borderWidth: 2, borderColor: '#8e8e8e' },
+              styles(theme).textInput,
+              { borderWidth: 2, borderColor: theme.grey5 },
             ]}
             value={group.userName}
             placeholder={group.userName}
@@ -267,6 +275,16 @@ export default function CreateGroup({ navigation }) {
               })
             }
           />
+          <TouchableOpacity
+            onPress={() => {
+              onCreateGroup();
+              console.log(group.groupCode);
+              console.log(groupRole);
+            }}
+            style={styles(theme).createBtn}
+          >
+            <Text style={styles(theme).btnTxt}>Create</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
       <View
@@ -279,16 +297,14 @@ export default function CreateGroup({ navigation }) {
       >
         <View
           style={[
-            styles.triangle,
+            styles(theme).triangle,
             {
               borderRightWidth: dimensions.window.width,
               borderTopWidth: dimensions.window.height / 6,
             },
           ]}
         ></View>
-        {/* <View style={{ position: 'absolute', backgroundColor: 'black', width: 100, height: 100}}></View> */}
         <Image
-          //source={coachKFaceLogo}
           source={coachKLogo}
           style={{
             position: 'absolute',
@@ -296,8 +312,6 @@ export default function CreateGroup({ navigation }) {
             zIndex: 1,
             height: 129,
             width: 113,
-            //height: 135,
-            //width: 135,
             alignSelf: 'center',
           }}
         />
@@ -305,9 +319,7 @@ export default function CreateGroup({ navigation }) {
           style={{
             width: '100%',
             height: dimensions.window.height / 15,
-            backgroundColor: '#1F509A',
-            /* borderTopWidth: 2, //for hiding faint white line
-              borderTopColor: '#1F509A' */
+            backgroundColor: theme.primary,
           }}
         ></View>
       </View>
@@ -317,115 +329,103 @@ export default function CreateGroup({ navigation }) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <View style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-        </View>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
       </Snackbar>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  groupContainer: {
-    flexDirection: 'column',
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#C2C6D0',
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    height: '100%',
-    width: '100%',
-    resizeMode: 'cover',
-  },
-  topBanner: {
-    //for the top container holding "create" button
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 12,
-    width: '90%',
-    //borderWidth: 2
-  },
-  headerText: {
-    //text for 'headers of each input'
-    textAlign: 'left',
-    width: '90%',
-    fontSize: 20,
-    marginBottom: 10,
-    fontWeight: '700',
-    //color: '#656565'
-  },
-  textContainer: {
-    height: '70%',
-    width: '80%',
-    marginVertical: 50,
-    //justifyContent: 'space-between'
-  },
-  text: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '700',
-  },
-  centerText: {
-    color: '#fff',
-    fontSize: 36,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  textInput: {
-    //backgroundColor: "#FFFFFF",
-    padding: 10,
-    width: '90%',
-    fontSize: 20,
-    fontWeight: '400',
-    textAlign: 'left',
-    borderRadius: 15,
-    //borderColor: '',
-    //borderWidth: 2
-    //height: '7%',
-  },
-  picker: {
-    width: '90%',
-    height: '20%',
-    //borderWidth: 2,
-  },
-  pickerItem: {
-    height: '100%',
-  },
-  /* btnContainer: {
-    alignItems: 'center',
-    width: '90%'
-  },
-  cancelBtn: {
-    borderRadius: 30,
-    backgroundColor: '#000',
-    padding: 15,
-    width: '45%'
-  },
-  createBtn: {
-    borderRadius: 30,
-    backgroundColor: '#1F509A',
-    padding: 15,
-    width: '45%'
-  },
-  btnTxt: {
-    fontWeight: '700',
-    color: '#fff',
-    fontSize: 36,
-    textAlign: 'center'
-  }, */
-  triangle: {
-    //position: "relative",
-    //zIndex: 1,
-    height: 0,
-    width: 0,
-    borderTopWidth: 150,
-    borderRightColor: '#1F509A',
-    borderTopColor: 'transparent',
-    transform: [{ scaleX: -1 }],
-  },
-});
+const styles = (theme) =>
+  StyleSheet.create({
+    groupContainer: {
+      flexDirection: 'column',
+      flex: 1,
+      alignItems: 'center',
+      backgroundColor: theme.background,
+    },
+    backgroundImage: {
+      flex: 1,
+      alignItems: 'center',
+      flexDirection: 'column',
+      height: '100%',
+      width: '100%',
+      resizeMode: 'cover',
+    },
+    topBanner: {
+      //for the top container holding "create" button
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      flexDirection: 'row',
+      marginTop: 10,
+      marginBottom: 12,
+      width: '90%',
+      //borderWidth: 2
+    },
+    headerText: {
+      //text for 'headers of each input'
+      textAlign: 'left',
+      width: '90%',
+      fontSize: 20,
+      marginBottom: 10,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textContainer: {
+      height: '70%',
+      width: '80%',
+      marginVertical: 50,
+      //justifyContent: 'space-between'
+    },
+    text: {
+      color: theme.text1,
+      fontSize: 22,
+      fontWeight: '700',
+    },
+    centerText: {
+      color: theme.text1,
+      fontSize: 36,
+      fontWeight: '700',
+      textAlign: 'center',
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      padding: 10,
+      width: '90%',
+      fontSize: 20,
+      fontWeight: '400',
+      textAlign: 'center',
+      borderRadius: 15,
+      borderColor: theme.grey2,
+      borderWidth: 2,
+    },
+    picker: {
+      width: '90%',
+      height: '20%',
+      //borderWidth: 2,
+    },
+    pickerItem: {
+      height: '100%',
+    },
+    createBtn: {
+      backgroundColor: theme.primary,
+      padding: 15,
+      borderRadius: 30,
+      marginTop: 30,
+      width: '50%',
+    },
+    btnTxt: {
+      fontSize: 20,
+      color: theme.text1,
+      textAlign: 'center',
+    },
+    triangle: {
+      //position: "relative",
+      //zIndex: 1,
+      height: 0,
+      width: 0,
+      borderTopWidth: 150,
+      borderRightColor: theme.primary,
+      borderTopColor: 'transparent',
+      transform: [{ scaleX: -1 }],
+    },
+  });
