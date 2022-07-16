@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -23,6 +23,7 @@ import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
+import { useTheme } from '../context/ThemeProvider';
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -47,6 +48,8 @@ const win = Dimensions.get('window'); //Global Var for screen size
 export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
   //console.log('Schedule screen params', route.params);
+
+  const {theme} = useTheme();
 
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
@@ -266,7 +269,7 @@ export default function Schedule({ route }) {
         <Col
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
-          textStyle={StyleSheet.flatten(styles.timesText)}
+          textStyle={StyleSheet.flatten(styles(theme).timesText)}
         />
       </Table>
     );
@@ -333,8 +336,8 @@ export default function Schedule({ route }) {
               toggleModal();
             }}
           >
-            <View style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}>
-              <Text style={styles.btnText} adjustsFontSizeToFit minimumFontScale={0.5}>
+            <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
+              <Text style={styles(theme).btnText} adjustsFontSizeToFit minimumFontScale={0.5}>
                 {person}
               </Text>
             </View>
@@ -344,8 +347,8 @@ export default function Schedule({ route }) {
     } else if (weekDisplay == 'Previous Week') {
       return (
         <View style={{ flex: 1 }}>
-          <View style={[styles.timeSlotBtn, { backgroundColor: backgroundColor }]}>
-            <Text style={styles.btnText} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
+          <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
+            <Text style={styles(theme).btnText} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
               {person}
             </Text>
           </View>
@@ -366,7 +369,7 @@ export default function Schedule({ route }) {
     //console.log('people: ', people);
 
     return (
-      <View style={styles.row}>
+      <View style={styles(theme).row}>
         <OneCell index={arrayIndex} person={people[0]} />
         {people.length > 1 ? <OneCell index={arrayIndex} person={people[1]} /> : null}
         {people.length > 2 ? <OneCell index={arrayIndex} person={people[2]} /> : null}
@@ -414,10 +417,10 @@ export default function Schedule({ route }) {
       <View style={{ marginTop: 30 }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
-            <TableWrapper key={index} style={StyleSheet.flatten(styles.row)}>
+            <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
               <Cell
                 data={RenderCell(index, index + indexAdder, dayArr[index])}
-                textStyle={StyleSheet.flatten(styles.text)}
+                textStyle={StyleSheet.flatten(styles(theme).text)}
               />
             </TableWrapper>
           ))}
@@ -429,8 +432,8 @@ export default function Schedule({ route }) {
   //Component for the top day buttons
   const DayButton = ({ day, abbrev }) => {
     return (
-      <TouchableOpacity style={styles.button} onPress={() => setRenderDay(day)}>
-        <Text style={styles.buttonText}>{abbrev}</Text>
+      <TouchableOpacity style={styles(theme).button} onPress={() => setRenderDay(day)}>
+        <Text style={styles(theme).buttonText}>{abbrev}</Text>
       </TouchableOpacity>
     );
   };
@@ -438,9 +441,9 @@ export default function Schedule({ route }) {
   //Modal component for confirming if the user wants to push edits or create a new schedule
   function ConfirmationModal () {
     return (
-      <View style={styles.confirmationPop}>
-        <Text style={styles.confirmationHeader}>Create New Schedule</Text>
-        <Text style={styles.confirmationText}>
+      <View style={styles(theme).confirmationPop}>
+        <Text style={styles(theme).confirmationHeader}>Create New Schedule</Text>
+        <Text style={styles(theme).confirmationText}>
           Are you sure you want to create a new schedule? This will erase the current schedule for all group members
           and cannot be undone.
         </Text>
@@ -452,8 +455,8 @@ export default function Schedule({ route }) {
             toggleSnackBar();
           }}
         >
-          <View style={styles.confirmationBottomBtn}>
-            <Text style={[styles.buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
+          <View style={styles(theme).confirmationBottomBtn}>
+            <Text style={[styles(theme).buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -476,10 +479,10 @@ export default function Schedule({ route }) {
   }
 
   return (
-    <View style={styles.bigContainer} onLayout={onLayoutRootView}>
+    <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
       <View>
         <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
-          <View style={styles.deletePopup}>
+          <View style={styles(theme).deletePopup}>
             <Text
               style={{
                 fontSize: 26,
@@ -593,7 +596,7 @@ export default function Schedule({ route }) {
           </View>
         </TouchableOpacity>
 
-        <View style={styles.buttonContainer}>
+        <View style={styles(theme).buttonContainer}>
           <DayButton day='Sunday' abbrev='Sun' />
           <DayButton day='Monday' abbrev='Mon' />
           <DayButton day='Tuesday' abbrev='Tue' />
@@ -604,15 +607,15 @@ export default function Schedule({ route }) {
         </View>
 
         {weekDisplay == 'Current Week' ? (
-          <View style={[styles.buttonContainer, styles.shadowProp]}>
+          <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
             {/* <TouchableOpacity
               onPress={() => {
                 setTypeOfEdit('Push');
                 toggleConfirmation();
               }}
             >
-              <View style={[styles.topEditBtn, { backgroundColor: '#5d5d5d' }]}>
-                <Text style={[styles.topEditBtnText, { color: 'white' }]}>Push Changes</Text>
+              <View style={[styles(theme).topEditBtn, { backgroundColor: '#5d5d5d' }]}>
+                <Text style={[styles(theme).topEditBtnText, { color: 'white' }]}>Push Changes</Text>
               </View>
             </TouchableOpacity> */}
 
@@ -622,8 +625,8 @@ export default function Schedule({ route }) {
                 toggleConfirmation();
               }}
             >
-              <View style={[styles.topEditBtn, { backgroundColor: '#c9c9c9' }]}>
-                <Text style={styles.topEditBtnText}>Create New Schedule</Text>
+              <View style={[styles(theme).topEditBtn, { backgroundColor: '#c9c9c9' }]}>
+                <Text style={styles(theme).topEditBtnText}>Create New Schedule</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -631,7 +634,7 @@ export default function Schedule({ route }) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.dayHeader}>{renderDay}</Text>
+        <Text style={styles(theme).dayHeader}>{renderDay}</Text>
         <View style={{ flexDirection: 'row' }}>
           <TimeColumn />
           <DailyTable day={renderDay} />
@@ -653,7 +656,7 @@ export default function Schedule({ route }) {
 }
 
 //const makeStyles = (fontScale) => StyleSheet.create({
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
   bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
   text: { margin: 3 }, //text within cells
   timesText: {
@@ -672,7 +675,7 @@ const styles = StyleSheet.create({
   },
   button: {
     //for the day buttons at top of screen
-    backgroundColor: '#e5e5e5',
+    backgroundColor: theme.grey3,
     width: win.width / 7,
     height: 38,
     alignItems: 'center',
@@ -712,7 +715,7 @@ const styles = StyleSheet.create({
   confirmationHeader: {
     //style for text at the top of the popup
     fontWeight: '600',
-    color: 'white',
+    color: theme.text1,
     //height: 30,
     //borderWidth:2,
     textAlign: 'center',
@@ -720,7 +723,7 @@ const styles = StyleSheet.create({
   },
   confirmationText: {
     backgroundColor: '#2E5984',
-    color: 'white',
+    color: theme.text1,
     textAlign: 'center',
     width: '90%',
     padding: 5,
@@ -763,7 +766,7 @@ const styles = StyleSheet.create({
   btnText: {
     //Text within one cell button
     textAlign: 'center',
-    color: 'black',
+    color: theme.text2,
     fontWeight: '400',
     fontSize: 11,
   },
@@ -782,6 +785,6 @@ const styles = StyleSheet.create({
     marginTop: win.height * 0.83,
     width: win.width,
     height: win.height * 0.17,
-    backgroundColor: '#C2C6D0',
+    backgroundColor: theme.background,
   },
 });
