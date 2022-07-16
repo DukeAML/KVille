@@ -7,7 +7,9 @@ import {
   ScrollView,
   FlatList,
   Dimensions,
+  Platform,
   useWindowDimensions,
+  RefreshControl,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -24,6 +26,7 @@ import 'firebase/compat/firestore';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -49,7 +52,7 @@ export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
   //console.log('Schedule screen params', route.params);
 
-  const {theme} = useTheme();
+  const { theme } = useTheme();
 
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
@@ -78,18 +81,24 @@ export default function Schedule({ route }) {
   );
   //useRefreshOnFocus(refetch);
 
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
+
   useFocusEffect(
     useCallback(() => {
-      window.addEventListener('beforeunload', (event) => {
-        event.preventDefault();
-        updateHours(code);
-      });
-      return () => {
-        updateHours(code);
-        window.removeEventListener('beforeunload', (event) => {
+      if (Platform.OS === 'web') {
+        window.addEventListener('beforeunload', (event) => {
           event.preventDefault();
           updateHours(code);
         });
+      }
+      return () => {
+        updateHours(code);
+        if (Platform.OS === 'web') {
+          window.removeEventListener('beforeunload', (event) => {
+            event.preventDefault();
+            updateHours(code);
+          });
+        }
       };
     }, [])
   );
@@ -147,10 +156,9 @@ export default function Schedule({ route }) {
     }
   }
 
-  
   const postEditCell = useEditCell(code, weekDisplay);
 
-  function useEditCell (groupCode, weekDisplay) {
+  function useEditCell(groupCode, weekDisplay) {
     const queryClient = useQueryClient();
     return useMutation((options) => editCell(options), {
       onError: (error) => {
@@ -163,10 +171,10 @@ export default function Schedule({ route }) {
         );
       },
     });
-  };
+  }
 
   //function for editing the schedule based on old member and new member to replace
-  async function editCell (options) {
+  async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
     let currSchedule = data;
@@ -197,11 +205,11 @@ export default function Schedule({ route }) {
     });
 
     newSchedule.current = currSchedule;
-  };
+  }
 
   const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
 
-  function useUpdateSchedule (groupCode, tentType, weekDisplay) {
+  function useUpdateSchedule(groupCode, tentType, weekDisplay) {
     const queryClient = useQueryClient();
     return useMutation(() => createNewGroupSchedule(groupCode, tentType), {
       onError: (error) => {
@@ -215,9 +223,9 @@ export default function Schedule({ route }) {
         );
       },
     });
-  };
+  }
 
-  async function createNewGroupSchedule (code, tentType) {
+  async function createNewGroupSchedule(code, tentType) {
     //let newSchedule;
     await createGroupSchedule(code, tentType)
       .then((groupSchedule) => {
@@ -241,7 +249,7 @@ export default function Schedule({ route }) {
       previousSchedule: prevSchedule,
       previousMemberArr: colorCodes,
     });
-  };
+  }
 
   const toggleModal = () => {
     //to toggle the edit cell popup
@@ -439,13 +447,13 @@ export default function Schedule({ route }) {
   };
 
   //Modal component for confirming if the user wants to push edits or create a new schedule
-  function ConfirmationModal () {
+  function ConfirmationModal() {
     return (
       <View style={styles(theme).confirmationPop}>
         <Text style={styles(theme).confirmationHeader}>Create New Schedule</Text>
         <Text style={styles(theme).confirmationText}>
-          Are you sure you want to create a new schedule? This will erase the current schedule for all group members
-          and cannot be undone.
+          Are you sure you want to create a new schedule? This will erase the current schedule for all group members and
+          cannot be undone.
         </Text>
         <TouchableOpacity
           onPress={() => {
@@ -461,7 +469,7 @@ export default function Schedule({ route }) {
         </TouchableOpacity>
       </View>
     );
-  };
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -564,7 +572,7 @@ export default function Schedule({ route }) {
 
       <View>
         <Modal isVisible={isConfirmationVisible} onBackdropPress={() => setConfirmationVisible(false)}>
-          <ConfirmationModal/>
+          <ConfirmationModal />
         </Modal>
       </View>
 
@@ -633,7 +641,10 @@ export default function Schedule({ route }) {
         ) : null}
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+      >
         <Text style={styles(theme).dayHeader}>{renderDay}</Text>
         <View style={{ flexDirection: 'row' }}>
           <TimeColumn />
@@ -656,135 +667,136 @@ export default function Schedule({ route }) {
 }
 
 //const makeStyles = (fontScale) => StyleSheet.create({
-const styles = (theme) => StyleSheet.create({
-  bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
-  text: { margin: 3 }, //text within cells
-  timesText: {
-    //text style for the side text of the list of times
-    fontWeight: '800',
-    fontSize: 9,
-    //marginRight:6,
-    width: win.width * 0.1,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    //container for the top buttons
-    //flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  button: {
-    //for the day buttons at top of screen
-    backgroundColor: theme.grey3,
-    width: win.width / 7,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    //text for day buttons
-    fontSize: 'auto',
-    fontWeight: '500',
-    textAlign: 'center',
-    color: 'black',
-  },
-  topEditBtn: {
-    //for top edit buttons below daybuttons
-    width: win.width * 0.5,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    height: 32,
-  },
-  topEditBtnText: {
-    //text for the edit buttons
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  confirmationPop: {
-    //style for confirmations popups for editting and changing group schedule
-    width: '90%',
-    height: 175,
-    backgroundColor: '#1E3F66',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderRadius: 20,
-    margin: 15,
-  },
-  confirmationHeader: {
-    //style for text at the top of the popup
-    fontWeight: '600',
-    color: theme.text1,
-    //height: 30,
-    //borderWidth:2,
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  confirmationText: {
-    backgroundColor: '#2E5984',
-    color: theme.text1,
-    textAlign: 'center',
-    width: '90%',
-    padding: 5,
-    borderRadius: 15,
-  },
-  confirmationBottomBtn: {
-    color: 'white',
-    backgroundColor: 'black',
-    width: win.width * 0.5,
-    borderRadius: 8,
-    justifyContent: 'center',
-    height: 26,
-  },
-  dayHeader: {
-    //text for the header for the day
-    marginTop: 20,
-    fontSize: 28,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  row: {
-    //style for one row of the table
-    flexDirection: 'row',
-    backgroundColor: 'lavender',
-    width: win.width * 0.88,
-    height: 31,
-    alignItems: 'center',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-  },
-  timeSlotBtn: {
-    //Button for oneCell of the Table
-    //width: 58,
-    height: 30,
-    backgroundColor: '#78B7BB',
-    //borderRadius: 2,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-  },
-  btnText: {
-    //Text within one cell button
-    textAlign: 'center',
-    color: theme.text2,
-    fontWeight: '400',
-    fontSize: 11,
-  },
-  shadowProp: {
-    //shadows to apply
-    shadowColor: '#171717',
-    shadowOffset: { width: -3, height: 5 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-  },
-  deletePopup: {
-    //style for the bottom screen popup for editing a cell
-    alignSelf: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    marginTop: win.height * 0.83,
-    width: win.width,
-    height: win.height * 0.17,
-    backgroundColor: theme.background,
-  },
-});
+const styles = (theme) =>
+  StyleSheet.create({
+    bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
+    text: { margin: 3 }, //text within cells
+    timesText: {
+      //text style for the side text of the list of times
+      fontWeight: '800',
+      fontSize: 9,
+      //marginRight:6,
+      width: win.width * 0.1,
+      textAlign: 'center',
+    },
+    buttonContainer: {
+      //container for the top buttons
+      //flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    button: {
+      //for the day buttons at top of screen
+      backgroundColor: theme.grey3,
+      width: win.width / 7,
+      height: 38,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonText: {
+      //text for day buttons
+      fontSize: 'auto',
+      fontWeight: '500',
+      textAlign: 'center',
+      color: 'black',
+    },
+    topEditBtn: {
+      //for top edit buttons below daybuttons
+      width: win.width * 0.5,
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      height: 32,
+    },
+    topEditBtnText: {
+      //text for the edit buttons
+      textAlign: 'center',
+      fontSize: 16,
+      fontWeight: '500',
+    },
+    confirmationPop: {
+      //style for confirmations popups for editting and changing group schedule
+      width: '90%',
+      height: 175,
+      backgroundColor: '#1E3F66',
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'space-evenly',
+      borderRadius: 20,
+      margin: 15,
+    },
+    confirmationHeader: {
+      //style for text at the top of the popup
+      fontWeight: '600',
+      color: theme.text1,
+      //height: 30,
+      //borderWidth:2,
+      textAlign: 'center',
+      fontSize: 18,
+    },
+    confirmationText: {
+      backgroundColor: '#2E5984',
+      color: theme.text1,
+      textAlign: 'center',
+      width: '90%',
+      padding: 5,
+      borderRadius: 15,
+    },
+    confirmationBottomBtn: {
+      color: 'white',
+      backgroundColor: 'black',
+      width: win.width * 0.5,
+      borderRadius: 8,
+      justifyContent: 'center',
+      height: 26,
+    },
+    dayHeader: {
+      //text for the header for the day
+      marginTop: 20,
+      fontSize: 28,
+      fontWeight: '700',
+      textAlign: 'center',
+    },
+    row: {
+      //style for one row of the table
+      flexDirection: 'row',
+      backgroundColor: 'lavender',
+      width: win.width * 0.88,
+      height: 31,
+      alignItems: 'center',
+      borderBottomColor: 'black',
+      borderBottomWidth: 1,
+    },
+    timeSlotBtn: {
+      //Button for oneCell of the Table
+      //width: 58,
+      height: 30,
+      backgroundColor: '#78B7BB',
+      //borderRadius: 2,
+      alignSelf: 'stretch',
+      justifyContent: 'center',
+    },
+    btnText: {
+      //Text within one cell button
+      textAlign: 'center',
+      color: theme.text2,
+      fontWeight: '400',
+      fontSize: 11,
+    },
+    shadowProp: {
+      //shadows to apply
+      shadowColor: '#171717',
+      shadowOffset: { width: -3, height: 5 },
+      shadowOpacity: 0.4,
+      shadowRadius: 3,
+    },
+    deletePopup: {
+      //style for the bottom screen popup for editing a cell
+      alignSelf: 'center',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      marginTop: win.height * 0.83,
+      width: win.width,
+      height: win.height * 0.17,
+      backgroundColor: theme.background,
+    },
+  });

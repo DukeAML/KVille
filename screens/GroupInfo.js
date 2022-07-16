@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -11,6 +11,7 @@ import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 /* let currentUserName;
 
@@ -20,8 +21,6 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 }).catch((error) => {
   console.log("Error getting document:", error);
 });*/
-
-let members = new Array(); //members array for list
 
 export default function GroupInfo({ route }) {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -42,7 +41,9 @@ export default function GroupInfo({ route }) {
     () => fetchGroupMembers(groupCode),
     { initialData: [] }
   );
-  useRefreshOnFocus(refetch)
+  useRefreshOnFocus(refetch);
+
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
@@ -154,7 +155,7 @@ export default function GroupInfo({ route }) {
       .get()
       .then((doc) => {
         groups = doc.data().groupCode;
-        for (let i=0; i<groups.length; i++) {
+        for (let i = 0; i < groups.length; i++) {
           if (groups[i].groupCode == groupCode) {
             groups.splice(i, 1);
             break;
@@ -236,9 +237,12 @@ export default function GroupInfo({ route }) {
         </Text>
       </View>
 
-      <View>
-        <FlatList data={data} renderItem={renderMember} keyExtractor={(item) => item.id} />
-      </View>
+      <FlatList
+        data={data}
+        renderItem={renderMember}
+        keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+      ></FlatList>
 
       <View>
         <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
@@ -258,7 +262,7 @@ export default function GroupInfo({ route }) {
             <Text style={styles(theme).popUpHeader}>{currMember.name} Information</Text>
             <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
             {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={()=>postRemoveMember.mutate()}>
+              <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
                 <Text
                   style={{
                     textAlign: 'center',
