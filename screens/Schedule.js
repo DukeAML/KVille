@@ -20,8 +20,14 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import { useTheme } from '../context/ThemeProvider';
+
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { color } from 'react-native-reanimated';
+
+import {ConfirmationModal} from '../component/ConfirmationModal'
+import { BottomSheetModal } from '../component/BottomSheetModal';
+
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -79,6 +85,8 @@ export default function Schedule({ route }) {
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
   const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
   const editIndex = useRef(0);
+
+  const { theme } = useTheme();
 
   const newSchedule = useRef([]);
   //const [editIndex, setEditIndex] = useState(0); //to store which index is being edited
@@ -243,21 +251,32 @@ export default function Schedule({ route }) {
 
   //Component for the popup list of members for each member
   const Member = ({ name }) => {
+    /* function formatAsPercent(num) {
+      return `${parseFloat(num).toFixed(2)}%`;
+    } 
+    let height = formatAsPercent(100 * (1 / colorCodes.length));*/
+    let height = win.height * 0.45 * (1 / colorCodes.length);
     return (
       <View>
         <TouchableOpacity
           onPress={() => {
             setNewMember(name);
             toggleMemberModal();
+            console.log('height', height);
           }}
         >
-          <View style={{ backgroundColor: '#656565' }}>
+          <View style={{ 
+              //backgroundColor: '#656565', 
+              height: height, 
+              justifyContent: 'center'
+            }}
+          >
             <Text
               style={{
                 textAlign: 'left',
                 color: 'white',
-                marginLeft: 15,
-                height: 25,
+                marginLeft: 25,
+                fontSize: 18,
               }}
             >
               {name}
@@ -407,53 +426,53 @@ export default function Schedule({ route }) {
   };
 
   //Modal component for confirming if the user wants to push edits or create a new schedule
-  const ConfirmationModal = ({ type }) => {
-    if (type == 'Push') {
-      return (
-        <View style={styles.confirmationPop}>
-          <Text style={styles.confirmationHeader}>Push Changes</Text>
-          <Text style={styles.confirmationText}>
-            Are you sure you want to push changes? This will change the schedule for everyone in your group.
-          </Text>
+  // const ConfirmationModal = ({ type }) => {
+  //   if (type == 'Push') {
+  //     return (
+  //       <View style={styles.confirmationPop}>
+  //         <Text style={styles.confirmationHeader}>Push Changes</Text>
+  //         <Text style={styles.confirmationText}>
+  //           Are you sure you want to push changes? This will change the schedule for everyone in your group.
+  //         </Text>
 
-          {/* <TouchableOpacity
-            onPress={() => {
-              pushEdits(); //if confirmed, push edits and dismiss popUp
-              toggleConfirmation();
-            }}
-          >
-            <View style={styles.confirmationBottomBtn}>
-              <Text style={[styles.buttonText, { color: 'white' }]}>
-                Yes I'm Sure
-              </Text>
-            </View>
-          </TouchableOpacity> */}
-        </View>
-      );
-    } else if (type == 'Create') {
-      return (
-        <View style={styles.confirmationPop}>
-          <Text style={styles.confirmationHeader}>Create New Schedule</Text>
-          <Text style={styles.confirmationText}>
-            Are you sure you want to create a new schedule? This will erase the current schedule for all group members
-            and cannot be undone.
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              toggleConfirmation();
-              postSchedule.mutate();
-              setSnackMessage('New Schedule Created');
-              toggleSnackBar();
-            }}
-          >
-            <View style={styles.confirmationBottomBtn}>
-              <Text style={[styles.buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-  };
+  //         {/* <TouchableOpacity
+  //           onPress={() => {
+  //             pushEdits(); //if confirmed, push edits and dismiss popUp
+  //             toggleConfirmation();
+  //           }}
+  //         >
+  //           <View style={styles.confirmationBottomBtn}>
+  //             <Text style={[styles.buttonText, { color: 'white' }]}>
+  //               Yes I'm Sure
+  //             </Text>
+  //           </View>
+  //         </TouchableOpacity> */}
+  //       </View>
+  //     );
+  //   } else if (type == 'Create') {
+  //     return (
+  //       <View style={styles.confirmationPop}>
+  //         <Text style={styles.confirmationHeader}>Create New Schedule</Text>
+  //         <Text style={styles.confirmationText}>
+  //           Are you sure you want to create a new schedule? This will erase the current schedule for all group members
+  //           and cannot be undone.
+  //         </Text>
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             toggleConfirmation();
+  //             postSchedule.mutate();
+  //             setSnackMessage('New Schedule Created');
+  //             toggleSnackBar();
+  //           }}
+  //         >
+  //           <View style={styles.confirmationBottomBtn}>
+  //             <Text style={[styles.buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
+  //           </View>
+  //         </TouchableOpacity>
+  //       </View>
+  //     );
+  //   }
+  // };
 
   const useUpdateSchedule = (groupCode, tentType, weekDisplay) => {
     const queryClient = useQueryClient();
@@ -578,7 +597,29 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
-        <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
+        <BottomSheetModal
+          isVisible={isMemberModalVisible} 
+          onBackdropPress={() => setMemberModalVisible(false)}
+          onSwipeComplete={toggleMemberModal}
+        >
+          <View
+            style={{
+              marginTop: 10,
+              width: '90%',
+              borderWidth: 1,
+              height: '92%'
+            }}
+          >
+            <View  style = {{height: '100%'}}>
+              <FlatList 
+                data={colorCodes} 
+                renderItem={renderMember} 
+                keyExtractor={(item) => item.id} 
+              />
+            </View>
+          </View>
+        </BottomSheetModal>
+        {/* <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
           <View
             style={{
               width: '50%',
@@ -590,13 +631,34 @@ export default function Schedule({ route }) {
               <FlatList data={colorCodes} renderItem={renderMember} keyExtractor={(item) => item.id} />
             </View>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
 
       <View>
-        <Modal isVisible={isConfirmationVisible} onBackdropPress={() => setConfirmationVisible(false)}>
-          <ConfirmationModal type={typeOfEdit} />
-        </Modal>
+        {/* <Modal 
+          isVisible={isConfirmationVisible} 
+          onBackdropPress={() => setConfirmationVisible(false)}
+          style={styles.BottomModalView}
+        > */}
+          {/* <ConfirmationModal type={typeOfEdit} /> */}
+          <ConfirmationModal
+            toggleModal = {toggleConfirmation}
+            body= {typeOfEdit === 'Push' ? 
+              'Are you sure you want to push changes? This will change the schedule for everyone in your group.'
+            : 'Are you sure you want to create a new schedule? This will erase the current schedule for all group members and cannot be undone.'}
+            buttonText = {typeOfEdit === 'Push' ? 'Push Changes' : 'Create New Schedule'}
+            buttonAction = {() => {
+              //toggleConfirmation();
+              postSchedule.mutate();
+              setSnackMessage('New Schedule Created');
+              toggleSnackBar();
+            }}
+            
+            isVisible={isConfirmationVisible} 
+            onBackdropPress={() => setConfirmationVisible(false)}
+            onSwipeComplete={toggleConfirmation}
+          />
+        {/* </Modal> */}
       </View>
 
       <View>
@@ -640,8 +702,10 @@ export default function Schedule({ route }) {
           <DayButton day='Saturday' abbrev='Sat' />
         </View>
 
-        {weekDisplay == 'Current Week' ? (
-          <View style={[styles.buttonContainer, styles.shadowProp]}>
+        {weekDisplay == 'Current Week' ? (   
+          <View style = {[styles.shadowProp, {width:'100%'}]}>       
+            {/* 
+              <View style={[styles.buttonContainer, styles.shadowProp]}>
             <TouchableOpacity
               onPress={() => {
                 setTypeOfEdit('Push');
@@ -651,7 +715,7 @@ export default function Schedule({ route }) {
               <View style={[styles.topEditBtn, { backgroundColor: '#5d5d5d' }]}>
                 <Text style={[styles.topEditBtnText, { color: 'white' }]}>Push Changes</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={() => {
@@ -704,6 +768,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     //container for the top buttons
     //flex: 1,
+    //width:'100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -724,18 +789,24 @@ const styles = StyleSheet.create({
   },
   topEditBtn: {
     //for top edit buttons below daybuttons
-    width: win.width * 0.5,
+    //width: win.width * 0.5,
+    width:'100%',
     backgroundColor: 'white',
     justifyContent: 'center',
     height: 32,
   },
   topEditBtnText: {
     //text for the edit buttons
+    
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
   },
-  confirmationPop: {
+  BottomModalView:{
+    margin: 0,
+    justifyContent: 'flex-end',
+  },
+  /* confirmationPop: {
     //style for confirmations popups for editting and changing group schedule
     width: '90%',
     height: 175,
@@ -770,7 +841,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     height: 26,
-  },
+  }, */
   dayHeader: {
     //text for the header for the day
     marginTop: 20,
