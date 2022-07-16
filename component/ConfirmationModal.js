@@ -4,6 +4,31 @@ import Modal from 'react-native-modal';
 import { useTheme } from '../context/ThemeProvider';
 
 
+
+/*Parent Function for Confirmation Modal component
+
+This Modal has little to no customization for uniform look
+
+Parameters: 
+    height -- percent size of modal
+    backgroundColor -- background color of modal 
+    buttonAction -- action taken the confirmation button 
+        **note: should be a function 
+            ex] 
+                () = > {
+                    function();
+                    action2();
+                    ...
+                }
+    body -- text prompt for the confirmation
+    buttonText -- text for confirmation button
+
+props --
+    **NOTE: must include normal modal props in the props of the BottomSheetModal such as:
+        isVisible={isModalVisible} 
+        onBackdropPress={() => setModalVisible(false)}
+        onSwipeComplete = {toggleModal} 
+*/ 
 const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, backgroundColor, ...props  }) => {
   {
     const {theme} = useTheme();
@@ -14,44 +39,41 @@ const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, backg
             {...props}
         >
             <View>
-            <View style={styles(theme).confirmationPop}>
-            <View style = {{height: '60%', width: '100%', justifyContent:'center', borderBottomWidth: 1,
-                borderBottomColor: 'white', padding: 10}}>
-                <Text style={styles(theme).confirmationText}>
-                    {body}
-                </Text>
-            </View>
-
-            <TouchableOpacity
-                onPress={() => {
-                    buttonAction();
-                    toggleModal();
-                }}
-                style = {{height: '40%', width: '100%'}}
-            >
-                <View style = {{height: '100%', width: '100%', justifyContent:'center'}}>
-                    <Text 
-                    style={[
-                        styles(theme).confirmationHeader, 
-                        { color: theme.error, }
-                    ]}>
-                    {buttonText}
+                <View style={styles(theme).confirmationPop}>
+                <View style = {{height: '60%', width: '100%', justifyContent:'center', borderBottomWidth: 1,
+                    borderBottomColor: 'white', padding: 10}}>
+                    <Text style={styles(theme).confirmationText}>
+                        {body}
                     </Text>
                 </View>
-                
-            </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={() => {
+                        buttonAction();
+                        toggleModal();
+                    }}
+                    style = {{height: '40%', width: '100%'}}
+                >
+                    <View style = {{height: '100%', width: '100%', justifyContent:'center'}}>
+                        <Text 
+                        style={[
+                            styles(theme).confirmationHeader, 
+                            { color: theme.error, }
+                        ]}>
+                        {buttonText}
+                        </Text>
+                    </View>
+                    
+                </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                    onPress= {()=> toggleModal()}
+                    style={styles(theme).confirmationBottomBtn}
+                >
+                <Text style= {[styles(theme).confirmationHeader, { color: theme.text1 }]}>Cancel</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                onPress= {()=> toggleModal()}
-                style={styles(theme).confirmationBottomBtn}
-            >
-            <Text style= {[styles(theme).confirmationHeader, { color: theme.text1 }]}>Cancel</Text>
-            </TouchableOpacity>
-        </View>
-        
         </Modal>
-        
-      
     );
   }
 };
@@ -85,10 +107,7 @@ const styles = (theme) => StyleSheet.create({
         color: theme.text1,
         textAlign: 'center',
         justifyContent: 'center',
-        //height: '50%',
-        //width: '100%',
         padding: 5,
-        //borderRadius: 15,
     },
     confirmationBottomBtn: {
         color: theme.text1,

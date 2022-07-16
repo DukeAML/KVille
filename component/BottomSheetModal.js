@@ -5,6 +5,8 @@ import { useTheme } from '../context/ThemeProvider';
 
 let ModalContext = createContext();
 
+
+//Function for creating context for interior components
 function useModal() {
     const context = React.useContext(ModalContext);
     if (!context) {
@@ -13,6 +15,19 @@ function useModal() {
     return context;
   }
 
+/*Parent Function for modal component
+
+Parameters: 
+    height -- percent size of modal ; color -- background color of modal ; 
+    barSize -- depending on the size of the modal, determine the size of toggle bar
+    children -- components inside component; 
+
+props --
+    **NOTE: must include normal modal props in the props of the BottomSheetModal such as:
+        isVisible={isModalVisible} 
+        onBackdropPress={() => setModalVisible(false)}
+        onSwipeComplete = {toggleModal} 
+*/ 
 const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'default', children, ...props}) => {
     {
       const {theme} = useTheme();
@@ -34,7 +49,14 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
       );
     }
   };
-  
+
+/*      Component for adding a second bottom layer on modal
+
+    Parameters: 
+        color -- background color of modal ; 
+        size -- depending on the size of the modal, determine the size of second layer
+        children -- components inside component; 
+*/
   const ModalSecondContainer = ({ children, color='#757575', size = 'default'}) => {
     let height;
     {size == 'default' ? height = '85%': height='70%'}
@@ -50,6 +72,13 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
   BottomSheetModal.SecondContainer = ModalSecondContainer;
 
 
+/*      Component for adding a top header
+
+    Parameters: 
+        verticalMargin -- depending on the size of the modal, determine the margin of text 
+        fontSize -- depending on the size of the modal, determine the fontSize of text
+        children -- text of header; 
+*/
   const ModalHeader = ({ children, verticalMargin = 10, fontSize = 20}) => {
     const {theme} = useTheme();
     let context = useModal();
@@ -59,6 +88,8 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
   };
 
   BottomSheetModal.Header = ModalHeader;
+
+
   
   const styles = (theme) => StyleSheet.create({
     BottomModalView:{
@@ -91,13 +122,12 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
       ModalHeader: {
         //style for text at the top of the popup
         fontWeight: '700',
-        color:'white', //theme.text2,
-        //marginVertical: 10,
+        color:'white', 
         textAlign: 'center',
         fontSize: 20,
       },
       ModalSecondaryView: {
-        backgroundColor: '#757575', //'#bebebe',
+        backgroundColor: '#757575', 
         width: '100%',
         height: '85%',
         paddingHorizontal: 35,
@@ -107,7 +137,7 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         marginBottom: 0,
       },
       ModalText: {
-        color:'white', //theme.text2,
+        color:'white', 
         marginVertical: 5,
         textAlign: 'left',
         fontSize: 16,
