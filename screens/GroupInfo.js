@@ -13,6 +13,8 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
+import {BottomSheetModal} from '../component/BottomSheetModal'
+
 /* let currentUserName;
 
 firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
@@ -245,7 +247,40 @@ export default function GroupInfo({ route }) {
       ></FlatList>
 
       <View>
-        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+
+        <BottomSheetModal
+          isVisible={isModalVisible} 
+          onBackdropPress={() => setModalVisible(false)}
+          onSwipeComplete = {toggleModal}
+          color = {theme.secondary}
+          height = '15%'
+          barSize='small'
+        >
+          <BottomSheetModal.Header verticalMargin={3} fontSize = {18}>
+            {currMember.name} Information
+          </BottomSheetModal.Header>
+          <BottomSheetModal.SecondContainer color={theme.tertiary} size = 'small'>
+            <View style ={{justifyContent:'center', height: '100%'}}>
+              <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
+            </View>
+            
+            {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
+              <TouchableOpacity onPress={()=>postRemoveMember.mutate()}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: theme.error,
+                    fontSize: 15,
+                  }}
+                >
+                  Remove
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </BottomSheetModal.SecondContainer>
+        </BottomSheetModal>
+
+        {/* <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
           <View style={styles(theme).popUp}>
             <View
               style={{
@@ -275,7 +310,7 @@ export default function GroupInfo({ route }) {
               </TouchableOpacity>
             ) : null}
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </View>
   );
@@ -331,7 +366,7 @@ const styles = (theme) =>
       shadowOpacity: 0.2,
       shadowRadius: 3,
     },
-    popUp: {
+   /*  popUp: {
       width: '90%',
       height: '15%',
       backgroundColor: theme.secondary,
@@ -347,14 +382,15 @@ const styles = (theme) =>
       textAlign: 'center',
       fontSize: 16,
       //borderWidth: 1
-    },
+    }, */
     popUpText: {
       backgroundColor: theme.tertiary,
       color: theme.text1,
       textAlign: 'center',
-      width: '90%',
-      marginVertical: 8,
+      fontSize: 18,
+      //width: '90%',
+      /* marginVertical: 8,
       padding: 5,
-      borderRadius: 15,
+      borderRadius: 15, */
     },
   });

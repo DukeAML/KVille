@@ -28,6 +28,10 @@ import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
+import {ConfirmationModal} from '../component/ConfirmationModal'
+import { BottomSheetModal } from '../component/BottomSheetModal';
+
+
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
   '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
@@ -285,21 +289,32 @@ export default function Schedule({ route }) {
 
   //Component for the popup list of members for each member
   const Member = ({ name }) => {
+    /* function formatAsPercent(num) {
+      return `${parseFloat(num).toFixed(2)}%`;
+    } 
+    let height = formatAsPercent(100 * (1 / colorCodes.length));*/
+    let height = win.height * 0.45 * (1 / colorCodes.length);
     return (
       <View>
         <TouchableOpacity
           onPress={() => {
             setNewMember(name);
             toggleMemberModal();
+            console.log('height', height);
           }}
         >
-          <View style={{ backgroundColor: '#656565' }}>
+          <View style={{ 
+              //backgroundColor: '#656565', 
+              height: height, 
+              justifyContent: 'center'
+            }}
+          >
             <Text
               style={{
                 textAlign: 'left',
                 color: 'white',
-                marginLeft: 15,
-                height: 25,
+                marginLeft: 25,
+                fontSize: 18,
               }}
             >
               {name}
@@ -555,7 +570,29 @@ export default function Schedule({ route }) {
       </View>
 
       <View>
-        <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
+        <BottomSheetModal
+          isVisible={isMemberModalVisible} 
+          onBackdropPress={() => setMemberModalVisible(false)}
+          onSwipeComplete={toggleMemberModal}
+        >
+          <View
+            style={{
+              marginTop: 10,
+              width: '90%',
+              borderWidth: 1,
+              height: '92%'
+            }}
+          >
+            <View  style = {{height: '100%'}}>
+              <FlatList 
+                data={colorCodes} 
+                renderItem={renderMember} 
+                keyExtractor={(item) => item.id} 
+              />
+            </View>
+          </View>
+        </BottomSheetModal>
+        {/* <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
           <View
             style={{
               width: '50%',
@@ -567,7 +604,7 @@ export default function Schedule({ route }) {
               <FlatList data={colorCodes} renderItem={renderMember} keyExtractor={(item) => item.id} />
             </View>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
 
       <View>
