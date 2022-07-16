@@ -21,6 +21,8 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { color } from 'react-native-reanimated';
+import { useFocusEffect } from '@react-navigation/native';
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -88,6 +90,14 @@ export default function Schedule({ route }) {
     { initialData: [] }
   );
   //useRefreshOnFocus(refetch);
+
+  useFocusEffect(
+    useCallback(()=>{
+      return () => {
+        updateHours(code);
+      }
+    }, [])
+  )
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
@@ -192,6 +202,23 @@ export default function Schedule({ route }) {
   //   toggleSnackBar();
   // };
 
+  function updateHours(groupCode) {
+    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    for (let i=0; i<colorCodes.length; i++) {
+      if (colorCodes[i].changedHrs == 0) continue;
+      groupRef.collection('members').doc(colorCodes[i].id).get().then((doc) => {
+        const newHours = doc.data().scheduledHrs + colorCodes[i].changedHrs;
+        console.log(colorCodes[i].changedHrs + ' new hours: ' + newHours);
+        colorCodes[i].changedHrs = 0;
+        return newHours;
+      }).then((hours)=>{
+        groupRef.collection('members').doc(colorCodes[i].id).update({scheduledHrs:hours})
+      }).catch((error)=>{
+        console.error(error);
+      });
+    }
+  }
+
   const useEditCell = (groupCode, weekDisplay) => {
     const queryClient = useQueryClient();
     return useMutation((options) => editCell(options), {
@@ -217,24 +244,23 @@ export default function Schedule({ route }) {
     const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
 
-    let oldHours;
-    let newHours;
-    await groupRef.collection('members').doc(colorCodes[indexofOld].id).get().then((doc) => {
-      oldHours = doc.data().scheduledHrs - 0.5;
-    });
-    await groupRef.collection('members').doc(colorCodes[indexofNew].id).get().then((doc) => {
-      newHours = doc.data().scheduledHrs + 0.5;
-    });
-    groupRef.collection('members').doc(colorCodes[indexofOld].id).update({
-      scheduledHrs: oldHours
-    })
-    groupRef.collection('members').doc(colorCodes[indexofNew].id).update({
-      scheduledHrs: newHours,
-    });
-    //colorCodes[indexofOld].changedHrs -= 0.5;
-    //colorCodes[indexofNew].changedHrs += 0.5;
-    //console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
-    //console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
+    // let oldHours;
+    // let newHours;
+    // await groupRef.collection('members').doc(colorCodes[indexofOld].id).get().then((doc) => {
+    //   oldHours = doc.data().scheduledHrs - 0.5;
+    // });
+    // await groupRef.collection('members').doc(colorCodes[indexofNew].id).get().then((doc) => {
+    //   newHours = doc.data().scheduledHrs + 0.5;
+    // });
+    // groupRef.collection('members').doc(colorCodes[indexofOld].id).update({
+    //   scheduledHrs: oldHours
+    // })
+    // groupRef.collection('members').doc(colorCodes[indexofNew].id).update({
+    //   scheduledHrs: newHours,
+    // });
+
+    colorCodes[indexofOld].changedHrs -= 0.5;
+    colorCodes[indexofNew].changedHrs += 0.5;
 
     groupRef.update({
       groupSchedule: currSchedule
