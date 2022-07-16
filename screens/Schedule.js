@@ -21,7 +21,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { color } from 'react-native-reanimated';
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -210,18 +209,34 @@ export default function Schedule({ route }) {
   //function for editing the schedule based on old member and new member to replace
   const editCell = async (options) => {
     const { index, oldMember, newMember, groupCode } = options
+    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
     let currSchedule = data;
     //must delete from 'schedule' and update the string within
     //schedule[index] = schedule[index].replace(oldMember, newMember);
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
+
+    let oldHours;
+    let newHours;
+    await groupRef.collection('members').doc(colorCodes[indexofOld].id).get().then((doc) => {
+      oldHours = doc.data().scheduledHrs - 0.5;
+    });
+    await groupRef.collection('members').doc(colorCodes[indexofNew].id).get().then((doc) => {
+      newHours = doc.data().scheduledHrs + 0.5;
+    });
+    groupRef.collection('members').doc(colorCodes[indexofOld].id).update({
+      scheduledHrs: oldHours
+    })
+    groupRef.collection('members').doc(colorCodes[indexofNew].id).update({
+      scheduledHrs: newHours,
+    });
     //colorCodes[indexofOld].changedHrs -= 0.5;
     //colorCodes[indexofNew].changedHrs += 0.5;
-    console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
-    console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
+    //console.log('indexOfOld: ', indexofOld, '|', 'indexOfNew', '|', indexofNew);
+    //console.log('index: ', index, '|| old: ', oldMember, '|| new: ', newMember);
 
-    firebase.firestore().collection('groups').doc(groupCode).update({
+    groupRef.update({
       groupSchedule: currSchedule
     })
 
