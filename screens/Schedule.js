@@ -27,6 +27,7 @@ import { color } from 'react-native-reanimated';
 
 import {ConfirmationModal} from '../component/ConfirmationModal'
 import { BottomSheetModal } from '../component/BottomSheetModal';
+import {ActionSheetModal} from '../component/ActionSheetModal';
 
 
 //prettier-ignore
@@ -255,27 +256,28 @@ export default function Schedule({ route }) {
       return `${parseFloat(num).toFixed(2)}%`;
     } 
     let height = formatAsPercent(100 * (1 / colorCodes.length));*/
-    let height = win.height * 0.45 * (1 / colorCodes.length);
+    let height = win.height * 0.45 * (1 / colorCodes.length) + 8 ;
     return (
-      <View>
+      <View style = {{width: '100%'}}>
         <TouchableOpacity
           onPress={() => {
             setNewMember(name);
             toggleMemberModal();
             console.log('height', height);
           }}
+          style = {{width: '100%', /* borderBottomWidth:1 */}}
         >
           <View style={{ 
               //backgroundColor: '#656565', 
               height: height, 
-              justifyContent: 'center'
+              justifyContent: 'center',
             }}
           >
             <Text
               style={{
-                textAlign: 'left',
+                textAlign: 'center',
                 color: 'white',
-                marginLeft: 25,
+                //marginLeft: 25,
                 fontSize: 18,
               }}
             >
@@ -535,7 +537,7 @@ export default function Schedule({ route }) {
   return (
     <View style={styles.bigContainer} onLayout={onLayoutRootView}>
       <View>
-        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+        {/* <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
           <View style={styles.deletePopup}>
             <Text
               style={{
@@ -593,8 +595,60 @@ export default function Schedule({ route }) {
               </View>
             </TouchableOpacity>
           </View>
-        </Modal>
+        </Modal> */}
+        <ActionSheetModal
+          isVisible={isModalVisible} 
+          onBackdropPress={() => setModalVisible(false)}
+          onSwipeComplete={toggleModal}
+
+          toggleModal = {toggleModal}
+
+          cancelButton = {true}
+          height = {win.height * 0.15}
+        >
+          <TouchableOpacity onPress={toggleMemberModal} style = {{height: '50%', width: '100%'}}>
+            <View
+              style={{
+                height: '100%',
+                width: '100%',
+                justifyContent: 'center',
+                borderBottomWidth: 1,
+                borderColor: '#cfcfcf',
+              }}
+            >
+              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (newMember == 'Select a Member') {
+                toggleModal();
+              } else {
+                toggleModal();
+                //editCell(editIndex.current, oldMember, newMember);
+                postEditCell.mutate({index:editIndex.current, oldMember: oldMember, newMember: newMember, groupCode: code});
+              }
+            }}
+            style = {{height: '50%', width: '100%'}}
+          >
+            <View
+              style={{ height: '100%', justifyContent: 'center',}}
+            >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: 'white',
+                  fontSize: 24,
+                  fontWeight: '500',
+                }}
+              >
+                Edit
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </ActionSheetModal>
       </View>
+
 
       <View>
         <BottomSheetModal
@@ -606,11 +660,12 @@ export default function Schedule({ route }) {
             style={{
               marginTop: 10,
               width: '90%',
-              borderWidth: 1,
+              //borderWidth: 1,
+              alignItems: 'center',
               height: '92%'
             }}
           >
-            <View  style = {{height: '100%'}}>
+            <View  style = {{height: '100%', width: '100%'}}>
               <FlatList 
                 data={colorCodes} 
                 renderItem={renderMember} 
@@ -645,7 +700,7 @@ export default function Schedule({ route }) {
             toggleModal = {toggleConfirmation}
             body= {typeOfEdit === 'Push' ? 
               'Are you sure you want to push changes? This will change the schedule for everyone in your group.'
-            : 'Are you sure you want to create a new schedule? This will erase the current schedule for all group members and cannot be undone.'}
+            : 'Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'}
             buttonText = {typeOfEdit === 'Push' ? 'Push Changes' : 'Create New Schedule'}
             buttonAction = {() => {
               //toggleConfirmation();

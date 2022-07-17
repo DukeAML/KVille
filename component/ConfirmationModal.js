@@ -10,9 +10,9 @@ import { useTheme } from '../context/ThemeProvider';
 This Modal has little to no customization for uniform look
 
 Parameters: 
-    height -- percent size of modal
-    backgroundColor -- background color of modal 
-    buttonAction -- action taken the confirmation button 
+    @param {function} toggleModal -- function for toggling the modal
+    @param {string ('dark' | 'light')}  userStyle -- background color of modal and text color
+    @param {function} buttonAction -- action taken the confirmation button 
         **note: should be a function 
             ex] 
                 () = > {
@@ -20,8 +20,8 @@ Parameters:
                     action2();
                     ...
                 }
-    body -- text prompt for the confirmation
-    buttonText -- text for confirmation button
+    @param {string} body -- text prompt for the confirmation
+    @param {string} buttonText -- text for confirmation button
 
 props --
     **NOTE: must include normal modal props in the props of the BottomSheetModal such as:
@@ -29,7 +29,7 @@ props --
         onBackdropPress={() => setModalVisible(false)}
         onSwipeComplete = {toggleModal} 
 */ 
-const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, backgroundColor, ...props  }) => {
+const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, userStyle, ...props  }) => {
   {
     const {theme} = useTheme();
     return (
@@ -41,7 +41,7 @@ const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, backg
             <View>
                 <View style={styles(theme).confirmationPop}>
                 <View style = {{height: '60%', width: '100%', justifyContent:'center', borderBottomWidth: 1,
-                    borderBottomColor: 'white', padding: 10}}>
+                    borderBottomColor: '#cfcfcf', padding: 10}}>
                     <Text style={styles(theme).confirmationText}>
                         {body}
                     </Text>
@@ -86,21 +86,27 @@ const styles = (theme) => StyleSheet.create({
         justifyContent: 'flex-end',
     },
     confirmationPop: {
-        width: '90%',
+        width: '95%',
         height: 130,
-        backgroundColor: '#424242',//theme.primary,
+        backgroundColor: '#565656',//theme.primary,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'space-evenly',
         borderRadius: 20,
         margin: 15,
+
+        shadowColor: '#171717',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 5,
     },
     confirmationHeader: {
-        //style for text at the top of the popup
-        fontWeight: '700',
+        //style for text of buttons
+        fontWeight: '600',
         //color: theme.text1,
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 23,
     },
     confirmationText: {
         //backgroundColor: '#424242',
@@ -111,14 +117,20 @@ const styles = (theme) => StyleSheet.create({
     },
     confirmationBottomBtn: {
         color: theme.text1,
-        backgroundColor: '#424242',
+        backgroundColor: '#565656',
         alignSelf: 'center',
-        width: '90%',
+        width: '95%',
         borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
         height: 65,
         marginBottom: 15,
+
+        shadowColor: '#171717',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 5,
     },
 });
 

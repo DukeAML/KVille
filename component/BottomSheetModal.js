@@ -18,8 +18,10 @@ function useModal() {
 /*Parent Function for modal component
 
 Parameters: 
-    height -- percent size of modal ; color -- background color of modal ; 
-    barSize -- depending on the size of the modal, determine the size of toggle bar
+    @param {string (%) | number } height -- percent size of modal (or pixel size) 
+    @param {string (color | hex) } color -- background color of modal 
+    @param {string ('default' | 'small') } barSize -- depending on the size of the modal, determine the size of toggle bar
+
     children -- components inside component; 
 
 props --
@@ -28,7 +30,7 @@ props --
         onBackdropPress={() => setModalVisible(false)}
         onSwipeComplete = {toggleModal} 
 */ 
-const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'default', children, ...props}) => {
+const BottomSheetModal = ({ height = '50%', color = '#565656', barSize = 'default', children, ...props}) => {
     {
       const {theme} = useTheme();
       return (
@@ -53,8 +55,9 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
 /*      Component for adding a second bottom layer on modal
 
     Parameters: 
-        color -- background color of modal ; 
-        size -- depending on the size of the modal, determine the size of second layer
+        @param {string (color | hex) } color -- background color of modal ; 
+        @param {string ('default' | 'small') } size -- depending on the size of the modal, determine the size of second layer
+        
         children -- components inside component; 
 */
   const ModalSecondContainer = ({ children, color='#757575', size = 'default'}) => {
@@ -68,15 +71,15 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         </View>
     )
   };
- 
   BottomSheetModal.SecondContainer = ModalSecondContainer;
 
 
 /*      Component for adding a top header
 
     Parameters: 
-        verticalMargin -- depending on the size of the modal, determine the margin of text 
-        fontSize -- depending on the size of the modal, determine the fontSize of text
+        @param {number} verticalMargin -- depending on the size of the modal, determine the margin of text 
+        @param {number} fontSize -- depending on the size of the modal, determine the fontSize of text
+        
         children -- text of header; 
 */
   const ModalHeader = ({ children, verticalMargin = 10, fontSize = 20}) => {
@@ -86,7 +89,6 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         <Text style={[styles(theme).ModalHeader,{marginVertical: verticalMargin, fontSize: fontSize}]}>{children}</Text>
     )
   };
-
   BottomSheetModal.Header = ModalHeader;
 
 
@@ -96,10 +98,24 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         margin: 0,
         justifyContent: 'flex-end',
       },
+      ModalContainer: {
+        width: '100%',
+        height: '45%',
+        borderTopRightRadius: 30,
+        borderTopLeftRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+
+        shadowColor: '#171717',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 5,
+      },
       modalSmallBar:{
         height: 2,
         marginTop: 4,
-        width: '18%',
+        width: '15%',
         borderRadius: 25,
         backgroundColor: 'white',
       },
@@ -110,15 +126,6 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         borderRadius: 25,
         backgroundColor: 'white', //theme.grey1,
       },
-      ModalContainer: {
-        width: '100%',
-        height: '45%',
-        borderTopRightRadius: 30,
-        borderTopLeftRadius: 30,
-        backgroundColor: '#424242',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      },
       ModalHeader: {
         //style for text at the top of the popup
         fontWeight: '700',
@@ -127,7 +134,6 @@ const BottomSheetModal = ({ height = '50%', color = '#424242', barSize = 'defaul
         fontSize: 20,
       },
       ModalSecondaryView: {
-        backgroundColor: '#757575', 
         width: '100%',
         height: '85%',
         paddingHorizontal: 35,

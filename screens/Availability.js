@@ -561,7 +561,7 @@ export default function Availability({ route }) {
         ]}
       >
         <TouchableOpacity onPress={toggleModal}>
-          <Icon name={'plus-circle'} color={theme.grey1} size={50} />
+          <Icon name={'plus-circle'} color={theme.greyModal} size={50} />
         </TouchableOpacity>
       </View>
     </View>
@@ -594,7 +594,7 @@ const styles = (theme) =>
       alignItems: 'center',
       alignSelf: 'center',
       justifyContent: 'space-around',
-      backgroundColor: '#424242',//theme.background,
+      backgroundColor: theme.greyModal,//theme.background,
       //opacity: '95%'
     },
 

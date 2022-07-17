@@ -13,6 +13,7 @@ export const lightTheme = {
   grey4: '#555555',
   grey5: '#8e8e8e',
   grey6: '#a9a9a9',
+  greyModal: '#565656',
   text1: '#fff',
   text2: '#000',
   icon1: '#fff',
