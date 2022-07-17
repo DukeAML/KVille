@@ -43,6 +43,8 @@ for (let i = 0; i < 48; i += 1) {
   tableData.push(rowData);
 }
 
+const cellHeight = 30;
+
 let currIndex;
 
 let availability;
@@ -205,7 +207,7 @@ export default function Availability({ route }) {
 
   const element = (cellData, index, availability) => (
     <TouchableOpacity
-      style={[styles(theme).btn, { height: 40 * parseInt(availability[index][1]) }]}
+      style={[styles(theme).btn, { height: cellHeight * parseInt(availability[index][1]) }]}
       onPress={() => {
         console.log(index);
         toggleDeleteModal();
@@ -497,7 +499,7 @@ export default function Availability({ route }) {
             {tableData.map((rowData, index) => (
               <TableWrapper
                 key={index}
-                style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: '#F7F6E7' }])}
+                style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
               >
                 {rowData.map((cellData, cellIndex) => (
                   <Cell
@@ -530,8 +532,8 @@ const styles = (theme) =>
       //backgroundColor: theme.background,
     },
     row: {
-      height: 40,
-      backgroundColor: '#E7E6E1',
+      height: cellHeight,
+      backgroundColor: theme.grey3,
       flexDirection: 'row',
     },
     text: {
@@ -540,7 +542,7 @@ const styles = (theme) =>
     modalContainer: {
       width: '100%',
       height: '80%',
-      borderTopRightRadius: 30,
+      borderTopRightRadius: 30, 
       borderTopLeftRadius: 30,
       /*borderRadius: 25,
       borderWidth: 1,
@@ -571,11 +573,11 @@ const styles = (theme) =>
       fontSize: 24,
       fontWeight: '600',
       marginBottom: 5,
-      color: 'white',
+      color: theme.text1,
     },
     modalText:{
       fontSize: 18,
-      color: 'white',
+      color: theme.text1,
       marginBottom: 3,
       //width: '100%',
     },
@@ -635,14 +637,13 @@ const styles = (theme) =>
       justifyContent: 'center',
     },
     btnText: {
-      //color: theme.text1,
-      color: 'white',
+      color: theme.text1,
       fontSize: 24,
       fontWeight: '600'
       //textAlign: 'center',
     },
     cell: {
-      height: 40,
+      height: cellHeight,
       flexDirection: 'column',
       justifyContent: 'flex-end',
       alignItems: 'center',

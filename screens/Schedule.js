@@ -14,7 +14,7 @@ import {
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Divider } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -571,7 +571,7 @@ export default function Schedule({ route }) {
 
       <View>
         <BottomSheetModal
-          isVisible={isMemberModalVisible} 
+          isVisible={isMemberModalVisible}
           onBackdropPress={() => setMemberModalVisible(false)}
           onSwipeComplete={toggleMemberModal}
         >
@@ -580,14 +580,15 @@ export default function Schedule({ route }) {
               marginTop: 10,
               width: '90%',
               borderWidth: 1,
-              height: '92%'
+              height: '92%',
             }}
           >
-            <View  style = {{height: '100%'}}>
-              <FlatList 
-                data={colorCodes} 
-                renderItem={renderMember} 
-                keyExtractor={(item) => item.id} 
+            <View style={{ height: '100%' }}>
+              <FlatList
+                data={colorCodes}
+                renderItem={renderMember}
+                ItemSeparatorComponent={() => <Divider />}
+                keyExtractor={(item) => item.id}
               />
             </View>
           </View>
