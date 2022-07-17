@@ -7,17 +7,11 @@ import {
   Dimensions,
   TouchableOpacity,
   Platform,
+  RefreshControl,
 } from 'react-native';
-import {
-  Table,
-  TableWrapper,
-  Row,
-  Col,
-  Cell,
-} from 'react-native-table-component';
+import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-//import RNPickerSelect from 'react-native-picker-select';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
@@ -29,6 +23,7 @@ import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const window = Dimensions.get('window');
 
@@ -48,9 +43,11 @@ for (let i = 0; i < 48; i += 1) {
   tableData.push(rowData);
 }
 
+const cellHeight = 30;
+
 let currIndex;
 
-let availability
+let availability;
 // let availabilityUI = new Array(336);
 // availabilityUI.fill([true, 0]);
 
@@ -80,6 +77,7 @@ export default function Availability({ route }) {
     ['availability', firebase.auth().currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)
   );
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
   //useRefreshOnFocus(refetch);
 
   async function fetchAvailability(groupCode) {
@@ -121,11 +119,7 @@ export default function Availability({ route }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([
-          'availability',
-          firebase.auth().currentUser.uid,
-          groupCode,
-        ]);
+        queryClient.invalidateQueries(['availability', firebase.auth().currentUser.uid, groupCode]);
       },
     });
   };
@@ -145,15 +139,9 @@ export default function Availability({ route }) {
       return;
     }
     let startIdx =
-      parseInt(selectedDay) * 48 +
-      parseInt(startTime.day) +
-      parseInt(startTime.minute) +
-      parseInt(startTime.hour) * 2;
+      parseInt(selectedDay) * 48 + parseInt(startTime.day) + parseInt(startTime.minute) + parseInt(startTime.hour) * 2;
     let endIdx =
-      parseInt(selectedDay) * 48 +
-      parseInt(endTime.day) +
-      parseInt(endTime.minute) +
-      parseInt(endTime.hour) * 2;
+      parseInt(selectedDay) * 48 + parseInt(endTime.day) + parseInt(endTime.minute) + parseInt(endTime.hour) * 2;
     if (endIdx == parseInt(selectedDay) * 48) {
       endIdx += 48;
     }
@@ -181,11 +169,7 @@ export default function Availability({ route }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([
-          'availability',
-          firebase.auth().currentUser.uid,
-          groupCode,
-        ]);
+        queryClient.invalidateQueries(['availability', firebase.auth().currentUser.uid, groupCode]);
       },
     });
   };
@@ -223,10 +207,7 @@ export default function Availability({ route }) {
 
   const element = (cellData, index, availability) => (
     <TouchableOpacity
-      style={[
-        styles(theme).btn,
-        { height: 40 * parseInt(availability[index][1]) },
-      ]}
+      style={[styles(theme).btn, { height: cellHeight * parseInt(availability[index][1]) }]}
       onPress={() => {
         console.log(index);
         toggleDeleteModal();
@@ -292,9 +273,7 @@ export default function Availability({ route }) {
           wrapperStyle={{ top: 0 }}
           duration={2000}
         >
-          <Text style={{ textAlign: 'center', color: theme.text1 }}>
-            {snackMessage}
-          </Text>
+          <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
         </Snackbar>
         <View style={styles(theme).modalContainer}>
 
@@ -311,14 +290,8 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedDay(itemValue);
                 }}
-                style={
-                  Platform.OS === 'ios'
-                    ? { height: '100%', width: '80%' }
-                    : { height: 30, width: '70%' }
-                }
-                itemStyle={
-                  Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                }
+                style={Platform.OS === 'ios' ? { height: '100%', width: '80%' } : { height: 30, width: '70%' }}
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='Sunday' value={0} />
                 <Picker.Item label='Monday' value={1} />
@@ -509,14 +482,12 @@ export default function Availability({ route }) {
           textStyle={{ textAlign: 'center' }}
         />
       </Table>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Table
-          borderStyle={{ borderWidth: 1 }}
-          style={{ flexDirection: 'row' }}
-        >
-          <TableWrapper
-            style={StyleSheet.flatten([{ width: dimensions.window.width / 8 }])}
-          >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+      >
+        <Table borderStyle={{ borderWidth: 1 }} style={{ flexDirection: 'row' }}>
+          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 8 }])}>
             <Col
               data={agenda.tableTime}
               style={StyleSheet.flatten(styles(theme).time)}
@@ -528,25 +499,15 @@ export default function Availability({ route }) {
             {tableData.map((rowData, index) => (
               <TableWrapper
                 key={index}
-                style={StyleSheet.flatten([
-                  styles(theme).row,
-                  index % 2 && { backgroundColor: '#F7F6E7' },
-                ])}
+                style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
               >
                 {rowData.map((cellData, cellIndex) => (
                   <Cell
                     key={cellIndex}
-                    data={
-                      data[48 * cellIndex + index][0]
-                        ? cellData
-                        : element(cellData, 48 * cellIndex + index, data)
-                    }
+                    data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
                     //{data[48 * cellIndex + index].toString()}
 
-                    style={StyleSheet.flatten([
-                      styles(theme).cell,
-                      { width: dimensions.window.width / 8 },
-                    ])}
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width / 8 }])}
                   />
                 ))}
               </TableWrapper>
@@ -554,12 +515,7 @@ export default function Availability({ route }) {
           </TableWrapper>
         </Table>
       </ScrollView>
-      <View
-        style={[
-          styles(theme).addContainer,
-          { width: dimensions.window.width / 8 },
-        ]}
-      >
+      <View style={[styles(theme).addContainer, { width: dimensions.window.width / 8 }]}>
         <TouchableOpacity onPress={toggleModal}>
           <Icon name={'plus-circle'} color={theme.greyModal} size={50} />
         </TouchableOpacity>
@@ -576,8 +532,8 @@ const styles = (theme) =>
       //backgroundColor: theme.background,
     },
     row: {
-      height: 40,
-      backgroundColor: '#E7E6E1',
+      height: cellHeight,
+      backgroundColor: theme.grey3,
       flexDirection: 'row',
     },
     text: {
@@ -586,7 +542,7 @@ const styles = (theme) =>
     modalContainer: {
       width: '100%',
       height: '80%',
-      borderTopRightRadius: 30,
+      borderTopRightRadius: 30, 
       borderTopLeftRadius: 30,
       /*borderRadius: 25,
       borderWidth: 1,
@@ -617,11 +573,11 @@ const styles = (theme) =>
       fontSize: 24,
       fontWeight: '600',
       marginBottom: 5,
-      color: 'white',
+      color: theme.text1,
     },
     modalText:{
       fontSize: 18,
-      color: 'white',
+      color: theme.text1,
       marginBottom: 3,
       //width: '100%',
     },
@@ -681,14 +637,13 @@ const styles = (theme) =>
       justifyContent: 'center',
     },
     btnText: {
-      //color: theme.text1,
-      color: 'white',
+      color: theme.text1,
       fontSize: 24,
       fontWeight: '600'
       //textAlign: 'center',
     },
     cell: {
-      height: 40,
+      height: cellHeight,
       flexDirection: 'column',
       justifyContent: 'flex-end',
       alignItems: 'center',
