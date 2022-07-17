@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import { Animated, Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -13,7 +15,7 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
-import {BottomSheetModal} from '../component/BottomSheetModal'
+import { BottomSheetModal } from '../component/BottomSheetModal';
 
 /* let currentUserName;
 
@@ -28,12 +30,16 @@ export default function GroupInfo({ route }) {
   const [isModalVisible, setModalVisible] = useState(false);
 
   //These 2 hooks are used for identifying which member is clicked from the list
-  const [currMember, setCurrMember] = useState({});
+  //const [currMember, setCurrMember] = useState({});
+  const currMember = useRef({});
   //const [currIndex, setCurrIndex] = useState(0);
 
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   //console.log('route params: ', route.params);
   const { theme } = useTheme();
+
+  //const userMember = useRef({});
+  const [userMember, setUserMember] = useState();
 
   //const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
   //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
@@ -50,7 +56,7 @@ export default function GroupInfo({ route }) {
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
-    let data = [{}];
+    let data = [];
     await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
@@ -62,12 +68,14 @@ export default function GroupInfo({ route }) {
           let scheduledHours = doc.data().scheduledHrs;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            data[0] = {
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-            };
+            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
+            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours });
+            // data[0] = {
+            // id: memID,
+            // name: currName,
+            // inTent: tentCondition,
+            // hours: scheduledHours,
+            // };
           } else {
             data.push({
               id: memID,
@@ -92,12 +100,14 @@ export default function GroupInfo({ route }) {
           let scheduledHours = doc.data().scheduledHrs;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            data[0] = {
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-            };
+            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
+            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours });
+            // data[0] = {
+            //   id: memID,
+            //   name: currName,
+            //   inTent: tentCondition,
+            //   hours: scheduledHours,
+            // };
           } else {
             data.push({
               id: memID,
@@ -135,16 +145,16 @@ export default function GroupInfo({ route }) {
   }
 
   const removeMember = async (groupCode) => {
-    console.log('current member being deleted', currMember.id);
+    console.log('current member being deleted', currMember.current.id);
     firebase
       .firestore()
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(currMember.id)
+      .doc(currMember.current.id)
       .delete()
       .then(() => {
-        console.log(currMember.id + ' removed from group');
+        console.log(currMember.current.id + ' removed from group');
       })
       .catch((error) => {
         console.error('Error removing member: ', error);
@@ -153,24 +163,31 @@ export default function GroupInfo({ route }) {
     await firebase
       .firestore()
       .collection('users')
-      .doc(currMember.id)
+      .doc(currMember.current.id)
       .get()
       .then((doc) => {
-        groups = doc.data().groupCode;
-        for (let i = 0; i < groups.length; i++) {
-          if (groups[i].groupCode == groupCode) {
-            groups.splice(i, 1);
-            break;
+        if (doc.exists) {
+          groups = doc.data().groupCode;
+          for (let i = 0; i < groups.length; i++) {
+            if (groups[i].groupCode == groupCode) {
+              groups.splice(i, 1);
+              break;
+            }
           }
+          console.log('groups', groups);
         }
-        console.log('groups', groups);
       })
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
-    firebase.firestore().collection('users').doc(currMember.id).update({
-      groupCode: groups,
-    });
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(currMember.current.id)
+      .update({
+        groupCode: groups,
+      })
+      .catch((error) => console.error(error));
     toggleModal();
   };
 
@@ -180,30 +197,87 @@ export default function GroupInfo({ route }) {
     }
   }, [isLoading]);
 
-  //Render Item for Each List Item of group members
-  const Member = ({ name, id, hours, backgroundColor }) => {
-    //const indexOfUser = data.findIndex((member) => member.id === id);
-    //console.log(name, indexOfUser, members[indexOfUser].hours);
+  const renderRightActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [-50, 0.5],
+      outputRange: [1, 0.1],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View
+        style={{
+          width: '20%',
+          //backgroundColor: theme.error,
+          alignItems: 'center',
+          padding: 4,
+          justifyContent: 'flex-end',
+          marginVertical: 3,
+        }}
+      >
+        <Animated.Text style={{ transform: [{ scale }], color: theme.error }} onPress={() => postRemoveMember.mutate()}>
+          Remove
+        </Animated.Text>
+        {/* <Icon name='trash-can-outline' color={theme.icon1} size={20} style={{ right: 0 }} /> */}
+      </View>
+    );
+  };
+
+  const UserMember = ({ item }) => {
+    const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
     return (
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          setCurrMember({ name: name, id: id, hours: hours });
+          currMember.current = { name: item.name, id: item.id, hours: item.hours };
+          //setCurrMember({ name: name, id: id, hours: hours });
           //setCurrIndex(indexOfUser);
         }}
       >
         <View
           style={[
             styles(theme).listItem,
-            backgroundColor,
             styles(theme).shadowProp,
-            { flexDirection: 'row', justifyContent: 'space-evenly' },
+            { flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor },
           ]}
         >
-          <Text style={styles(theme).listText}>{name}</Text>
-          <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+          <Text style={styles(theme).listText}>{item.name}</Text>
+          <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
         </View>
       </TouchableOpacity>
+    );
+  };
+  //Render Item for Each List Item of group members
+  const Member = ({ name, id, hours, backgroundColor }) => {
+    //const indexOfUser = data.findIndex((member) => member.id === id);
+    //console.log(name, indexOfUser, members[indexOfUser].hours);
+    return (
+      <Swipeable
+        renderRightActions={renderRightActions}
+        onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours })}
+        friction={2}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            toggleModal();
+            currMember.current = { name: name, id: id, hours: hours };
+            //setCurrMember({ name: name, id: id, hours: hours });
+            //setCurrIndex(indexOfUser);
+          }}
+        >
+          <View
+            style={[
+              styles(theme).listItem,
+              backgroundColor,
+              styles(theme).shadowProp,
+              { flexDirection: 'row', justifyContent: 'space-evenly' },
+            ]}
+          >
+            <Text style={styles(theme).listText}>{name}</Text>
+            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
     );
   };
 
@@ -243,29 +317,30 @@ export default function GroupInfo({ route }) {
         data={data}
         renderItem={renderMember}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+        style={{ marginHorizontal: '8%', flexGrow: 0, height: '70%' }}
       ></FlatList>
 
       <View>
-
         <BottomSheetModal
-          isVisible={isModalVisible} 
+          isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
-          onSwipeComplete = {toggleModal}
-          color = {theme.secondary}
-          height = '15%'
+          onSwipeComplete={toggleModal}
+          color={theme.secondary}
+          height='15%'
           barSize='small'
         >
-          <BottomSheetModal.Header verticalMargin={3} fontSize = {18}>
-            {currMember.name} Information
+          <BottomSheetModal.Header verticalMargin={3} fontSize={18}>
+            {currMember.current.name} Information
           </BottomSheetModal.Header>
-          <BottomSheetModal.SecondContainer color={theme.tertiary} size = 'small'>
-            <View style ={{justifyContent:'center', height: '100%'}}>
-              <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
+          <BottomSheetModal.SecondContainer color={theme.tertiary} size='small'>
+            <View style={{ justifyContent: 'center', height: '100%' }}>
+              <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
             </View>
-            
-            {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={()=>postRemoveMember.mutate()}>
+
+            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+              <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
                 <Text
                   style={{
                     textAlign: 'center',
@@ -294,9 +369,9 @@ export default function GroupInfo({ route }) {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles(theme).popUpHeader}>{currMember.name} Information</Text>
-            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.hours} hrs</Text>
-            {groupRole === 'Creator' && currMember.id != firebase.auth().currentUser.uid ? (
+            <Text style={styles(theme).popUpHeader}>{currMember.current.name} Information</Text>
+            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
+            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
               <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
                 <Text
                   style={{
@@ -343,7 +418,7 @@ const styles = (theme) =>
       padding: 4,
       marginVertical: 3,
       borderRadius: 15,
-      width: '80%',
+      width: '100%',
       alignSelf: 'center',
       alignItems: 'center',
     },
@@ -366,7 +441,7 @@ const styles = (theme) =>
       shadowOpacity: 0.2,
       shadowRadius: 3,
     },
-   /*  popUp: {
+    /*  popUp: {
       width: '90%',
       height: '15%',
       backgroundColor: theme.secondary,
