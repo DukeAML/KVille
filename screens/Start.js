@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
   Image,
-  ScrollView,
+  RefreshControl,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -17,6 +17,7 @@ import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
 import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -37,8 +38,6 @@ import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 
 const window = Dimensions.get('window');
 
-let GROUPS = new Array();
-
 export default function Start({ navigation }) {
   /* let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
@@ -50,7 +49,8 @@ export default function Start({ navigation }) {
   );
   //console.log('useQuery data:', data);
   useRefreshOnFocus(refetch);
-  //console.log(isLoading);
+
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchGroups() {
     let data;
@@ -213,11 +213,7 @@ export default function Start({ navigation }) {
           <Text style={styles(theme).groupText}>Groups</Text>
           <TouchableOpacity onPress={toggleModal}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Icon
-                name='plus-circle-outline'
-                color={theme.primary}
-                size={20}
-              />
+              <Icon name='plus-circle-outline' color={theme.primary} size={20} />
               <Text
                 style={[
                   styles(theme).groupText,
@@ -241,6 +237,7 @@ export default function Start({ navigation }) {
             data={data}
             renderItem={renderGroup}
             keyExtractor={(item) => item.code}
+            refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
           />
         </SafeAreaView>
         {/* </ScrollView> */}
@@ -270,12 +267,7 @@ export default function Start({ navigation }) {
                     },
                   ]}
                 >
-                  <Icon
-                    name='account-plus-outline'
-                    color={'white'}
-                    size={20}
-                    style={{ marginLeft: 10 }}
-                  />
+                  <Icon name='account-plus-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
                   <Text style={styles(theme).buttonText}>Join Group</Text>
                 </View>
               </TouchableOpacity>
@@ -283,7 +275,7 @@ export default function Start({ navigation }) {
               <TouchableOpacity
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate('CreateGroup')
+                  navigation.navigate('CreateGroup');
                 }}
               >
                 <View
@@ -297,12 +289,7 @@ export default function Start({ navigation }) {
                     },
                   ]}
                 >
-                  <Icon
-                    name='account-circle-outline'
-                    color={'white'}
-                    size={20}
-                    style={{ marginLeft: 10 }}
-                  />
+                  <Icon name='account-circle-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
                   <Text style={styles(theme).buttonText}>Create New Group</Text>
                 </View>
               </TouchableOpacity>

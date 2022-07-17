@@ -27,6 +27,8 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 
+import {ConfirmationModal} from '../component/ConfirmationModal'
+
 let prevTentType;
 
 export default function Settings({ route, navigation }) {
@@ -218,63 +220,88 @@ export default function Settings({ route, navigation }) {
     }
   };
 
-  const ConfirmationModal = () => {
-    return (
-      <View style={styles(theme).confirmationPop}>
-        <TouchableOpacity
-          onPress={toggleConfirmation}
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Icon
-            name='close'
-            color={'white'}
-            size={15}
-            style={{ marginTop: 3, marginRight: 10 }}
-          />
-        </TouchableOpacity>
-        {groupRole === 'Creator' ? (
-          <Text style={styles(theme).confirmationHeader}>Delete Group</Text>
-        ) : (
-          <Text style={styles(theme).confirmationHeader}>Leave Group</Text>
-        )}
-        {groupRole === 'Creator' ? (
-          <Text style={styles(theme).confirmationText}>
-            Are you sure you want to DELETE this group? This will delete it for
-            everyone in this group and CANNOT be undone.
-          </Text>
-        ) : (
-          <Text style={styles(theme).confirmationText}>
-            Are you sure you want to LEAVE this group? This will delete all your
-            information in this group and CANNOT be undone.
-          </Text>
-        )}
+  // const ConfirmationModal = () => {
+  //   return (
+  //     <View>
+  //       <View style={styles(theme).confirmationPop}>
+  //         {/* <TouchableOpacity
+  //           onPress={toggleConfirmation}
+  //           style={{
+  //             flexDirection: 'row',
+  //             width: '100%',
+  //             justifyContent: 'flex-end',
+  //           }}
+  //         >
+  //           <Icon
+  //             name='close'
+  //             color={'white'}
+  //             size={15}
+  //             style={{ marginTop: 3, marginRight: 10 }}
+  //           />
+  //         </TouchableOpacity> */}
+  //       {/*  {groupRole === 'Creator' ? (
+  //           <Text style={styles(theme).confirmationHeader}>Delete Group</Text>
+  //         ) : (
+  //           <Text style={styles(theme).confirmationHeader}>Leave Group</Text>
+  //         )} */}
+  //         <View style = {{height: '60%', width: '100%', justifyContent:'center', borderBottomWidth: 1,
+  //             borderBottomColor: 'white', padding: 10}}>
+  //           {groupRole === 'Creator' ? (
+  //             <Text style={styles(theme).confirmationText}>
+  //               Are you sure you want to DELETE this group? This will delete it for
+  //               everyone in this group and CANNOT be undone.
+  //             </Text>
+  //           ) : (
+  //             <Text style={styles(theme).confirmationText}>
+  //               Are you sure you want to LEAVE this group? This will delete all your
+  //               information in this group and CANNOT be undone.
+  //             </Text>
+  //           )}
+  //         </View>
+          
 
-        <TouchableOpacity
-          onPress={() => {
-            leaveGroup();
-            navigation.navigate('Start');
-            toggleConfirmation();
-          }}
-          //onPress= {toggleConfirmation}
-          style={styles(theme).confirmationBottomBtn}
-        >
-          {groupRole === 'Creator' ? (
-            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
-              Yes, Delete This Group
-            </Text>
-          ) : (
-            <Text style={[styles(theme).buttonText, { color: theme.text1 }]}>
-              Yes, Leave This Group
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             leaveGroup();
+  //             navigation.navigate('Start');
+  //             toggleConfirmation();
+  //           }}
+  //           //onPress= {toggleConfirmation}
+  //           style = {{height: '40%', width: '100%'}}
+  //           //style={styles(theme).confirmationBottomBtn}
+  //         >
+  //           <View style = {{height: '100%', width: '100%', justifyContent:'center'}}>
+  //             {groupRole === 'Creator' ? (
+  //               <Text 
+  //                 style={[
+  //                   styles(theme).confirmationHeader, 
+  //                   { color: theme.error, }
+  //                 ]}>
+  //                 Delete This Group
+  //               </Text>
+  //             ) : (
+  //               <Text 
+  //                 style={[
+  //                   styles(theme).confirmationHeader, 
+  //                   { color: theme.error,  }
+  //               ]}>
+  //                 Leave This Group
+  //               </Text>
+  //             )}
+  //           </View>
+            
+  //         </TouchableOpacity>
+  //       </View>
+  //       <TouchableOpacity
+  //         onPress= {toggleConfirmation}
+  //         style={styles(theme).confirmationBottomBtn}
+  //       >
+  //         <Text style= {[styles(theme).confirmationHeader, { color: theme.text1 }]}>Cancel</Text>
+  //       </TouchableOpacity>
+  //     </View>
+      
+  //   );
+  // };
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
@@ -413,23 +440,50 @@ export default function Settings({ route, navigation }) {
         onPress={toggleConfirmation}
       >
         {groupRole === 'Creator' ? (
-          <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '500' }}>
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>
             Delete Group
           </Text>
         ) : (
-          <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '500' }}>
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>
             Leave Group
           </Text>
         )}
       </TouchableOpacity>
 
       <View>
-        <Modal
+        {/* <Modal
           isVisible={isConfirmationVisible}
           onBackdropPress={() => setConfirmationVisible(false)}
+          style={styles(theme).BottomModalView}
+          onSwipeComplete={toggleConfirmation}
+          swipeDirection={['down']}
         >
           <ConfirmationModal />
-        </Modal>
+        </Modal> */}
+        {/* <Modal
+          isVisible={isConfirmationVisible}
+          onBackdropPress={() => setConfirmationVisible(false)}
+          style={styles(theme).BottomModalView}
+          onSwipeComplete={toggleConfirmation}
+          swipeDirection={['down']}
+        > */}
+          <ConfirmationModal 
+            body= {groupRole === 'Creator' ? 
+                    'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
+                  : 'Are you sure you want to LEAVE this group? This will delete all your information in this group and CANNOT be undone.'}
+            buttonText = {groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
+            buttonAction = {() => {
+              leaveGroup();
+              navigation.navigate('Start');
+            }}
+            toggleModal = {toggleConfirmation}
+
+            isVisible={isConfirmationVisible}
+            onBackdropPress={() => setConfirmationVisible(false)}
+            onSwipeComplete={toggleConfirmation}
+          />
+        {/* </Modal> */}
+        
       </View>
 
       <Snackbar
@@ -495,10 +549,14 @@ const styles = (theme) =>
     pickerItem: {
       height: '100%',
     },
-    confirmationPop: {
+    BottomModalView:{
+      margin: 0,
+      justifyContent: 'flex-end',
+    },
+    /* confirmationPop: {
       width: '90%',
-      height: 173,
-      backgroundColor: theme.primary,
+      height: 130,
+      backgroundColor: '#424242',//theme.primary,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'space-evenly',
@@ -507,28 +565,33 @@ const styles = (theme) =>
     },
     confirmationHeader: {
       //style for text at the top of the popup
-      fontWeight: '600',
-      color: theme.text1,
+      fontWeight: '700',
+      //color: theme.text1,
       textAlign: 'center',
-      fontSize: 18,
+      fontSize: 20,
     },
     confirmationText: {
-      backgroundColor: theme.tertiary,
+      //backgroundColor: '#424242',
+      
       color: theme.text1,
       textAlign: 'center',
-      width: '90%',
+      justifyContent: 'center',
+      //height: '50%',
+      //width: '100%',
       padding: 5,
-      borderRadius: 15,
+      //borderRadius: 15,
     },
     confirmationBottomBtn: {
       color: theme.text1,
-      backgroundColor: 'black',
-      width: '50%',
-      borderRadius: 8,
+      backgroundColor: '#424242',
+      alignSelf: 'center',
+      width: '90%',
+      borderRadius: 15,
       justifyContent: 'center',
       alignItems: 'center',
-      height: 26,
-    },
+      height: 65,
+      marginBottom: 15,
+    }, */
     button: {
       backgroundColor: theme.primary,
       padding: 15,
