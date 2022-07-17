@@ -464,29 +464,29 @@ export default function Schedule({ route }) {
   };
 
   //Modal component for confirming if the user wants to push edits or create a new schedule
-  function ConfirmationModal() {
-    return (
-      <View style={styles(theme).confirmationPop}>
-        <Text style={styles(theme).confirmationHeader}>Create New Schedule</Text>
-        <Text style={styles(theme).confirmationText}>
-          Are you sure you want to create a new schedule? This will erase the current schedule for all group members and
-          cannot be undone.
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            toggleConfirmation();
-            postSchedule.mutate();
-            setSnackMessage('New Schedule Created');
-            toggleSnackBar();
-          }}
-        >
-          <View style={styles(theme).confirmationBottomBtn}>
-            <Text style={[styles(theme).buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  // function ConfirmationModal() {
+  //   return (
+  //     <View style={styles(theme).confirmationPop}>
+  //       <Text style={styles(theme).confirmationHeader}>Create New Schedule</Text>
+  //       <Text style={styles(theme).confirmationText}>
+  //         Are you sure you want to create a new schedule? This will erase the current schedule for all group members and
+  //         cannot be undone.
+  //       </Text>
+  //       <TouchableOpacity
+  //         onPress={() => {
+  //           toggleConfirmation();
+  //           postSchedule.mutate();
+  //           setSnackMessage('New Schedule Created');
+  //           toggleSnackBar();
+  //         }}
+  //       >
+  //         <View style={styles(theme).confirmationBottomBtn}>
+  //           <Text style={[styles(theme).buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
+  //         </View>
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // }
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -642,6 +642,7 @@ export default function Schedule({ route }) {
               <FlatList 
                 data={colorCodes} 
                 renderItem={renderMember} 
+                ItemSeparatorComponent={() => <Divider />}
                 keyExtractor={(item) => item.id} 
               />
             </View>
@@ -671,10 +672,8 @@ export default function Schedule({ route }) {
           {/* <ConfirmationModal type={typeOfEdit} /> */}
           <ConfirmationModal
             toggleModal = {toggleConfirmation}
-            body= {typeOfEdit === 'Push' ? 
-              'Are you sure you want to push changes? This will change the schedule for everyone in your group.'
-            : 'Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'}
-            buttonText = {typeOfEdit === 'Push' ? 'Push Changes' : 'Create New Schedule'}
+            body=  'Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
+            buttonText = 'Create New Schedule'
             buttonAction = {() => {
               //toggleConfirmation();
               postSchedule.mutate();
@@ -745,6 +744,7 @@ export default function Schedule({ route }) {
                 //setTypeOfEdit('Create');
                 toggleConfirmation();
               }}
+              style = {{width:'100%'}}
             >
               <View style={[styles(theme).topEditBtn, { backgroundColor: '#c9c9c9' }]}>
                 <Text style={styles(theme).topEditBtnText}>Create New Schedule</Text>
@@ -815,7 +815,7 @@ const styles = (theme) =>
     },
     topEditBtn: {
       //for top edit buttons below daybuttons
-      width: win.width * 0.5,
+      width: '100%',
       backgroundColor: 'white',
       justifyContent: 'center',
       height: 32,
@@ -826,7 +826,7 @@ const styles = (theme) =>
       fontSize: 16,
       fontWeight: '500',
     },
-    confirmationPop: {
+    /* confirmationPop: {
       //style for confirmations popups for editting and changing group schedule
       width: '90%',
       height: 175,
@@ -861,7 +861,7 @@ const styles = (theme) =>
       borderRadius: 8,
       justifyContent: 'center',
       height: 26,
-    },
+    }, */
     dayHeader: {
       //text for the header for the day
       marginTop: 20,

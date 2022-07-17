@@ -10,8 +10,8 @@ import { useTheme } from '../context/ThemeProvider';
 This Modal has little to no customization for uniform look
 
 Parameters: 
-    @param {function} toggleModal
-    @param {number | string (percentage)} height -- vertical size of modal
+    @param {function} toggleModal -- if cancelButton is true, set parameter to toggleModal function
+    @param {number} height -- vertical size of modal
     @param {string (color | hex) } backgroundColor -- background color of modal 
 
     @type {compoenents} children -- components inside component; 
