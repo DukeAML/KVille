@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
   RefreshControl,
   LayoutAnimation,
-  UIManager
+  UIManager,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,6 +20,7 @@ import { Snackbar, Divider } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import { AnimatedFAB, FAB, Portal, Provider } from 'react-native-paper';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -31,9 +32,9 @@ import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
-import {ConfirmationModal} from '../component/ConfirmationModal'
+import { ConfirmationModal } from '../component/ConfirmationModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
-import {ActionSheetModal} from '../component/ActionSheetModal';
+import { ActionSheetModal } from '../component/ActionSheetModal';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -50,10 +51,10 @@ const times = [ //Times for right column of the list of times of the day
 //prettier-ignore
 const colors = ['#D0342C','#dd7e6b','#ea9999','#f9cb9c','#ffe599','#b6d7a8','#a2c4c9','#a4c2f4','#fed9c9','#b4a7d6','#d5a6bd','#e69138','#6aa84f',];
 
-let colorCodes = [
-  //Array for color corresponding to each member
-  { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 },
-];
+// let colorCodes = [
+//   //Array for color corresponding to each member
+//   { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 },
+// ];
 let prevColorCodes;
 let prevSchedule = new Array();
 
@@ -70,6 +71,11 @@ export default function Schedule({ route }) {
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
   const [isSnackVisible, setSnackVisible] = useState(false); // for temporary popup
   const [snackMessage, setSnackMessage] = useState(''); //message for the temporary popup
+  const [fabState, setFabState] = React.useState({ open: false });
+
+  const onFabStateChange = ({ open }) => setFabState({ open });
+
+  const { open } = fabState;
 
   //Hooks and data for changing between the current weeks schedule and the previous one
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
@@ -85,6 +91,7 @@ export default function Schedule({ route }) {
   const dayHighlightOffset = useSharedValue(0);
 
   const newSchedule = useRef([]);
+  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
   /* const window = useWindowDimensions();
   const styles= makeStyles(window.fontScale); */
 
@@ -132,7 +139,7 @@ export default function Schedule({ route }) {
       .then((doc) => {
         currSchedule = doc.data().groupSchedule;
         prevSchedule = doc.data().previousSchedule;
-        colorCodes = doc.data().memberArr;
+        colorCodes.current = doc.data().memberArr;
         prevColorCodes = doc.data().previousMemberArr;
       })
       .catch((error) => {
@@ -149,20 +156,20 @@ export default function Schedule({ route }) {
 
   function updateHours(groupCode) {
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    for (let i = 0; i < colorCodes.length; i++) {
-      if (colorCodes[i].changedHrs == 0) continue;
+    for (let i = 0; i < colorCodes.current.length; i++) {
+      if (colorCodes.current[i].changedHrs == 0) continue;
       groupRef
         .collection('members')
-        .doc(colorCodes[i].id)
+        .doc(colorCodes.current[i].id)
         .get()
         .then((doc) => {
-          const newHours = doc.data().scheduledHrs + colorCodes[i].changedHrs;
-          console.log(colorCodes[i].changedHrs + ' new hours: ' + newHours);
-          colorCodes[i].changedHrs = 0;
+          const newHours = doc.data().scheduledHrs + colorCodes.current[i].changedHrs;
+          console.log(colorCodes.current[i].changedHrs + ' new hours: ' + newHours);
+          colorCodes.current[i].changedHrs = 0;
           return newHours;
         })
         .then((hours) => {
-          groupRef.collection('members').doc(colorCodes[i].id).update({ scheduledHrs: hours });
+          groupRef.collection('members').doc(colorCodes.current[i].id).update({ scheduledHrs: hours });
         })
         .catch((error) => {
           console.error(error);
@@ -193,26 +200,26 @@ export default function Schedule({ route }) {
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
     let currSchedule = data;
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
-    const indexofOld = colorCodes.findIndex((object) => object.name === oldMember);
-    const indexofNew = colorCodes.findIndex((object) => object.name === newMember);
+    const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
+    const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
 
     // let oldHours;
     // let newHours;
-    // await groupRef.collection('members').doc(colorCodes[indexofOld].id).get().then((doc) => {
+    // await groupRef.collection('members').doc(colorCodes.current[indexofOld].id).get().then((doc) => {
     //   oldHours = doc.data().scheduledHrs - 0.5;
     // });
-    // await groupRef.collection('members').doc(colorCodes[indexofNew].id).get().then((doc) => {
+    // await groupRef.collection('members').doc(colorCodes.current[indexofNew].id).get().then((doc) => {
     //   newHours = doc.data().scheduledHrs + 0.5;
     // });
-    // groupRef.collection('members').doc(colorCodes[indexofOld].id).update({
+    // groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
     //   scheduledHrs: oldHours
     // })
-    // groupRef.collection('members').doc(colorCodes[indexofNew].id).update({
+    // groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
     //   scheduledHrs: newHours,
     // });
 
-    colorCodes[indexofOld].changedHrs -= 0.5;
-    colorCodes[indexofNew].changedHrs += 0.5;
+    colorCodes.current[indexofOld].changedHrs -= 0.5;
+    colorCodes.current[indexofNew].changedHrs += 0.5;
 
     groupRef.update({
       groupSchedule: currSchedule,
@@ -250,7 +257,7 @@ export default function Schedule({ route }) {
         if (data[0] !== undefined) prevSchedule = data;
 
         //Update previous colorCodes to current and update current schedule to the groupSchedule
-        prevColorCodes = colorCodes;
+        prevColorCodes = colorCodes.current;
       })
       .catch((error) => {
         console.error(error);
@@ -261,7 +268,7 @@ export default function Schedule({ route }) {
     return firebase.firestore().collection('groups').doc(code).update({
       groupSchedule: newSchedule.current,
       previousSchedule: prevSchedule,
-      previousMemberArr: colorCodes,
+      previousMemberArr: colorCodes.current,
     });
   }
 
@@ -293,7 +300,7 @@ export default function Schedule({ route }) {
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
           textStyle={StyleSheet.flatten(styles(theme).timesText)}
-          style={{width: win.width * 0.1}}
+          style={{ width: win.width * 0.1 }}
         />
       </Table>
     );
@@ -305,20 +312,21 @@ export default function Schedule({ route }) {
       return `${parseFloat(num).toFixed(2)}%`;
     } 
     let height = formatAsPercent(100 * (1 / colorCodes.length));*/
-    let height = win.height * 0.45 * (1 / colorCodes.length) + 8 ;
+    let height = win.height * 0.45 * (1 / colorCodes.current.length) + 8;
     return (
-      <View style = {{width: '100%'}}>
+      <View style={{ width: '100%' }}>
         <TouchableOpacity
           onPress={() => {
             setNewMember(name);
             toggleMemberModal();
             console.log('height', height);
           }}
-          style = {{width: '100%', /* borderBottomWidth:1 */}}
+          style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
-          <View style={{ 
-              //backgroundColor: '#656565', 
-              height: height, 
+          <View
+            style={{
+              //backgroundColor: '#656565',
+              height: height,
               justifyContent: 'center',
             }}
           >
@@ -351,14 +359,14 @@ export default function Schedule({ route }) {
     //changes background based on who the member is
     const indexofUser =
       weekDisplay == 'Current Week'
-        ? colorCodes.findIndex((object) => object.name == person)
+        ? colorCodes.current.findIndex((object) => object.name == person)
         : prevColorCodes.findIndex((object) => object.name == person);
-    //console.log(colorCodes);
+    //console.log(colorCodes.current);
     //console.log('indexOfUser', indexofUser);
     const backgroundColor =
       indexofUser != -1
         ? weekDisplay == 'Current Week'
-          ? colorCodes[indexofUser].color
+          ? colorCodes.current[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
     if (weekDisplay == 'Current Week') {
@@ -470,7 +478,7 @@ export default function Schedule({ route }) {
     return {
       transform: [
         {
-          translateX: withSpring(dayHighlightOffset.value * (win.width/7), {
+          translateX: withSpring(dayHighlightOffset.value * (win.width / 7), {
             damping: 20,
             stiffness: 90,
           }),
@@ -482,39 +490,17 @@ export default function Schedule({ route }) {
   //Component for the top day buttons
   const DayButton = ({ day, abbrev, value }) => {
     return (
-      <TouchableOpacity style={[styles(theme).button, {backgroundColor: 'transparent', zIndex: 2}]} onPress={() => {
-        setRenderDay(day)
-        dayHighlightOffset.value = value
-      }}>
+      <TouchableOpacity
+        style={[styles(theme).button, { backgroundColor: 'transparent', zIndex: 2 }]}
+        onPress={() => {
+          setRenderDay(day);
+          dayHighlightOffset.value = value;
+        }}
+      >
         <Text style={styles(theme).buttonText}>{abbrev}</Text>
       </TouchableOpacity>
     );
   };
-
-  //Modal component for confirming if the user wants to push edits or create a new schedule
-  // function ConfirmationModal() {
-  //   return (
-  //     <View style={styles(theme).confirmationPop}>
-  //       <Text style={styles(theme).confirmationHeader}>Create New Schedule</Text>
-  //       <Text style={styles(theme).confirmationText}>
-  //         Are you sure you want to create a new schedule? This will erase the current schedule for all group members and
-  //         cannot be undone.
-  //       </Text>
-  //       <TouchableOpacity
-  //         onPress={() => {
-  //           toggleConfirmation();
-  //           postSchedule.mutate();
-  //           setSnackMessage('New Schedule Created');
-  //           toggleSnackBar();
-  //         }}
-  //       >
-  //         <View style={styles(theme).confirmationBottomBtn}>
-  //           <Text style={[styles(theme).buttonText, { color: 'white' }]}>Yes I'm Sure</Text>
-  //         </View>
-  //       </TouchableOpacity>
-  //     </View>
-  //   );
-  // }
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -532,33 +518,28 @@ export default function Schedule({ route }) {
   }
 
   return (
-    <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
-      <View>
-        {/* <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
-          <View style={styles.deletePopup}>
-            <Text
-              style={{
-                fontSize: 26,
-                fontWeight: '500',
-                textAlign: 'center',
-                borderBottomWidth: 1,
-                height: win.height * 0.05,
-                width: '100%',
-              }}
-            >
-              Edit Timeslot
-            </Text>
-
-            <TouchableOpacity onPress={toggleMemberModal}>
+    <Provider>
+      <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
+        <View>
+          <ActionSheetModal
+            isVisible={isModalVisible}
+            onBackdropPress={toggleModal}
+            onSwipeComplete={toggleModal}
+            toggleModal={toggleModal}
+            cancelButton={true}
+            height={win.height * 0.15}
+          >
+            <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
               <View
                 style={{
-                  height: win.height * 0.06,
+                  height: '100%',
                   width: '100%',
-                  alignSelf: 'center',
                   justifyContent: 'center',
+                  borderBottomWidth: 1,
+                  borderColor: '#cfcfcf',
                 }}
               >
-                <Text style={{ textAlign: 'center', fontSize: 20 }}>{newMember}</Text>
+                <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -567,22 +548,18 @@ export default function Schedule({ route }) {
                   toggleModal();
                 } else {
                   toggleModal();
+                  //editCell(editIndex.current, oldMember, newMember);
                   postEditCell.mutate({
                     index: editIndex.current,
-                    oldMember: oldMember.current,
+                    oldMember: oldMember,
                     newMember: newMember,
                     groupCode: code,
                   });
                 }
               }}
+              style={{ height: '50%', width: '100%' }}
             >
-              <View
-                style={{
-                  backgroundColor: '#636363',
-                  height: win.height * 0.06,
-                  justifyContent: 'center',
-                }}
-              >
+              <View style={{ height: '100%', justifyContent: 'center' }}>
                 <Text
                   style={{
                     textAlign: 'center',
@@ -595,88 +572,35 @@ export default function Schedule({ route }) {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
-        </Modal> */}
-        <ActionSheetModal
-          isVisible={isModalVisible} 
-          onBackdropPress={toggleModal}
-          onSwipeComplete={toggleModal}
+          </ActionSheetModal>
+        </View>
 
-          toggleModal = {toggleModal}
-
-          cancelButton = {true}
-          height = {win.height * 0.15}
-        >
-          <TouchableOpacity onPress={toggleMemberModal} style = {{height: '50%', width: '100%'}}>
+        <View>
+          <BottomSheetModal
+            isVisible={isMemberModalVisible}
+            onBackdropPress={() => setMemberModalVisible(false)}
+            onSwipeComplete={toggleMemberModal}
+          >
             <View
               style={{
-                height: '100%',
-                width: '100%',
-                justifyContent: 'center',
-                borderBottomWidth: 1,
-                borderColor: '#cfcfcf',
+                marginTop: 10,
+                width: '90%',
+                //borderWidth: 1,
+                alignItems: 'center',
+                height: '92%',
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+              <View style={{ height: '100%', width: '100%' }}>
+                <FlatList
+                  data={colorCodes.current}
+                  renderItem={renderMember}
+                  ItemSeparatorComponent={() => <Divider />}
+                  keyExtractor={(item) => item.id}
+                />
+              </View>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              if (newMember == 'Select a Member') {
-                toggleModal();
-              } else {
-                toggleModal();
-                //editCell(editIndex.current, oldMember, newMember);
-                postEditCell.mutate({index:editIndex.current, oldMember: oldMember, newMember: newMember, groupCode: code});
-              }
-            }}
-            style = {{height: '50%', width: '100%'}}
-          >
-            <View
-              style={{ height: '100%', justifyContent: 'center',}}
-            >
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: 'white',
-                  fontSize: 24,
-                  fontWeight: '500',
-                }}
-              >
-                Edit
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </ActionSheetModal>
-      </View>
-
-
-      <View>
-        <BottomSheetModal
-          isVisible={isMemberModalVisible}
-          onBackdropPress={() => setMemberModalVisible(false)}
-          onSwipeComplete={toggleMemberModal}
-        >
-          <View
-            style={{
-              marginTop: 10,
-              width: '90%',
-              //borderWidth: 1,
-              alignItems: 'center',
-              height: '92%'
-            }}
-          >
-            <View  style = {{height: '100%', width: '100%'}}>
-              <FlatList 
-                data={colorCodes} 
-                renderItem={renderMember} 
-                ItemSeparatorComponent={() => <Divider />}
-                keyExtractor={(item) => item.id} 
-              />
-            </View>
-          </View>
-        </BottomSheetModal>
-        {/* <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
+          </BottomSheetModal>
+          {/* <Modal isVisible={isMemberModalVisible} onBackdropPress={() => setMemberModalVisible(false)}>
           <View
             style={{
               width: '50%',
@@ -685,79 +609,78 @@ export default function Schedule({ route }) {
             }}
           >
             <View>
-              <FlatList data={colorCodes} renderItem={renderMember} keyExtractor={(item) => item.id} />
+              <FlatList data={colorCodes.current} renderItem={renderMember} keyExtractor={(item) => item.id} />
             </View>
           </View>
         </Modal> */}
-      </View>
+        </View>
 
-      <View>
-        {/* <Modal 
+        <View>
+          {/* <Modal 
           isVisible={isConfirmationVisible} 
           onBackdropPress={() => setConfirmationVisible(false)}
           style={styles.BottomModalView}
         > */}
           {/* <ConfirmationModal type={typeOfEdit} /> */}
           <ConfirmationModal
-            toggleModal = {toggleConfirmation}
-            body=  'Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
-            buttonText = 'Create New Schedule'
-            buttonAction = {() => {
+            toggleModal={toggleConfirmation}
+            body='Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
+            buttonText='Create New Schedule'
+            buttonAction={() => {
               //toggleConfirmation();
               postSchedule.mutate();
               setSnackMessage('New Schedule Created');
               toggleSnackBar();
             }}
-            
-            isVisible={isConfirmationVisible} 
+            isVisible={isConfirmationVisible}
             onBackdropPress={() => setConfirmationVisible(false)}
             onSwipeComplete={toggleConfirmation}
           />
-        {/* </Modal> */}
-      </View>
-
-      <View>
-        <TouchableOpacity
-          onPress={() => {
-            if (weekDisplay == 'Current Week') {
-              console.log('showing previous week', weekDisplay);
-              setWeekDisplay('Previous Week');
-              console.log(weekDisplay);
-              refetch();
-            } else {
-              console.log('showing current week');
-              setWeekDisplay('Current Week');
-              refetch();
-            }
-          }}
-        >
-          <View
-            style={{
-              height: 28,
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: myBtnColor,
-            }}
-          >
-            <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles(theme).buttonContainer}>
-          <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
-          <DayButton day='Sunday' abbrev='Sun' value={0} />
-          <DayButton day='Monday' abbrev='Mon' value={1} />
-          <DayButton day='Tuesday' abbrev='Tue' value={2} />
-          <DayButton day='Wednesday' abbrev='Wed' value={3} />
-          <DayButton day='Thursday' abbrev='Thur' value={4} />
-          <DayButton day='Friday' abbrev='Fri' value={5} />
-          <DayButton day='Saturday' abbrev='Sat' value={6} />
+          {/* </Modal> */}
         </View>
 
-        {weekDisplay == 'Current Week' ? (
-          <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
-            {/* <TouchableOpacity
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              if (weekDisplay == 'Current Week') {
+                console.log('showing previous week', weekDisplay);
+                setWeekDisplay('Previous Week');
+                console.log(weekDisplay);
+                refetch();
+              } else {
+                console.log('showing current week');
+                setWeekDisplay('Current Week');
+                refetch();
+              }
+            }}
+          >
+            <View
+              style={{
+                height: 28,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: myBtnColor,
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles(theme).buttonContainer}>
+            <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
+            <DayButton day='Sunday' abbrev='Sun' value={0} />
+            <DayButton day='Monday' abbrev='Mon' value={1} />
+            <DayButton day='Tuesday' abbrev='Tue' value={2} />
+            <DayButton day='Wednesday' abbrev='Wed' value={3} />
+            <DayButton day='Thursday' abbrev='Thur' value={4} />
+            <DayButton day='Friday' abbrev='Fri' value={5} />
+            <DayButton day='Saturday' abbrev='Sat' value={6} />
+          </View>
+
+          {weekDisplay == 'Current Week' ? (
+            <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
+              {/* <TouchableOpacity
               onPress={() => {
                 setTypeOfEdit('Push');
                 toggleConfirmation();
@@ -768,7 +691,7 @@ export default function Schedule({ route }) {
               </View>
             </TouchableOpacity> */}
 
-            {/* <TouchableOpacity
+              {/* <TouchableOpacity
               onPress={() => { 
                 toggleConfirmation();
               }}
@@ -778,40 +701,66 @@ export default function Schedule({ route }) {
                 <Text style={styles(theme).topEditBtnText}>Create New Schedule</Text>
               </View>
             </TouchableOpacity> */}
+            </View>
+          ) : null}
+        </View>
+        <View
+          style={[
+            styles(theme).shadowProp,
+            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10 },
+          ]}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+            // contentContainerStyle={[styles(theme).shadowProp, {backgroundColor: theme.grey3, borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10}]}
+          >
+            {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
+            <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
+              <TimeColumn />
+              <DailyTable day={renderDay} />
+            </View>
+          </ScrollView>
+        </View>
+        <Portal>
+          <FAB.Group
+            open={open}
+            icon={'plus'}
+            fabStyle={{ backgroundColor: '#9FA6B7' }}
+            actions={[
+              {
+                icon: 'calendar',
+                label: 'New Schedule',
+                onPress: () => toggleConfirmation(),
+              },
+            ]}
+            onStateChange={onFabStateChange}
+            onPress={() => {
+              if (open) {
+                // do something if the speed dial is open
+              }
+            }}
+          />
+        </Portal>
+        <Snackbar
+          visible={isSnackVisible}
+          onDismiss={() => setSnackVisible(false)}
+          wrapperStyle={{ top: 0 }}
+          duration={1300}
+        >
+          <View style={{ width: '100%' }}>
+            <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
           </View>
-        ) : null}
+        </Snackbar>
       </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        contentContainerStyle={[styles(theme).shadowProp, {backgroundColor: theme.grey3, borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10}]}
-      >
-        {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
-        <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
-          <TimeColumn />
-          <DailyTable day={renderDay} />
-        </View>
-      </ScrollView>
-
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={1300}
-      >
-        <View style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-        </View>
-      </Snackbar>
-    </View>
+    </Provider>
   );
 }
 
 //const makeStyles = (fontScale) => StyleSheet.create({
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: theme.background }, //for the entire page's container
+    bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1 }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
@@ -948,5 +897,10 @@ const styles = (theme) =>
       width: win.width,
       height: win.height * 0.17,
       backgroundColor: theme.background,
+    },
+    fabStyle: {
+      bottom: 16,
+      right: win.width * 0.02,
+      position: 'absolute',
     },
   });
