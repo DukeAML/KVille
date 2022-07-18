@@ -85,11 +85,11 @@ const styles = (theme) =>
       borderRadius: 20,
       margin: 15,
 
-      shadowColor: '#171717',
-      shadowOffset: { width: 0, height: -5 },
-      shadowOpacity: 0.5,
-      shadowRadius: 20,
-      elevation: 5,
+      // shadowColor: '#171717',
+      // shadowOffset: { width: 0, height: -5 },
+      // shadowOpacity: 0.5,
+      // shadowRadius: 20,
+      // elevation: 5,
     },
     confirmationHeader: {
       //style for text of buttons
@@ -118,11 +118,11 @@ const styles = (theme) =>
       alignItems: 'center',
       height: 65,
       marginBottom: 15,
-      shadowColor: '#171717',
-      shadowOffset: { width: 0, height: -5 },
-      shadowOpacity: 0.5,
-      shadowRadius: 20,
-      elevation: 5,
+      // shadowColor: '#171717',
+      // shadowOffset: { width: 0, height: -5 },
+      // shadowOpacity: 0.5,
+      // shadowRadius: 20,
+      // elevation: 5,
     },
   });
 
