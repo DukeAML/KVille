@@ -228,8 +228,8 @@ export default function GroupInfo({ route }) {
           //setCurrMember({ name: name, id: id, hours: hours });
           //setCurrIndex(indexOfUser);
         }}
-      >
-        <View
+      > 
+        {!isLoading ? <View
           style={[
             styles(theme).listItem,
             styles(theme).shadowProp,
@@ -238,7 +238,7 @@ export default function GroupInfo({ route }) {
         >
           <Text style={styles(theme).listText}>{item.name}</Text>
           <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
-        </View>
+        </View> : null}
       </TouchableOpacity>
     );
   };
