@@ -5,7 +5,6 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { RectButton } from 'react-native-gesture-handler';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -14,7 +13,7 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-
+import { ConfirmationModal } from '../component/ConfirmationModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 
 /* let currentUserName;
@@ -27,22 +26,18 @@ firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
 });*/
 
 export default function GroupInfo({ route }) {
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  //These 2 hooks are used for identifying which member is clicked from the list
-  //const [currMember, setCurrMember] = useState({});
-  const currMember = useRef({});
-  //const [currIndex, setCurrIndex] = useState(0);
-
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
-  //console.log('route params: ', route.params);
-  const { theme } = useTheme();
-
-  //const userMember = useRef({});
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  //These 2 hooks are used for identifying which member is clicked from the list
+  const currMember = useRef({});
   const [userMember, setUserMember] = useState();
 
-  //const GroupRef = firebase.firestore().collection('groups').doc(groupCode);
-  //const GroupRef = firebase.firestore().collection('groupsTest').doc('BtycLIprkN3EmC9wmpaE');
+  const { theme } = useTheme();
+
+  const toggleConfirmation = () => {
+    setConfirmationVisible(!isConfirmationVisible);
+  };
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
@@ -215,7 +210,7 @@ export default function GroupInfo({ route }) {
           marginVertical: 3,
         }}
       >
-        <Animated.Text style={{ transform: [{ scale }], color: theme.error }} onPress={() => postRemoveMember.mutate()}>
+        <Animated.Text style={{ transform: [{ scale }], color: theme.error }} onPress={toggleConfirmation}>
           Remove
         </Animated.Text>
         {/* <Icon name='trash-can-outline' color={theme.icon1} size={20} style={{ right: 0 }} /> */}
@@ -252,19 +247,33 @@ export default function GroupInfo({ route }) {
     //const indexOfUser = data.findIndex((member) => member.id === id);
     //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
-      <Swipeable
-        renderRightActions={renderRightActions}
-        onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours })}
-        friction={2}
+      <TouchableOpacity
+        onPress={() => {
+          toggleModal();
+          currMember.current = { name: name, id: id, hours: hours };
+          //setCurrMember({ name: name, id: id, hours: hours });
+          //setCurrIndex(indexOfUser);
+        }}
       >
-        <TouchableOpacity
-          onPress={() => {
-            toggleModal();
-            currMember.current = { name: name, id: id, hours: hours };
-            //setCurrMember({ name: name, id: id, hours: hours });
-            //setCurrIndex(indexOfUser);
-          }}
-        >
+        {groupRole == 'Creator' ? (
+          <Swipeable
+            renderRightActions={renderRightActions}
+            onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours })}
+            friction={2}
+          >
+            <View
+              style={[
+                styles(theme).listItem,
+                backgroundColor,
+                styles(theme).shadowProp,
+                { flexDirection: 'row', justifyContent: 'space-evenly' },
+              ]}
+            >
+              <Text style={styles(theme).listText}>{name}</Text>
+              <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+            </View>
+          </Swipeable>
+        ) : (
           <View
             style={[
               styles(theme).listItem,
@@ -276,8 +285,8 @@ export default function GroupInfo({ route }) {
             <Text style={styles(theme).listText}>{name}</Text>
             <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
           </View>
-        </TouchableOpacity>
-      </Swipeable>
+        )}
+      </TouchableOpacity>
     );
   };
 
@@ -339,7 +348,7 @@ export default function GroupInfo({ route }) {
               <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
             </View>
 
-            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+            {/* {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
               <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
                 <Text
                   style={{
@@ -351,7 +360,7 @@ export default function GroupInfo({ route }) {
                   Remove
                 </Text>
               </TouchableOpacity>
-            ) : null}
+            ) : null} */}
           </BottomSheetModal.SecondContainer>
         </BottomSheetModal>
 
@@ -387,6 +396,18 @@ export default function GroupInfo({ route }) {
           </View>
         </Modal> */}
       </View>
+
+      <ConfirmationModal
+        body={"Are you sure you want to REMOVE " + currMember.current.name + " from the group? This action CANNOT be undone."}
+        buttonText={'Remove ' + currMember.current.name}
+        buttonAction={() => {
+          postRemoveMember.mutate();
+        }}
+        toggleModal={toggleConfirmation}
+        isVisible={isConfirmationVisible}
+        onBackdropPress={() => setConfirmationVisible(false)}
+        onSwipeComplete={toggleConfirmation}
+      />
     </View>
   );
 }
