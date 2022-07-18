@@ -17,6 +17,7 @@ import Modal from 'react-native-modal';
 import { Snackbar, Divider } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
+import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -71,8 +72,11 @@ export default function Schedule({ route }) {
 
   //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
-  const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
+  //const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
+  const oldMember = useRef('');
   const editIndex = useRef(0);
+
+  const dayHighlightOffset = useSharedValue(0);
 
   const newSchedule = useRef([]);
   /* const window = useWindowDimensions();
@@ -354,7 +358,8 @@ export default function Schedule({ route }) {
           <TouchableOpacity
             onPress={() => {
               editIndex.current = index;
-              setOldMember(person);
+              oldMember.current = person;
+              //setOldMember(person);
               console.log('index: ', index);
               toggleModal();
             }}
@@ -452,10 +457,26 @@ export default function Schedule({ route }) {
     );
   };
 
+  const customSpringStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withSpring(dayHighlightOffset.value * (win.width/7), {
+            damping: 20,
+            stiffness: 90,
+          }),
+        },
+      ],
+    };
+  });
+
   //Component for the top day buttons
-  const DayButton = ({ day, abbrev }) => {
+  const DayButton = ({ day, abbrev, value }) => {
     return (
-      <TouchableOpacity style={styles(theme).button} onPress={() => setRenderDay(day)}>
+      <TouchableOpacity style={[styles(theme).button, {backgroundColor: 'transparent', zIndex: 2}]} onPress={() => {
+        setRenderDay(day)
+        dayHighlightOffset.value = value
+      }}>
         <Text style={styles(theme).buttonText}>{abbrev}</Text>
       </TouchableOpacity>
     );
@@ -539,7 +560,7 @@ export default function Schedule({ route }) {
                   toggleModal();
                   postEditCell.mutate({
                     index: editIndex.current,
-                    oldMember: oldMember,
+                    oldMember: oldMember.current,
                     newMember: newMember,
                     groupCode: code,
                   });
@@ -643,13 +664,14 @@ export default function Schedule({ route }) {
         </TouchableOpacity>
 
         <View style={styles(theme).buttonContainer}>
-          <DayButton day='Sunday' abbrev='Sun' />
-          <DayButton day='Monday' abbrev='Mon' />
-          <DayButton day='Tuesday' abbrev='Tue' />
-          <DayButton day='Wednesday' abbrev='Wed' />
-          <DayButton day='Thursday' abbrev='Thur' />
-          <DayButton day='Friday' abbrev='Fri' />
-          <DayButton day='Saturday' abbrev='Sat' />
+          <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
+          <DayButton day='Sunday' abbrev='Sun' value={0} />
+          <DayButton day='Monday' abbrev='Mon' value={1} />
+          <DayButton day='Tuesday' abbrev='Tue' value={2} />
+          <DayButton day='Wednesday' abbrev='Wed' value={3} />
+          <DayButton day='Thursday' abbrev='Thur' value={4} />
+          <DayButton day='Friday' abbrev='Fri' value={5} />
+          <DayButton day='Saturday' abbrev='Sat' value={6} />
         </View>
 
         {weekDisplay == 'Current Week' ? (
@@ -717,11 +739,19 @@ const styles = (theme) =>
       width: win.width * 0.1,
       textAlign: 'center',
     },
+    dayHighlight: {
+      position: 'absolute',
+      backgroundColor: '#1F509Ad0',
+      width: win.width / 7,
+      height: 38,
+      borderRadius: 100,
+    },
     buttonContainer: {
       //container for the top buttons
       //flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
+      backgroundColor: '#00000000',
     },
     button: {
       //for the day buttons at top of screen
