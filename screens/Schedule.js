@@ -14,7 +14,7 @@ import {
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
-import { Snackbar, Divider } from 'react-native-paper';
+import { Snackbar, Divider, Badge} from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -439,7 +439,7 @@ export default function Schedule({ route }) {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 30 }}>
+      <View style={[styles(theme).tableShadow,{ marginTop: 30}]}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -459,6 +459,7 @@ export default function Schedule({ route }) {
     return (
       <TouchableOpacity style={styles(theme).button} onPress={() => setRenderDay(day)}>
         <Text style={styles(theme).buttonText}>{abbrev}</Text>
+        {renderDay == day ? (<Badge size={8} style={{alignSelf:'center', backgroundColor: theme.primary}}></Badge>):null}
       </TouchableOpacity>
     );
   };
@@ -575,6 +576,9 @@ export default function Schedule({ route }) {
           onSwipeComplete={toggleModal}
 
           toggleModal = {toggleModal}
+
+          //backgroundColor = 'lavender'
+          userStyle = 'dark'
 
           cancelButton = {true}
           height = {win.height * 0.15}
@@ -788,13 +792,18 @@ const styles = (theme) =>
       //text style for the side text of the list of times
       fontWeight: '800',
       fontSize: 9,
-      //marginRight:6,
       width: win.width * 0.1,
       textAlign: 'center',
     },
+    tableShadow:{
+      shadowColor: '#171717',
+      shadowOffset: { width: 0, height: -5 },
+      shadowOpacity: 0.3,
+      shadowRadius: 15,
+      elevation: 5,
+    },
     buttonContainer: {
       //container for the top buttons
-      //flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
     },

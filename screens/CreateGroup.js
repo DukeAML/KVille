@@ -196,6 +196,7 @@ export default function CreateGroup({ navigation }) {
             autoFocus={true}
             placeholder='Enter Group Name'
             value={group.groupName}
+            maxLength = {28}
             onChangeText={(groupName) =>
               setGroup({ ...group, groupName: groupName })
             }
@@ -264,6 +265,7 @@ export default function CreateGroup({ navigation }) {
             ]}
             value={group.userName}
             placeholder={group.userName}
+            maxLength = {11}
             onChangeText={(userName) =>
               setGroup({
                 ...group,

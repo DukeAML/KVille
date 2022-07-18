@@ -249,6 +249,7 @@ export default function Availability({ route }) {
         onBackdropPress={toggleDeleteModal}
 
         height = {55}
+        userStyle = 'dark'
       >
         <TouchableOpacity onPress={()=>deleteAvailability.mutate()}>
           <View 

@@ -15,36 +15,47 @@ function useModal() {
     return context;
   }
 
-/*Parent Function for modal component
+/** Parent function for BottomSheetModal
+ * 
+ * @param {string (%) | number } height -- percent size of modal (or pixel size) 
+ * @param {color} color -- overwrite background color of modal from dark or light theme
+ * @param {string ('default' | 'small') } barSize -- depending on the size of the modal, determine the size of toggle bar
+ * @param {string} userStyle -- options: ('dark' | 'light') background color of modal and text color
+ * @param {Component} children -- components inside modal component;
+ * 
+ * @param {props} props --
+ *   **NOTE: must include normal modal props in the props of the Modal such as:
+ *       isVisible={isModalVisible} 
+ *       onBackdropPress={() => setModalVisible(false)}
+ *       onSwipeComplete = {toggleModal} 
+ *       ...
+ * @returns {Component} Modal Component
+ */
 
-Parameters: 
-    @param {string (%) | number } height -- percent size of modal (or pixel size) 
-    @param {string (color | hex) } color -- background color of modal 
-    @param {string ('default' | 'small') } barSize -- depending on the size of the modal, determine the size of toggle bar
-
-    children -- components inside component; 
-
-props --
-    **NOTE: must include normal modal props in the props of the BottomSheetModal such as:
-        isVisible={isModalVisible} 
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete = {toggleModal} 
-*/ 
-const BottomSheetModal = ({ height = '50%', color = '#565656', barSize = 'default', children, ...props}) => {
+const BottomSheetModal = ({ height = '50%', color, barSize = 'default', userStyle, children, ...props}) => {
     {
       const {theme} = useTheme();
+      
+      //set up default styles for light and dark themes
+      let background, headerColor;
+      userStyle == 'light' ? (background = '#fff', headerColor = 'black') : 
+              (background= '#565656', headerColor = '#fff')
+
+      //overwrite dark|light theme background colors if defined
+      if (color !== undefined) background = color; 
+
       return (
-        <ModalContext.Provider value={{}}>
+        <ModalContext.Provider value={{headerColor}}>
             <Modal
                 style={styles(theme).BottomModalView}
                 swipeDirection={['down']}
                 {...props}
             >
-                <View style={[styles(theme).ModalContainer, {height: height, backgroundColor:color}]}>
-                    {barSize == 'default' ? (<View style={styles(theme).modalBar}></View>) : 
-                        (<View style={styles(theme).modalSmallBar}></View>)}
+                <View style={[styles(theme).ModalContainer, {height: height, backgroundColor:background}]}>
+                  {barSize == 'default' ? (<View style={[styles(theme).modalBar, {backgroundColor:headerColor}]}></View>) : 
+                      (<View style={[styles(theme).modalSmallBar, {backgroundColor:headerColor}]}></View>)}
 
-                        {children}
+                  {children}
                 </View>
             </Modal>
         </ModalContext.Provider>
@@ -52,21 +63,25 @@ const BottomSheetModal = ({ height = '50%', color = '#565656', barSize = 'defaul
     }
   };
 
-/*      Component for adding a second bottom layer on modal
-
-    Parameters: 
-        @param {string (color | hex) } color -- background color of modal ; 
-        @param {string ('default' | 'small') } size -- depending on the size of the modal, determine the size of second layer
-        
-        children -- components inside component; 
-*/
-  const ModalSecondContainer = ({ children, color='#757575', size = 'default'}) => {
-    let height;
+/**Component for adding a second bottom layer on modal
+ * 
+ * @param {color} color -- background color of modal ; 
+ * @param {string ('default' | 'small') } size -- depending on the size of the modal, determine the size of second layer
+ * @param {Component} children -- components inside bottom container component; 
+ * 
+ */      
+  const ModalSecondContainer = ({ children, color, size = 'default'}) => {
+    let height, background;
     {size == 'default' ? height = '85%': height='70%'}
     const {theme} = useTheme();
-    let context = useModal();
+    let {headerColor} = useModal();
+    headerColor == 'black' ? background = '#f5f5f5' : background = '#757575';
+
+    //overwrite dark|light theme background colors if defined
+    if (color !== undefined) background = color;
+
     return(
-        <View style={[styles(theme).ModalSecondaryView, {backgroundColor: color, height: height}]}>
+        <View style={[styles(theme).ModalSecondaryView, {backgroundColor: background, height: height}]}>
             {children}
         </View>
     )
@@ -74,19 +89,19 @@ const BottomSheetModal = ({ height = '50%', color = '#565656', barSize = 'defaul
   BottomSheetModal.SecondContainer = ModalSecondContainer;
 
 
-/*      Component for adding a top header
-
-    Parameters: 
-        @param {number} verticalMargin -- depending on the size of the modal, determine the margin of text 
-        @param {number} fontSize -- depending on the size of the modal, determine the fontSize of text
-        
-        children -- text of header; 
-*/
+/**Component for adding a top header
+ * 
+ * @param {number} verticalMargin -- depending on the size of the modal, determine the margin of text        
+ * @param {number} fontSize -- depending on the size of the modal, determine the fontSize of text
+ *  
+ * @param {string} children -- text of header; 
+ * 
+ * */      
   const ModalHeader = ({ children, verticalMargin = 10, fontSize = 20}) => {
     const {theme} = useTheme();
-    let context = useModal();
+    let {headerColor} = useModal();
     return(
-        <Text style={[styles(theme).ModalHeader,{marginVertical: verticalMargin, fontSize: fontSize}]}>{children}</Text>
+        <Text style={[styles(theme).ModalHeader,{marginVertical: verticalMargin, fontSize: fontSize, color: headerColor}]}>{children}</Text>
     )
   };
   BottomSheetModal.Header = ModalHeader;

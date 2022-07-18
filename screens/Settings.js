@@ -481,6 +481,8 @@ export default function Settings({ route, navigation }) {
             isVisible={isConfirmationVisible}
             onBackdropPress={() => setConfirmationVisible(false)}
             onSwipeComplete={toggleConfirmation}
+
+            userStyle = 'light'
           />
         {/* </Modal> */}
         

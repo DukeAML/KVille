@@ -374,6 +374,7 @@ export default function Main() {
                   onBackdropPress={() => setInfoVisible(false)}
                   onSwipeComplete={toggleInfo}
                   height = '45%'
+                  //userStyle = 'light'
                 >
                   <BottomSheetModal.Header>How to use the Availability Page</BottomSheetModal.Header>
                   <BottomSheetModal.SecondContainer>

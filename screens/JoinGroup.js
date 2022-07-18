@@ -193,6 +193,7 @@ export default function JoinGroup({ navigation }) {
             style={[styles(theme).textInput, styles(theme).shadowProp]}
             value={name}
             placeholder={name}
+            maxLength = {11}
             onChangeText={(name) =>
               setName(
                 name
