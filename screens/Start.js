@@ -24,13 +24,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useDispatch } from 'react-redux';
-import {
-  setGroupCode,
-  setGroupName,
-  setUserName,
-  setTentType,
-  setGroupRole,
-} from '../redux/reducers/userSlice';
+import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
@@ -90,21 +84,33 @@ export default function Start({ navigation }) {
 
   const closeMenu = () => setMenuVisible(false);
 
+  const EmptyGroup = () => {
+    return (
+      <View
+        style={isLoading ? [
+          styles(theme).listItem,
+          styles(theme).shadowProp,
+          { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
+        ]: null}
+      >
+        
+        {isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
+        {isLoading ? <View style={{ flexDirection: 'column' }}>
+          <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
+          <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
+        </View> : null}
+      </View>
+    );
+  };
+
   //const for list Items of Groups List
   const Group = ({ groupName, groupCode, onPress }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles(theme).listItem, styles(theme).shadowProp]}
-    >
+    <TouchableOpacity onPress={onPress} style={[styles(theme).listItem, styles(theme).shadowProp]}>
       <View style={{ flexDirection: 'row', justifyContent: 'left' }}>
         <Image source={DukeBasketballLogo} style={styles(theme).image} />
         <View style={{ flexDirection: 'column' }}>
-          <Text style={[styles(theme).listText, { fontSize: 20 }]}>
-            {groupName}
-          </Text>
-          <Text style={[styles(theme).listText, { color: theme.grey4 }]}>
-            {groupCode}
-          </Text>
+          <Text style={[styles(theme).listText, { fontSize: 20 }]}>{groupName}</Text>
+          <Text style={[styles(theme).listText, { color: theme.grey4 }]}>{groupCode}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -236,6 +242,7 @@ export default function Start({ navigation }) {
           <FlatList
             data={data}
             renderItem={renderGroup}
+            ListEmptyComponent={<EmptyGroup />}
             keyExtractor={(item) => item.code}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
           />

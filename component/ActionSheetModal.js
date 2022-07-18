@@ -77,11 +77,11 @@ const styles = (theme) => StyleSheet.create({
         borderRadius: 20,
         margin: 15,
 
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: -5 },
-        shadowOpacity: 0.5,
-        shadowRadius: 20,
-        elevation: 5,
+        // shadowColor: '#171717',
+        // shadowOffset: { width: 0, height: -5 },
+        // shadowOpacity: 0.5,
+        // shadowRadius: 20,
+        // elevation: 5,
     },
     CancelBtn: { //style for Cancel Button
         alignSelf: 'center',
@@ -92,11 +92,11 @@ const styles = (theme) => StyleSheet.create({
         height: 65,
         marginBottom: 15,
 
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: -5 },
-        shadowOpacity: 0.5,
-        shadowRadius: 20,
-        elevation: 5,
+        // shadowColor: '#171717',
+        // shadowOffset: { width: 0, height: -5 },
+        // shadowOpacity: 0.5,
+        // shadowRadius: 20,
+        // elevation: 5,
     },
     CancelBtnText: { //style for text of Cancel Button
         fontWeight: '700',

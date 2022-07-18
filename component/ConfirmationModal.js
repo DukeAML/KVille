@@ -68,7 +68,7 @@ const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, userS
                     <Text style= {[styles(theme).confirmationHeader, { color: '#1988f8' }]}>Cancel</Text>
                 </TouchableOpacity>
             </View>
-        </Modal>
+      </Modal>
     );
   }
 };
@@ -88,11 +88,11 @@ const styles = (theme) => StyleSheet.create({
         borderRadius: 20,
         margin: 15,
 
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: -5 },
-        shadowOpacity: 0.5,
-        shadowRadius: 20,
-        elevation: 5,
+      // shadowColor: '#171717',
+      // shadowOffset: { width: 0, height: -5 },
+      // shadowOpacity: 0.5,
+      // shadowRadius: 20,
+      // elevation: 5,
     },
     confirmationHeader: { //style for text of buttons
         fontWeight: '600',
@@ -120,7 +120,6 @@ const styles = (theme) => StyleSheet.create({
         shadowRadius: 20,
         elevation: 5,
     },
-});
-
+  });
 
 export { ConfirmationModal };

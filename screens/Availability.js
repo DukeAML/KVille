@@ -269,8 +269,6 @@ export default function Availability({ route }) {
           </View>
           
         </TouchableOpacity>
-
-
       </ActionSheetModal>
 
       {/* <Modal
@@ -291,13 +289,12 @@ export default function Availability({ route }) {
         </TouchableOpacity>
       </Modal> */}
 
-
       <BottomSheetModal
-        isVisible={isModalVisible} 
+        isVisible={isModalVisible}
         onBackdropPress={toggleModal}
         onSwipeComplete={toggleModal}
-
-        height = '80%'
+        height='80%'
+        userStyle = 'dark'
       >
         <Snackbar
           visible={isSnackVisible}
@@ -307,391 +304,141 @@ export default function Availability({ route }) {
         >
           <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
         </Snackbar>
-          <BottomSheetModal.Header>Add New Busy Time</BottomSheetModal.Header>
+        <BottomSheetModal.Header>Add New Busy Time</BottomSheetModal.Header>
 
-          <View style={styles(theme).modalBody}>
-            <View style={styles(theme).selectDay}>
-              <Text  style = {styles(theme).modalText}>Select Day: </Text>
+        <View style={styles(theme).modalBody}>
+          <View style={styles(theme).selectDay}>
+            <Text style={styles(theme).modalText}>Select Day: </Text>
+            <Picker
+              selectedValue={selectedDay}
+              onValueChange={(itemValue, itemIndex) => {
+                setSelectedDay(itemValue);
+              }}
+              style={
+                Platform.OS === 'ios' ? { height: '100%', width: '80%' } : { height: 30, width: '70%', marginTop: 15 }
+              }
+              itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+            >
+              <Picker.Item label='Sunday' value={0} />
+              <Picker.Item label='Monday' value={1} />
+              <Picker.Item label='Tuesday' value={2} />
+              <Picker.Item label='Wednesday' value={3} />
+              <Picker.Item label='Thursday' value={4} />
+              <Picker.Item label='Friday' value={5} />
+              <Picker.Item label='Saturday' value={6} />
+            </Picker>
+          </View>
+
+          <View style={styles(theme).selectTime}>
+            <Text style={styles(theme).modalText}>Start Time: </Text>
+            <View style={styles(theme).timePickerBody}>
               <Picker
-                selectedValue={selectedDay}
+                selectedValue={startTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
-                  setSelectedDay(itemValue);
+                  setStartTime({ ...startTime, hour: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? { height: '100%', width: '80%' } : 
-                      { height: 30, width: '70%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
-                <Picker.Item label='Sunday' value={0} />
-                <Picker.Item label='Monday' value={1} />
-                <Picker.Item label='Tuesday' value={2} />
-                <Picker.Item label='Wednesday' value={3} />
-                <Picker.Item label='Thursday' value={4} />
-                <Picker.Item label='Friday' value={5} />
-                <Picker.Item label='Saturday' value={6} />
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
               </Picker>
-            </View>
-            
-            <View style={styles(theme).selectTime}>
-              <Text style = {styles(theme).modalText}>Start Time: </Text>
-              <View style = {styles(theme).timePickerBody}>
-                <Picker
-                  selectedValue={startTime.hour}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, hour: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15 }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='12' value={0} />
-                  <Picker.Item label='1' value={1} />
-                  <Picker.Item label='2' value={2} />
-                  <Picker.Item label='3' value={3} />
-                  <Picker.Item label='4' value={4} />
-                  <Picker.Item label='5' value={5} />
-                  <Picker.Item label='6' value={6} />
-                  <Picker.Item label='7' value={7} />
-                  <Picker.Item label='8' value={8} />
-                  <Picker.Item label='9' value={9} />
-                  <Picker.Item label='10' value={10} />
-                  <Picker.Item label='11' value={11} />
-                </Picker>
-                <Picker
-                  selectedValue={startTime.minute}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, minute: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15 }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='00' value={0} />
-                  <Picker.Item label='30' value={1} />
-                </Picker>
-                <Picker
-                  selectedValue={startTime.day}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, day: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15 }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={24} />
-                </Picker>
-              </View>
-              
-            </View>
-            
-            <View style={styles(theme).selectTime}>
-              
-              <Text style = {styles(theme).modalText}>End Time: </Text>
-
-              <View style = {styles(theme).timePickerBody}>
-                <Picker
-                  selectedValue={endTime.hour}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, hour: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15 }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='12' value={0} />
-                  <Picker.Item label='1' value={1} />
-                  <Picker.Item label='2' value={2} />
-                  <Picker.Item label='3' value={3} />
-                  <Picker.Item label='4' value={4} />
-                  <Picker.Item label='5' value={5} />
-                  <Picker.Item label='6' value={6} />
-                  <Picker.Item label='7' value={7} />
-                  <Picker.Item label='8' value={8} />
-                  <Picker.Item label='9' value={9} />
-                  <Picker.Item label='10' value={10} />
-                  <Picker.Item label='11' value={11} />
-                </Picker>
-                <Picker
-                  selectedValue={endTime.minute}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, minute: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15 }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='00' value={0} />
-                  <Picker.Item label='30' value={1} />
-                </Picker>
-                <Picker
-                  selectedValue={endTime.day}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, day: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%', marginTop: 15}
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={24} />
-                </Picker>
-              </View>
-              
-            </View>
-          </View>
-
-          <View style={styles(theme).modalFooter}>
-            <TouchableOpacity
-              style={styles(theme).addBtn}
-              onPress={toggleModal}
-            >
-              <Text style={styles(theme).btnText}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles(theme).addBtn}
-              onPress={() => postAvailability.mutate()}
-            >
-              <Text style={styles(theme).btnText}>Add</Text>
-            </TouchableOpacity>
-          </View>
-
-      </BottomSheetModal>
-
-      
-{/*       <Modal 
-        //MAIN MODAL HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        isVisible={isModalVisible} 
-        onBackdropPress={toggleModal}
-        style={styles(theme).deleteModalView}
-        onSwipeComplete={toggleModal}
-        swipeDirection={['down']}
-      >
-        <Snackbar
-          visible={isSnackVisible}
-          onDismiss={() => setSnackVisible(false)}
-          wrapperStyle={{ top: 0 }}
-          duration={2000}
-        >
-          <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-        </Snackbar>
-        <View style={styles(theme).modalContainer}>
-
-          <View style={styles(theme).modalHeader}>
-            <View style={styles(theme).modalBar}></View>
-            <Text style={styles(theme).headerText}>Add New Busy Time</Text>
-          </View>
-
-          <View style={styles(theme).modalBody}>
-            <View style={styles(theme).selectDay}>
-              <Text  style = {styles(theme).modalText}>Select Day: </Text>
               <Picker
-                selectedValue={selectedDay}
+                selectedValue={startTime.minute}
                 onValueChange={(itemValue, itemIndex) => {
-                  setSelectedDay(itemValue);
+                  setStartTime({ ...startTime, minute: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? { height: '100%', width: '80%' } : { height: 30, width: '70%' }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
-                <Picker.Item label='Sunday' value={0} />
-                <Picker.Item label='Monday' value={1} />
-                <Picker.Item label='Tuesday' value={2} />
-                <Picker.Item label='Wednesday' value={3} />
-                <Picker.Item label='Thursday' value={4} />
-                <Picker.Item label='Friday' value={5} />
-                <Picker.Item label='Saturday' value={6} />
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
               </Picker>
-
-            </View>
-            
-            <View style={styles(theme).selectTime}>
-              <Text style = {styles(theme).modalText}>Start Time: </Text>
-              <View style = {styles(theme).timePickerBody}>
-                <Picker
-                  selectedValue={startTime.hour}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, hour: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%' }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='12' value={0} />
-                  <Picker.Item label='1' value={1} />
-                  <Picker.Item label='2' value={2} />
-                  <Picker.Item label='3' value={3} />
-                  <Picker.Item label='4' value={4} />
-                  <Picker.Item label='5' value={5} />
-                  <Picker.Item label='6' value={6} />
-                  <Picker.Item label='7' value={7} />
-                  <Picker.Item label='8' value={8} />
-                  <Picker.Item label='9' value={9} />
-                  <Picker.Item label='10' value={10} />
-                  <Picker.Item label='11' value={11} />
-                </Picker>
-                <Picker
-                  selectedValue={startTime.minute}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, minute: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%' }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='00' value={0} />
-                  <Picker.Item label='30' value={1} />
-                </Picker>
-                <Picker
-                  selectedValue={startTime.day}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setStartTime({ ...startTime, day: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%' }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={24} />
-                </Picker>
-              </View>
-              
-            </View>
-            
-            <View style={styles(theme).selectTime}>
-              
-              <Text style = {styles(theme).modalText}>End Time: </Text>
-
-              <View style = {styles(theme).timePickerBody}>
-                <Picker
-                  selectedValue={endTime.hour}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, hour: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%' }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='12' value={0} />
-                  <Picker.Item label='1' value={1} />
-                  <Picker.Item label='2' value={2} />
-                  <Picker.Item label='3' value={3} />
-                  <Picker.Item label='4' value={4} />
-                  <Picker.Item label='5' value={5} />
-                  <Picker.Item label='6' value={6} />
-                  <Picker.Item label='7' value={7} />
-                  <Picker.Item label='8' value={8} />
-                  <Picker.Item label='9' value={9} />
-                  <Picker.Item label='10' value={10} />
-                  <Picker.Item label='11' value={11} />
-                </Picker>
-                <Picker
-                  selectedValue={endTime.minute}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, minute: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%' }
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='00' value={0} />
-                  <Picker.Item label='30' value={1} />
-                </Picker>
-                <Picker
-                  selectedValue={endTime.day}
-                  onValueChange={(itemValue, itemIndex) => {
-                    setEndTime({ ...endTime, day: itemValue });
-                  }}
-                  style={
-                    Platform.OS === 'ios'
-                      ? styles(theme).picker
-                      : { height: 30, width: '30%'}
-                  }
-                  itemStyle={
-                    Platform.OS === 'ios' ? styles(theme).pickerItem : {}
-                  }
-                >
-                  <Picker.Item label='AM' value={0} />
-                  <Picker.Item label='PM' value={24} />
-                </Picker>
-              </View>
-              
+              <Picker
+                selectedValue={startTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setStartTime({ ...startTime, day: itemValue });
+                }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
             </View>
           </View>
 
-          <View style={styles(theme).modalFooter}>
-            <TouchableOpacity
-              style={styles(theme).addBtn}
-              onPress={toggleModal}
-            >
-              <Text style={styles(theme).btnText}>Cancel</Text>
-            </TouchableOpacity>
+          <View style={styles(theme).selectTime}>
+            <Text style={styles(theme).modalText}>End Time: </Text>
 
-            <TouchableOpacity
-              style={styles(theme).addBtn}
-              onPress={() => postAvailability.mutate()}
-            >
-              <Text style={styles(theme).btnText}>Add</Text>
-            </TouchableOpacity>
+            <View style={styles(theme).timePickerBody}>
+              <Picker
+                selectedValue={endTime.hour}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, hour: itemValue });
+                }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+              >
+                <Picker.Item label='12' value={0} />
+                <Picker.Item label='1' value={1} />
+                <Picker.Item label='2' value={2} />
+                <Picker.Item label='3' value={3} />
+                <Picker.Item label='4' value={4} />
+                <Picker.Item label='5' value={5} />
+                <Picker.Item label='6' value={6} />
+                <Picker.Item label='7' value={7} />
+                <Picker.Item label='8' value={8} />
+                <Picker.Item label='9' value={9} />
+                <Picker.Item label='10' value={10} />
+                <Picker.Item label='11' value={11} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.minute}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, minute: itemValue });
+                }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+              >
+                <Picker.Item label='00' value={0} />
+                <Picker.Item label='30' value={1} />
+              </Picker>
+              <Picker
+                selectedValue={endTime.day}
+                onValueChange={(itemValue, itemIndex) => {
+                  setEndTime({ ...endTime, day: itemValue });
+                }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+              >
+                <Picker.Item label='AM' value={0} />
+                <Picker.Item label='PM' value={24} />
+              </Picker>
+            </View>
           </View>
-
         </View>
-      </Modal> */}
-    
+
+        <View style={styles(theme).modalFooter}>
+          <TouchableOpacity style={styles(theme).addBtn} onPress={toggleModal}>
+            <Text style={styles(theme).btnText}>Cancel</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles(theme).addBtn} onPress={() => postAvailability.mutate()}>
+            <Text style={styles(theme).btnText}>Add</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
 
       <Table borderStyle={{ borderWidth: 1 }}>
         <Row
@@ -763,7 +510,7 @@ const styles = (theme) =>
     modalContainer: {
       width: '100%',
       height: '80%',
-      borderTopRightRadius: 30, 
+      borderTopRightRadius: 30,
       borderTopLeftRadius: 30,
       /*borderRadius: 25,
       borderWidth: 1,
@@ -771,11 +518,11 @@ const styles = (theme) =>
       alignItems: 'center',
       alignSelf: 'center',
       justifyContent: 'space-around',
-      backgroundColor: theme.greyModal,//theme.background,
+      backgroundColor: theme.greyModal, //theme.background,
       //opacity: '95%'
     },
 
-/*     modalHeader: {
+    /*     modalHeader: {
       //borderBottomWidth: 1,
       borderBottomColor: 'white',
       alignItems: 'center',
@@ -796,7 +543,7 @@ const styles = (theme) =>
       marginBottom: 5,
       color: theme.text1,
     },*/
-    modalText:{
+    modalText: {
       fontSize: 18,
       color: theme.text1,
       marginBottom: 3,
@@ -833,11 +580,11 @@ const styles = (theme) =>
       /* borderWidth:1,
       borderColor: 'white', */
     },
-    timePickerBody:{
-      flexDirection: 'row', 
-      width: '100%', 
-      height: '90%', 
-      justifyContent: 'center', 
+    timePickerBody: {
+      flexDirection: 'row',
+      width: '100%',
+      height: '90%',
+      justifyContent: 'center',
       //alignItems: 'center',
       /* borderWidth:1,
       borderColor: 'white', */
@@ -860,7 +607,7 @@ const styles = (theme) =>
     btnText: {
       color: theme.text1,
       fontSize: 24,
-      fontWeight: '600'
+      fontWeight: '600',
       //textAlign: 'center',
     },
     cell: {
@@ -887,7 +634,7 @@ const styles = (theme) =>
       right: 8,
       bottom: 15,
     },
-/*     deleteModalView:{
+    /*     deleteModalView:{
       margin: 0,
       //position: 'absolute',
       justifyContent: 'flex-end',
@@ -937,8 +684,8 @@ const pickerSelectStyles = StyleSheet.create({
   },
 });
 
-
-              {/* <RNPickerSelect
+{
+  /* <RNPickerSelect
                 onValueChange={(value) => setSelectedDay(value)}
                 placeholder={{ label: 'Select a day...', value: 7 }}
                 style={pickerSelectStyles}
@@ -951,4 +698,5 @@ const pickerSelectStyles = StyleSheet.create({
                   { label: 'Friday', value: 5 },
                   { label: 'Saturday', value: 6 },
                 ]}
-              /> */}
+              /> */
+}
