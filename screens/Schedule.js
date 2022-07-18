@@ -10,6 +10,8 @@ import {
   Platform,
   useWindowDimensions,
   RefreshControl,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -33,6 +35,9 @@ import {ConfirmationModal} from '../component/ConfirmationModal'
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import {ActionSheetModal} from '../component/ActionSheetModal';
 
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 //prettier-ignore
 const times = [ //Times for right column of the list of times of the day
@@ -261,6 +266,7 @@ export default function Schedule({ route }) {
   }
 
   const toggleModal = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     //to toggle the edit cell popup
     setModalVisible(!isModalVisible);
   };
@@ -287,6 +293,7 @@ export default function Schedule({ route }) {
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
           textStyle={StyleSheet.flatten(styles(theme).timesText)}
+          style={{width: win.width * 0.1}}
         />
       </Table>
     );
@@ -592,7 +599,7 @@ export default function Schedule({ route }) {
         </Modal> */}
         <ActionSheetModal
           isVisible={isModalVisible} 
-          onBackdropPress={() => setModalVisible(false)}
+          onBackdropPress={toggleModal}
           onSwipeComplete={toggleModal}
 
           toggleModal = {toggleModal}
@@ -761,9 +768,8 @@ export default function Schedule({ route }) {
               </View>
             </TouchableOpacity> */}
 
-            <TouchableOpacity
-              onPress={() => {
-                //setTypeOfEdit('Create');
+            {/* <TouchableOpacity
+              onPress={() => { 
                 toggleConfirmation();
               }}
               style = {{width:'100%'}}
@@ -771,7 +777,7 @@ export default function Schedule({ route }) {
               <View style={[styles(theme).topEditBtn, { backgroundColor: '#c9c9c9' }]}>
                 <Text style={styles(theme).topEditBtnText}>Create New Schedule</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         ) : null}
       </View>
@@ -779,9 +785,10 @@ export default function Schedule({ route }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+        contentContainerStyle={[styles(theme).shadowProp, {backgroundColor: theme.grey3, borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10}]}
       >
-        <Text style={styles(theme).dayHeader}>{renderDay}</Text>
-        <View style={{ flexDirection: 'row' }}>
+        {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
+        <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
           <TimeColumn />
           <DailyTable day={renderDay} />
         </View>
@@ -804,7 +811,7 @@ export default function Schedule({ route }) {
 //const makeStyles = (fontScale) => StyleSheet.create({
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: '#C2C6D0' }, //for the entire page's container
+    bigContainer: { flex: 1, backgroundColor: theme.background }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
@@ -903,7 +910,7 @@ const styles = (theme) =>
       //style for one row of the table
       flexDirection: 'row',
       backgroundColor: 'lavender',
-      width: win.width * 0.88,
+      width: win.width * 0.9,
       height: 31,
       alignItems: 'center',
       borderBottomColor: 'black',
