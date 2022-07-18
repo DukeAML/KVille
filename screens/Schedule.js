@@ -684,7 +684,7 @@ export default function Schedule({ route }) {
         <View
           style={[
             styles(theme).shadowProp,
-            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10 },
+            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10 },
           ]}
         >
           <ScrollView
