@@ -238,7 +238,7 @@ export default function Info() {
 
         <Text style={styles(theme).contentText}>
           Tents who have yet to be checked but appear to be missing will — at a
-          minimum – be given three warning calls over the bullhorn before being
+          minimum — be given three warning calls over the bullhorn before being
           marked as absent. After the final warning call, an additional 2
           minutes will be given to allow for tenters to check in. After this
           time elapses, the check is officially over.

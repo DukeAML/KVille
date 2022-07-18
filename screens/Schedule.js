@@ -76,6 +76,8 @@ export default function Schedule({ route }) {
   const editIndex = useRef(0);
 
   const newSchedule = useRef([]);
+
+  const scrollRef = useRef([]);
   /* const window = useWindowDimensions();
   const styles= makeStyles(window.fontScale); */
 
@@ -457,7 +459,13 @@ export default function Schedule({ route }) {
   //Component for the top day buttons
   const DayButton = ({ day, abbrev }) => {
     return (
-      <TouchableOpacity style={styles(theme).button} onPress={() => setRenderDay(day)}>
+      <TouchableOpacity 
+        style={styles(theme).button} 
+        onPress={() => {
+          setRenderDay(day);
+          scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
+        }}
+      >
         <Text style={styles(theme).buttonText}>{abbrev}</Text>
         {renderDay == day ? (<Badge size={8} style={{alignSelf:'center', backgroundColor: theme.primary}}></Badge>):null}
       </TouchableOpacity>
@@ -760,6 +768,7 @@ export default function Schedule({ route }) {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
+        ref = {scrollRef}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
       >
         <Text style={styles(theme).dayHeader}>{renderDay}</Text>

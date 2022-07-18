@@ -735,7 +735,10 @@ export default function Availability({ route }) {
       </ScrollView>
       <View style={[styles(theme).addContainer, { width: dimensions.window.width / 8 }]}>
         <TouchableOpacity onPress={toggleModal}>
-          <Icon name={'plus-circle'} color={theme.greyModal} size={50} />
+          <View style = {{height: 50, width:50, backgroundColor: theme.background, borderRadius: 12, justifyContent: 'center', alignItems:'center'}}>
+            <Icon name={'plus'} color={theme.text2} size={30} />
+          </View>
+          
         </TouchableOpacity>
       </View>
     </View>
