@@ -1,0 +1,109 @@
+import React, { Component } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import Modal from 'react-native-modal';
+import { useTheme } from '../context/ThemeProvider';
+
+
+/**
+ * Parent Function for ActionSheet Modal component
+ * 
+ * @param {function} toggleModal -- if cancelButton is true, set parameter to toggleModal function
+ * @param {number} height -- vertical size of modal
+ * @param {color} backgroundColor -- background color of modal 
+ * @param {string} userStyle -- options: ('dark' | 'light') background color of modal and text color
+ * @param {Component} children -- components inside modal component; 
+ *
+ * @param {props} props --
+ *   **NOTE: must include normal modal props in the props of the Modal such as:
+ *       isVisible={isModalVisible} 
+ *       onBackdropPress={() => setModalVisible(false)}
+ *       onSwipeComplete = {toggleModal} 
+ *       ...
+ * @returns Modal Component
+ */
+
+const ActionSheetModal = ({ toggleModal , backgroundColor, height = 130, userStyle,
+                            cancelButton = false,  children, ...props  }) => {
+  {
+    const {theme} = useTheme();
+
+    //set up default styles for light and dark themes
+    let background, opacity;
+    userStyle == 'light' ? (background = '#fff', opacity= '92%') : 
+            (background= '#565656', opacity = '100%');
+
+    //overwrite dark|light theme background colors if defined
+    if (backgroundColor !== undefined) background = backgroundColor; 
+
+    //Height of entire modal based on if cancel button is added or not
+    const adjustedHeight = cancelButton ? height+110 : height+30; //accounts for vertical margin and cancel button
+
+    return (
+        <Modal
+            style={styles(theme).BottomModalView}
+            swipeDirection={['down']}
+            {...props}
+        >
+            <View style = {{width: '95%', alignSelf: 'center', height: adjustedHeight}}>
+                <View style={[styles(theme).TopSectionView, {backgroundColor: background, height: height, opacity: opacity}]}>
+                    {children}
+                </View>
+                {cancelButton ? (
+                    <TouchableOpacity
+                        onPress= {()=> toggleModal()}
+                        style={[styles(theme).CancelBtn, {backgroundColor: background, opacity:opacity}]}
+                    >
+                    <Text style= {[styles(theme).CancelBtnText, { color: '#1988f8' }]}>Cancel</Text>
+                    </TouchableOpacity>
+                ): null}
+                
+            </View>
+        </Modal>
+    );
+  }
+};
+
+
+const styles = (theme) => StyleSheet.create({
+    BottomModalView:{
+        margin: 0,
+        justifyContent: 'flex-end',
+    },
+    TopSectionView: { //Style for top view of action sheet
+        width: '100%',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        borderRadius: 20,
+        margin: 15,
+
+        // shadowColor: '#171717',
+        // shadowOffset: { width: 0, height: -5 },
+        // shadowOpacity: 0.5,
+        // shadowRadius: 20,
+        // elevation: 5,
+    },
+    CancelBtn: { //style for Cancel Button
+        alignSelf: 'center',
+        width: '100%',
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 65,
+        marginBottom: 15,
+
+        // shadowColor: '#171717',
+        // shadowOffset: { width: 0, height: -5 },
+        // shadowOpacity: 0.5,
+        // shadowRadius: 20,
+        // elevation: 5,
+    },
+    CancelBtnText: { //style for text of Cancel Button
+        fontWeight: '700',
+        textAlign: 'center',
+        fontSize: 24,
+    },
+});
+
+
+export { ActionSheetModal };

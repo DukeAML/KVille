@@ -32,17 +32,17 @@ import {ConfirmationModal} from '../component/ConfirmationModal'
 let prevTentType;
 
 export default function Settings({ route, navigation }) {
+  const { groupCode, groupName, userName, tentType } = route.params;
+  const groupRole = useSelector((state) => state.user.currGroupRole);
   const [isReady, setIsReady] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  const dispatch = useDispatch();
-  const { theme } = useTheme();
-  const { groupCode, groupName, userName, tentType } = route.params;
   const [currGroupName, setCurrGroupName] = useState(groupName);
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
-  const groupRole = useSelector((state) => state.user.currGroupRole);
+  const dispatch = useDispatch();
+  const { theme } = useTheme();
 
   const toggleConfirmation = () => {
     setConfirmationVisible(!isConfirmationVisible);
@@ -481,6 +481,8 @@ export default function Settings({ route, navigation }) {
             isVisible={isConfirmationVisible}
             onBackdropPress={() => setConfirmationVisible(false)}
             onSwipeComplete={toggleConfirmation}
+
+            userStyle = 'light'
           />
         {/* </Modal> */}
         
