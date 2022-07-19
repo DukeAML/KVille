@@ -12,6 +12,7 @@ import {
   RefreshControl,
   LayoutAnimation,
   UIManager,
+  SafeAreaView,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -274,25 +275,25 @@ export default function Schedule({ route }) {
     });
   }
 
-  function toggleModal () {
+  function toggleModal() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     //to toggle the edit cell popup
     setModalVisible(!isModalVisible);
-  };
+  }
 
-  function toggleMemberModal () {
+  function toggleMemberModal() {
     //to toggle the popup for the member list
     setMemberModalVisible(!isMemberModalVisible);
-  };
+  }
 
-  function toggleConfirmation () {
+  function toggleConfirmation() {
     //to toggle the popup for the edit confirmation
     setConfirmationVisible(!isConfirmationVisible);
-  };
+  }
 
-  function toggleSnackBar () {
+  function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
-  };
+  }
 
   const TimeColumn = () => {
     //component for side table of 12am-12am time segments
@@ -666,7 +667,7 @@ export default function Schedule({ route }) {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
-        <View
+        <SafeAreaView
           style={[
             styles(theme).shadowProp,
             { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10 },
@@ -676,6 +677,7 @@ export default function Schedule({ route }) {
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
+            contentContainerStyle={{ paddingBottom: 100 }}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
             <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
@@ -683,11 +685,12 @@ export default function Schedule({ route }) {
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
-        </View>
+        </SafeAreaView>
         <Portal>
           <FAB.Group
             open={open}
             icon={'plus'}
+            style= {{position: 'absolute'}}
             fabStyle={{ backgroundColor: '#9FA6B7' }}
             actions={[
               {
@@ -721,7 +724,7 @@ export default function Schedule({ route }) {
 
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1 }, //for the entire page's container
+    bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1, overflow: 'hidden' }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
