@@ -14,10 +14,11 @@ import { Linking, Platform } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
-/* import Modal from "../component/Modal.js";
-import ModalHeader from "../component/Modal.js";
-import ModalBody from "../component/Modal.js"; */
-import Modal from 'react-native-modal';
+import { useDispatch } from 'react-redux';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 import StartScreen from './Start';
 import CreateGroupScreen from './CreateGroup';
@@ -30,20 +31,12 @@ import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import SettingScreen from './Settings';
 import CountdownScreen from './Countdown';
-
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-import { useDispatch } from 'react-redux';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
-
 import { BottomSheetModal } from '../component/BottomSheetModal';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
-
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -55,13 +48,11 @@ export default function Main() {
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   const { theme } = useTheme();
 
-  //const [typeOfHelp, setTypeOfHelp] = useState('Availability');
-
-  const toggleInfo = () => {
+  function toggleInfo () {
     setInfoVisible(!isInfoVisible);
   };
 
-  const toggleScheduleInfo = () => {
+  function toggleScheduleInfo () {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
   
@@ -126,45 +117,6 @@ export default function Main() {
       </Text>
     </View>
   );
-
-  // const InformationModal = () => {
-  //   console.log('infoModal rendered:', typeOfHelp);
-  //   return (
-  //     <View>
-  //       <Modal
-  //         //isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
-  //         isVisible={isInfoVisible}
-  //         onBackdropPress={() => setInfoVisible(false)}
-  //         /* onBackdropPress={() => {
-  //           if (typeOfHelp == 'Availability') setInfoVisible(false);
-  //           else setScheduleInfoVisible(false);
-  //         }} */
-  //       >
-  //         <View style={styles(theme).InfoPop}>
-  //           {typeOfHelp == 'Availability' ? (
-  //             <Text style={styles(theme).InfoHeader}>
-  //               How to Use the Availability Page
-  //             </Text>
-  //           ) : (
-  //             <Text style={styles(theme).InfoHeader}>
-  //               How to Use the Schedule Page
-  //             </Text>
-  //           )}
-  //           <ScrollView
-  //             style={styles(theme).InfoTextView}
-  //             showsVerticalScrollIndicator={false}
-  //           >
-  //             {typeOfHelp == 'Availability' ? (
-  //               <AvailabilityText />
-  //             ) : (
-  //               <ScheduleText />
-  //             )}
-  //           </ScrollView>
-  //         </View>
-  //       </Modal>
-  //     </View>
-  //   );
-  // };
 
   const dispatch = useDispatch();
 
@@ -385,24 +337,6 @@ export default function Main() {
                       </ScrollView>
                   </BottomSheetModal.SecondContainer>
                 </BottomSheetModal>
-                 {/* <Modal
-                    isVisible = {isInfoVisible}
-                    onBackdropPress={() => setInfoVisible(false)}
-                    style={styles(theme).BottomModalView}
-                    onSwipeComplete={toggleInfo}
-                    swipeDirection={['down']}
-                  >
-                    <View style={styles(theme).InfoPop}>
-                      <View style={styles(theme).modalBar}></View>
-                      <Text style={styles(theme).InfoHeader}>How to use the Availability Page</Text>
-                      <ScrollView 
-                        style = {styles(theme).InfoTextView}
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <AvailabilityText/>
-                      </ScrollView>
-                    </View>                    
-                  </Modal> */}
               </View>
             ),
           })}
@@ -450,24 +384,6 @@ export default function Main() {
                       </ScrollView>
                   </BottomSheetModal.SecondContainer>
                 </BottomSheetModal>
-                {/* <Modal
-                  isVisible = {isScheduleInfoVisible}
-                  onBackdropPress={() => setScheduleInfoVisible(false)}
-                  style={styles(theme).BottomModalView}
-                  onSwipeComplete={toggleScheduleInfo}
-                  swipeDirection={['down']}
-                >
-                    <View style={styles(theme).InfoPop}>
-                      <View style={styles(theme).modalBar}></View>
-                      <Text style={styles(theme).InfoHeader}>How to use the Schedule Page</Text>
-                      <ScrollView 
-                        style = {styles(theme).InfoTextView}
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <ScheduleText/>
-                      </ScrollView>
-                    </View>
-                </Modal> */}
               </View>
             ),
           })}
@@ -554,89 +470,12 @@ export default function Main() {
 }
 
 const styles = (theme) => StyleSheet.create({
-  /* BottomModalView:{
-    margin: 0,
-    //position: 'absolute',
-    justifyContent: 'flex-end',
-  },
-  modalBar:{
-    height: 4,
-    marginTop: 8,
-    //marginBottom: 4,
-    width: '22%',
-    borderRadius: 25,
-    backgroundColor: 'white', //theme.grey1,
-  },
-  InfoPop: {
-    width: '100%',
-    height: '45%',
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    backgroundColor: '#424242',//'#6a6a6a',
-    //alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    //borderRadius: 20,
-    //margin: 15,
-    //paddingVertical: 15,
-  },
-  InfoHeader: {
-    //style for text at the top of the popup
-    fontWeight: '700',
-    color:'white', //theme.text2,
-    //marginTop: 15,
-    marginVertical: 10,
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  InfoTextView: {
-    backgroundColor: '#757575', //'#bebebe',
-    width: '100%',
-    height: '80%',
-    paddingHorizontal: 35,
-    paddingVertical: 20,
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
-    //marginBottom: 10,
-  },*/
   InfoText: {
     //backgroundColor: '#2E5984',
     color:'white', //theme.text2,
     marginVertical: 5,
     textAlign: 'left',
     fontSize: 16,
-
   }, 
 });
 
-{
-  /*  <Modal
-        isVisible = {isAvailInfoVisible}
-        onBackdropPress={() => setAvailInfoVisible(false)}
-      >
-        <View style={styles(theme).InfoPop}>
-          <Text style={styles(theme).InfoHeader}>How to use the Availability page</Text>
-          <ScrollView style = {styles(theme).InfoTextView}>
-            <Text style={styles(theme).InfoText}>
-              This page is for your availability throughout the week. You will input what times of the week you are not
-              available for tenting.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
-              end time.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              Do this for your entire weekly schedule. You can delete blocks to edit your times.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              This schedule should remain saved from week to week, but you may edit every week if you have changes 
-              to your schedule.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              Make sure to fill out your availability every week before you Create a New Group Schedule or your 
-              busy times will not be accounted for in the group schedule.
-            </Text>
-          </ScrollView>
-        </View>
-      </Modal> */
-}
