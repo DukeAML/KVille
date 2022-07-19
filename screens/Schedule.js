@@ -297,12 +297,12 @@ export default function Schedule({ route }) {
   const TimeColumn = () => {
     //component for side table of 12am-12am time segments
     return (
-      <Table>
+      <Table style = {{width:'7%'}}>
         <Col
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
           textStyle={StyleSheet.flatten(styles(theme).timesText)}
-          style={{ width: win.width * 0.1 }}
+          //style={{  borderWidth: 1 }}
         />
       </Table>
     );
@@ -461,7 +461,7 @@ export default function Schedule({ route }) {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 30 }}>
+      <View style={{ marginTop: 31, width:'93%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -676,10 +676,11 @@ export default function Schedule({ route }) {
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
+            style = {{width: '100%'/* , borderWidth:1 */}}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
-            <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
-              <TimeColumn />
+            <View style={{ flexDirection: 'row', marginTop: 20, width: '100%', marginRight: 0 }}>
+              <TimeColumn/>
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
@@ -727,7 +728,7 @@ const styles = (theme) =>
       //text style for the side text of the list of times
       fontWeight: '800',
       fontSize: 9,
-      width: win.width * 0.1,
+      width: '100%',
       textAlign: 'center',
     },
     dayHighlight: {
@@ -782,7 +783,8 @@ const styles = (theme) =>
       //style for one row of the table
       flexDirection: 'row',
       backgroundColor: 'lavender',
-      width: win.width * 0.9,
+      //width: win.width * 0.9,
+      width: '100%',
       height: 31,
       alignItems: 'center',
       borderBottomColor: 'black',
@@ -794,7 +796,7 @@ const styles = (theme) =>
       height: 30,
       backgroundColor: '#78B7BB',
       //borderRadius: 2,
-      alignSelf: 'stretch',
+      //alignSelf: 'stretch',
       justifyContent: 'center',
     },
     btnText: {
@@ -811,7 +813,7 @@ const styles = (theme) =>
       shadowOpacity: 0.4,
       shadowRadius: 3,
     },
-    deletePopup: {
+/*     deletePopup: {
       //style for the bottom screen popup for editing a cell
       alignSelf: 'center',
       flexDirection: 'column',
@@ -820,7 +822,7 @@ const styles = (theme) =>
       width: win.width,
       height: win.height * 0.17,
       backgroundColor: theme.background,
-    },
+    }, */
     fabStyle: {
       bottom: 16,
       right: win.width * 0.02,
