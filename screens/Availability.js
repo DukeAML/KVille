@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar} from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
@@ -28,12 +28,15 @@ import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 
+
+
 const window = Dimensions.get('window');
 
 // prettier-ignore
 const agenda = {
   tableHead: ['', 'Sun', 'Mon', 'Tu', 'Wed', 'Th', 'Fri', 'Sat'],
-  tableTime: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM','8 AM', '9 AM', '10 AM', '11 AM', '12 PM',' 1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM',],
+  tableTime: [ ' 1 am', ' 2 am', ' 3 am', ' 4 am', ' 5 am', ' 6 am', ' 7 am',' 8 am', ' 9 am', '10 am', '11 am', 
+  '12 pm',' 1 pm', ' 2 pm', ' 3 pm', ' 4 pm', ' 5 pm', ' 6 pm', ' 7 pm', ' 8 pm', ' 9 pm', '10 pm', '11 pm',],
 };
 
 //const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
@@ -46,7 +49,7 @@ for (let i = 0; i < 48; i += 1) {
   tableData.push(rowData);
 }
 
-const cellHeight = 30;
+const cellHeight = 35;
 
 let currIndex;
 
@@ -64,6 +67,7 @@ export default function Availability({ route }) {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
+  //const [isExtended, setIsExtended] = useState(true);
   const [selectedDay, setSelectedDay] = useState(7);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -76,6 +80,13 @@ export default function Availability({ route }) {
     day: 0,
   });
   const { theme } = useTheme();
+
+  /* const onScroll = ({ nativeEvent }) => {
+    const currentScrollPosition =
+      Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+
+    setIsExtended(currentScrollPosition <= 0);
+  }; */
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['availability', firebase.auth().currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)
@@ -246,8 +257,8 @@ export default function Availability({ route }) {
       <ActionSheetModal
         isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
-        height={55}
-        userStyle='dark'
+        height = {55}
+        userStyle = 'light'
       >
         <TouchableOpacity
           onPress={() => deleteAvailability.mutate()}
@@ -286,6 +297,7 @@ export default function Availability({ route }) {
             <Text style={styles(theme).modalText}>Select Day: </Text>
             <Picker
               selectedValue={selectedDay}
+              
               onValueChange={(itemValue, itemIndex) => {
                 setSelectedDay(itemValue);
               }}
@@ -294,6 +306,7 @@ export default function Availability({ route }) {
               }
               itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
             >
+              <Picker.Item label='' value={7}/>
               <Picker.Item label='Sunday' value={0} />
               <Picker.Item label='Monday' value={1} />
               <Picker.Item label='Tuesday' value={2} />
@@ -415,23 +428,35 @@ export default function Availability({ route }) {
         </View>
       </BottomSheetModal>
 
-      <Table borderStyle={{ borderWidth: 1 }}>
+
+
+      <Table borderStyle={{ borderColor: 'transparent' }}>
         <Row
           data={agenda.tableHead}
           style={StyleSheet.flatten(styles(theme).head)}
-          textStyle={{ textAlign: 'center' }}
+          widthArr = {[dimensions.window.width/15, dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), 
+            dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15)]}
+          textStyle={{ textAlign: 'center', fontWeight: '700' }}
         />
       </Table>
+
+
+
       <ScrollView
         showsVerticalScrollIndicator={false}
+        //onScroll = {onScroll}
+        //scrollEventThrottle = {16}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
       >
-        <Table borderStyle={{ borderWidth: 1 }} style={{ flexDirection: 'row' }}>
-          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 8 }])}>
+        <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent'}} style={{ flexDirection: 'row' }}>
+          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 15, marginTop:30/* , borderWidth:1 */}])}>
             <Col
               data={agenda.tableTime}
-              style={StyleSheet.flatten(styles(theme).time)}
-              textStyle={{ textAlign: 'center', marginBottom: 40 }}
+              //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
+              heightArr = {new Array(23).fill(cellHeight*2)}
+              //style={StyleSheet.flatten(styles(theme).time)}
+              //style={{alignSelf: 'center'}}
+              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 12, width: '100%', color: '#717573'/* , borderWidth:1, */ }}
             />
           </TableWrapper>
 
@@ -439,7 +464,8 @@ export default function Availability({ route }) {
             {tableData.map((rowData, index) => (
               <TableWrapper
                 key={index}
-                style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
+                //style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
+                style={StyleSheet.flatten(styles(theme).row)}
               >
                 {rowData.map((cellData, cellIndex) => (
                   <Cell
@@ -447,7 +473,7 @@ export default function Availability({ route }) {
                     data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
                     //{data[48 * cellIndex + index].toString()}
 
-                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width / 8 }])}
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(2/15) }])}
                   />
                 ))}
               </TableWrapper>
@@ -455,7 +481,7 @@ export default function Availability({ route }) {
           </TableWrapper>
         </Table>
       </ScrollView>
-      <View style={[styles(theme).addContainer, { width: dimensions.window.width / 8 }]}>
+      <View style={styles(theme).addContainer}>
         <TouchableOpacity onPress={toggleModal}>
           <View
             style={{
@@ -481,28 +507,10 @@ const styles = (theme) =>
       flex: 1,
       padding: 0,
       //backgroundColor: theme.background,
-    },
-    row: {
-      height: cellHeight,
-      backgroundColor: theme.grey3,
-      flexDirection: 'row',
+      backgroundColor :  '#f5f5f5'
     },
     text: {
       textAlign: 'center',
-    },
-    modalContainer: {
-      width: '100%',
-      height: '80%',
-      borderTopRightRadius: 30,
-      borderTopLeftRadius: 30,
-      /*borderRadius: 25,
-      borderWidth: 1,
-      borderStyle: 'solid', */
-      alignItems: 'center',
-      alignSelf: 'center',
-      justifyContent: 'space-around',
-      backgroundColor: theme.greyModal, //theme.background,
-      //opacity: '95%'
     },
     modalText: {
       fontSize: 18,
@@ -525,16 +533,12 @@ const styles = (theme) =>
     },
     selectDay: {
       alignItems: 'center',
-      //justifyContent: 'center',
       width: '70%',
       height: '20%',
       //borderWidth:1,
       borderColor: 'white',
     },
     selectTime: {
-      //flex: 1,
-      //flexDirection: 'row',
-      //justifyContent: 'center',
       alignItems: 'center',
       height: '30%',
       width: '90%',
@@ -546,7 +550,6 @@ const styles = (theme) =>
       width: '100%',
       height: '90%',
       justifyContent: 'center',
-      //alignItems: 'center',
       /* borderWidth:1,
       borderColor: 'white', */
     },
@@ -558,10 +561,6 @@ const styles = (theme) =>
       justifyContent: 'space-evenly',
     },
     addBtn: {
-      //width: '95%',
-      //height: '50%',
-      //backgroundColor: theme.primary,
-      //borderRadius: 5,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -571,19 +570,41 @@ const styles = (theme) =>
       fontWeight: '600',
       //textAlign: 'center',
     },
+    head: {
+      backgroundColor: theme.background,
+      height: 35,
+      //borderWidth:1,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+
+      shadowColor: '#171717',
+      shadowOffset: { width: 0, height: -5 },
+      shadowOpacity: 0.9,
+      shadowRadius: 20,
+      elevation: 5,
+    },
+    row: {
+      height: cellHeight,
+      //backgroundColor: theme.grey3,
+      flexDirection: 'row',
+      borderBottomWidth:1,
+      borderColor: '#cfcfcf',
+    },
     cell: {
       height: cellHeight,
       flexDirection: 'column',
       justifyContent: 'flex-end',
       alignItems: 'center',
+      borderRightWidth: 1,
+      borderColor: '#cfcfcf',
       margin: 0,
     },
     btn: {
-      //margin: 0,
-      width: '95%',
+      width: '92%',
       height: 42,
       backgroundColor: theme.primary,
-      borderRadius: 5,
+      borderRadius: 7,
+      borderWidth :1,
       alignSelf: 'center',
     },
     addContainer: {
@@ -592,30 +613,11 @@ const styles = (theme) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      right: 8,
+      /* height: 50,
+      width: 50,
+      //borderRadius: 25, */
+      //backgroundColor: theme.background,
+      right: 25,
       bottom: 15,
     },
   });
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
