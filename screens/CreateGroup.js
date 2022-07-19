@@ -56,10 +56,7 @@ export default function CreateGroup({ navigation }) {
 
   const groupRole = 'Creator';
 
-  const userRef = firebase
-    .firestore()
-    .collection('users')
-    .doc(firebase.auth().currentUser.uid);
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.username);
@@ -91,12 +88,8 @@ export default function CreateGroup({ navigation }) {
     }, [])
   );
 
-  const toggleSnackBar = () => {
-    setSnackVisible(!isSnackVisible);
-  };
-
   //Create group function
-  const onCreateGroup = () => {
+  function onCreateGroup() {
     if (group.groupName == '') {
       toggleSnackBar();
       setSnackMessage('Enter group name');
@@ -154,7 +147,11 @@ export default function CreateGroup({ navigation }) {
           groupRole: 'Creator',
         });
       });
-  };
+  }
+
+  function toggleSnackBar() {
+    setSnackVisible(!isSnackVisible);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -196,15 +193,11 @@ export default function CreateGroup({ navigation }) {
             autoFocus={true}
             placeholder='Enter Group Name'
             value={group.groupName}
-            maxLength = {28}
-            onChangeText={(groupName) =>
-              setGroup({ ...group, groupName: groupName })
-            }
+            maxLength={28}
+            onChangeText={(groupName) => setGroup({ ...group, groupName: groupName })}
           />
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
-            Group Code
-          </Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Group Code</Text>
           <View
             style={[
               styles(theme).textInput,
@@ -232,19 +225,13 @@ export default function CreateGroup({ navigation }) {
             </Text>
           </View>
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
-            Tent Type
-          </Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
           <Picker
             selectedValue={group.tentType}
             onValueChange={(itemValue, itemIndex) => {
               setGroup({ ...group, tentType: itemValue });
             }}
-            style={
-              Platform.OS === 'ios'
-                ? styles(theme).picker
-                : { width: '90%', height: 30 }
-            }
+            style={Platform.OS === 'ios' ? styles(theme).picker : { width: '90%', height: 30 }}
             itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
           >
             <Picker.Item label='' value='' />
@@ -254,18 +241,13 @@ export default function CreateGroup({ navigation }) {
             <Picker.Item label='Walk up line' value='Walk up line' />
           </Picker>
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>
-            Username
-          </Text>
+          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
 
           <TextInput
-            style={[
-              styles(theme).textInput,
-              { borderWidth: 2, borderColor: theme.grey5 },
-            ]}
+            style={[styles(theme).textInput, { borderWidth: 2, borderColor: theme.grey5 }]}
             value={group.userName}
             placeholder={group.userName}
-            maxLength = {11}
+            maxLength={11}
             onChangeText={(userName) =>
               setGroup({
                 ...group,

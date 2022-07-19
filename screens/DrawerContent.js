@@ -33,7 +33,7 @@ export default function DrawerContent(props) {
       },
     });
   };
-  const updateTentStatus = (groupCode, status) => {
+  function updateTentStatus (groupCode, status) {
     return firebase
       .firestore()
       .collection('groups')
@@ -87,10 +87,7 @@ export default function DrawerContent(props) {
     postTentStatus.mutate(!status);
   };
 
-  //const dispatch = useDispatch();
-
-  const onLogout = () => {
-    //dispatch(reset());
+  function onLogout () {
     firebase.auth().signOut();
   };
 

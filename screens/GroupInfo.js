@@ -201,7 +201,7 @@ export default function GroupInfo({ route }) {
     }
   }, [isLoading]);
 
-  const renderRightActions = (progress, dragX) => {
+  const RenderRightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-50, 0.5],
       outputRange: [1, 0.1],
@@ -266,7 +266,7 @@ export default function GroupInfo({ route }) {
       >
         {groupRole == 'Creator' ? (
           <Swipeable
-            renderRightActions={renderRightActions}
+            renderRightActions={RenderRightActions}
             onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours, role: role })}
             friction={2}
           >
@@ -547,93 +547,3 @@ const styles = (theme) =>
       shadowRadius: 3,
     },
   });
-
-
-  {/* <BottomSheetModal
-        isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete={toggleModal}
-        color={theme.secondary}
-        height='15%'
-        barSize='small'
-      >
-        <BottomSheetModal.Header verticalMargin={3} fontSize={18}>
-          {currMember.current.name} Information
-        </BottomSheetModal.Header>
-        <BottomSheetModal.SecondContainer color={theme.tertiary} size='small'>
-          <View style={{ justifyContent: 'center', height: '100%' }}>
-            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
-          </View>
-
-          {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-            <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: theme.error,
-                  fontSize: 15,
-                }}
-              >
-                Remove
-              </Text>
-            </TouchableOpacity>
-          ) : null}
-        </BottomSheetModal.SecondContainer>
-      </BottomSheetModal> */}
-
-    {/* <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
-          <View style={styles(theme).popUp}>
-            <View
-              style={{
-                flexDirextion: 'row',
-                width: '90%',
-                alignItems: 'flex-end',
-              }}
-            >
-              <TouchableOpacity onPress={toggleModal}>
-                <Icon name='close' color={'white'} size={15} style={{ marginTop: 5 }} />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={styles(theme).popUpHeader}>{currMember.current.name} Information</Text>
-            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
-            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    color: theme.error,
-                    fontSize: 15,
-                  }}
-                >
-                  Remove
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </Modal> */}
-
-    /*  popUp: {
-      width: '90%',
-      height: '15%',
-      backgroundColor: theme.secondary,
-      alignSelf: 'center',
-      alignItems: 'center',
-      borderRadius: 20,
-      margin: 15,
-    },
-    popUpHeader: {
-      fontWeight: '600',
-      color: theme.text1,
-      marginBottom: 5,
-      textAlign: 'center',
-      fontSize: 16,
-      //borderWidth: 1
-    }, 
-        popUpText: {
-      backgroundColor: theme.tertiary,
-      color: theme.text1,
-      textAlign: 'center',
-      fontSize: 18,
-    }
-    */

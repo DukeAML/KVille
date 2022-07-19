@@ -77,12 +77,17 @@ export default function Start({ navigation }) {
 
   const dispatch = useDispatch();
 
-  const toggleModal = () => {
+  function toggleModal () {
     setModalVisible(!isModalVisible);
-  };
-  const openMenu = () => setMenuVisible(true);
+  }
+  
+  function openMenu () {
+    setMenuVisible(true);
+  }
 
-  const closeMenu = () => setMenuVisible(false);
+  function closeMenu () {
+    setMenuVisible(false)
+  }
 
   const EmptyGroup = () => {
     return (
@@ -172,7 +177,7 @@ export default function Start({ navigation }) {
     );
   };
 
-  const onLogout = () => {
+  function onLogout () {
     firebase.auth().signOut();
   };
 
