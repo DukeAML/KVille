@@ -31,14 +31,21 @@ export default function GroupInfo({ route }) {
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
 
   const { theme } = useTheme();
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   const toggleConfirmation = () => {
     setConfirmationVisible(!isConfirmationVisible);
+  };
+  const toggleRoleChange = () => {
+    setRoleChangeVisible(!isRoleChangeVisible);
   };
 
   const { isLoading, isError, error, data, refetch } = useQuery(
@@ -126,10 +133,6 @@ export default function GroupInfo({ route }) {
     console.log('groupInfo data', data);
     return data;
   }
-
-  function toggleModal () {
-    setModalVisible(!isModalVisible);
-  };
 
   const postRemoveMember = useRemoveMember(groupCode);
 
@@ -334,48 +337,16 @@ export default function GroupInfo({ route }) {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        style={{  marginHorizontal: '4%',flexGrow: 0, height: '70%'}}
+        style={{  marginHorizontal: '4%',flexGrow: 1, height: '70%'/* , borderWidth:1 */}}
       ></FlatList>
 
       <View>
-        {/* <BottomSheetModal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          onSwipeComplete={toggleModal}
-          color={theme.secondary}
-          height='15%'
-          barSize='small'
-        >
-          <BottomSheetModal.Header verticalMargin={3} fontSize={18}>
-            {currMember.current.name} Information
-          </BottomSheetModal.Header>
-          <BottomSheetModal.SecondContainer color={theme.tertiary} size='small'>
-            <View style={{ justifyContent: 'center', height: '100%' }}>
-              <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
-            </View>
-
-            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    color: theme.error,
-                    fontSize: 15,
-                  }}
-                >
-                  Remove
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-          </BottomSheetModal.SecondContainer>
-        </BottomSheetModal> */}
-
         <ActionSheetModal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
           onSwipeComplete={toggleModal}
 
-          height = {groupRole=='Creator' ? 250 : 190}
+          height = {(groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid) ? 250 : 190}
           userStyle = {'light'}
         >
           <View style = {styles(theme).popUpHeaderView}>
@@ -388,35 +359,34 @@ export default function GroupInfo({ route }) {
             </TouchableOpacity>
           </View>
           
-
-          <View style={{height:'70%', width: '94%', justifyContent: 'space-between'/* , borderWidth: 1 */}}>
-            <View style = {groupRole=='Creator'?{height: '65%'}:{height:'100%'}}>
+          <View style={{height:'70%', width: '94%', justifyContent: 'space-between'}}>
+            <View style = {(groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid) ?
+                              {height: '65%'}:{height:'100%'}}>
               <View style = {styles(theme).popUpHalfBody}>
                 <Icon name='timer-sand-empty' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                <Text style = {{fontSize: 18, fontWeight:'500'}}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
+                <Text style = {styles(theme).modalText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
               </View>
               <Divider/>
 
-              {groupRole=='Creator' ? (
+              {groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid? (
                 <TouchableOpacity 
                   style = {styles(theme).popUpHalfBody}
-                  onPress = {toggleModal} //change later to admin change
+                  onPress = {toggleRoleChange} //change later to admin change
                 >
                   <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                  <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role: {currMember.current.role}</Text>
+                  <Text style = {styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
                 </TouchableOpacity>
                 ): (
                   <View style = {styles(theme).popUpHalfBody}>
                     <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                    <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role: {currMember.current.role}</Text>
+                    <Text style = {styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
                   </View>
-                  
                 ) 
               }
             </View>
             
             {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-              <View style={{width: '100%', height: '35%', justifyContent:'center'/* , borderWidth:1 */}}>
+              <View style={{width: '100%', height: '35%', justifyContent:'center'}}>
                 <TouchableOpacity 
                   onPress={toggleConfirmation}
                   style = {styles(theme).removeBtn}
@@ -427,43 +397,50 @@ export default function GroupInfo({ route }) {
                   </Text>
                 </TouchableOpacity>
               </View>
-              
             ) : null}
           </View>
         </ActionSheetModal>
-
-        {/* <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
-          <View style={styles(theme).popUp}>
-            <View
-              style={{
-                flexDirextion: 'row',
-                width: '90%',
-                alignItems: 'flex-end',
-              }}
-            >
-              <TouchableOpacity onPress={toggleModal}>
-                <Icon name='close' color={'white'} size={15} style={{ marginTop: 5 }} />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={styles(theme).popUpHeader}>{currMember.current.name} Information</Text>
-            <Text style={styles(theme).popUpText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
-            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-              <TouchableOpacity onPress={() => postRemoveMember.mutate()}>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    color: theme.error,
-                    fontSize: 15,
-                  }}
-                >
-                  Remove
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </Modal> */}
       </View>
+
+      { groupRole=='Creator' ? (
+          <ActionSheetModal
+            isVisible={isRoleChangeVisible}
+            onBackdropPress={toggleRoleChange}
+            onSwipeComplete={toggleRoleChange}
+            toggleModal = {toggleRoleChange}
+
+            cancelButton = {true}
+            height = {180}
+            userStyle = {'dark'}
+          >
+            <TouchableOpacity
+              onPress={toggleRoleChange} //change to changing member role
+              style = {styles(theme).roleChangeListItem}
+            >
+              <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
+              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Creator</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={toggleRoleChange}
+              style = {styles(theme).roleChangeListItem}
+            >
+              <Icon name='badge-account-outline' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
+              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Admin</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={toggleRoleChange}
+              style = {[styles(theme).roleChangeListItem, {borderBottomWidth:0}]}
+            >
+              <Icon name='account' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
+              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Member</Text>
+            </TouchableOpacity>
+
+          </ActionSheetModal>
+      ): null}
+
+      
 
       <ConfirmationModal
         body={"Are you sure you want to REMOVE " + currMember.current.name + " from the group? This action CANNOT be undone."}
@@ -486,58 +463,56 @@ const styles = (theme) =>
       flex: 1,
       backgroundColor: theme.primaryContainer,
     },
-    header: {
+    header: { //view of top headers above boxText
       marginBottom: 10,
       marginTop: 4,
       alignSelf: 'center',
-      //borderWidth: 2,
       color: theme.grey1,
       width: '90%',
       fontSize: 22,
       fontWeight: '700',
     },
-    contentText: {
-      fontSize: 24,
-      fontWeight: '700',
-      textAlign: 'center',
-      marginHorizontal: 8,
-    },
-    listItem: {
-      backgroundColor: theme.primary,
-      padding: 4,
-      marginVertical: 3,
-      borderRadius: 15,
-      width: '100%',
-      alignSelf: 'center',
-      alignItems: 'center',
-    },
-    listText: {
-      fontSize: 15,
-      //fontFamily: 'sans-serif',
-      fontWeight: '500',
-      color: theme.text1,
-    },
-    boxText: {
+    boxText: { //View of top 2 boxes of text (groupCode and groupName)
       marginBottom: 10,
       width: '90%',
       backgroundColor: theme.white1,
       borderRadius: 8,
       alignSelf: 'center',
     },
-    shadowProp: {
-      shadowColor: '#171717',
-      shadowOffset: { width: -2, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
+    contentText: { //style of text inside boxText
+      fontSize: 24,
+      fontWeight: '700',
+      textAlign: 'center',
+      marginHorizontal: 8,
     },
-    popUpHeaderView:{
+    listItem: { //style of a member list item
+      backgroundColor: theme.primary,
+      padding: 4,
+      height: 35,
+      marginVertical: 4,
+      borderRadius: 12,
+      width: '100%',
+      alignSelf: 'center',
+      alignItems: 'center',
+    },
+    listText: { //text of a member item
+      fontSize: 15,
+      //fontFamily: 'sans-serif',
+      fontWeight: '500',
+      color: theme.text1,
+    },
+    modalText:{ //style of text within the modals (member info text and roleChange text)
+      fontSize: 18, 
+      fontWeight:'500',
+    },
+    popUpHeaderView:{ //view of the header of the info popup modal
       flexDirection: 'row',
       height: '20%',
       width: '94%',
       justifyContent: 'space-between',
       alignItems: 'center'
     },
-    popUpHalfBody:{
+    popUpHalfBody:{ //view of the half of the info in the info popup modal
       flexDirection:'row', 
       alignSelf: 'center',
       height: '50%', 
@@ -546,7 +521,7 @@ const styles = (theme) =>
       alignItems: 'center',
       borderRadius: 16,
     },
-    removeBtn:{
+    removeBtn:{ //remove button for removing member if the user is the Creator
       flexDirection:'row', 
       width: '100%', 
       height:'85%',
@@ -555,31 +530,20 @@ const styles = (theme) =>
       justifyContent: 'center', 
       borderRadius: 15
     },
-    /*  popUp: {
-      width: '90%',
-      height: '15%',
-      backgroundColor: theme.secondary,
+    roleChangeListItem:{ //Style of an item in the member roleChange modal (for creator only)
+      flexDirection: 'row', 
+      height: '33%', 
+      width: '95%', 
+      justifyContent: 'center', 
       alignSelf: 'center',
       alignItems: 'center',
-      borderRadius: 20,
-      margin: 15,
+      borderBottomWidth: 1,
+      borderColor: '#cfcfcf',
     },
-    popUpHeader: {
-      fontWeight: '600',
-      color: theme.text1,
-      marginBottom: 5,
-      textAlign: 'center',
-      fontSize: 16,
-      //borderWidth: 1
-    }, */
-    popUpText: {
-      backgroundColor: theme.tertiary,
-      color: theme.text1,
-      textAlign: 'center',
-      fontSize: 18,
-      //width: '90%',
-      /* marginVertical: 8,
-      padding: 5,
-      borderRadius: 15, */
+    shadowProp: {
+      shadowColor: '#171717',
+      shadowOffset: { width: -2, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
     },
   });
