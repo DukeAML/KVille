@@ -667,17 +667,17 @@ export default function Schedule({ route }) {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
-        <SafeAreaView
+        <View
           style={[
             styles(theme).shadowProp,
-            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10 },
+            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10, flex: 1 },
           ]}
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingBottom: 30 }}
             style = {{width: '100%'/* , borderWidth:1 */}}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
@@ -686,7 +686,7 @@ export default function Schedule({ route }) {
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
-        </SafeAreaView>
+        </View>
         <Portal>
           <FAB.Group
             open={open}
