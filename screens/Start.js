@@ -236,18 +236,18 @@ export default function Start({ navigation }) {
             </View>
           </TouchableOpacity>
         </View>
-        {/* 
-      <ScrollView showsVerticalScrollIndicator={false}> */}
-        <SafeAreaView>
+
+
+        <SafeAreaView style = {{width: '100%', height: '70%'}}>
           <FlatList
             data={data}
             renderItem={renderGroup}
             ListEmptyComponent={<EmptyGroup />}
             keyExtractor={(item) => item.code}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+            style={{ width: '100%', flexGrow: 1, height: '100%'/* , borderWidth:1 */}}
           />
         </SafeAreaView>
-        {/* </ScrollView> */}
 
         <View>
           <Modal
@@ -262,6 +262,7 @@ export default function Start({ navigation }) {
                   toggleModal();
                   navigation.navigate('JoinGroup');
                 }}
+                style = {{width: '100%', alignSelf: 'center'}}
               >
                 <View
                   style={[
@@ -284,6 +285,7 @@ export default function Start({ navigation }) {
                   toggleModal();
                   navigation.navigate('CreateGroup');
                 }}
+                style = {{width: '100%', alignSelf: 'center'}}
               >
                 <View
                   style={[
@@ -379,7 +381,7 @@ const styles = (theme) =>
       fontWeight: '600',
       color: theme.text1,
       height: 40,
-      width: window.width * 0.8,
+      width: "89%",
       marginTop: 15,
       textAlign: 'center',
       fontSize: 24,
@@ -387,10 +389,10 @@ const styles = (theme) =>
     popButton: {
       //style for the buttons in the popup
       flexDirection: 'row',
-      width: window.width * 0.7,
+      width: '85%',
       height: 40,
       marginVertical: 2,
-      alignSelf: 'stretch',
+      alignSelf: 'center',
       backgroundColor: theme.tertiary,
       justifyContent: 'flex-start',
       alignItems: 'center',
@@ -424,7 +426,9 @@ const styles = (theme) =>
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
-      width: window.width * 0.9,
+      alignSelf: 'center',
+      //width: window.width * 0.9,
+      width: '90%',
       justifyContent: 'flex-start',
     },
     listText: {
