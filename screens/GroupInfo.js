@@ -63,10 +63,11 @@ export default function GroupInfo({ route }) {
           let currName = doc.data().name; //gets current name in list
           let tentCondition = doc.data().inTent; //gets tent status as well
           let scheduledHours = doc.data().scheduledHrs;
+          let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
             //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours });
+            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
             // data[0] = {
             // id: memID,
             // name: currName,
@@ -79,6 +80,7 @@ export default function GroupInfo({ route }) {
               name: currName,
               inTent: tentCondition,
               hours: scheduledHours,
+              role: groupRole,
             });
           }
         });
@@ -95,10 +97,11 @@ export default function GroupInfo({ route }) {
           let currName = doc.data().name; //gets current name in list
           let tentCondition = doc.data().inTent; //gets tent status as well
           let scheduledHours = doc.data().scheduledHrs;
+          let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
             //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours });
+            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
             // data[0] = {
             //   id: memID,
             //   name: currName,
@@ -111,6 +114,7 @@ export default function GroupInfo({ route }) {
               name: currName,
               inTent: tentCondition,
               hours: scheduledHours,
+              role: groupRole,
             });
           }
         });
@@ -226,7 +230,7 @@ export default function GroupInfo({ route }) {
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          currMember.current = { name: item.name, id: item.id, hours: item.hours };
+          currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
           //setCurrMember({ name: name, id: id, hours: hours });
           //setCurrIndex(indexOfUser);
         }}
@@ -245,22 +249,22 @@ export default function GroupInfo({ route }) {
     );
   };
   //Render Item for Each List Item of group members
-  const Member = ({ name, id, hours, backgroundColor }) => {
+  const Member = ({ name, id, hours, role, backgroundColor }) => {
     //const indexOfUser = data.findIndex((member) => member.id === id);
     //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          currMember.current = { name: name, id: id, hours: hours };
-          //setCurrMember({ name: name, id: id, hours: hours });
+          currMember.current = { name: name, id: id, hours: hours, role: role };
+          //setCurrMember({ name: name, id: id, hours: hours, role: role });
           //setCurrIndex(indexOfUser);
         }}
       >
         {groupRole == 'Creator' ? (
           <Swipeable
             renderRightActions={renderRightActions}
-            onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours })}
+            onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours, role: role })}
             friction={2}
           >
             <View
@@ -295,7 +299,7 @@ export default function GroupInfo({ route }) {
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return <Member name={item.name} id={item.id} hours={item.hours} backgroundColor={{ backgroundColor }} />;
+    return <Member name={item.name} id={item.id} hours={item.hours} role = {item.role} backgroundColor={{ backgroundColor }} />;
   };
 
   if (isLoading) {
@@ -399,12 +403,12 @@ export default function GroupInfo({ route }) {
                   onPress = {toggleModal} //change later to admin change
                 >
                   <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                  <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role ...</Text>
+                  <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role: {currMember.current.role}</Text>
                 </TouchableOpacity>
                 ): (
                   <View style = {styles(theme).popUpHalfBody}>
                     <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                    <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role ...</Text>
+                    <Text style = {{fontSize: 18, fontWeight:'500'}}>Group Role: {currMember.current.role}</Text>
                   </View>
                   
                 ) 
