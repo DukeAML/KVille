@@ -274,23 +274,23 @@ export default function Schedule({ route }) {
     });
   }
 
-  const toggleModal = () => {
+  function toggleModal () {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     //to toggle the edit cell popup
     setModalVisible(!isModalVisible);
   };
 
-  const toggleMemberModal = () => {
+  function toggleMemberModal () {
     //to toggle the popup for the member list
     setMemberModalVisible(!isMemberModalVisible);
   };
 
-  const toggleConfirmation = () => {
+  function toggleConfirmation () {
     //to toggle the popup for the edit confirmation
     setConfirmationVisible(!isConfirmationVisible);
   };
 
-  const toggleSnackBar = () => {
+  function toggleSnackBar () {
     setSnackVisible(!isSnackVisible);
   };
 

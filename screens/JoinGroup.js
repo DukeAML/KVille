@@ -70,11 +70,7 @@ export default function JoinGroup({ navigation }) {
     }, [])
   );
 
-  const toggleSnackBar = () => {
-    setSnackVisible(!isSnackVisible);
-  };
-
-  const onJoinGroup = async (navigation) => {
+  async function onJoinGroup(navigation) {
     console.log('group code', groupCode);
     if (groupCode == '') {
       toggleSnackBar();
@@ -82,10 +78,7 @@ export default function JoinGroup({ navigation }) {
       return;
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    const userRef = firebase
-      .firestore()
-      .collection('users')
-      .doc(firebase.auth().currentUser.uid);
+    const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
 
     //checks to make sure entered group code exists
     await groupRef.get().then(async (docSnapshot) => {
@@ -122,16 +115,13 @@ export default function JoinGroup({ navigation }) {
           }),
         });
         //adds current user to member list
-        await groupRef
-          .collection('members')
-          .doc(firebase.auth().currentUser.uid)
-          .set({
-            groupRole: 'member',
-            name: name,
-            inTent: false,
-            availability: availability,
-            scheduledHrs: 0,
-          });
+        await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
+          groupRole: 'member',
+          name: name,
+          inTent: false,
+          availability: availability,
+          scheduledHrs: 0,
+        });
         await userRef
           .get()
           .then((snapshot) => {
@@ -154,7 +144,11 @@ export default function JoinGroup({ navigation }) {
         return;
       }
     });
-  };
+  }
+
+  function toggleSnackBar() {
+    setSnackVisible(!isSnackVisible);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -193,7 +187,7 @@ export default function JoinGroup({ navigation }) {
             style={[styles(theme).textInput, styles(theme).shadowProp]}
             value={name}
             placeholder={name}
-            maxLength = {11}
+            maxLength={11}
             onChangeText={(name) =>
               setName(
                 name
@@ -255,9 +249,7 @@ export default function JoinGroup({ navigation }) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>
-          {snackMessage}
-        </Text>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
       </Snackbar>
     </View>
   );

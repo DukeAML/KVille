@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
 
@@ -26,10 +25,7 @@ import {
   setTentType,
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-
 import {ConfirmationModal} from '../component/ConfirmationModal'
-
-let prevTentType;
 
 export default function Settings({ route, navigation }) {
   const { groupCode, groupName, userName, tentType } = route.params;
@@ -44,33 +40,12 @@ export default function Settings({ route, navigation }) {
   const dispatch = useDispatch();
   const { theme } = useTheme();
 
-  const toggleConfirmation = () => {
-    setConfirmationVisible(!isConfirmationVisible);
-  };
-  const toggleSnackBar = () => {
-    setSnackVisible(!isSnackVisible);
-  };
-
   console.log('Settings route params', route.params);
   //gets current user's group role from redux store
 
-  const userRef = firebase
-    .firestore()
-    .collection('users')
-    .doc(firebase.auth().currentUser.uid);
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-  //sets states to updated params after each time param is changed
-  // useEffect(() => {
-  //   let mounted = true;
-  //   //console.log("route params after change", route.params);
-  //   setCurrGroupName(groupName);
-  //   setName(userName);
-  //   setTent(tentType);
-  //   return () => (mounted = false);
-  // }, [userName]);
-
-  //useEffect(() => {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
@@ -105,16 +80,14 @@ export default function Settings({ route, navigation }) {
     }, [route.params])
   );
 
-  const onSave = () => {
+  function onSave() {
     let groupIndex;
     let groupCodeArr;
     userRef
       .get()
       .then((userDoc) => {
         groupCodeArr = userDoc.data().groupCode;
-        groupIndex = groupCodeArr.findIndex(
-          (element) => element.groupCode == groupCode
-        );
+        groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
         console.log('group index', groupIndex);
         groupCodeArr[groupIndex] = {
           groupCode: groupCode,
@@ -153,21 +126,6 @@ export default function Settings({ route, navigation }) {
         return;
       });
 
-    console.log('prevTentType', prevTentType);
-    console.log('currTentType', tent);
-    // if (prevTentType) {
-    //   groupRef
-    //     .update({
-    //       groupSchedule: [],
-    //     })
-    //     .then(() => {
-    //       console.log('cleared group schedule');
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
-
     groupRef
       .collection('members')
       .doc(firebase.auth().currentUser.uid)
@@ -188,9 +146,9 @@ export default function Settings({ route, navigation }) {
     dispatch(setGroupName(currGroupName));
     toggleSnackBar();
     setSnackMessage('Saved');
-  };
+  }
 
-  const leaveGroup = () => {
+  function leaveGroup() {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
         groupCode: groupCode,
@@ -218,90 +176,14 @@ export default function Settings({ route, navigation }) {
           console.error('Error removing user: ', error);
         });
     }
-  };
+  }
 
-  // const ConfirmationModal = () => {
-  //   return (
-  //     <View>
-  //       <View style={styles(theme).confirmationPop}>
-  //         {/* <TouchableOpacity
-  //           onPress={toggleConfirmation}
-  //           style={{
-  //             flexDirection: 'row',
-  //             width: '100%',
-  //             justifyContent: 'flex-end',
-  //           }}
-  //         >
-  //           <Icon
-  //             name='close'
-  //             color={'white'}
-  //             size={15}
-  //             style={{ marginTop: 3, marginRight: 10 }}
-  //           />
-  //         </TouchableOpacity> */}
-  //       {/*  {groupRole === 'Creator' ? (
-  //           <Text style={styles(theme).confirmationHeader}>Delete Group</Text>
-  //         ) : (
-  //           <Text style={styles(theme).confirmationHeader}>Leave Group</Text>
-  //         )} */}
-  //         <View style = {{height: '60%', width: '100%', justifyContent:'center', borderBottomWidth: 1,
-  //             borderBottomColor: 'white', padding: 10}}>
-  //           {groupRole === 'Creator' ? (
-  //             <Text style={styles(theme).confirmationText}>
-  //               Are you sure you want to DELETE this group? This will delete it for
-  //               everyone in this group and CANNOT be undone.
-  //             </Text>
-  //           ) : (
-  //             <Text style={styles(theme).confirmationText}>
-  //               Are you sure you want to LEAVE this group? This will delete all your
-  //               information in this group and CANNOT be undone.
-  //             </Text>
-  //           )}
-  //         </View>
-          
-
-  //         <TouchableOpacity
-  //           onPress={() => {
-  //             leaveGroup();
-  //             navigation.navigate('Start');
-  //             toggleConfirmation();
-  //           }}
-  //           //onPress= {toggleConfirmation}
-  //           style = {{height: '40%', width: '100%'}}
-  //           //style={styles(theme).confirmationBottomBtn}
-  //         >
-  //           <View style = {{height: '100%', width: '100%', justifyContent:'center'}}>
-  //             {groupRole === 'Creator' ? (
-  //               <Text 
-  //                 style={[
-  //                   styles(theme).confirmationHeader, 
-  //                   { color: theme.error, }
-  //                 ]}>
-  //                 Delete This Group
-  //               </Text>
-  //             ) : (
-  //               <Text 
-  //                 style={[
-  //                   styles(theme).confirmationHeader, 
-  //                   { color: theme.error,  }
-  //               ]}>
-  //                 Leave This Group
-  //               </Text>
-  //             )}
-  //           </View>
-            
-  //         </TouchableOpacity>
-  //       </View>
-  //       <TouchableOpacity
-  //         onPress= {toggleConfirmation}
-  //         style={styles(theme).confirmationBottomBtn}
-  //       >
-  //         <Text style= {[styles(theme).confirmationHeader, { color: theme.text1 }]}>Cancel</Text>
-  //       </TouchableOpacity>
-  //     </View>
-      
-  //   );
-  // };
+  function toggleConfirmation() {
+    setConfirmationVisible(!isConfirmationVisible);
+  }
+  function toggleSnackBar() {
+    setSnackVisible(!isSnackVisible);
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
@@ -318,14 +200,7 @@ export default function Settings({ route, navigation }) {
       <View style={styles(theme).topBanner}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon name='cog-outline' color={theme.icon1} size={35} />
-          <Text
-            style={[
-              styles(theme).headerText,
-              { color: theme.text1, width: '100%', marginLeft: 6 },
-            ]}
-          >
-            Settings
-          </Text>
+          <Text style={[styles(theme).headerText, { color: theme.text1, width: '100%', marginLeft: 6 }]}>Settings</Text>
         </View>
         <TouchableOpacity onPress={onSave}>
           <View>
@@ -352,12 +227,7 @@ export default function Settings({ route, navigation }) {
         }}
       >
         <Text style={styles(theme).headerText}>Name</Text>
-        <Icon
-          name='account-edit'
-          color={theme.grey2}
-          size={20}
-          style={{ marginRight: 8 }}
-        />
+        <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
       </View>
       <TextInput
         style={[styles(theme).textInput, styles(theme).shadowProp]}
@@ -382,12 +252,7 @@ export default function Settings({ route, navigation }) {
           }}
         >
           <Text style={styles(theme).headerText}>Group Name</Text>
-          <Icon
-            name='circle-edit-outline'
-            color={theme.grey2}
-            size={20}
-            style={{ marginRight: 8 }}
-          />
+          <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
         </View>
       ) : null}
       {groupRole === 'Creator' ? (
@@ -407,26 +272,16 @@ export default function Settings({ route, navigation }) {
           }}
         >
           <Text style={styles(theme).headerText}>Tent Type</Text>
-          <Icon
-            name='home-edit'
-            color={theme.grey2}
-            size={20}
-            style={{ marginRight: 8 }}
-          />
+          <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
         </View>
       ) : null}
       {groupRole === 'Creator' ? (
         <Picker
           selectedValue={tent}
           onValueChange={(itemValue, itemIndex) => {
-            prevTentType = tent;
             setTent(itemValue);
           }}
-          style={
-            Platform.OS === 'ios'
-              ? styles(theme).picker
-              : { width: '90%', height: 30 }
-          }
+          style={Platform.OS === 'ios' ? styles(theme).picker : { width: '90%', height: 30 }}
           itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
         >
           <Picker.Item label='Black' value='Black' />
@@ -435,68 +290,38 @@ export default function Settings({ route, navigation }) {
           <Picker.Item label='Walk up line' value='Walk up line' />
         </Picker>
       ) : null}
-      <TouchableOpacity
-        style={styles(theme).button}
-        onPress={toggleConfirmation}
-      >
+      <TouchableOpacity style={styles(theme).button} onPress={toggleConfirmation}>
         {groupRole === 'Creator' ? (
-          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>
-            Delete Group
-          </Text>
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
         ) : (
-          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>
-            Leave Group
-          </Text>
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
         )}
       </TouchableOpacity>
 
-      <View>
-        {/* <Modal
-          isVisible={isConfirmationVisible}
-          onBackdropPress={() => setConfirmationVisible(false)}
-          style={styles(theme).BottomModalView}
-          onSwipeComplete={toggleConfirmation}
-          swipeDirection={['down']}
-        >
-          <ConfirmationModal />
-        </Modal> */}
-        {/* <Modal
-          isVisible={isConfirmationVisible}
-          onBackdropPress={() => setConfirmationVisible(false)}
-          style={styles(theme).BottomModalView}
-          onSwipeComplete={toggleConfirmation}
-          swipeDirection={['down']}
-        > */}
-          <ConfirmationModal 
-            body= {groupRole === 'Creator' ? 
-                    'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
-                  : 'Are you sure you want to LEAVE this group? This will delete all your information in this group and CANNOT be undone.'}
-            buttonText = {groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
-            buttonAction = {() => {
-              leaveGroup();
-              navigation.navigate('Start');
-            }}
-            toggleModal = {toggleConfirmation}
-
-            isVisible={isConfirmationVisible}
-            onBackdropPress={() => setConfirmationVisible(false)}
-            onSwipeComplete={toggleConfirmation}
-
-            userStyle = 'light'
-          />
-        {/* </Modal> */}
-        
-      </View>
-
+      <ConfirmationModal
+        body={
+          groupRole === 'Creator'
+            ? 'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
+            : 'Are you sure you want to LEAVE this group? This will delete all your information in this group and CANNOT be undone.'
+        }
+        buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
+        buttonAction={() => {
+          leaveGroup();
+          navigation.navigate('Start');
+        }}
+        toggleModal={toggleConfirmation}
+        isVisible={isConfirmationVisible}
+        onBackdropPress={() => setConfirmationVisible(false)}
+        onSwipeComplete={toggleConfirmation}
+        userStyle='light'
+      />
       <Snackbar
         visible={isSnackVisible}
         onDismiss={() => setSnackVisible(false)}
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>
-          {snackMessage}
-        </Text>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
       </Snackbar>
     </View>
   );
@@ -555,45 +380,6 @@ const styles = (theme) =>
       margin: 0,
       justifyContent: 'flex-end',
     },
-    /* confirmationPop: {
-      width: '90%',
-      height: 130,
-      backgroundColor: '#424242',//theme.primary,
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      borderRadius: 20,
-      margin: 15,
-    },
-    confirmationHeader: {
-      //style for text at the top of the popup
-      fontWeight: '700',
-      //color: theme.text1,
-      textAlign: 'center',
-      fontSize: 20,
-    },
-    confirmationText: {
-      //backgroundColor: '#424242',
-      
-      color: theme.text1,
-      textAlign: 'center',
-      justifyContent: 'center',
-      //height: '50%',
-      //width: '100%',
-      padding: 5,
-      //borderRadius: 15,
-    },
-    confirmationBottomBtn: {
-      color: theme.text1,
-      backgroundColor: '#424242',
-      alignSelf: 'center',
-      width: '90%',
-      borderRadius: 15,
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: 65,
-      marginBottom: 15,
-    }, */
     button: {
       backgroundColor: theme.primary,
       padding: 15,

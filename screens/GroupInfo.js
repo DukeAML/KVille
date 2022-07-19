@@ -127,7 +127,7 @@ export default function GroupInfo({ route }) {
     return data;
   }
 
-  const toggleModal = () => {
+  function toggleModal () {
     setModalVisible(!isModalVisible);
   };
 
@@ -198,7 +198,7 @@ export default function GroupInfo({ route }) {
     }
   }, [isLoading]);
 
-  const renderRightActions = (progress, dragX) => {
+  const RenderRightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [-50, 0.5],
       outputRange: [1, 0.1],
@@ -263,7 +263,7 @@ export default function GroupInfo({ route }) {
       >
         {groupRole == 'Creator' ? (
           <Swipeable
-            renderRightActions={renderRightActions}
+            renderRightActions={RenderRightActions}
             onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours, role: role })}
             friction={2}
           >
