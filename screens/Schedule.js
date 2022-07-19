@@ -16,11 +16,11 @@ import {
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import Modal from 'react-native-modal';
-import { Snackbar, Divider, Badge} from 'react-native-paper';
+import { Snackbar, Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { AnimatedFAB, FAB, Portal, Provider } from 'react-native-paper';
+import { FAB, Portal, Provider } from 'react-native-paper';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -149,10 +149,10 @@ export default function Schedule({ route }) {
         throw error;
       });
     if (weekDisplay == 'Current Week') {
-      console.log('current week returned', currSchedule);
+      //console.log('current week returned', currSchedule);
       return currSchedule;
     }
-    console.log('previous week returned', prevSchedule);
+    //console.log('previous week returned', prevSchedule);
     return prevSchedule;
   }
 
@@ -461,7 +461,7 @@ export default function Schedule({ route }) {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={[styles(theme).tableShadow,{ marginTop: 30}]}>
+      <View style={{ marginTop: 30 }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -500,10 +500,18 @@ export default function Schedule({ route }) {
           scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
         }}
       >
-        <Text style={renderDay == day ? [styles(theme).buttonText, {color: 'white'}]: [styles(theme).buttonText, {color: 'black'}]}>
+        <Text
+          style={
+            renderDay == day
+              ? [styles(theme).buttonText, { color: 'white' }]
+              : [styles(theme).buttonText, { color: 'black' }]
+          }
+        >
           {abbrev}
         </Text>
-        {renderDay == day ? (<Badge size={8} style={{alignSelf:'center', backgroundColor: theme.text1}}></Badge>):null}
+        {renderDay == day ? (
+          <Badge size={8} style={{ alignSelf: 'center', backgroundColor: theme.text1 }}></Badge>
+        ) : null}
       </TouchableOpacity>
     );
   };
@@ -526,62 +534,57 @@ export default function Schedule({ route }) {
   return (
     <Provider>
       <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
-        <View>
-          <ActionSheetModal
-            isVisible={isModalVisible}
-            onBackdropPress={toggleModal}
-            onSwipeComplete={toggleModal}
-            toggleModal={toggleModal}
-            cancelButton={true}
-            height={win.height * 0.15}
+        <ActionSheetModal
+          isVisible={isModalVisible}
+          onBackdropPress={toggleModal}
+          onSwipeComplete={toggleModal}
+          toggleModal={toggleModal}
+          cancelButton={true}
+          height={win.height * 0.15}
+        >
+          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
+            <View
+              style={{
+                height: '100%',
+                width: '100%',
+                justifyContent: 'center',
+                borderBottomWidth: 1,
+                borderColor: '#cfcfcf',
+              }}
+            >
+              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (newMember == 'Select a Member') {
+                toggleModal();
+              } else {
+                toggleModal();
+                //editCell(editIndex.current, oldMember, newMember);
+                postEditCell.mutate({
+                  index: editIndex.current,
+                  oldMember: oldMember,
+                  newMember: newMember,
+                  groupCode: code,
+                });
+              }
+            }}
+            style={{ height: '50%', width: '100%' }}
           >
-            <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
-              <View
+            <View style={{ height: '100%', justifyContent: 'center' }}>
+              <Text
                 style={{
-                  height: '100%',
-                  width: '100%',
-                  justifyContent: 'center',
-                  borderBottomWidth: 1,
-                  borderColor: '#cfcfcf',
+                  textAlign: 'center',
+                  color: 'white',
+                  fontSize: 24,
+                  fontWeight: '500',
                 }}
               >
-                <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                if (newMember == 'Select a Member') {
-                  toggleModal();
-                } else {
-                  toggleModal();
-                  //editCell(editIndex.current, oldMember, newMember);
-                  postEditCell.mutate({
-                    index: editIndex.current,
-                    oldMember: oldMember,
-                    newMember: newMember,
-                    groupCode: code,
-                  });
-                }
-              }}
-              style={{ height: '50%', width: '100%' }}
-            >
-              <View style={{ height: '100%', justifyContent: 'center' }}>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    color: 'white',
-                    fontSize: 24,
-                    fontWeight: '500',
-                  }}
-                >
-                  Edit
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </ActionSheetModal>
-        </View>
-
-        <View>
+                Edit
+              </Text>
+            </View>
+          </TouchableOpacity>
           <BottomSheetModal
             isVisible={isMemberModalVisible}
             onBackdropPress={() => setMemberModalVisible(false)}
@@ -606,25 +609,23 @@ export default function Schedule({ route }) {
               </View>
             </View>
           </BottomSheetModal>
-        </View>
+        </ActionSheetModal>
 
-        <View>
-          <ConfirmationModal
-            toggleModal={toggleConfirmation}
-            body='Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
-            buttonText='Create New Schedule'
-            buttonAction={() => {
-              //toggleConfirmation();
-              postSchedule.mutate();
-              setSnackMessage('New Schedule Created');
-              toggleSnackBar();
-            }}
-            isVisible={isConfirmationVisible}
-            onBackdropPress={() => setConfirmationVisible(false)}
-            onSwipeComplete={toggleConfirmation}
-          />
-          {/* </Modal> */}
-        </View>
+        <ConfirmationModal
+          toggleModal={toggleConfirmation}
+          body='Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
+          buttonText='Create New Schedule'
+          buttonAction={() => {
+            //toggleConfirmation();
+            postSchedule.mutate();
+            setSnackMessage('New Schedule Created');
+            toggleSnackBar();
+          }}
+          isVisible={isConfirmationVisible}
+          onBackdropPress={() => setConfirmationVisible(false)}
+          onSwipeComplete={toggleConfirmation}
+        />
+        {/* </Modal> */}
 
         <View>
           <TouchableOpacity
@@ -664,22 +665,6 @@ export default function Schedule({ route }) {
             <DayButton day='Friday' abbrev='Fri' value={5} />
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
-
-  {/*         {weekDisplay == 'Current Week' ? (
-            <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
-
-              <TouchableOpacity
-              onPress={() => { 
-                toggleConfirmation();
-              }}
-              style = {{width:'100%'}}
-            >
-              <View style={[styles(theme).topEditBtn, { backgroundColor: '#c9c9c9' }]}>
-                <Text style={styles(theme).topEditBtnText}>Create New Schedule</Text>
-              </View>
-            </TouchableOpacity>
-            </View>
-          ) : null} */}
         </View>
         <View
           style={[
@@ -690,8 +675,7 @@ export default function Schedule({ route }) {
           <ScrollView
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-            ref = {scrollRef}
-            // contentContainerStyle={[styles(theme).shadowProp, {backgroundColor: theme.grey3, borderTopLeftRadius: 40, marginTop: 10, shadowRadius: 10}]}
+            ref={scrollRef}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
             <View style={{ flexDirection: 'row', marginTop: 20, marginRight: 0 }}>
@@ -735,7 +719,6 @@ export default function Schedule({ route }) {
   );
 }
 
-//const makeStyles = (fontScale) => StyleSheet.create({
 const styles = (theme) =>
   StyleSheet.create({
     bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1 }, //for the entire page's container
@@ -746,13 +729,6 @@ const styles = (theme) =>
       fontSize: 9,
       width: win.width * 0.1,
       textAlign: 'center',
-    },
-    tableShadow:{
-      shadowColor: '#171717',
-      shadowOffset: { width: 0, height: -5 },
-      shadowOpacity: 0.3,
-      shadowRadius: 15,
-      elevation: 5,
     },
     dayHighlight: {
       position: 'absolute',
@@ -795,42 +771,6 @@ const styles = (theme) =>
       fontSize: 16,
       fontWeight: '500',
     },
-    /* confirmationPop: {
-      //style for confirmations popups for editting and changing group schedule
-      width: '90%',
-      height: 175,
-      backgroundColor: '#1E3F66',
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      borderRadius: 20,
-      margin: 15,
-    },
-    confirmationHeader: {
-      //style for text at the top of the popup
-      fontWeight: '600',
-      color: theme.text1,
-      //height: 30,
-      //borderWidth:2,
-      textAlign: 'center',
-      fontSize: 18,
-    },
-    confirmationText: {
-      backgroundColor: '#2E5984',
-      color: theme.text1,
-      textAlign: 'center',
-      width: '90%',
-      padding: 5,
-      borderRadius: 15,
-    },
-    confirmationBottomBtn: {
-      color: 'white',
-      backgroundColor: 'black',
-      width: win.width * 0.5,
-      borderRadius: 8,
-      justifyContent: 'center',
-      height: 26,
-    }, */
     dayHeader: {
       //text for the header for the day
       marginTop: 20,

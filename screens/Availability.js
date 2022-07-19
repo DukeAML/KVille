@@ -254,58 +254,33 @@ export default function Availability({ route }) {
 
   return (
     <View style={styles(theme).container} onLayout={onLayoutRootView}>
-
       <ActionSheetModal
         isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
-
         height = {55}
         userStyle = 'light'
       >
-        <TouchableOpacity onPress={()=>deleteAvailability.mutate()}>
-          <View 
-          style = {{
-            width: '100%', 
+        <TouchableOpacity
+          onPress={() => deleteAvailability.mutate()}
+          style={{
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            }}
-          >
-            <Icon name={'trash-can-outline'} color={theme.error} size={26} />
-            <Text
-              style={{ textAlign: 'center', color: theme.error, fontSize: 26, fontWeight: '600', marginLeft: 10}}
-            >
-              Delete
-            </Text>
-          </View>
-          
+          }}
+        >
+          <Icon name={'trash-can-outline'} color={theme.error} size={26} />
+          <Text style={{ textAlign: 'center', color: theme.error, fontSize: 26, fontWeight: '600', marginLeft: 10 }}>
+            Delete
+          </Text>
         </TouchableOpacity>
       </ActionSheetModal>
-
-      {/* <Modal
-        isVisible={isDeleteModalVisible}
-        onBackdropPress={toggleDeleteModal}
-        style={styles(theme).deleteModalView}
-      >
-        <TouchableOpacity onPress={()=>deleteAvailability.mutate()}>
-          <View style = {styles(theme).deleteModal}>
-            <Icon name={'trash-can-outline'} color={theme.error} size={26} />
-            <Text
-              style={{ textAlign: 'center', color: theme.error, fontSize: 26, fontWeight: '600', marginLeft: 10}}
-            >
-              Delete
-            </Text>
-          </View>
-          
-        </TouchableOpacity>
-      </Modal> */}
 
       <BottomSheetModal
         isVisible={isModalVisible}
         onBackdropPress={toggleModal}
         onSwipeComplete={toggleModal}
         height='80%'
-        userStyle = 'dark'
+        userStyle='dark'
       >
         <Snackbar
           visible={isSnackVisible}
@@ -506,24 +481,20 @@ export default function Availability({ route }) {
           </TableWrapper>
         </Table>
       </ScrollView>
-      {/* <AnimatedFAB
-        icon={'plus'}
-        label={'New Busy Time'}
-        extended={isExtended}
-        onPress={toggleModal}
-        visible={true}
-        animateFrom={'right'}
-        iconMode={'static'}
-        backgroundColor = {theme.background}
-        style={[styles(theme).addContainer]}
-      /> */}
       <View style={styles(theme).addContainer}>
         <TouchableOpacity onPress={toggleModal}>
-          <View style = {{height: 50, width:50, backgroundColor: theme.background, borderRadius: 25, 
-            justifyContent: 'center', alignItems:'center'}}>
+          <View
+            style={{
+              height: 50,
+              width: 50,
+              backgroundColor: theme.background,
+              borderRadius: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
             <Icon name={'plus'} color={theme.text2} size={30} />
           </View>
-          
         </TouchableOpacity>
       </View>
     </View>
@@ -541,17 +512,6 @@ const styles = (theme) =>
     text: {
       textAlign: 'center',
     },
-/*     modalContainer: {
-      width: '100%',
-      height: '80%',
-      borderTopRightRadius: 30,
-      borderTopLeftRadius: 30,
-      alignItems: 'center',
-      alignSelf: 'center',
-      justifyContent: 'space-around',
-      backgroundColor: theme.greyModal, //theme.background,
-      //opacity: '95%'
-    }, */
     modalText: {
       fontSize: 18,
       color: theme.text1,
@@ -661,91 +621,3 @@ const styles = (theme) =>
       bottom: 15,
     },
   });
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
-
-{
-  /* <RNPickerSelect
-                onValueChange={(value) => setSelectedDay(value)}
-                placeholder={{ label: 'Select a day...', value: 7 }}
-                style={pickerSelectStyles}
-                items={[
-                  { label: 'Sunday', value: 0 },
-                  { label: 'Monday', value: 1 },
-                  { label: 'Tuesday', value: 2 },
-                  { label: 'Wednesday', value: 3 },
-                  { label: 'Thursday', value: 4 },
-                  { label: 'Friday', value: 5 },
-                  { label: 'Saturday', value: 6 },
-                ]}
-              /> */
-}
-
-    /*     modalHeader: {
-      //borderBottomWidth: 1,
-      borderBottomColor: 'white',
-      alignItems: 'center',
-      width: '100%',
-      height: '10%'
-    },
-    modalBar:{
-      height: 4,
-      marginTop: 8,
-      marginBottom: 8,
-      width: '22%',
-      borderRadius: 25,
-      backgroundColor: 'white', //theme.grey1,
-    }, 
-    headerText: {
-      fontSize: 24,
-      fontWeight: '600',
-      marginBottom: 5,
-      color: theme.text1,
-    },*/
-
-        /*     deleteModalView:{
-      margin: 0,
-      //position: 'absolute',
-      justifyContent: 'flex-end',
-    },
-    deleteModal: {
-      //margin: 0,
-      //position: 'absolute',
-      //justifyContent: 'flex-end',
-      alignSelf: 'center',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.grey4,
-      opacity: '100%',
-      shadowColor: '#171717',
-      shadowOffset: { width: 0, height: -5 },
-      shadowOpacity: 0.5,
-      shadowRadius: 20,
-      elevation: 5,
-      borderRadius: 20,
-      width: '90%',
-      height: 55,
-      bottom: 20,
-    }, */
