@@ -13,12 +13,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useSelector, useDispatch } from 'react-redux';
 import {
   setGroupName,
   setUserName,
@@ -39,9 +39,6 @@ export default function Settings({ route, navigation }) {
   const [tent, setTent] = useState(tentType);
   const dispatch = useDispatch();
   const { theme } = useTheme();
-
-  console.log('Settings route params', route.params);
-  //gets current user's group role from redux store
 
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);

@@ -13,13 +13,13 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Snackbar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { generateGroupCode } from '../backend/GroupCode';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   setCurrentUser,
   setGroupCode,
@@ -29,7 +29,6 @@ import {
   setGroupRole,
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-
 import coachKLogo from '../assets/coachKLogo.png';
 
 //length of the group code

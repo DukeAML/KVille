@@ -18,12 +18,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useDispatch } from 'react-redux';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
@@ -61,8 +61,6 @@ export default function Start({ navigation }) {
           code: group.groupCode,
           groupName: group.groupName,
         }));
-
-        //return [];
       })
       .catch((error) => {
         console.error(error);

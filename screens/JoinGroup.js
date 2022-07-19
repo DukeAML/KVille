@@ -11,12 +11,12 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useSelector, useDispatch } from 'react-redux';
 import {
   setCurrentUser,
   setGroupCode,
