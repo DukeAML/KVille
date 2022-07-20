@@ -198,13 +198,13 @@ export default function Availability({ route }) {
     toggleDeleteModal();
   };
 
-  const toggleModal = () => {
+  function toggleModal () {
     setModalVisible(!isModalVisible);
   };
-  const toggleDeleteModal = () => {
+  function toggleDeleteModal () {
     setDeleteModalVisible(!isDeleteModalVisible);
   };
-  const toggleSnackBar = () => {
+  function toggleSnackBar () {
     setSnackVisible(!isSnackVisible);
   };
 

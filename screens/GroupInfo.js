@@ -37,13 +37,13 @@ export default function GroupInfo({ route }) {
 
   const { theme } = useTheme();
 
-  const toggleModal = () => {
+  function toggleModal () {
     setModalVisible(!isModalVisible);
   };
-  const toggleConfirmation = () => {
+  function toggleConfirmation () {
     setConfirmationVisible(!isConfirmationVisible);
   };
-  const toggleRoleChange = () => {
+  function toggleRoleChange () {
     setRoleChangeVisible(!isRoleChangeVisible);
   };
 
