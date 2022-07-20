@@ -187,6 +187,8 @@ export default function Schedule({ route }) {
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
+    console.log(colorCodes.current)
+    console.log(indexofOld, indexofNew);
 
     // let oldHours;
     // let newHours;
@@ -277,9 +279,9 @@ export default function Schedule({ route }) {
     setSnackVisible(!isSnackVisible);
   }
 
-  function onFabStateChange ({ open }) {
+  function onFabStateChange({ open }) {
     setFabState({ open });
-  } 
+  }
 
   const TimeColumn = () => {
     //component for side table of 12am-12am time segments
@@ -548,10 +550,9 @@ export default function Schedule({ route }) {
                 toggleModal();
               } else {
                 toggleModal();
-                //editCell(editIndex.current, oldMember, newMember);
                 postEditCell.mutate({
                   index: editIndex.current,
-                  oldMember: oldMember,
+                  oldMember: oldMember.current,
                   newMember: newMember,
                   groupCode: code,
                 });
@@ -614,7 +615,7 @@ export default function Schedule({ route }) {
         />
         {/* </Modal> */}
 
-        <View>
+        <View style={{ zIndex: 1 }}>
           <TouchableOpacity
             onPress={() => {
               if (weekDisplay == 'Current Week') {
@@ -642,7 +643,7 @@ export default function Schedule({ route }) {
             </View>
           </TouchableOpacity>
 
-          <View style={styles(theme).buttonContainer}>
+          <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
             <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
             <DayButton day='Sunday' abbrev='Sun' value={0} />
             <DayButton day='Monday' abbrev='Mon' value={1} />
@@ -653,12 +654,7 @@ export default function Schedule({ route }) {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
-        <View
-          style={[
-            styles(theme).shadowProp,
-            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10, flex: 1 },
-          ]}
-        >
+        <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
@@ -711,7 +707,7 @@ export default function Schedule({ route }) {
 
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1, overflow: 'hidden' }, //for the entire page's container
+    bigContainer: { flex: 1, backgroundColor: '#D2D5DC', flexGrow: 1, overflow: 'hidden' }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
@@ -731,7 +727,9 @@ const styles = (theme) =>
       //container for the top buttons
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: '#00000000',
+      borderBottomRightRadius: 20,
+      borderBottomLeftRadius: 20,
+      backgroundColor: theme.background,
     },
     button: {
       //for the day buttons at top of screen
