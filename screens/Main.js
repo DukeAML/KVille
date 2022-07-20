@@ -34,6 +34,7 @@ import CountdownScreen from './Countdown';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
 import { BottomSheetModal } from '../component/BottomSheetModal';
+import { ActionSheetModal } from '../component/ActionSheetModal';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
@@ -321,22 +322,44 @@ export default function Main() {
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
 
-                <BottomSheetModal
+                <ActionSheetModal
                   isVisible = {isInfoVisible}
-                  onBackdropPress={() => setInfoVisible(false)}
-                  onSwipeComplete={toggleInfo}
-                  height = '45%'
-                  //userStyle = 'light'
+                  onBackdropPress={toggleInfo}
+                  swipeDown = {false}
+        
+                  height = {350}
+                  userStyle = {'light'}
                 >
-                  <BottomSheetModal.Header>How to use the Availability Page</BottomSheetModal.Header>
-                  <BottomSheetModal.SecondContainer>
-                      <ScrollView 
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <AvailabilityText/>
-                      </ScrollView>
-                  </BottomSheetModal.SecondContainer>
-                </BottomSheetModal>
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                      <View>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:17, fontWeight: '700'}}>How to use the Availability Page</Text>
+                      </View>
+                      
+                    </View>
+                    <TouchableOpacity onPress={toggleInfo}>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    style={styles(theme).textView}
+                  >
+                    <AvailabilityText/>
+                  </ScrollView>
+                  
+                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity 
+                      onPress={toggleInfo} 
+                      style = {styles(theme).closeBtn}
+                    >
+                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ActionSheetModal>
               </View>
             ),
           })}
@@ -369,21 +392,44 @@ export default function Main() {
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
 
-                <BottomSheetModal
-                  isVisible = {isScheduleInfoVisible}
-                  onBackdropPress={() => setScheduleInfoVisible(false)}
-                  onSwipeComplete={toggleScheduleInfo}
-                  height = '45%'
+                <ActionSheetModal
+                  isVisible={isScheduleInfoVisible}
+                  onBackdropPress={toggleScheduleInfo}
+                  swipeDown = {false}
+        
+                  height = {350}
+                  userStyle = {'light'}
                 >
-                  <BottomSheetModal.Header>How to use the Schedule Page</BottomSheetModal.Header>
-                  <BottomSheetModal.SecondContainer>
-                      <ScrollView 
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <ScheduleText/>
-                      </ScrollView>
-                  </BottomSheetModal.SecondContainer>
-                </BottomSheetModal>
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                      <View>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:18, fontWeight: '700'}}>How to use the Schedule Page</Text>
+                      </View>
+                      
+                    </View>
+                    <TouchableOpacity onPress={toggleScheduleInfo}>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    style={styles(theme).textView}
+                  >
+                    <ScheduleText/>
+                  </ScrollView>
+                  
+                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity 
+                      onPress={toggleScheduleInfo} 
+                      style = {styles(theme).closeBtn}
+                    >
+                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ActionSheetModal>
               </View>
             ),
           })}
@@ -470,12 +516,37 @@ export default function Main() {
 }
 
 const styles = (theme) => StyleSheet.create({
+  popUpHeaderView:{ //view of the header of the info popup modal
+    flexDirection: 'row',
+    height: '18%',
+    width: '94%',
+    marginTop: '2%',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  textView: {
+    height:'67%', 
+    width: '94%', 
+    backgroundColor: '#f3f3f3',
+    //borderWidth: 1, 
+    borderRadius: 18, 
+    paddingVertical: 10, 
+    paddingHorizontal: 15
+  },
   InfoText: {
-    //backgroundColor: '#2E5984',
-    color:'white', //theme.text2,
+    color: theme.text2,
     marginVertical: 5,
     textAlign: 'left',
     fontSize: 16,
   }, 
+  closeBtn:{ //remove button for removing member if the user is the Creator
+    flexDirection:'row', 
+    height: '70%',
+    width: '70%',
+    backgroundColor: '#3B65A2', 
+    alignItems:'center',
+    justifyContent: 'center', 
+    borderRadius: 15
+  },
 });
 
