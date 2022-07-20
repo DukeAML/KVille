@@ -89,7 +89,7 @@ export async function createGroupSchedule(groupCode, tentType) {
       return collSnap;
     })
     .then((collSnap) => { //promise to make sure all members are added before trying to read them
-
+      
       //console.log("tent type", tentType, numDay, numNight);
 
       //** FOR LOOP TO CREATE GROUP SCHEDULE
@@ -101,7 +101,8 @@ export async function createGroupSchedule(groupCode, tentType) {
         //night time (starts at 1am-7am), so index 2 to 13
         if (time % 48 == 2) { //if night time, add the entire section as a block
 
-          sortMembers(time); //sorts so lowest hours and available members go first
+          sortMembers(time, memberArr); //sorts so lowest hours and available members go first
+          console.log('memberArr', memberArr);
 
           if (prevMember1.availability[time]) {
             let idxOfUsr = memberArr.findIndex((element) => element == prevMember1);
@@ -129,13 +130,12 @@ export async function createGroupSchedule(groupCode, tentType) {
               if (memberIdx == 0 && memberArr[0].availability[time]) { 
                 groupScheduleArr[nightHour + time] = memberArr[0].name + " ";
                 memberArr[0].hours++;
-              } else if (memberArr[memberIdx].availability[time]) { //for each next member, if available add to group schedule array
+              } else if (memberIdx < memberArr.length && memberArr[memberIdx].availability[time]) { //for each next member, if available add to group schedule array
                 groupScheduleArr[nightHour + time] +=
                   memberArr[memberIdx].name + " ";
                 memberArr[memberIdx].hours++;
               } else { //otherwise, input empty to that empty spot
-                if (memberIdx == numNight-1) groupScheduleArr[nightHour + time] += "empty";
-                else groupScheduleArr[nightHour + time] += "empty ";
+                groupScheduleArr[nightHour + time] += "empty ";
               }
             }
           }
@@ -158,7 +158,7 @@ export async function createGroupSchedule(groupCode, tentType) {
             prevMember1.consecutive++;
           } else {
             prevMember1.consecutive = 0;
-            sortMembers(time); //sort array by total hours and availability
+            sortMembers(time, memberArr); //sort array by total hours and availability
 
             if (numDay == 2 && memberArr[0] == prevMember2) {
               if (memberArr[1].availability[time]) {
@@ -197,7 +197,7 @@ export async function createGroupSchedule(groupCode, tentType) {
               prevMember2.consecutive++;
             } else {
               prevMember2.consecutive = 0;
-              sortMembers(time); //sort array by total hours and availability
+              sortMembers(time, memberArr); //sort array by total hours and availability
               ////console.log("members array", memberArr);
               if (memberArr[0] == prevMember1) {
                 if (memberArr[1].availability[time]) {
@@ -230,7 +230,7 @@ export async function createGroupSchedule(groupCode, tentType) {
           //might need to set prevMember2.consecutive, if tenttype is black
         }
 
-        sortMembers(time); //sort array by total hours and availability
+        sortMembers(time, memberArr); //sort array by total hours and availability
         ////console.log("members array", memberArr);
         if (memberArr[0].availability[time]) { //if first index is available, add to current block in group schedule
           groupScheduleArr[time] = memberArr[0].name;
@@ -317,9 +317,9 @@ export async function createGroupSchedule(groupCode, tentType) {
 
   //sorts member array by total hours in ascending order
   //then sorts by availibility, people who are availible go first
-  function sortMembers(idx) {
-    memberArr.sort((a, b) => a.hours - b.hours);
-    memberArr.sort(
+  function sortMembers(idx, array) {
+    array.sort((a, b) => a.hours - b.hours);
+    array.sort(
       (a, b) => Number(b.availability[idx]) - Number(a.availability[idx])
     );
   }
