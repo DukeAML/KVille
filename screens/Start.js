@@ -23,12 +23,13 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
@@ -186,7 +187,7 @@ export default function Start({ navigation }) {
   }, [isLoading]);
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
   if (isError) {
     console.error(error);

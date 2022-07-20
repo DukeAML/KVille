@@ -34,6 +34,7 @@ import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -187,8 +188,6 @@ export default function Schedule({ route }) {
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
-    console.log(colorCodes.current)
-    console.log(indexofOld, indexofNew);
 
     // let oldHours;
     // let newHours;
@@ -450,7 +449,7 @@ export default function Schedule({ route }) {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 31, width: '93%' }}>
+      <View style={{ marginTop: 31, width: '90%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -512,7 +511,7 @@ export default function Schedule({ route }) {
   }, [isLoading]);
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
 
   if (isError) {
@@ -660,10 +659,10 @@ export default function Schedule({ route }) {
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
             contentContainerStyle={{ paddingBottom: 30 }}
-            style={{ width: '100%' /* , borderWidth:1 */ }}
+            style={{ width: '100%'}}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
-            <View style={{ flexDirection: 'row', marginTop: 20, width: '100%', marginRight: 0 }}>
+            <View style={{ flexDirection: 'row', marginTop: 10, width: '100%', }}>
               <TimeColumn />
               <DailyTable day={renderDay} />
             </View>
@@ -707,7 +706,12 @@ export default function Schedule({ route }) {
 
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: '#D2D5DC', flexGrow: 1, overflow: 'hidden' }, //for the entire page's container
+    bigContainer: {
+      flex: 1,
+      backgroundColor: '#D2D5DC',
+      flexGrow: 1,
+      overflow: 'hidden',
+    }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times

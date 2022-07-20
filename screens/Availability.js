@@ -25,6 +25,7 @@ import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
@@ -232,7 +233,7 @@ export default function Availability({ route }) {
   }, [isLoading]);
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
 
   if (isError) {

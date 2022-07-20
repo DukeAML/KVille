@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { Divider } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -14,7 +15,7 @@ import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
-import { Divider } from 'react-native-paper';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 /* let currentUserName;
 
@@ -304,7 +305,7 @@ export default function GroupInfo({ route }) {
   };
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
   if (isError) {
     console.error(error);
