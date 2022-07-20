@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar} from 'react-native-paper';
@@ -24,11 +23,8 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
-
-
 
 const window = Dimensions.get('window');
 
@@ -61,13 +57,11 @@ export default function Availability({ route }) {
   const { groupCode } = route.params;
   //console.log('availability params', route.params);
 
-  const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  //const [isExtended, setIsExtended] = useState(true);
   const [selectedDay, setSelectedDay] = useState(7);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -81,12 +75,6 @@ export default function Availability({ route }) {
   });
   const { theme } = useTheme();
 
-  /* const onScroll = ({ nativeEvent }) => {
-    const currentScrollPosition =
-      Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
-
-    setIsExtended(currentScrollPosition <= 0);
-  }; */
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['availability', firebase.auth().currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)

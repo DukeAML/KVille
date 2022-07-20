@@ -12,23 +12,23 @@ import {
 } from 'react-native';
 //import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
 import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useDispatch } from 'react-redux';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 
 const window = Dimensions.get('window');
 
@@ -61,8 +61,6 @@ export default function Start({ navigation }) {
           code: group.groupCode,
           groupName: group.groupName,
         }));
-
-        //return [];
       })
       .catch((error) => {
         console.error(error);

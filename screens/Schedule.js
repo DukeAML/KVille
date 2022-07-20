@@ -12,10 +12,10 @@ import {
   RefreshControl,
   LayoutAnimation,
   UIManager,
+  SafeAreaView,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
-import Modal from 'react-native-modal';
 import { Snackbar, Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFocusEffect } from '@react-navigation/native';
@@ -31,7 +31,6 @@ import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
@@ -51,10 +50,6 @@ const times = [ //Times for right column of the list of times of the day
 //prettier-ignore
 const colors = ['#D0342C','#dd7e6b','#ea9999','#f9cb9c','#ffe599','#b6d7a8','#a2c4c9','#a4c2f4','#fed9c9','#b4a7d6','#d5a6bd','#e69138','#6aa84f',];
 
-// let colorCodes = [
-//   //Array for color corresponding to each member
-//   { id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 },
-// ];
 let prevColorCodes;
 let prevSchedule = new Array();
 
@@ -64,38 +59,26 @@ export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
   //console.log('Schedule screen params', route.params);
 
-  const { theme } = useTheme();
-
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
   const [isSnackVisible, setSnackVisible] = useState(false); // for temporary popup
   const [snackMessage, setSnackMessage] = useState(''); //message for the temporary popup
-  const [fabState, setFabState] = React.useState({ open: false });
-
-  const onFabStateChange = ({ open }) => setFabState({ open });
-
-  const { open } = fabState;
-
-  //Hooks and data for changing between the current weeks schedule and the previous one
+  const [fabState, setFabState] = useState({ open: false });
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
-  let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
   const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
-
-  //These Hooks are for editing the group schedule
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
-  //const [oldMember, setOldMember] = useState(''); //to store which member is being replaced
+
   const oldMember = useRef('');
   const editIndex = useRef(0);
-
-  const dayHighlightOffset = useSharedValue(0);
-
   const newSchedule = useRef([]);
-
   const scrollRef = useRef([]);
   const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
-  /* const window = useWindowDimensions();
-  const styles= makeStyles(window.fontScale); */
+
+  const { theme } = useTheme();
+  const dayHighlightOffset = useSharedValue(0);
+  const { open } = fabState;
+  let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
 
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, code, weekDisplay],
@@ -204,6 +187,8 @@ export default function Schedule({ route }) {
     currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
     const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
+    console.log(colorCodes.current)
+    console.log(indexofOld, indexofNew);
 
     // let oldHours;
     // let newHours;
@@ -274,30 +259,34 @@ export default function Schedule({ route }) {
     });
   }
 
-  function toggleModal () {
+  function toggleModal() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
     //to toggle the edit cell popup
     setModalVisible(!isModalVisible);
-  };
+  }
 
-  function toggleMemberModal () {
+  function toggleMemberModal() {
     //to toggle the popup for the member list
     setMemberModalVisible(!isMemberModalVisible);
-  };
+  }
 
-  function toggleConfirmation () {
+  function toggleConfirmation() {
     //to toggle the popup for the edit confirmation
     setConfirmationVisible(!isConfirmationVisible);
-  };
+  }
 
-  function toggleSnackBar () {
+  function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
-  };
+  }
+
+  function onFabStateChange({ open }) {
+    setFabState({ open });
+  }
 
   const TimeColumn = () => {
     //component for side table of 12am-12am time segments
     return (
-      <Table style = {{width:'7%'}}>
+      <Table style={{ width: '7%' }}>
         <Col
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
@@ -461,7 +450,7 @@ export default function Schedule({ route }) {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 31, width:'93%' }}>
+      <View style={{ marginTop: 31, width: '93%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -561,10 +550,9 @@ export default function Schedule({ route }) {
                 toggleModal();
               } else {
                 toggleModal();
-                //editCell(editIndex.current, oldMember, newMember);
                 postEditCell.mutate({
                   index: editIndex.current,
-                  oldMember: oldMember,
+                  oldMember: oldMember.current,
                   newMember: newMember,
                   groupCode: code,
                 });
@@ -627,7 +615,7 @@ export default function Schedule({ route }) {
         />
         {/* </Modal> */}
 
-        <View>
+        <View style={{ zIndex: 1 }}>
           <TouchableOpacity
             onPress={() => {
               if (weekDisplay == 'Current Week') {
@@ -655,7 +643,7 @@ export default function Schedule({ route }) {
             </View>
           </TouchableOpacity>
 
-          <View style={styles(theme).buttonContainer}>
+          <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
             <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
             <DayButton day='Sunday' abbrev='Sun' value={0} />
             <DayButton day='Monday' abbrev='Mon' value={1} />
@@ -666,21 +654,17 @@ export default function Schedule({ route }) {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
-        <View
-          style={[
-            styles(theme).shadowProp,
-            { backgroundColor: '#D2D5DC', borderTopLeftRadius: 20, marginTop: 10, shadowRadius: 10 },
-          ]}
-        >
+        <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
-            style = {{width: '100%'/* , borderWidth:1 */}}
+            contentContainerStyle={{ paddingBottom: 30 }}
+            style={{ width: '100%' /* , borderWidth:1 */ }}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
             <View style={{ flexDirection: 'row', marginTop: 20, width: '100%', marginRight: 0 }}>
-              <TimeColumn/>
+              <TimeColumn />
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
@@ -689,6 +673,7 @@ export default function Schedule({ route }) {
           <FAB.Group
             open={open}
             icon={'plus'}
+            style={{ position: 'absolute' }}
             fabStyle={{ backgroundColor: '#9FA6B7' }}
             actions={[
               {
@@ -722,7 +707,7 @@ export default function Schedule({ route }) {
 
 const styles = (theme) =>
   StyleSheet.create({
-    bigContainer: { flex: 1, backgroundColor: theme.background, flexGrow: 1 }, //for the entire page's container
+    bigContainer: { flex: 1, backgroundColor: '#D2D5DC', flexGrow: 1, overflow: 'hidden' }, //for the entire page's container
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
@@ -742,7 +727,9 @@ const styles = (theme) =>
       //container for the top buttons
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: '#00000000',
+      borderBottomRightRadius: 20,
+      borderBottomLeftRadius: 20,
+      backgroundColor: theme.background,
     },
     button: {
       //for the day buttons at top of screen
@@ -813,16 +800,6 @@ const styles = (theme) =>
       shadowOpacity: 0.4,
       shadowRadius: 3,
     },
-/*     deletePopup: {
-      //style for the bottom screen popup for editing a cell
-      alignSelf: 'center',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      marginTop: win.height * 0.83,
-      width: win.width,
-      height: win.height * 0.17,
-      backgroundColor: theme.background,
-    }, */
     fabStyle: {
       bottom: 16,
       right: win.width * 0.02,

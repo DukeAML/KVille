@@ -38,7 +38,7 @@ export default function Register(props) {
     return () => subscription?.remove();
   });
 
-  const onRegister = () => {
+  function onRegister () {
     if (username.length == 0 || email.length == 0 || password.length == 0) {
       setIsValid({
         bool: true,
