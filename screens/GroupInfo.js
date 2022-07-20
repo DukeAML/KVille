@@ -57,6 +57,8 @@ export default function GroupInfo({ route }) {
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
+
+  //Function for gathering member information from database
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
@@ -148,6 +150,7 @@ export default function GroupInfo({ route }) {
     });
   }
 
+  //Function for removing a member from group in firebase
   const removeMember = async (groupCode) => {
     console.log('current member being deleted', currMember.current.id);
     firebase
@@ -251,10 +254,9 @@ export default function GroupInfo({ route }) {
       </TouchableOpacity>
     );
   };
+
   //Render Item for Each List Item of group members
   const Member = ({ name, id, hours, role, backgroundColor }) => {
-    //const indexOfUser = data.findIndex((member) => member.id === id);
-    //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -331,6 +333,7 @@ export default function GroupInfo({ route }) {
         </Text>
       </View>
 
+      {/* List of Members in Group*/}
       <FlatList
         data={data}
         renderItem={renderMember}
@@ -341,6 +344,7 @@ export default function GroupInfo({ route }) {
       ></FlatList>
 
       <View>
+        {/*Member Information Modal Component*/}
         <ActionSheetModal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
@@ -441,7 +445,7 @@ export default function GroupInfo({ route }) {
       ): null}
 
       
-
+      {/* Remove Member Confirmation Modal */}
       <ConfirmationModal
         body={"Are you sure you want to REMOVE " + currMember.current.name + " from the group? This action CANNOT be undone."}
         buttonText={'Remove ' + currMember.current.name}
