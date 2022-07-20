@@ -3,7 +3,7 @@ name: Bug report
 about: Description of bug
 title: ''
 labels: bug
-assignees: alvin-hong, kevinfu1
+assignees: ''
 
 ---
 
