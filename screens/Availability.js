@@ -267,8 +267,10 @@ export default function Availability({ route }) {
       <BottomSheetModal
         isVisible={isModalVisible}
         onBackdropPress={toggleModal}
-        onSwipeComplete={toggleModal}
-        height='80%'
+        //onSwipeComplete={toggleModal}
+        swipeDown = {false}
+        barSize = {'none'}
+        height='75%'
         userStyle='dark'
       >
         <Snackbar
@@ -305,7 +307,7 @@ export default function Availability({ route }) {
               <Picker.Item label='Saturday' value={6} />
             </Picker>
           </View>
-
+              
           <View style={styles(theme).selectTime}>
             <Text style={styles(theme).modalText}>Start Time: </Text>
             <View style={styles(theme).timePickerBody}>
@@ -423,8 +425,8 @@ export default function Availability({ route }) {
         <Row
           data={agenda.tableHead}
           style={StyleSheet.flatten(styles(theme).head)}
-          widthArr = {[dimensions.window.width/15, dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), 
-            dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15)]}
+          widthArr = {[dimensions.window.width/12, dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), 
+            dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84)]}
           textStyle={{ textAlign: 'center', fontWeight: '700' }}
         />
       </Table>
@@ -438,14 +440,12 @@ export default function Availability({ route }) {
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
       >
         <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent'}} style={{ flexDirection: 'row' }}>
-          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 15, marginTop:30/* , borderWidth:1 */}])}>
+          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 12, marginTop:34, alignItems: 'center'/* , borderWidth:1 */}])}>
             <Col
               data={agenda.tableTime}
               //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
               heightArr = {new Array(23).fill(cellHeight*2)}
-              //style={StyleSheet.flatten(styles(theme).time)}
-              //style={{alignSelf: 'center'}}
-              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 12, width: '100%', color: '#717573'/* , borderWidth:1, */ }}
+              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 10, width: '70%', color: '#717573', marginLeft: 2/* , borderWidth:1, */ }}
             />
           </TableWrapper>
 
@@ -462,7 +462,7 @@ export default function Availability({ route }) {
                     data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
                     //{data[48 * cellIndex + index].toString()}
 
-                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(2/15) }])}
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(11/84) }])}
                   />
                 ))}
               </TableWrapper>
@@ -495,7 +495,7 @@ const styles = (theme) =>
     container: {
       flex: 1,
       padding: 0,
-      //backgroundColor: theme.background,
+      //backgroundColor: '#D2D5DC',
       backgroundColor :  '#f5f5f5'
     },
     text: {
@@ -557,12 +557,10 @@ const styles = (theme) =>
       color: theme.text1,
       fontSize: 24,
       fontWeight: '600',
-      //textAlign: 'center',
     },
     head: {
       backgroundColor: theme.background,
       height: 35,
-      //borderWidth:1,
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,
 
@@ -574,10 +572,10 @@ const styles = (theme) =>
     },
     row: {
       height: cellHeight,
-      //backgroundColor: theme.grey3,
       flexDirection: 'row',
       borderBottomWidth:1,
       borderColor: '#cfcfcf',
+      //borderColor: '#a7aebe',
     },
     cell: {
       height: cellHeight,
@@ -586,6 +584,7 @@ const styles = (theme) =>
       alignItems: 'center',
       borderRightWidth: 1,
       borderColor: '#cfcfcf',
+      //borderColor: '#a7aebe',
       margin: 0,
     },
     btn: {
@@ -602,10 +601,6 @@ const styles = (theme) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      /* height: 50,
-      width: 50,
-      //borderRadius: 25, */
-      //backgroundColor: theme.background,
       right: 25,
       bottom: 15,
     },
