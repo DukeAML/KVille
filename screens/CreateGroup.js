@@ -156,33 +156,16 @@ export default function CreateGroup({ navigation }) {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
         <View style={styles(theme).groupContainer}>
-          {/* <View style={styles(theme).topBanner}>
-            <TouchableOpacity
-              onPress={() => {
-                onCreateGroup();
-                //navigation.navigate("GroupNavigator");
-                console.log(group.groupCode);
-                console.log(groupRole);
-              }}
-            >
-              <View>
-                <Text
-                  style={[
-                    styles(theme).groupText,
-                    {
-                      fontSize: 24,
-                      fontWeight: '700',
-                      color: theme.primary,
-                      width: '100%',
-                      //borderWidth: 2
-                    },
-                  ]}
-                >
-                  Create
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View> */}
+          <TouchableOpacity
+            style={{alignSelf:'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20}}
+            onPress={() => {
+              onCreateGroup();
+              console.log(group.groupCode);
+              console.log(groupRole);
+            }}
+          >
+          <Text style={styles(theme).btnTxt}>Create</Text>
+        </TouchableOpacity>
 
           <View style={{ width: '90%' }}>
             <Text style={styles(theme).headerText}>Group Name</Text>
@@ -258,18 +241,9 @@ export default function CreateGroup({ navigation }) {
               })
             }
           />
-          <TouchableOpacity
-            onPress={() => {
-              onCreateGroup();
-              console.log(group.groupCode);
-              console.log(groupRole);
-            }}
-            style={styles(theme).createBtn}
-          >
-            <Text style={styles(theme).btnTxt}>Create</Text>
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
       <View
         style={{
           /* position: "absolute",
@@ -306,6 +280,7 @@ export default function CreateGroup({ navigation }) {
           }}
         ></View>
       </View>
+      
       <Snackbar
         visible={isSnackVisible}
         onDismiss={() => setSnackVisible(false)}
@@ -389,17 +364,17 @@ const styles = (theme) =>
     pickerItem: {
       height: '100%',
     },
-    createBtn: {
+/*     createBtn: {
       backgroundColor: theme.primary,
       padding: 15,
       borderRadius: 30,
       marginTop: 30,
       width: '50%',
-    },
+    }, */
     btnTxt: {
-      fontSize: 20,
-      color: theme.text1,
-      textAlign: 'center',
+      fontSize: 24,
+      color: theme.primary,
+      fontWeight: '700',
     },
     triangle: {
       //position: "relative",

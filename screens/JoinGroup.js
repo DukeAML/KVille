@@ -154,6 +154,14 @@ export default function JoinGroup({ navigation }) {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
         <View style={styles(theme).container}>
+          <TouchableOpacity
+              style={{alignSelf:'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20}}
+              onPress={() => {
+                onJoinGroup(navigation);
+              }}
+            >
+            <Text style={styles(theme).buttonText}>Join</Text>
+          </TouchableOpacity>
           <View
             style={{
               flexDirection: 'row',
@@ -187,7 +195,7 @@ export default function JoinGroup({ navigation }) {
             style={[styles(theme).textInput, styles(theme).shadowProp]}
             value={name}
             placeholder={name}
-            maxLength={11}
+            maxLength={11} //Maximize username length to 11 characters
             onChangeText={(name) =>
               setName(
                 name
@@ -198,14 +206,7 @@ export default function JoinGroup({ navigation }) {
               )
             }
           />
-          <TouchableOpacity
-            style={styles(theme).button}
-            onPress={() => {
-              onJoinGroup(navigation);
-            }}
-          >
-            <Text style={styles(theme).buttonText}>Join</Text>
-          </TouchableOpacity>
+
         </View>
       </KeyboardAvoidingView>
       <View
@@ -291,9 +292,10 @@ const styles = (theme) =>
       width: '50%',
     },
     buttonText: {
-      fontSize: 20,
-      color: theme.text1,
-      textAlign: 'center',
+      fontSize: 24,
+      color: theme.primary,
+      fontWeight: '700',
+      //textAlign: 'center',
     },
     shadowProp: {
       //shadow for the text input and image
