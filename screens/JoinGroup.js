@@ -116,7 +116,7 @@ export default function JoinGroup({ navigation }) {
         });
         //adds current user to member list
         await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
-          groupRole: 'member',
+          groupRole: 'Member',
           name: name,
           inTent: false,
           availability: availability,
