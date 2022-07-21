@@ -91,15 +91,15 @@ export default function Start({ navigation }) {
   const EmptyGroup = () => {
     return (
       <View
-        style={isLoading ? [
+        style={!isLoading ? [
           styles(theme).listItem,
           styles(theme).shadowProp,
           { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
         ]: null}
       >
         
-        {isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
-        {isLoading ? <View style={{ flexDirection: 'column' }}>
+        {!isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
+        {!isLoading ? <View style={{ flexDirection: 'column' }}>
           <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
           <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
         </View> : null}

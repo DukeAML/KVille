@@ -79,7 +79,6 @@ export default function Schedule({ route }) {
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
   const { open } = fabState;
-  let myBtnColor = weekDisplay == 'Current Week' ? '#bfd4db' : '#96b9d0';
 
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, code, weekDisplay],
@@ -280,6 +279,17 @@ export default function Schedule({ route }) {
 
   function onFabStateChange({ open }) {
     setFabState({ open });
+  }
+
+  function toggleWeek() {
+    if (weekDisplay == 'Current Week') {
+      console.log('showing previous week', weekDisplay);
+      setWeekDisplay('Previous Week');
+    } else {
+      console.log('showing current week');
+      setWeekDisplay('Current Week');
+    }
+    refetch();
   }
 
   const TimeColumn = () => {
@@ -612,36 +622,8 @@ export default function Schedule({ route }) {
           onBackdropPress={() => setConfirmationVisible(false)}
           onSwipeComplete={toggleConfirmation}
         />
-        {/* </Modal> */}
 
         <View style={{ zIndex: 1 }}>
-          <TouchableOpacity
-            onPress={() => {
-              if (weekDisplay == 'Current Week') {
-                console.log('showing previous week', weekDisplay);
-                setWeekDisplay('Previous Week');
-                console.log(weekDisplay);
-                refetch();
-              } else {
-                console.log('showing current week');
-                setWeekDisplay('Current Week');
-                refetch();
-              }
-            }}
-          >
-            <View
-              style={{
-                height: 28,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: myBtnColor,
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: '500' }}>{weekDisplay}</Text>
-            </View>
-          </TouchableOpacity>
-
           <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
             <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
             <DayButton day='Sunday' abbrev='Sun' value={0} />
@@ -659,10 +641,10 @@ export default function Schedule({ route }) {
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             ref={scrollRef}
             contentContainerStyle={{ paddingBottom: 30 }}
-            style={{ width: '100%'}}
+            style={{ width: '100%' }}
           >
             {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
-            <View style={{ flexDirection: 'row', marginTop: 10, width: '100%', }}>
+            <View style={{ flexDirection: 'row', marginTop: 10, width: '100%' }}>
               <TimeColumn />
               <DailyTable day={renderDay} />
             </View>
@@ -675,6 +657,11 @@ export default function Schedule({ route }) {
             style={{ position: 'absolute' }}
             fabStyle={{ backgroundColor: '#9FA6B7' }}
             actions={[
+              {
+                icon: 'toggle-switch-outline',
+                label: weekDisplay,
+                onPress: () => toggleWeek(),
+              },
               {
                 icon: 'calendar',
                 label: 'Create New Schedule',
