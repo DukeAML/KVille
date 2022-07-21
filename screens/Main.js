@@ -14,10 +14,11 @@ import { Linking, Platform } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
-/* import Modal from "../component/Modal.js";
-import ModalHeader from "../component/Modal.js";
-import ModalBody from "../component/Modal.js"; */
-import Modal from 'react-native-modal';
+import { useDispatch } from 'react-redux';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 import StartScreen from './Start';
 import CreateGroupScreen from './CreateGroup';
@@ -30,20 +31,13 @@ import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import SettingScreen from './Settings';
 import CountdownScreen from './Countdown';
-
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-import { useDispatch } from 'react-redux';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
-
 import { BottomSheetModal } from '../component/BottomSheetModal';
+import { ActionSheetModal } from '../component/ActionSheetModal';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
-
 
 export default function Main() {
   //uncomment this to reset redux states
@@ -55,13 +49,11 @@ export default function Main() {
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   const { theme } = useTheme();
 
-  //const [typeOfHelp, setTypeOfHelp] = useState('Availability');
-
-  const toggleInfo = () => {
+  function toggleInfo () {
     setInfoVisible(!isInfoVisible);
   };
 
-  const toggleScheduleInfo = () => {
+  function toggleScheduleInfo () {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
   
@@ -126,45 +118,6 @@ export default function Main() {
       </Text>
     </View>
   );
-
-  // const InformationModal = () => {
-  //   console.log('infoModal rendered:', typeOfHelp);
-  //   return (
-  //     <View>
-  //       <Modal
-  //         //isVisible = {(typeOfHelp== 'Availability') ? isInfoVisible: isScheduleInfoVisible}
-  //         isVisible={isInfoVisible}
-  //         onBackdropPress={() => setInfoVisible(false)}
-  //         /* onBackdropPress={() => {
-  //           if (typeOfHelp == 'Availability') setInfoVisible(false);
-  //           else setScheduleInfoVisible(false);
-  //         }} */
-  //       >
-  //         <View style={styles(theme).InfoPop}>
-  //           {typeOfHelp == 'Availability' ? (
-  //             <Text style={styles(theme).InfoHeader}>
-  //               How to Use the Availability Page
-  //             </Text>
-  //           ) : (
-  //             <Text style={styles(theme).InfoHeader}>
-  //               How to Use the Schedule Page
-  //             </Text>
-  //           )}
-  //           <ScrollView
-  //             style={styles(theme).InfoTextView}
-  //             showsVerticalScrollIndicator={false}
-  //           >
-  //             {typeOfHelp == 'Availability' ? (
-  //               <AvailabilityText />
-  //             ) : (
-  //               <ScheduleText />
-  //             )}
-  //           </ScrollView>
-  //         </View>
-  //       </Modal>
-  //     </View>
-  //   );
-  // };
 
   const dispatch = useDispatch();
 
@@ -369,40 +322,44 @@ export default function Main() {
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
 
-                <BottomSheetModal
+                <ActionSheetModal
                   isVisible = {isInfoVisible}
-                  onBackdropPress={() => setInfoVisible(false)}
-                  onSwipeComplete={toggleInfo}
-                  height = '45%'
-                  //userStyle = 'light'
+                  onBackdropPress={toggleInfo}
+                  swipeDown = {false}
+        
+                  height = {350}
+                  userStyle = {'light'}
                 >
-                  <BottomSheetModal.Header>How to use the Availability Page</BottomSheetModal.Header>
-                  <BottomSheetModal.SecondContainer>
-                      <ScrollView 
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <AvailabilityText/>
-                      </ScrollView>
-                  </BottomSheetModal.SecondContainer>
-                </BottomSheetModal>
-                 {/* <Modal
-                    isVisible = {isInfoVisible}
-                    onBackdropPress={() => setInfoVisible(false)}
-                    style={styles(theme).BottomModalView}
-                    onSwipeComplete={toggleInfo}
-                    swipeDirection={['down']}
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                      <View>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:17, fontWeight: '700'}}>How to use the Availability Page</Text>
+                      </View>
+                      
+                    </View>
+                    <TouchableOpacity onPress={toggleInfo}>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    style={styles(theme).textView}
                   >
-                    <View style={styles(theme).InfoPop}>
-                      <View style={styles(theme).modalBar}></View>
-                      <Text style={styles(theme).InfoHeader}>How to use the Availability Page</Text>
-                      <ScrollView 
-                        style = {styles(theme).InfoTextView}
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <AvailabilityText/>
-                      </ScrollView>
-                    </View>                    
-                  </Modal> */}
+                    <AvailabilityText/>
+                  </ScrollView>
+                  
+                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity 
+                      onPress={toggleInfo} 
+                      style = {styles(theme).closeBtn}
+                    >
+                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ActionSheetModal>
               </View>
             ),
           })}
@@ -435,39 +392,44 @@ export default function Main() {
                   <Icon name='help-circle-outline' color={'black'} size={30} />
                 </TouchableOpacity>
 
-                <BottomSheetModal
-                  isVisible = {isScheduleInfoVisible}
-                  onBackdropPress={() => setScheduleInfoVisible(false)}
-                  onSwipeComplete={toggleScheduleInfo}
-                  height = '45%'
+                <ActionSheetModal
+                  isVisible={isScheduleInfoVisible}
+                  onBackdropPress={toggleScheduleInfo}
+                  swipeDown = {false}
+        
+                  height = {350}
+                  userStyle = {'light'}
                 >
-                  <BottomSheetModal.Header>How to use the Schedule Page</BottomSheetModal.Header>
-                  <BottomSheetModal.SecondContainer>
-                      <ScrollView 
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <ScheduleText/>
-                      </ScrollView>
-                  </BottomSheetModal.SecondContainer>
-                </BottomSheetModal>
-                {/* <Modal
-                  isVisible = {isScheduleInfoVisible}
-                  onBackdropPress={() => setScheduleInfoVisible(false)}
-                  style={styles(theme).BottomModalView}
-                  onSwipeComplete={toggleScheduleInfo}
-                  swipeDirection={['down']}
-                >
-                    <View style={styles(theme).InfoPop}>
-                      <View style={styles(theme).modalBar}></View>
-                      <Text style={styles(theme).InfoHeader}>How to use the Schedule Page</Text>
-                      <ScrollView 
-                        style = {styles(theme).InfoTextView}
-                        showsVerticalScrollIndicator={false}
-                      >
-                        <ScheduleText/>
-                      </ScrollView>
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                      <View>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:18, fontWeight: '700'}}>How to use the Schedule Page</Text>
+                      </View>
+                      
                     </View>
-                </Modal> */}
+                    <TouchableOpacity onPress={toggleScheduleInfo}>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    style={styles(theme).textView}
+                  >
+                    <ScheduleText/>
+                  </ScrollView>
+                  
+                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity 
+                      onPress={toggleScheduleInfo} 
+                      style = {styles(theme).closeBtn}
+                    >
+                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ActionSheetModal>
               </View>
             ),
           })}
@@ -554,89 +516,37 @@ export default function Main() {
 }
 
 const styles = (theme) => StyleSheet.create({
-  /* BottomModalView:{
-    margin: 0,
-    //position: 'absolute',
-    justifyContent: 'flex-end',
+  popUpHeaderView:{ //view of the header of the info popup modal
+    flexDirection: 'row',
+    height: '18%',
+    width: '94%',
+    marginTop: '2%',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
-  modalBar:{
-    height: 4,
-    marginTop: 8,
-    //marginBottom: 4,
-    width: '22%',
-    borderRadius: 25,
-    backgroundColor: 'white', //theme.grey1,
+  textView: {
+    height:'67%', 
+    width: '94%', 
+    backgroundColor: '#f3f3f3',
+    //borderWidth: 1, 
+    borderRadius: 18, 
+    paddingVertical: 10, 
+    paddingHorizontal: 15
   },
-  InfoPop: {
-    width: '100%',
-    height: '45%',
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    backgroundColor: '#424242',//'#6a6a6a',
-    //alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    //borderRadius: 20,
-    //margin: 15,
-    //paddingVertical: 15,
-  },
-  InfoHeader: {
-    //style for text at the top of the popup
-    fontWeight: '700',
-    color:'white', //theme.text2,
-    //marginTop: 15,
-    marginVertical: 10,
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  InfoTextView: {
-    backgroundColor: '#757575', //'#bebebe',
-    width: '100%',
-    height: '80%',
-    paddingHorizontal: 35,
-    paddingVertical: 20,
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
-    //marginBottom: 10,
-  },*/
   InfoText: {
-    //backgroundColor: '#2E5984',
-    color:'white', //theme.text2,
+    color: theme.text2,
     marginVertical: 5,
     textAlign: 'left',
     fontSize: 16,
-
   }, 
+  closeBtn:{ //remove button for removing member if the user is the Creator
+    flexDirection:'row', 
+    height: '70%',
+    width: '70%',
+    backgroundColor: '#3B65A2', 
+    alignItems:'center',
+    justifyContent: 'center', 
+    borderRadius: 15
+  },
 });
 
-{
-  /*  <Modal
-        isVisible = {isAvailInfoVisible}
-        onBackdropPress={() => setAvailInfoVisible(false)}
-      >
-        <View style={styles(theme).InfoPop}>
-          <Text style={styles(theme).InfoHeader}>How to use the Availability page</Text>
-          <ScrollView style = {styles(theme).InfoTextView}>
-            <Text style={styles(theme).InfoText}>
-              This page is for your availability throughout the week. You will input what times of the week you are not
-              available for tenting.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
-              end time.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              Do this for your entire weekly schedule. You can delete blocks to edit your times.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              This schedule should remain saved from week to week, but you may edit every week if you have changes 
-              to your schedule.
-            </Text>
-            <Text style={styles(theme).InfoText}>
-              Make sure to fill out your availability every week before you Create a New Group Schedule or your 
-              busy times will not be accounted for in the group schedule.
-            </Text>
-          </ScrollView>
-        </View>
-      </Modal> */
-}

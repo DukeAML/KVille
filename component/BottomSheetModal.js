@@ -19,7 +19,10 @@ function useModal() {
  * 
  * @param {string (%) | number } height -- percent size of modal (or pixel size) 
  * @param {color} color -- overwrite background color of modal from dark or light theme
- * @param {string ('default' | 'small') } barSize -- depending on the size of the modal, determine the size of toggle bar
+ * @param {boolean} swipeDown -- if you want the modal to be swipeable 
+ *      * would recommend false if modal has scrollable components such as a picker
+ *      * if true, must add onSwipeComplete prop to the modal
+ * @param {string ('default' | 'small' | 'none') } barSize -- depending on the size of the modal, determine the size of toggle bar
  * @param {string} userStyle -- options: ('dark' | 'light') background color of modal and text color
  * @param {Component} children -- components inside modal component;
  * 
@@ -32,7 +35,7 @@ function useModal() {
  * @returns {Component} Modal Component
  */
 
-const BottomSheetModal = ({ height = '50%', color, barSize = 'default', userStyle, children, ...props}) => {
+const BottomSheetModal = ({ height = '50%', color, swipeDown = true, barSize = 'default', userStyle, children, ...props}) => {
     {
       const {theme} = useTheme();
       
@@ -48,12 +51,13 @@ const BottomSheetModal = ({ height = '50%', color, barSize = 'default', userStyl
         <ModalContext.Provider value={{headerColor}}>
             <Modal
                 style={styles(theme).BottomModalView}
-                swipeDirection={['down']}
+                swipeDirection={swipeDown ? ['down'] : null}
                 {...props}
             >
                 <View style={[styles(theme).ModalContainer, {height: height, backgroundColor:background}]}>
                   {barSize == 'default' ? (<View style={[styles(theme).modalBar, {backgroundColor:headerColor}]}></View>) : 
-                      (<View style={[styles(theme).modalSmallBar, {backgroundColor:headerColor}]}></View>)}
+                      barSize == 'small' ? (<View style={[styles(theme).modalSmallBar, {backgroundColor:headerColor}]}></View>):
+                        null}
 
                   {children}
                 </View>
@@ -120,12 +124,6 @@ const BottomSheetModal = ({ height = '50%', color, barSize = 'default', userStyl
         borderTopLeftRadius: 30,
         alignItems: 'center',
         justifyContent: 'space-between',
-
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: -5 },
-        shadowOpacity: 0.5,
-        shadowRadius: 20,
-        elevation: 5,
       },
       modalSmallBar:{
         height: 2,

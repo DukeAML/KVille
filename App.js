@@ -126,13 +126,6 @@ export default function App() {
                     headerTitleStyle: {
                       fontSize: 28,
                     },
-                    // headerLeft: () => (
-                    //   <IconButton
-                    //     icon='menu'
-                    //     size={25}
-                    //     onPress={() => navigation.openDrawer()}
-                    //   ></IconButton>
-                    // ),
                   })}
                 />
               </Stack.Navigator>

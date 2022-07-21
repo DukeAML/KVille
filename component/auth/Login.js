@@ -37,11 +37,11 @@ export default function Login(props) {
     return () => subscription?.remove();
   });
 
-  const toggleSnackBar = () => {
+  function toggleSnackBar () {
     setSnackVisible(!isSnackVisible);
   };
 
-  const onSignUp = () => {
+  function onSignUp () {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)

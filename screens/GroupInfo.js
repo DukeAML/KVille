@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Animated, Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { Divider } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -14,9 +14,8 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
-import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
-import { Divider } from 'react-native-paper';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 /* let currentUserName;
 
@@ -38,15 +37,15 @@ export default function GroupInfo({ route }) {
 
   const { theme } = useTheme();
 
-  const toggleModal = () => {
+  function toggleModal() {
     setModalVisible(!isModalVisible);
-  };
-  const toggleConfirmation = () => {
+  }
+  function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  };
-  const toggleRoleChange = () => {
+  }
+  function toggleRoleChange() {
     setRoleChangeVisible(!isRoleChangeVisible);
-  };
+  }
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
@@ -57,6 +56,7 @@ export default function GroupInfo({ route }) {
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
+  //Function for gathering member information from database
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
@@ -148,9 +148,10 @@ export default function GroupInfo({ route }) {
     });
   }
 
-  const removeMember = async (groupCode) => {
+  //Function for removing a member from group in firebase
+  async function removeMember(groupCode) {
     console.log('current member being deleted', currMember.current.id);
-    firebase
+    await firebase
       .firestore()
       .collection('groups')
       .doc(groupCode)
@@ -193,7 +194,38 @@ export default function GroupInfo({ route }) {
       })
       .catch((error) => console.error(error));
     toggleModal();
-  };
+  }
+
+  const postGroupRole = useGroupRole(groupCode);
+
+  function useGroupRole(groupCode) {
+    const queryClient = useQueryClient();
+    return useMutation((options) => setGroupRole(options), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['group', groupCode]);
+      },
+    });
+  }
+
+  function setGroupRole(options) {
+    const { groupRole, groupCode } = options;
+    firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(currMember.current.id)
+      .update({
+        groupRole: groupRole,
+      })
+      .then(() => console.log(currMember.current.id + ' group Role updated to ' + groupRole))
+      .catch((error) => console.error(error));
+    toggleRoleChange();
+    toggleModal();
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -237,24 +269,25 @@ export default function GroupInfo({ route }) {
           //setCurrMember({ name: name, id: id, hours: hours });
           //setCurrIndex(indexOfUser);
         }}
-      > 
-        {!isLoading ? <View
-          style={[
-            styles(theme).listItem,
-            styles(theme).shadowProp,
-            { flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor, marginVertical: 15 },
-          ]}
-        >
-          <Text style={styles(theme).listText}>{item.name}</Text>
-          <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
-        </View> : null}
+      >
+        {!isLoading ? (
+          <View
+            style={[
+              styles(theme).listItem,
+              styles(theme).shadowProp,
+              { flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor, marginVertical: 15 },
+            ]}
+          >
+            <Text style={styles(theme).listText}>{item.name}</Text>
+            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   };
+
   //Render Item for Each List Item of group members
   const Member = ({ name, id, hours, role, backgroundColor }) => {
-    //const indexOfUser = data.findIndex((member) => member.id === id);
-    //console.log(name, indexOfUser, members[indexOfUser].hours);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -302,11 +335,13 @@ export default function GroupInfo({ route }) {
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return <Member name={item.name} id={item.id} hours={item.hours} role = {item.role} backgroundColor={{ backgroundColor }} />;
+    return (
+      <Member name={item.name} id={item.id} hours={item.hours} role={item.role} backgroundColor={{ backgroundColor }} />
+    );
   };
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
   if (isError) {
     console.error(error);
@@ -331,119 +366,120 @@ export default function GroupInfo({ route }) {
         </Text>
       </View>
 
+      {/* List of Members in Group*/}
       <FlatList
         data={data}
         renderItem={renderMember}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        style={{  marginHorizontal: '4%',flexGrow: 1, height: '70%'/* , borderWidth:1 */}}
+        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
       ></FlatList>
 
-      <View>
-        <ActionSheetModal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          onSwipeComplete={toggleModal}
-
-          height = {(groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid) ? 250 : 190}
-          userStyle = {'light'}
-        >
-          <View style = {styles(theme).popUpHeaderView}>
-            <View style={{flexDirection:'row', marginLeft:'5%'}}>
-              <Icon name='account' color={theme.grey2} size={30} style={{ marginRight: 20 }}/>
-              <Text style={{fontSize:22, fontWeight: '700'}}>{currMember.current.name} Information</Text>
-            </View>
-            <TouchableOpacity onPress={toggleModal}>
-              <Icon name='close-circle' color={theme.grey2} size={26} style={{ marginRight: 0 }}/>
-            </TouchableOpacity>
+      {/*Member Information Modal Component*/}
+      <ActionSheetModal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        onSwipeComplete={toggleModal}
+        height={groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? 250 : 190}
+        userStyle={'light'}
+      >
+        <View style={styles(theme).popUpHeaderView}>
+          <View style={{ flexDirection: 'row', marginLeft: '5%' }}>
+            <Icon name='account' color={theme.grey2} size={30} style={{ marginRight: 20 }} />
+            <Text style={{ fontSize: 22, fontWeight: '700' }}>{currMember.current.name} Information</Text>
           </View>
-          
-          <View style={{height:'70%', width: '94%', justifyContent: 'space-between'}}>
-            <View style = {(groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid) ?
-                              {height: '65%'}:{height:'100%'}}>
-              <View style = {styles(theme).popUpHalfBody}>
-                <Icon name='timer-sand-empty' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                <Text style = {styles(theme).modalText}>Scheduled Hrs: {currMember.current.hours} hrs</Text>
-              </View>
-              <Divider/>
+          <TouchableOpacity onPress={toggleModal}>
+            <Icon name='close-circle' color={theme.grey2} size={26} style={{ marginRight: 0 }} />
+          </TouchableOpacity>
+        </View>
 
-              {groupRole=='Creator' && currMember.current.id != firebase.auth().currentUser.uid? (
-                <TouchableOpacity 
-                  style = {styles(theme).popUpHalfBody}
-                  onPress = {toggleRoleChange} //change later to admin change
-                >
-                  <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                  <Text style = {styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
-                </TouchableOpacity>
-                ): (
-                  <View style = {styles(theme).popUpHalfBody}>
-                    <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }}/>
-                    <Text style = {styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
-                  </View>
-                ) 
-              }
+        <View style={{ height: '70%', width: '94%', justifyContent: 'space-between' }}>
+          <View
+            style={
+              groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid
+                ? { height: '65%' }
+                : { height: '100%' }
+            }
+          >
+            <View style={styles(theme).popUpHalfBody}>
+              <Icon name='timer-sand-empty' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
+              <Text style={styles(theme).modalText}>Scheduled Hours: {currMember.current.hours} hrs</Text>
             </View>
-            
-            {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
-              <View style={{width: '100%', height: '35%', justifyContent:'center'}}>
-                <TouchableOpacity 
-                  onPress={toggleConfirmation}
-                  style = {styles(theme).removeBtn}
-                >
-                  <Icon name='trash-can' color={theme.error} size={30} style={{ marginRight: 15 }}/>
-                  <Text style={{color: theme.error,fontSize: 22, fontWeight: '600'}}>
-                    Remove
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : null}
-          </View>
-        </ActionSheetModal>
-      </View>
+            <Divider />
 
-      { groupRole=='Creator' ? (
+            {groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+              <TouchableOpacity
+                style={styles(theme).popUpHalfBody}
+                onPress={()=> {
+                  toggleRoleChange();
+                }} //change later to admin change
+              >
+                <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
+                <Text style={styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles(theme).popUpHalfBody}>
+                <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
+                <Text style={styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
+              </View>
+            )}
+          </View>
+
+          {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+            <View style={{ width: '100%', height: '35%', justifyContent: 'center' }}>
+              <TouchableOpacity onPress={toggleConfirmation} style={styles(theme).removeBtn}>
+                <Icon name='trash-can' color={theme.error} size={30} style={{ marginRight: 15 }} />
+                <Text style={{ color: theme.error, fontSize: 22, fontWeight: '600' }}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+
+        {groupRole == 'Creator' ? (
           <ActionSheetModal
             isVisible={isRoleChangeVisible}
             onBackdropPress={toggleRoleChange}
             onSwipeComplete={toggleRoleChange}
-            toggleModal = {toggleRoleChange}
-
-            cancelButton = {true}
-            height = {180}
-            userStyle = {'dark'}
+            toggleModal={toggleRoleChange}
+            cancelButton={true}
+            height={180}
+            userStyle={'dark'}
           >
             <TouchableOpacity
-              onPress={toggleRoleChange} //change to changing member role
-              style = {styles(theme).roleChangeListItem}
+              onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing member role
+              style={styles(theme).roleChangeListItem}
             >
-              <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
-              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Creator</Text>
+              <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Creator</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={toggleRoleChange}
-              style = {styles(theme).roleChangeListItem}
+              onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
+              style={styles(theme).roleChangeListItem}
             >
-              <Icon name='badge-account-outline' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
-              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Admin</Text>
+              <Icon name='badge-account-outline' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Admin</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={toggleRoleChange}
-              style = {[styles(theme).roleChangeListItem, {borderBottomWidth:0}]}
+              onPress={() => postGroupRole.mutate({ groupRole: 'Member', groupCode })}
+              style={[styles(theme).roleChangeListItem, { borderBottomWidth: 0 }]}
             >
-              <Icon name='account' color={theme.text1} size={25} style={{ marginRight: 15 }}/>
-              <Text style={[styles(theme).modalText, {color: theme.text1, marginRight: 15,}]}>Member</Text>
+              <Icon name='account' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Member</Text>
             </TouchableOpacity>
-
           </ActionSheetModal>
-      ): null}
+        ) : null}
+      </ActionSheetModal>
 
-      
-
+      {/* Remove Member Confirmation Modal */}
       <ConfirmationModal
-        body={"Are you sure you want to REMOVE " + currMember.current.name + " from the group? This action CANNOT be undone."}
+        body={
+          'Are you sure you want to REMOVE ' +
+          currMember.current.name +
+          ' from the group? This action CANNOT be undone.'
+        }
         buttonText={'Remove ' + currMember.current.name}
         buttonAction={() => {
           postRemoveMember.mutate();
@@ -463,7 +499,8 @@ const styles = (theme) =>
       flex: 1,
       backgroundColor: theme.primaryContainer,
     },
-    header: { //view of top headers above boxText
+    header: {
+      //view of top headers above boxText
       marginBottom: 10,
       marginTop: 4,
       alignSelf: 'center',
@@ -472,20 +509,23 @@ const styles = (theme) =>
       fontSize: 22,
       fontWeight: '700',
     },
-    boxText: { //View of top 2 boxes of text (groupCode and groupName)
+    boxText: {
+      //View of top 2 boxes of text (groupCode and groupName)
       marginBottom: 10,
       width: '90%',
       backgroundColor: theme.white1,
       borderRadius: 8,
       alignSelf: 'center',
     },
-    contentText: { //style of text inside boxText
+    contentText: {
+      //style of text inside boxText
       fontSize: 24,
       fontWeight: '700',
       textAlign: 'center',
       marginHorizontal: 8,
     },
-    listItem: { //style of a member list item
+    listItem: {
+      //style of a member list item
       backgroundColor: theme.primary,
       padding: 4,
       height: 35,
@@ -495,46 +535,52 @@ const styles = (theme) =>
       alignSelf: 'center',
       alignItems: 'center',
     },
-    listText: { //text of a member item
+    listText: {
+      //text of a member item
       fontSize: 15,
       //fontFamily: 'sans-serif',
       fontWeight: '500',
       color: theme.text1,
     },
-    modalText:{ //style of text within the modals (member info text and roleChange text)
-      fontSize: 18, 
-      fontWeight:'500',
+    modalText: {
+      //style of text within the modals (member info text and roleChange text)
+      fontSize: 18,
+      fontWeight: '500',
     },
-    popUpHeaderView:{ //view of the header of the info popup modal
+    popUpHeaderView: {
+      //view of the header of the info popup modal
       flexDirection: 'row',
       height: '20%',
       width: '94%',
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
     },
-    popUpHalfBody:{ //view of the half of the info in the info popup modal
-      flexDirection:'row', 
+    popUpHalfBody: {
+      //view of the half of the info in the info popup modal
+      flexDirection: 'row',
       alignSelf: 'center',
-      height: '50%', 
-      width:'90%', 
-      justifyContent: 'center', 
+      height: '50%',
+      width: '90%',
+      justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 16,
     },
-    removeBtn:{ //remove button for removing member if the user is the Creator
-      flexDirection:'row', 
-      width: '100%', 
-      height:'85%',
-      backgroundColor: '#ececec', 
-      alignItems:'center',
-      justifyContent: 'center', 
-      borderRadius: 15
+    removeBtn: {
+      //remove button for removing member if the user is the Creator
+      flexDirection: 'row',
+      width: '100%',
+      height: '85%',
+      backgroundColor: '#ececec',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 15,
     },
-    roleChangeListItem:{ //Style of an item in the member roleChange modal (for creator only)
-      flexDirection: 'row', 
-      height: '33%', 
-      width: '95%', 
-      justifyContent: 'center', 
+    roleChangeListItem: {
+      //Style of an item in the member roleChange modal (for creator only)
+      flexDirection: 'row',
+      height: '33%',
+      width: '95%',
+      justifyContent: 'center',
       alignSelf: 'center',
       alignItems: 'center',
       borderBottomWidth: 1,

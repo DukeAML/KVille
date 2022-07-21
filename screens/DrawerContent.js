@@ -5,11 +5,11 @@ import { Title, Drawer, Switch } from 'react-native-paper';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMutation, useQueryClient } from 'react-query';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-import { useSelector, useDispatch } from 'react-redux';
 // import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {

@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar} from 'react-native-paper';
@@ -24,11 +23,9 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
-
-
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
@@ -61,13 +58,11 @@ export default function Availability({ route }) {
   const { groupCode } = route.params;
   //console.log('availability params', route.params);
 
-  const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  //const [isExtended, setIsExtended] = useState(true);
   const [selectedDay, setSelectedDay] = useState(7);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -81,12 +76,6 @@ export default function Availability({ route }) {
   });
   const { theme } = useTheme();
 
-  /* const onScroll = ({ nativeEvent }) => {
-    const currentScrollPosition =
-      Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
-
-    setIsExtended(currentScrollPosition <= 0);
-  }; */
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['availability', firebase.auth().currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)
@@ -209,13 +198,13 @@ export default function Availability({ route }) {
     toggleDeleteModal();
   };
 
-  const toggleModal = () => {
+  function toggleModal () {
     setModalVisible(!isModalVisible);
   };
-  const toggleDeleteModal = () => {
+  function toggleDeleteModal () {
     setDeleteModalVisible(!isDeleteModalVisible);
   };
-  const toggleSnackBar = () => {
+  function toggleSnackBar () {
     setSnackVisible(!isSnackVisible);
   };
 
@@ -244,7 +233,7 @@ export default function Availability({ route }) {
   }, [isLoading]);
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
 
   if (isError) {
@@ -278,8 +267,10 @@ export default function Availability({ route }) {
       <BottomSheetModal
         isVisible={isModalVisible}
         onBackdropPress={toggleModal}
-        onSwipeComplete={toggleModal}
-        height='80%'
+        //onSwipeComplete={toggleModal}
+        swipeDown = {false}
+        barSize = {'none'}
+        height='75%'
         userStyle='dark'
       >
         <Snackbar
@@ -290,42 +281,63 @@ export default function Availability({ route }) {
         >
           <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
         </Snackbar>
-        <BottomSheetModal.Header>Add New Busy Time</BottomSheetModal.Header>
+
+        <View style = {{height:'10%', width: '100%',}}>
+         <TouchableOpacity 
+            onPress={toggleModal} 
+            style = {{flexDirection: 'row', width: '96%', justifyContent: 'flex-end', marginTop: 10}}>
+              <Icon name='close-circle' color={theme.grey2} size={26}/>
+          </TouchableOpacity>
+
+          <BottomSheetModal.Header fontSize = {24} verticalMargin = {0}>Add New Busy Time</BottomSheetModal.Header>
+        </View>
+
+        
 
         <View style={styles(theme).modalBody}>
           <View style={styles(theme).selectDay}>
-            <Text style={styles(theme).modalText}>Select Day: </Text>
-            <Picker
-              selectedValue={selectedDay}
-              
-              onValueChange={(itemValue, itemIndex) => {
-                setSelectedDay(itemValue);
-              }}
-              style={
-                Platform.OS === 'ios' ? { height: '100%', width: '80%' } : { height: 30, width: '70%', marginTop: 15 }
-              }
-              itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
-            >
-              <Picker.Item label='' value={7}/>
-              <Picker.Item label='Sunday' value={0} />
-              <Picker.Item label='Monday' value={1} />
-              <Picker.Item label='Tuesday' value={2} />
-              <Picker.Item label='Wednesday' value={3} />
-              <Picker.Item label='Thursday' value={4} />
-              <Picker.Item label='Friday' value={5} />
-              <Picker.Item label='Saturday' value={6} />
-            </Picker>
-          </View>
+            <View style ={styles(theme).modalTextView}>
+              <Text style={styles(theme).modalText}>Select Day: </Text>
+            </View>
 
+            <View style={{width: '100%', height: '75%', alignItems: 'center'}}>
+              <Picker
+                selectedValue={selectedDay}
+                
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedDay(itemValue);
+                }}
+                style={
+                  Platform.OS === 'ios' ? { height: '100%', width: '80%' } : { height: 30, width: '70%', marginTop: 20 }
+                }
+                itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+              >
+                <Picker.Item label='' value={7}/>
+                <Picker.Item label='Sunday' value={0} />
+                <Picker.Item label='Monday' value={1} />
+                <Picker.Item label='Tuesday' value={2} />
+                <Picker.Item label='Wednesday' value={3} />
+                <Picker.Item label='Thursday' value={4} />
+                <Picker.Item label='Friday' value={5} />
+                <Picker.Item label='Saturday' value={6} />
+              </Picker>
+            </View>
+
+            
+          </View>
+              
           <View style={styles(theme).selectTime}>
-            <Text style={styles(theme).modalText}>Start Time: </Text>
+            <View style ={styles(theme).modalTextView}>
+              <Text style={styles(theme).modalText}>Start Time: </Text>
+            </View>
+            
             <View style={styles(theme).timePickerBody}>
               <Picker
                 selectedValue={startTime.hour}
                 onValueChange={(itemValue, itemIndex) => {
                   setStartTime({ ...startTime, hour: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='12' value={0} />
@@ -346,7 +358,7 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setStartTime({ ...startTime, minute: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='00' value={0} />
@@ -357,7 +369,7 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setStartTime({ ...startTime, day: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='AM' value={0} />
@@ -367,7 +379,9 @@ export default function Availability({ route }) {
           </View>
 
           <View style={styles(theme).selectTime}>
-            <Text style={styles(theme).modalText}>End Time: </Text>
+            <View style ={styles(theme).modalTextView}>
+              <Text style={styles(theme).modalText}>End Time: </Text>
+            </View>
 
             <View style={styles(theme).timePickerBody}>
               <Picker
@@ -375,7 +389,7 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setEndTime({ ...endTime, hour: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='12' value={0} />
@@ -396,7 +410,7 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setEndTime({ ...endTime, minute: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='00' value={0} />
@@ -407,7 +421,7 @@ export default function Availability({ route }) {
                 onValueChange={(itemValue, itemIndex) => {
                   setEndTime({ ...endTime, day: itemValue });
                 }}
-                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 15 }}
+                style={Platform.OS === 'ios' ? styles(theme).picker : { height: 30, width: '30%', marginTop: 20 }}
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
                 <Picker.Item label='AM' value={0} />
@@ -434,8 +448,8 @@ export default function Availability({ route }) {
         <Row
           data={agenda.tableHead}
           style={StyleSheet.flatten(styles(theme).head)}
-          widthArr = {[dimensions.window.width/15, dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), 
-            dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15), dimensions.window.width*(2/15)]}
+          widthArr = {[dimensions.window.width/12, dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), 
+            dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84)]}
           textStyle={{ textAlign: 'center', fontWeight: '700' }}
         />
       </Table>
@@ -449,14 +463,12 @@ export default function Availability({ route }) {
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
       >
         <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent'}} style={{ flexDirection: 'row' }}>
-          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 15, marginTop:30/* , borderWidth:1 */}])}>
+          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 12, marginTop:34, alignItems: 'center'/* , borderWidth:1 */}])}>
             <Col
               data={agenda.tableTime}
               //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
               heightArr = {new Array(23).fill(cellHeight*2)}
-              //style={StyleSheet.flatten(styles(theme).time)}
-              //style={{alignSelf: 'center'}}
-              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 12, width: '100%', color: '#717573'/* , borderWidth:1, */ }}
+              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 10, width: '70%', color: '#717573', marginLeft: 2/* , borderWidth:1, */ }}
             />
           </TableWrapper>
 
@@ -473,7 +485,7 @@ export default function Availability({ route }) {
                     data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
                     //{data[48 * cellIndex + index].toString()}
 
-                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(2/15) }])}
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(11/84) }])}
                   />
                 ))}
               </TableWrapper>
@@ -506,52 +518,46 @@ const styles = (theme) =>
     container: {
       flex: 1,
       padding: 0,
-      //backgroundColor: theme.background,
+      //backgroundColor: '#D2D5DC',
       backgroundColor :  '#f5f5f5'
     },
     text: {
       textAlign: 'center',
     },
+    modalTextView: {height: '25%', width : '100%', justifyContent: 'center'},
     modalText: {
       fontSize: 18,
       color: theme.text1,
-      marginBottom: 3,
-      //width: '100%',
+      textAlign: 'center',
+      //borderWidth:1,
     },
     modalBody: {
       alignItems: 'center',
       width: '100%',
       height: '80%',
       justifyContent: 'space-evenly',
+      //borderWidth:1,
     },
-    picker: {
-      height: '100%',
-      width: '35%',
-    },
-    pickerItem: {
-      height: '100%',
-    },
+    picker: { height: '100%', width: '35%', },
+    pickerItem: { height: '100%', },
     selectDay: {
       alignItems: 'center',
       width: '70%',
-      height: '20%',
+      height: '23%',
       //borderWidth:1,
-      borderColor: 'white',
     },
     selectTime: {
       alignItems: 'center',
-      height: '30%',
+      height: '35%',
       width: '90%',
-      /* borderWidth:1,
-      borderColor: 'white', */
+      //borderWidth:1,
     },
     timePickerBody: {
       flexDirection: 'row',
       width: '100%',
-      height: '90%',
+      height: '75%',
       justifyContent: 'center',
-      /* borderWidth:1,
-      borderColor: 'white', */
+      //borderWidth:1,
     },
     modalFooter: {
       flexDirection: 'row',
@@ -559,6 +565,7 @@ const styles = (theme) =>
       height: '10%',
       alignItems: 'center',
       justifyContent: 'space-evenly',
+      //borderWidth:1,
     },
     addBtn: {
       alignItems: 'center',
@@ -568,12 +575,10 @@ const styles = (theme) =>
       color: theme.text1,
       fontSize: 24,
       fontWeight: '600',
-      //textAlign: 'center',
     },
     head: {
       backgroundColor: theme.background,
       height: 35,
-      //borderWidth:1,
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,
 
@@ -585,10 +590,10 @@ const styles = (theme) =>
     },
     row: {
       height: cellHeight,
-      //backgroundColor: theme.grey3,
       flexDirection: 'row',
       borderBottomWidth:1,
       borderColor: '#cfcfcf',
+      //borderColor: '#a7aebe',
     },
     cell: {
       height: cellHeight,
@@ -597,6 +602,7 @@ const styles = (theme) =>
       alignItems: 'center',
       borderRightWidth: 1,
       borderColor: '#cfcfcf',
+      //borderColor: '#a7aebe',
       margin: 0,
     },
     btn: {
@@ -613,10 +619,6 @@ const styles = (theme) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      /* height: 50,
-      width: 50,
-      //borderRadius: 25, */
-      //backgroundColor: theme.background,
       right: 25,
       bottom: 15,
     },

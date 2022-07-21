@@ -1,31 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ImageBackground,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import { Text, View, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  setGroupName,
-  setUserName,
-  setTentType,
-} from '../redux/reducers/userSlice';
+import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-import {ConfirmationModal} from '../component/ConfirmationModal'
+import { ConfirmationModal } from '../component/ConfirmationModal';
 
 export default function Settings({ route, navigation }) {
   const { groupCode, groupName, userName, tentType } = route.params;
@@ -39,9 +27,6 @@ export default function Settings({ route, navigation }) {
   const [tent, setTent] = useState(tentType);
   const dispatch = useDispatch();
   const { theme } = useTheme();
-
-  console.log('Settings route params', route.params);
-  //gets current user's group role from redux store
 
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -198,39 +183,39 @@ export default function Settings({ route, navigation }) {
   return (
     <View style={styles(theme).settingsContainer} onLayout={onLayoutRootView}>
       <View style={styles(theme).topBanner}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name='cog-outline' color={theme.icon1} size={35} />
-          <Text style={[styles(theme).headerText, { color: theme.text1, width: '100%', marginLeft: 6 }]}>Settings</Text>
+
+          <Text
+            style={[
+              styles(theme).headerText,
+              { color: theme.text1, alignSelf: 'center', fontSize: 30, marginLeft: 10 },
+            ]}
+          >
+            Settings
+          </Text>
         </View>
         <TouchableOpacity onPress={onSave}>
-          <View>
-            <Text
-              style={[
-                styles(theme).groupText,
-                {
-                  fontSize: 21,
-                  fontWeight: '700',
-                  color: theme.primary,
-                },
-              ]}
-            >
-              Save
-            </Text>
-          </View>
+          <Text
+            style={[
+              styles(theme).groupText,
+              {
+                fontSize: 18,
+                fontWeight: '700',
+                color: theme.primary,
+              },
+            ]}
+          >
+            Save
+          </Text>
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '90%',
-          justifyContent: 'space-between',
-        }}
-      >
+      <View style={styles(theme).headerContainer}>
         <Text style={styles(theme).headerText}>Name</Text>
         <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
       </View>
       <TextInput
-        style={[styles(theme).textInput, styles(theme).shadowProp]}
+        style={styles(theme).textInput}
         value={name}
         placeholder={name}
         onChangeText={(name) =>
@@ -244,33 +229,21 @@ export default function Settings({ route, navigation }) {
         }
       />
       {groupRole === 'Creator' ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '90%',
-            justifyContent: 'space-between',
-          }}
-        >
+        <View style={styles(theme).headerContainer}>
           <Text style={styles(theme).headerText}>Group Name</Text>
           <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
         </View>
       ) : null}
       {groupRole === 'Creator' ? (
         <TextInput
-          style={[styles(theme).textInput, styles(theme).shadowProp]}
+          style={styles(theme).textInput}
           value={currGroupName}
           placeholder={currGroupName}
           onChangeText={(groupName) => setCurrGroupName(groupName)}
         />
       ) : null}
       {groupRole === 'Creator' ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '90%',
-            justifyContent: 'space-between',
-          }}
-        >
+        <View style={styles(theme).headerContainer}>
           <Text style={styles(theme).headerText}>Tent Type</Text>
           <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
         </View>
@@ -333,25 +306,25 @@ const styles = (theme) =>
       flexDirection: 'column',
       flex: 1,
       alignItems: 'center',
-      //backgroundColor: "#1f509a",
       backgroundColor: theme.background,
     },
     topBanner: {
       //for the top container holding top 'settings' and save button
-      alignItems: 'center',
-      justifyContent: 'space-between',
       flexDirection: 'row',
-      marginTop: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
       marginBottom: 30,
       width: '90%',
-      //borderWidth: 2
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      width: '90%',
+      justifyContent: 'space-between',
+      marginBottom: 15,
     },
     headerText: {
       //text for different setting headers
-      textAlign: 'left',
-      width: '90%',
       fontSize: 20,
-      marginBottom: 10,
       fontWeight: '700',
       color: theme.grey2,
     },
@@ -366,26 +339,25 @@ const styles = (theme) =>
       borderRadius: 15,
       marginBottom: 23,
       borderColor: theme.grey2,
-      borderWidth: 2,
     },
     picker: {
       height: '25%',
       width: '90%',
-      //borderWidth: 2,
     },
     pickerItem: {
       height: '100%',
     },
-    BottomModalView:{
+    BottomModalView: {
       margin: 0,
       justifyContent: 'flex-end',
     },
     button: {
-      backgroundColor: theme.primary,
+      backgroundColor: theme.white2,
+      borderRadius: 15,
       padding: 15,
       position: 'absolute',
       bottom: 0,
-      width: '100%',
+      width: '90%',
       alignItems: 'center',
     },
     shadowProp: {

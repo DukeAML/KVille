@@ -12,23 +12,24 @@ import {
 } from 'react-native';
 //import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
 import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useDispatch } from 'react-redux';
+import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
@@ -61,8 +62,6 @@ export default function Start({ navigation }) {
           code: group.groupCode,
           groupName: group.groupName,
         }));
-
-        //return [];
       })
       .catch((error) => {
         console.error(error);
@@ -92,15 +91,15 @@ export default function Start({ navigation }) {
   const EmptyGroup = () => {
     return (
       <View
-        style={isLoading ? [
+        style={!isLoading ? [
           styles(theme).listItem,
           styles(theme).shadowProp,
           { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
         ]: null}
       >
         
-        {isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
-        {isLoading ? <View style={{ flexDirection: 'column' }}>
+        {!isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
+        {!isLoading ? <View style={{ flexDirection: 'column' }}>
           <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
           <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
         </View> : null}
@@ -188,7 +187,7 @@ export default function Start({ navigation }) {
   }, [isLoading]);
 
   if (isLoading) {
-    return null;
+    return <LoadingIndicator />;
   }
   if (isError) {
     console.error(error);

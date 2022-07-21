@@ -10,8 +10,13 @@ import { useTheme } from '../context/ThemeProvider';
  * @param {function} toggleModal -- if cancelButton is true, set parameter to toggleModal function
  * @param {number} height -- vertical size of modal
  * @param {color} backgroundColor -- background color of modal 
+ * @param {boolean} swipeDown -- if you want the modal to be swipeable 
+ *      * would recommend false if modal has scrollable components such as a picker
+ *      * if true, must add onSwipeComplete prop to the modal
  * @param {string} userStyle -- options: ('dark' | 'light') background color of modal and text color
+ * @param {boolean} cancelButton  -- if a cancel button should be added to the modal
  * @param {Component} children -- components inside modal component; 
+ * 
  *
  * @param {props} props --
  *   **NOTE: must include normal modal props in the props of the Modal such as:
@@ -22,14 +27,14 @@ import { useTheme } from '../context/ThemeProvider';
  * @returns Modal Component
  */
 
-const ActionSheetModal = ({ toggleModal , backgroundColor, height = 130, userStyle,
+const ActionSheetModal = ({ toggleModal , backgroundColor, swipeDown = true, height = 130, userStyle,
                             cancelButton = false,  children, ...props  }) => {
   {
     const {theme} = useTheme();
 
     //set up default styles for light and dark themes
     let background, opacity;
-    userStyle == 'light' ? (background = '#fff', opacity= '92%') : 
+    userStyle == 'light' ? (background = '#fff', opacity= '96%') : 
             (background= '#565656', opacity = '100%');
 
     //overwrite dark|light theme background colors if defined
@@ -41,7 +46,7 @@ const ActionSheetModal = ({ toggleModal , backgroundColor, height = 130, userSty
     return (
         <Modal
             style={styles(theme).BottomModalView}
-            swipeDirection={['down']}
+            swipeDirection={swipeDown ? ['down'] : null}
             {...props}
         >
             <View style = {{width: '95%', alignSelf: 'center', height: adjustedHeight}}>
@@ -76,12 +81,6 @@ const styles = (theme) => StyleSheet.create({
         justifyContent: 'space-evenly',
         borderRadius: 20,
         margin: 15,
-
-        // shadowColor: '#171717',
-        // shadowOffset: { width: 0, height: -5 },
-        // shadowOpacity: 0.5,
-        // shadowRadius: 20,
-        // elevation: 5,
     },
     CancelBtn: { //style for Cancel Button
         alignSelf: 'center',
@@ -91,12 +90,6 @@ const styles = (theme) => StyleSheet.create({
         alignItems: 'center',
         height: 65,
         marginBottom: 15,
-
-        // shadowColor: '#171717',
-        // shadowOffset: { width: 0, height: -5 },
-        // shadowOpacity: 0.5,
-        // shadowRadius: 20,
-        // elevation: 5,
     },
     CancelBtnText: { //style for text of Cancel Button
         fontWeight: '700',
