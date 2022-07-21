@@ -372,7 +372,10 @@ export default function Schedule({ route }) {
             }}
           >
             <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
-              <Text style={styles(theme).btnText} adjustsFontSizeToFit minimumFontScale={0.5}>
+              <Text 
+                style={person == 'empty' ? [styles(theme).btnText, {color: theme.error, fontWeight: '700'}]:
+                  styles(theme).btnText} 
+                adjustsFontSizeToFit minimumFontScale={0.5}>
                 {person}
               </Text>
             </View>
