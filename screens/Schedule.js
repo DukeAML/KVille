@@ -324,20 +324,9 @@ export default function Schedule({ route }) {
           style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
           <View
-            style={{
-              //backgroundColor: '#656565',
-              height: height,
-              justifyContent: 'center',
-            }}
+            style={{height: height, justifyContent: 'center'}}
           >
-            <Text
-              style={{
-                textAlign: 'center',
-                color: 'white',
-                //marginLeft: 25,
-                fontSize: 18,
-              }}
-            >
+            <Text style={{textAlign: 'center', color: 'white', fontSize: 18}}>
               {name}
             </Text>
           </View>
@@ -382,7 +371,10 @@ export default function Schedule({ route }) {
             }}
           >
             <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
-              <Text style={styles(theme).btnText} adjustsFontSizeToFit minimumFontScale={0.5}>
+              <Text 
+                style={person == 'empty' ? [styles(theme).btnText, {color: theme.error, fontWeight: '700'}]:
+                  styles(theme).btnText} 
+                adjustsFontSizeToFit minimumFontScale={0.5}>
                 {person}
               </Text>
             </View>
