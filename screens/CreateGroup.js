@@ -30,6 +30,7 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
+import { ActionSheetModal } from '../component/ActionSheetModal';
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
@@ -45,10 +46,12 @@ export default function CreateGroup({ navigation }) {
     tentType: '',
     groupCode: '',
     userName: '',
-    tentType: '',
+    tentType: 'Select Tent Type',
   });
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
+  const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  //const [selectedTent, setSelectedTent] = useState('Select Tent Type');
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
   const dispatch = useDispatch();
@@ -59,6 +62,10 @@ export default function CreateGroup({ navigation }) {
   let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.username);
+
+  function toggleTentChange() {
+    setTentChangeVisible(!isTentChangeVisible);
+  }
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -94,7 +101,7 @@ export default function CreateGroup({ navigation }) {
       setSnackMessage('Enter group name');
       return;
     }
-    if (group.tentType == '') {
+    if (group.tentType == 'Select Tent Type') {
       toggleSnackBar();
       setSnackMessage('Select tent type');
       return;
@@ -188,40 +195,24 @@ export default function CreateGroup({ navigation }) {
                 height: 50,
                 width: '90%',
                 justifyContent: 'center',
-                flexDirection: 'row',
-                alignItems: 'center',
-                //flex: 0.2
               },
             ]}
           >
             <Text
               selectable={true}
-              style={{
-                textAlign: 'center',
-                fontSize: 26,
-                fontWeight: '700',
-                //flex: 1,
-              }}
+              style={{textAlign: 'center',fontSize: 26,fontWeight: '700',}}
             >
               {group.groupCode}
             </Text>
           </View>
 
           <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
-          <Picker
-            selectedValue={group.tentType}
-            onValueChange={(itemValue, itemIndex) => {
-              setGroup({ ...group, tentType: itemValue });
-            }}
-            style={Platform.OS === 'ios' ? styles(theme).picker : { width: '90%', height: 30 }}
-            itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+          <TouchableOpacity
+            onPress = {toggleTentChange}
+            style = {styles(theme).selectTent}
           >
-            <Picker.Item label='' value='' />
-            <Picker.Item label='Black' value='Black' />
-            <Picker.Item label='Blue' value='Blue' />
-            <Picker.Item label='White' value='White' />
-            <Picker.Item label='Walk up line' value='Walk up line' />
-          </Picker>
+            <Text style={{textAlign: 'center',fontSize: 24,fontWeight: '600',}}>{group.tentType}</Text>
+          </TouchableOpacity>
 
           <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
 
@@ -242,6 +233,46 @@ export default function CreateGroup({ navigation }) {
             }
           />
         </View>
+
+        <ActionSheetModal
+          isVisible={isTentChangeVisible}
+          onBackdropPress={toggleTentChange}
+          onSwipeComplete={toggleTentChange}
+          toggleModal={toggleTentChange}
+          cancelButton={true}
+          height={180}
+          userStyle={'light'}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setGroup({ ...group, tentType: 'Black' })
+              toggleTentChange();
+            }} //change to new tent type
+            style={styles(theme).tentChangeListItem}
+          >
+            <Text style={styles(theme).modalText}>Black</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setGroup({ ...group, tentType: 'Blue' });
+              toggleTentChange();
+            }} //change to new tent type
+            style={styles(theme).tentChangeListItem}
+          >
+            <Text style={styles(theme).modalText}>Blue</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setGroup({ ...group, tentType: 'White' })
+              toggleTentChange();
+            }} //change to new tent type
+            style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
+          >
+            <Text style={styles(theme).modalText}>White</Text>
+          </TouchableOpacity>
+        </ActionSheetModal>
       </KeyboardAvoidingView>
 
       <View
@@ -355,6 +386,32 @@ const styles = (theme) =>
       borderRadius: 15,
       borderColor: theme.grey2,
       borderWidth: 2,
+    },
+    selectTent: {
+      width: '90%', 
+      height: 45, 
+      borderRadius: 15, 
+      borderWidth: 1, 
+      borderColor: theme.grey2,
+      backgroundColor: '#ececec', 
+      justifyContent: 'center'
+    },
+    tentChangeListItem: {
+      //Style of an item in the member tentChange modal (for creator only)
+      flexDirection: 'row',
+      height: '33%',
+      width: '95%',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderColor: '#cfcfcf',
+    },
+    modalText: {
+      //style of text within the modals (member info text and tentChange text)
+      fontSize: 18,
+      fontWeight: '500',
+      color: theme.text2,
     },
     picker: {
       width: '90%',
