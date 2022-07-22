@@ -31,6 +31,7 @@ import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import SettingScreen from './Settings';
 import CountdownScreen from './Countdown';
+import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
 import { BottomSheetModal } from '../component/BottomSheetModal';
@@ -203,10 +204,7 @@ export default function Main() {
       //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
       // }
     >
-      <Drawer.Navigator
-        initialRouteName='Start'
-        drawerContent={(props) => <DrawerContent {...props} />}
-      >
+      <Drawer.Navigator initialRouteName='Start' drawerContent={(props) => <DrawerContent {...props} />}>
         <Drawer.Screen
           name='Start'
           component={StartScreen}
@@ -274,13 +272,7 @@ export default function Main() {
             headerTitleStyle: {
               fontSize: 28,
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -293,13 +285,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             headerRight: () => (
               <View>
                 <TouchableOpacity
@@ -312,45 +298,50 @@ export default function Main() {
                 </TouchableOpacity>
 
                 <ActionSheetModal
-                  isVisible = {isInfoVisible}
+                  isVisible={isInfoVisible}
                   onBackdropPress={toggleInfo}
-                  swipeDown = {false}
-        
-                  height = {350}
-                  userStyle = {'light'}
+                  swipeDown={false}
+                  height={350}
+                  userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row', marginLeft: '2%' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:17, fontWeight: '700'}}>How to use the Availability Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 17, fontWeight: '700' }}>How to use the Availability Page</Text>
                       </View>
-                      
                     </View>
                     <TouchableOpacity onPress={toggleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
                     </TouchableOpacity>
                   </View>
 
-                  <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles(theme).textView}
-                  >
-                    <AvailabilityText/>
+                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <AvailabilityText />
                   </ScrollView>
-                  
-                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <TouchableOpacity 
-                      onPress={toggleInfo} 
-                      style = {styles(theme).closeBtn}
-                    >
-                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+
+                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleInfo} style={styles(theme).closeBtn}>
+                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
                     </TouchableOpacity>
                   </View>
                 </ActionSheetModal>
               </View>
             ),
+          })}
+        />
+        <Drawer.Screen
+          name='ShiftsScreen'
+          component={ShiftsScreen}
+          options={({ navigation }) => ({
+            title: 'Shifts',
+            headerStyle: {
+              backgroundColor: theme.primaryContainer,
+              borderBottomWidth: 0,
+              shadowColor: 'transparent',
+            },
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -363,13 +354,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             headerRight: () => (
               <View>
                 <TouchableOpacity
@@ -384,38 +369,30 @@ export default function Main() {
                 <ActionSheetModal
                   isVisible={isScheduleInfoVisible}
                   onBackdropPress={toggleScheduleInfo}
-                  swipeDown = {false}
-        
-                  height = {350}
-                  userStyle = {'light'}
+                  swipeDown={false}
+                  height={350}
+                  userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row', marginLeft: '2%' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:18, fontWeight: '700'}}>How to use the Schedule Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '700' }}>How to use the Schedule Page</Text>
                       </View>
-                      
                     </View>
                     <TouchableOpacity onPress={toggleScheduleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
                     </TouchableOpacity>
                   </View>
 
-                  <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles(theme).textView}
-                  >
-                    <ScheduleText/>
+                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <ScheduleText />
                   </ScrollView>
-                  
-                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <TouchableOpacity 
-                      onPress={toggleScheduleInfo} 
-                      style = {styles(theme).closeBtn}
-                    >
-                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+
+                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleScheduleInfo} style={styles(theme).closeBtn}>
+                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
                     </TouchableOpacity>
                   </View>
                 </ActionSheetModal>
@@ -433,13 +410,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -452,13 +423,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -471,13 +436,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -490,13 +449,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
       </Drawer.Navigator>
