@@ -233,7 +233,7 @@ export default function Schedule({ route }) {
 
   async function createNewGroupSchedule(code, tentType) {
     //let newSchedule;
-    await createGroupSchedule(code, tentType)
+    await createGroupSchedule(code, tentType, firebase.auth().currentUser.uid)
       .then((groupSchedule) => {
         console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
