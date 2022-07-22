@@ -89,25 +89,25 @@ export default function Schedule({ route }) {
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (Platform.OS === 'web') {
-        window.addEventListener('beforeunload', (event) => {
-          event.preventDefault();
-          updateHours(code);
-        });
-      }
-      return () => {
-        updateHours(code);
-        if (Platform.OS === 'web') {
-          window.removeEventListener('beforeunload', (event) => {
-            event.preventDefault();
-            updateHours(code);
-          });
-        }
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (Platform.OS === 'web') {
+  //       window.addEventListener('beforeunload', (event) => {
+  //         event.preventDefault();
+  //         updateHours(code);
+  //       });
+  //     }
+  //     return () => {
+  //       updateHours(code);
+  //       if (Platform.OS === 'web') {
+  //         window.removeEventListener('beforeunload', (event) => {
+  //           event.preventDefault();
+  //           updateHours(code);
+  //         });
+  //       }
+  //     };
+  //   }, [])
+  // );
 
   //useWindowUnloadEffect(()=> updateHours(code), true);
 
@@ -188,23 +188,32 @@ export default function Schedule({ route }) {
     const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
     const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
 
-    // let oldHours;
-    // let newHours;
-    // await groupRef.collection('members').doc(colorCodes.current[indexofOld].id).get().then((doc) => {
-    //   oldHours = doc.data().scheduledHrs - 0.5;
-    // });
-    // await groupRef.collection('members').doc(colorCodes.current[indexofNew].id).get().then((doc) => {
-    //   newHours = doc.data().scheduledHrs + 0.5;
-    // });
-    // groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
-    //   scheduledHrs: oldHours
-    // })
-    // groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
-    //   scheduledHrs: newHours,
-    // });
+    let oldHours;
+    let newHours;
+    let oldShifts;
+    let newShifts
+    await groupRef.collection('members').doc(colorCodes.current[indexofOld].id).get().then((doc) => {
+      oldHours = doc.data().scheduledHrs - 0.5;
+      oldShifts = doc.data().shifts;
+      oldShifts[index] = false
+    });
+    await groupRef.collection('members').doc(colorCodes.current[indexofNew].id).get().then((doc) => {
+      newHours = doc.data().scheduledHrs + 0.5;
+      newShifts = doc.data().shifts;
+      newShifts[index] = true
+    });
+    groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
+      scheduledHrs: oldHours,
+      shifts: oldShifts
+    })
+    groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
+      scheduledHrs: newHours,
+      shifts: newShifts,
+    });
 
-    colorCodes.current[indexofOld].changedHrs -= 0.5;
-    colorCodes.current[indexofNew].changedHrs += 0.5;
+    //colorCodes.current[indexofOld].changedHrs -= 0.5;
+    //colorCodes.current[indexofNew].changedHrs += 0.5;
+
 
     groupRef.update({
       groupSchedule: currSchedule,
@@ -233,7 +242,7 @@ export default function Schedule({ route }) {
 
   async function createNewGroupSchedule(code, tentType) {
     //let newSchedule;
-    await createGroupSchedule(code, tentType, firebase.auth().currentUser.uid)
+    await createGroupSchedule(code, tentType)
       .then((groupSchedule) => {
         console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;

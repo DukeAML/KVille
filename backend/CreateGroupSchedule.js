@@ -10,7 +10,7 @@ const MAXBLOCK = 8; //max half hours minus one (not including current time block
 const colors = ['#ececec', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
   '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
 
-export async function createGroupSchedule(groupCode, tentType, currentUserId) {
+export async function createGroupSchedule(groupCode, tentType) {
   let numDay;
   let numNight;
 
@@ -34,8 +34,6 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
   //(members who had the last iteration of shifts)
   let memberArr = new Array();
   let groupScheduleArr = new Array(336);
-  let currentUserShifts = new Array(336);
-  currentUserShifts.fill(false);
   let prevMember1 = null;
   let prevMember2 = null;
 
@@ -60,6 +58,8 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
         let hours = 0;
         let consecutive = 0;
         let id = doc.id;
+        let shifts = new Array(336);
+        shifts.fill(false);
 
         //member name and id object (used to update hrs in schedule page)
         let member = {
@@ -77,7 +77,8 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
           hours, //normalized by the half hour
           availability, //array of 336 booleans
           consecutive,
-          id, //# of 30min shifts done consecutively
+          id,
+          shifts //# of 30min shifts done consecutively
         };
         ////console.log("Current member object", current);
         memberArr.push(current); //add member to array
@@ -128,12 +129,12 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
               //if first member in sorted array and is available, set index of group array to that member
               if (memberIdx == 0 && memberArr[0].availability[time]) {
                 groupScheduleArr[nightHour + time] = memberArr[0].name;
-                updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[0].id, nightHour + time);
+                memberArr[0].shifts[nightHour+time] = true
                 memberArr[0].hours++;
               } else if (memberIdx < memberArr.length && memberArr[memberIdx].availability[time]) {
                 //for each next member, if available add to group schedule array
                 groupScheduleArr[nightHour + time] += ' ' + memberArr[memberIdx].name;
-                updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[memberIdx].id, nightHour + time);
+                memberArr[memberIdx].shifts[nightHour + time] = true;
                 memberArr[memberIdx].hours++;
               } else {
                 //otherwise, input empty to that empty spot
@@ -157,7 +158,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
           if (prevMember1.availability[time] && prevMember1.consecutive < MAXBLOCK) {
             //If prev1 is available, add them in. Otherwise, resort and add next available person
             groupScheduleArr[time] = prevMember1.name;
-            updateCurrentUserShifts(currentUserShifts, currentUserId, prevMember1.id, time);
+            prevMember1.shifts[time] = true;
             prevMember1.hours++;
             prevMember1.consecutive++;
           } else {
@@ -168,7 +169,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
               if (memberArr[1].availability[time]) {
                 //if index 1 is available add that instead
                 groupScheduleArr[time] = memberArr[1].name;
-                updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[1].id, time);
+                memberArr[1].shifts[time] = true;
                 memberArr[1].hours++;
                 //memberArr[1].consecutive++;
                 prevMember1 = memberArr[1];
@@ -181,7 +182,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
               if (memberArr[0].availability[time]) {
                 //then add the first index instead
                 groupScheduleArr[time] = memberArr[0].name;
-                updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[0].id, time);
+                memberArr[0].shifts[time] = true;
                 memberArr[0].hours++;
                 //memberArr[0].consecutive++;
                 prevMember1 = memberArr[0];
@@ -198,7 +199,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
             if (prevMember2.availability[time] && prevMember2.consecutive < MAXBLOCK) {
               //If prev2 is available, add them in. Otherwise, resort and add next available person
               groupScheduleArr[time] += ' ' + prevMember2.name;
-              updateCurrentUserShifts(currentUserShifts, currentUserId, prevMember2.id, time);
+              prevMember2.shifts[time] = true;
               prevMember2.hours++;
               prevMember2.consecutive++;
             } else {
@@ -209,7 +210,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
                 if (memberArr[1].availability[time]) {
                   //if index 1 is available add that instead
                   groupScheduleArr[time] += ' ' + memberArr[1].name;
-                  updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[1].id, time);
+                  memberArr[1].shifts[time] = true;
                   memberArr[1].hours++;
                   prevMember2 = memberArr[1];
                 } else {
@@ -221,7 +222,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
                 if (memberArr[0].availability[time]) {
                   //then add the first index instead
                   groupScheduleArr[time] += ' ' + memberArr[0].name;
-                  updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[0].id, time);
+                  memberArr[0].shifts[time] = true;
                   memberArr[0].hours++;
                   prevMember2 = memberArr[0];
                 } else {
@@ -241,7 +242,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
         if (memberArr[0].availability[time]) {
           //if first index is available, add to current block in group schedule
           groupScheduleArr[time] = memberArr[0].name;
-          updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[0].id, time);
+          memberArr[0].shifts[time] = true;
           memberArr[0].hours++;
         } else {
           //otherwise, add empty
@@ -251,7 +252,7 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
           if (memberArr[1].availability[time]) {
             //if black tent, add next available person
             groupScheduleArr[time] += ' ' + memberArr[1].name;
-            updateCurrentUserShifts(currentUserShifts, currentUserId, memberArr[1].id, time);
+            memberArr[1].shifts[time] = true;
             memberArr[1].hours++;
           } else if (!memberArr[1].availability[time]) {
             groupScheduleArr[time] += ' ' + 'empty';
@@ -272,33 +273,21 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
       //});
     })
     .then((collSnap) => {
-      //to update the number of scheduled hours for each member
-      firebase
-        .firestore()
-        .collection('groups') //UPDATE THIS TO 'groups' in real cases ******!!!
-        //.collection('groupsTest')
-        .doc(groupCode)
-        .collection('members')
-        .get()
-        .then((collSnap) => {
-          collSnap.forEach((doc) => {
-            let currId = doc.id;
-            let indexOfUser;
-            if (memberArr.some((e) => e.id === currId)) {
-              //if Name is in member array
-              indexOfUser = memberArr.findIndex((member) => member.id === currId);
-            }
-
-            //console.log( 'hours of ',currId,' is ', memberArr[indexOfUser].hours);
-
-            doc.ref.update({
-              scheduledHrs: memberArr[indexOfUser].hours / 2,
-            });
+      //to update the number of scheduled hours and shifts for each member
+      for (let i = 0; i < memberArr.length; i++) {
+        firebase
+          .firestore()
+          .collection('groups') //UPDATE THIS TO 'groups' in real cases ******!!!
+          //.collection('groupsTest')
+          .doc(groupCode)
+          .collection('members')
+          .doc(memberArr[i].id)
+          .update({
+            scheduledHrs: memberArr[i].hours / 2,
+            shifts: memberArr[i].shifts,
           });
-          return collSnap;
-        });
-    })
-    .then((collSnap) => {
+      }
+
       //To update memberArr in group with their unique id and name that corresponds with the schedule
       for (let index = 1; index < memberIDs.length; index++) {
         memberIDs[index].color = colors[index];
@@ -307,20 +296,35 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
       firebase.firestore().collection('groups').doc(groupCode).update({
         memberArr: memberIDs,
       });
+      // firebase
+      //   .firestore()
+      //   .collection('groups') //UPDATE THIS TO 'groups' in real cases ******!!!
+      //   //.collection('groupsTest')
+      //   .doc(groupCode)
+      //   .collection('members')
+      //   .get()
+      //   .then((collSnap) => {
+      //     collSnap.forEach((doc) => {
+      //       let currId = doc.id;
+      //       let indexOfUser;
+      //       if (memberArr.some((e) => e.id === currId)) {
+      //         //if Name is in member array
+      //         indexOfUser = memberArr.findIndex((member) => member.id === currId);
+      //       }
 
-      console.log('currentUserShifts', currentUserShifts);
-      firebase
-        .firestore()
-        .collection('groups')
-        .doc(groupCode)
-        .collection('members')
-        .doc(currentUserId)
-        .update({
-          shifts: currentUserShifts,
-        })
-        .then(() => console.log("successfully updated current user's shifts"))
-        .catch((error) => console.error(error));
-    });
+      //       //console.log( 'hours of ',currId,' is ', memberArr[indexOfUser].hours);
+
+      //       doc.ref.update({
+      //         scheduledHrs: memberArr[indexOfUser].hours / 2,
+      //       });
+      //     });
+      //     return collSnap;
+      //   });
+    })
+    // .then((collSnap) => {
+    //   
+      
+    // });
 
   return groupScheduleArr; //return group schedule array
 
@@ -340,11 +344,5 @@ export async function createGroupSchedule(groupCode, tentType, currentUserId) {
   function sortMembers(idx, array) {
     array.sort((a, b) => a.hours - b.hours);
     array.sort((a, b) => Number(b.availability[idx]) - Number(a.availability[idx]));
-  }
-}
-
-function updateCurrentUserShifts(shiftsArr, currentUserId, memberId, index) {
-  if (memberId == currentUserId) {
-    shiftsArr[index] = true;
   }
 }
