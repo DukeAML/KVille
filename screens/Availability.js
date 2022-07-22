@@ -577,7 +577,7 @@ const styles = (theme) =>
       fontWeight: '600',
     },
     head: {
-      backgroundColor: theme.background,
+      backgroundColor: '#f3f3f3', //theme.background;
       height: 35,
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,

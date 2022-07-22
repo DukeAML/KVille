@@ -83,10 +83,7 @@ export default function Info() {
     <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).buttonContainer}>
         <TouchableOpacity
-          style={[
-            styles(theme).button,
-            { borderTopLeftRadius: 7, borderBottomLeftRadius: 7 },
-          ]}
+          style={styles(theme).button}
           onPress={() => autoScroll(hourPos)}
         >
           <Text style={styles(theme).buttonText}>Hours</Text>
@@ -121,10 +118,7 @@ export default function Info() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles(theme).button,
-            { borderTopRightRadius: 7, borderBottomRightRadius: 7 },
-          ]}
+          style={styles(theme).button}
           onPress={() => autoScroll(pCheckPos)}
         >
           <Text style={styles(theme).buttonText}>P-Checks</Text>
@@ -492,8 +486,9 @@ const styles = (theme) =>
       flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginHorizontal: 20,
-      marginTop: 2,
+      //marginHorizontal: 20,
+      //marginTop: 2,
+      width: '100%'
     },
     button: {
       backgroundColor: theme.primary,
