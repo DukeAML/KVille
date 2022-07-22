@@ -121,7 +121,7 @@ export default function DrawerContent(props) {
               icon={({ color, size }) => <Icon name='home-outline' color={color} size={size} />}
               label='Home'
               onPress={() => {
-                props.navigation.navigate('Start');
+                props.navigation.navigate('Home');
               }}
             />
             <DrawerItem

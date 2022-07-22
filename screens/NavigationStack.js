@@ -20,7 +20,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import StartScreen from './Start';
+import HomeScreen from './Home';
 import CreateGroupScreen from './CreateGroup';
 import JoinGroupScreen from './JoinGroup';
 import GroupInfoScreen from './GroupInfo';
@@ -206,8 +206,8 @@ export default function Main() {
     >
       <Drawer.Navigator initialRouteName='Start' drawerContent={(props) => <DrawerContent {...props} />}>
         <Drawer.Screen
-          name='Start'
-          component={StartScreen}
+          name='Home'
+          component={HomeScreen}
           options={{
             headerShown: false,
             swipeEnabled: false,
