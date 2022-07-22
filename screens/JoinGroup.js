@@ -121,6 +121,7 @@ export default function JoinGroup({ navigation }) {
           inTent: false,
           availability: availability,
           scheduledHrs: 0,
+          shifts: [],
         });
         await userRef
           .get()

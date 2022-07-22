@@ -123,6 +123,7 @@ export default function CreateGroup({ navigation }) {
       inTent: false,
       availability: availability,
       scheduledHrs: 0,
+      shifts: []
     });
     //updates current user's inGroup and groupCode states
     userRef.update({

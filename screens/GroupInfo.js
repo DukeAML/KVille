@@ -17,15 +17,6 @@ import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
 
-/* let currentUserName;
-
-firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
-.get().then((doc) => {
-  if (doc.exists) currentUserName = doc.data().username;
-}).catch((error) => {
-  console.log("Error getting document:", error);
-});*/
-
 export default function GroupInfo({ route }) {
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   const [isModalVisible, setModalVisible] = useState(false);
@@ -73,14 +64,7 @@ export default function GroupInfo({ route }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
             setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
-            // data[0] = {
-            // id: memID,
-            // name: currName,
-            // inTent: tentCondition,
-            // hours: scheduledHours,
-            // };
           } else {
             data.push({
               id: memID,
@@ -107,14 +91,7 @@ export default function GroupInfo({ route }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
             setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
-            // data[0] = {
-            //   id: memID,
-            //   name: currName,
-            //   inTent: tentCondition,
-            //   hours: scheduledHours,
-            // };
           } else {
             data.push({
               id: memID,
@@ -266,8 +243,6 @@ export default function GroupInfo({ route }) {
         onPress={() => {
           toggleModal();
           currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
-          //setCurrMember({ name: name, id: id, hours: hours });
-          //setCurrIndex(indexOfUser);
         }}
       >
         {!isLoading ? (
@@ -293,8 +268,6 @@ export default function GroupInfo({ route }) {
         onPress={() => {
           toggleModal();
           currMember.current = { name: name, id: id, hours: hours, role: role };
-          //setCurrMember({ name: name, id: id, hours: hours, role: role });
-          //setCurrIndex(indexOfUser);
         }}
       >
         {groupRole == 'Creator' ? (

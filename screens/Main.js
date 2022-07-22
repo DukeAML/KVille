@@ -465,7 +465,7 @@ export default function Main() {
           name='InfoScreen'
           component={InfoScreen}
           options={({ navigation }) => ({
-            title: 'Tent Details',
+            title: '',
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
