@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import CountDown from 'react-native-countdown-component';
-import * as SplashScreen from 'expo-splash-screen';
+import * as SplashScreen from 'expo-splash-screen'; 
 
 export default function Monitor() {
   const [isReady, setIsReady] = useState(false);
