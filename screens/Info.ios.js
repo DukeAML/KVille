@@ -130,7 +130,7 @@ export default function Info() {
               <Table borderStyle={{ borderWidth: 1.3 }}>
                 <Row
                   data={NIGHTHOURS.tableHead}
-                  flexArr={[1.00001, 2, 2]}
+                  flexArr={[1, 2, 2]}
                   style={StyleSheet.flatten(styles(theme).tableHead)}
                   textStyle={StyleSheet.flatten(styles(theme).tableText)}
                 />
@@ -143,7 +143,7 @@ export default function Info() {
                   />
                   <Rows
                     data={NIGHTHOURS.tableData}
-                    flexArr={[1.987, 1.987]}
+                    flexArr={[2, 2]}
                     style={StyleSheet.flatten(styles(theme).tableRow)}
                     textStyle={StyleSheet.flatten(styles(theme).tableText)}
                   />
@@ -262,7 +262,7 @@ export default function Info() {
                 <TableWrapper style={styles(theme).tableWrapper}>
                   <Rows
                     data={BLACKTENT.tableData}
-                    flexArr={[1, 1.987]}
+                    flexArr={[1, 2]}
                     style={StyleSheet.flatten(styles(theme).tentTableRow)}
                     textStyle={StyleSheet.flatten(styles(theme).tableText)}
                   />
@@ -290,7 +290,7 @@ export default function Info() {
                 <TableWrapper style={styles(theme).tableWrapper}>
                   <Rows
                     data={BLUETENT.tableData}
-                    flexArr={[1, 1.987]}
+                    flexArr={[1, 2]}
                     style={StyleSheet.flatten(styles(theme).tentTableRow)}
                     textStyle={StyleSheet.flatten(styles(theme).tableText)}
                   />
@@ -312,7 +312,7 @@ export default function Info() {
                 <TableWrapper style={styles(theme).tableWrapper}>
                   <Rows
                     data={WHITETENT.tableData}
-                    flexArr={[1, 1.987]}
+                    flexArr={[1, 2]}
                     style={StyleSheet.flatten(styles(theme).tentTableRow)}
                     textStyle={StyleSheet.flatten(styles(theme).tableText)}
                   />
