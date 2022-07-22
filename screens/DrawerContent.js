@@ -145,7 +145,7 @@ export default function DrawerContent(props) {
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => <Icon name='calendar-text-outline' color={color} size={size} />}
+              icon={({ color, size }) => <Icon name='calendar-check-outline' color={color} size={size} />}
               label='Your Shifts'
               onPress={() => {
                 props.navigation.navigate('ShiftsScreen', {

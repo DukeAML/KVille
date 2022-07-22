@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
@@ -23,7 +16,6 @@ import { BottomSheetModal } from '../component/BottomSheetModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
 
-
 const dayMapping = {
   0: 'Sunday',
   1: 'Monday',
@@ -35,12 +27,12 @@ const dayMapping = {
 };
 const timeOfDayMapping = {
   0: 'AM',
-  1: 'PM'
+  1: 'PM',
 };
 const minMapping = {
   0: '00',
   1: '30',
-}
+};
 
 export default function Availability({ route }) {
   const { groupCode } = route.params;
@@ -55,7 +47,8 @@ export default function Availability({ route }) {
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['shifts', firebase.auth().currentUser.uid, groupCode],
-    () => fetchCurrentUserShifts(groupCode)
+    () => fetchCurrentUserShifts(groupCode),
+    { initialData: [] }
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
   //useRefreshOnFocus(refetch);
@@ -82,7 +75,7 @@ export default function Availability({ route }) {
           i++;
         }
         const end = i - 1;
-        parsedShifts.push({ id: parsedShifts.length, start: start, end: end});
+        parsedShifts.push({ id: parsedShifts.length, start: start, end: end });
       }
     }
     console.log(parsedShifts);
@@ -99,11 +92,12 @@ export default function Availability({ route }) {
     setSnackVisible(!isSnackVisible);
   }
 
-  const renderShift = ({ item }) => {
+  const RenderShift = ({ item }) => {
     const startDay = Math.floor(item.start / 48);
     const startTime = item.start - 48 * startDay;
     const startTimeOfDay = Math.floor(startTime / 24);
-    const startHour = Math.floor((startTime - 24 * startTimeOfDay) / 2) == 0 ? 12 :  Math.floor((startTime - 24 * startTimeOfDay)/2);
+    const startHour =
+      Math.floor((startTime - 24 * startTimeOfDay) / 2) == 0 ? 12 : Math.floor((startTime - 24 * startTimeOfDay) / 2);
     const startMin = startTime % 2;
     // console.log('item start time', item.start);
     // console.log('startDay: ' + startDay + '; startTime: ' +  startTime);
@@ -111,7 +105,8 @@ export default function Availability({ route }) {
     const endDay = Math.floor(item.end / 48);
     const endTime = item.end - 48 * endDay;
     const endTimeOfDay = Math.floor(endTime / 24);
-    const endHour = Math.floor((endTime - 24 * endTimeOfDay) / 2) == 0 ? 12 :  Math.floor((endTime - 24 * endTimeOfDay)/2);
+    const endHour =
+      Math.floor((endTime - 24 * endTimeOfDay) / 2) == 0 ? 12 : Math.floor((endTime - 24 * endTimeOfDay) / 2);
     const endMin = endTime % 2;
 
     return (
@@ -124,16 +119,16 @@ export default function Availability({ route }) {
           style={[
             styles(theme).listItem,
             styles(theme).shadowProp,
-            { flexDirection: 'column', justifyContent: 'space-between' },
+            { flexDirection: 'row', justifyContent: 'space-between' },
           ]}
         >
-          <View style={{ width: '100%' }}>
+          <View>
             <Text style={styles(theme).listText}>{dayMapping[startDay]}</Text>
             <Text style={{ color: theme.text2 }}>
               {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]}
             </Text>
           </View>
-          <View style={{ width: '100%' }}>
+          <View>
             <Text style={styles(theme).listText}>{dayMapping[endDay]}</Text>
             <Text style={{ color: theme.text2 }}>
               {endHour} : {minMapping[endMin]} {timeOfDayMapping[endTimeOfDay]}
@@ -141,6 +136,14 @@ export default function Availability({ route }) {
           </View>
         </View>
       </TouchableOpacity>
+    );
+  };
+
+  const EmptyComponent = () => {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 30, fontWeight: '700' }}> Create Group Schedule First</Text>
+      </View>
     );
   };
 
@@ -163,10 +166,9 @@ export default function Availability({ route }) {
     <View style={styles(theme).screenContainer} onLayout={onLayoutRootView}>
       <FlatList
         data={data}
-        renderItem={renderShift}
+        renderItem={RenderShift}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        //ItemSeparatorComponent={() => <Divider />}
-        //keyExtractor={(item) => item.id}
+        ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );
