@@ -18,7 +18,7 @@ import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar, Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { FAB, Portal, Provider } from 'react-native-paper';
 
@@ -75,7 +75,7 @@ export default function Schedule({ route }) {
   const newSchedule = useRef([]);
   const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
-  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
+  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0 }]);
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
@@ -560,17 +560,19 @@ export default function Schedule({ route }) {
           cancelButton={true}
           height={win.height * 0.15}
         >
-          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
+          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%'}}>
             <View
               style={{
-                height: '100%',
-                width: '100%',
+                flex: 1,
                 justifyContent: 'center',
+                alignItems: 'center',
                 borderBottomWidth: 1,
                 borderColor: '#cfcfcf',
+                flexDirection: 'row'
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+              <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
+              <Icon name='chevron-down' color={theme.icon1} size={30} style={{marginLeft: 10}}/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -594,7 +596,7 @@ export default function Schedule({ route }) {
                 style={{
                   textAlign: 'center',
                   color: 'white',
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: '500',
                 }}
               >

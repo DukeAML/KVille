@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -165,15 +165,15 @@ export default function CreateGroup({ navigation }) {
       <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
         <View style={styles(theme).groupContainer}>
           <TouchableOpacity
-            style={{alignSelf:'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20}}
+            style={{ alignSelf: 'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20 }}
             onPress={() => {
               onCreateGroup();
               console.log(group.groupCode);
               console.log(groupRole);
             }}
           >
-          <Text style={styles(theme).btnTxt}>Create</Text>
-        </TouchableOpacity>
+            <Text style={styles(theme).btnTxt}>Create</Text>
+          </TouchableOpacity>
 
           <View style={{ width: '90%' }}>
             <Text style={styles(theme).headerText}>Group Name</Text>
@@ -199,20 +199,15 @@ export default function CreateGroup({ navigation }) {
               },
             ]}
           >
-            <Text
-              selectable={true}
-              style={{textAlign: 'center',fontSize: 26,fontWeight: '700',}}
-            >
+            <Text selectable={true} style={{ textAlign: 'center', fontSize: 26, fontWeight: '700' }}>
               {group.groupCode}
             </Text>
           </View>
 
           <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
-          <TouchableOpacity
-            onPress = {toggleTentChange}
-            style = {styles(theme).selectTent}
-          >
-            <Text style={{textAlign: 'center',fontSize: 24,fontWeight: '600',}}>{group.tentType}</Text>
+          <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
+            <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400' }}>{group.tentType}</Text>
+            <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
           </TouchableOpacity>
 
           <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
@@ -246,7 +241,7 @@ export default function CreateGroup({ navigation }) {
         >
           <TouchableOpacity
             onPress={() => {
-              setGroup({ ...group, tentType: 'Black' })
+              setGroup({ ...group, tentType: 'Black' });
               toggleTentChange();
             }} //change to new tent type
             style={styles(theme).tentChangeListItem}
@@ -266,7 +261,7 @@ export default function CreateGroup({ navigation }) {
 
           <TouchableOpacity
             onPress={() => {
-              setGroup({ ...group, tentType: 'White' })
+              setGroup({ ...group, tentType: 'White' });
               toggleTentChange();
             }} //change to new tent type
             style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
@@ -312,7 +307,7 @@ export default function CreateGroup({ navigation }) {
           }}
         ></View>
       </View>
-      
+
       <Snackbar
         visible={isSnackVisible}
         onDismiss={() => setSnackVisible(false)}
@@ -395,7 +390,11 @@ const styles = (theme) =>
       borderWidth: 1, 
       borderColor: theme.grey2,
       backgroundColor: '#ececec', 
-      justifyContent: 'center'
+      justifyContent: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center', 
+      paddingHorizontal: 10,
     },
     tentChangeListItem: {
       //Style of an item in the member tentChange modal (for creator only)
