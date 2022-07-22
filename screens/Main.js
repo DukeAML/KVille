@@ -213,17 +213,6 @@ export default function Main() {
           options={{
             headerShown: false,
             swipeEnabled: false,
-            // headerStyle: {
-            //   backgroundColor: "#1f509a",
-            //   borderBottomWidth: 0,
-            //   shadowColor: "transparent",
-            // },
-            // headerTitleStyle: {
-            //   fontFamily: "NovaCut",
-            //   color: "#fff",
-            //   fontSize: 30,
-            //   left: "0%",
-            // },
           }}
         />
         <Drawer.Screen

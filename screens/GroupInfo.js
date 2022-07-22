@@ -408,43 +408,44 @@ export default function GroupInfo({ route }) {
             </View>
           ) : null}
         </View>
-
-        {groupRole == 'Creator' ? (
-          <ActionSheetModal
-            isVisible={isRoleChangeVisible}
-            onBackdropPress={toggleRoleChange}
-            onSwipeComplete={toggleRoleChange}
-            toggleModal={toggleRoleChange}
-            cancelButton={true}
-            height={180}
-            userStyle={'dark'}
-          >
-            <TouchableOpacity
-              onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing member role
-              style={styles(theme).roleChangeListItem}
-            >
-              <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }} />
-              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Creator</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
-              style={styles(theme).roleChangeListItem}
-            >
-              <Icon name='badge-account-outline' color={theme.text1} size={25} style={{ marginRight: 15 }} />
-              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Admin</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => postGroupRole.mutate({ groupRole: 'Member', groupCode })}
-              style={[styles(theme).roleChangeListItem, { borderBottomWidth: 0 }]}
-            >
-              <Icon name='account' color={theme.text1} size={25} style={{ marginRight: 15 }} />
-              <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Member</Text>
-            </TouchableOpacity>
-          </ActionSheetModal>
-        ) : null}
       </ActionSheetModal>
+
+      {groupRole == 'Creator' ? (
+        <ActionSheetModal
+          isVisible={isRoleChangeVisible}
+          onBackdropPress={toggleRoleChange}
+          onSwipeComplete={toggleRoleChange}
+          toggleModal={toggleRoleChange}
+          cancelButton={true}
+          height={180}
+          userStyle={'dark'}
+        >
+          <TouchableOpacity
+            onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing member role
+            style={styles(theme).roleChangeListItem}
+          >
+            <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Creator</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
+            style={styles(theme).roleChangeListItem}
+          >
+            <Icon name='badge-account-outline' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Admin</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => postGroupRole.mutate({ groupRole: 'Member', groupCode })}
+            style={[styles(theme).roleChangeListItem, { borderBottomWidth: 0 }]}
+          >
+            <Icon name='account' color={theme.text1} size={25} style={{ marginRight: 15 }} />
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Member</Text>
+          </TouchableOpacity>
+        </ActionSheetModal>
+      ) : null}
+      
 
       {/* Remove Member Confirmation Modal */}
       <ConfirmationModal

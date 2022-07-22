@@ -73,6 +73,7 @@ export default function Schedule({ route }) {
   const oldMember = useRef('');
   const editIndex = useRef(0);
   const newSchedule = useRef([]);
+  const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
   const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
 
@@ -171,10 +172,12 @@ export default function Schedule({ route }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.setQueryData(
+        if (editSuccessful.current){
+          queryClient.setQueryData(
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current
-        );
+          );
+        } else return;
       },
     });
   }
@@ -183,43 +186,60 @@ export default function Schedule({ route }) {
   async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    
     let currSchedule = data;
-    currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
-    const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
-    const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
+    //Must check if the member already exists in the array
+    if (newMember !== 'empty' && data[index].trim().split(' ').includes(newMember)){
+      setSnackMessage('Member already in chosen timeslot');
+      toggleSnackBar();
+      editSuccessful.current = false;
+    } else {
+      
+      currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
+      const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
+      const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
 
-    let oldHours;
-    let newHours;
-    let oldShifts;
-    let newShifts
-    await groupRef.collection('members').doc(colorCodes.current[indexofOld].id).get().then((doc) => {
-      oldHours = doc.data().scheduledHrs - 0.5;
-      oldShifts = doc.data().shifts;
-      oldShifts[index] = false
-    });
-    await groupRef.collection('members').doc(colorCodes.current[indexofNew].id).get().then((doc) => {
-      newHours = doc.data().scheduledHrs + 0.5;
-      newShifts = doc.data().shifts;
-      newShifts[index] = true
-    });
-    groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
-      scheduledHrs: oldHours,
-      shifts: oldShifts
-    })
-    groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
-      scheduledHrs: newHours,
-      shifts: newShifts,
-    });
+       let oldHours;
+       let newHours;
+       let oldShifts;
+       let newShifts;
+       await groupRef
+         .collection('members')
+         .doc(colorCodes.current[indexofOld].id)
+         .get()
+         .then((doc) => {
+           oldHours = doc.data().scheduledHrs - 0.5;
+           oldShifts = doc.data().shifts;
+           oldShifts[index] = false;
+         });
+       await groupRef
+         .collection('members')
+         .doc(colorCodes.current[indexofNew].id)
+         .get()
+         .then((doc) => {
+           newHours = doc.data().scheduledHrs + 0.5;
+           newShifts = doc.data().shifts;
+           newShifts[index] = true;
+         });
+       groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
+         scheduledHrs: oldHours,
+         shifts: oldShifts,
+       });
+       groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
+         scheduledHrs: newHours,
+         shifts: newShifts,
+       });
 
-    //colorCodes.current[indexofOld].changedHrs -= 0.5;
-    //colorCodes.current[indexofNew].changedHrs += 0.5;
+      //colorCodes.current[indexofOld].changedHrs -= 0.5;
+      //colorCodes.current[indexofNew].changedHrs += 0.5;
 
+      groupRef.update({
+        groupSchedule: currSchedule,
+      });
 
-    groupRef.update({
-      groupSchedule: currSchedule,
-    });
-
-    newSchedule.current = currSchedule;
+      newSchedule.current = currSchedule;
+      editSuccessful.current = true;
+    }
   }
 
   const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
@@ -374,7 +394,6 @@ export default function Schedule({ route }) {
             onPress={() => {
               editIndex.current = index;
               oldMember.current = person;
-              //setOldMember(person);
               console.log('index: ', index);
               toggleModal();
             }}
@@ -680,7 +699,7 @@ export default function Schedule({ route }) {
         <Snackbar
           visible={isSnackVisible}
           onDismiss={() => setSnackVisible(false)}
-          wrapperStyle={{ top: 0 }}
+          wrapperStyle={{ top: 40 }}
           duration={1300}
         >
           <View style={{ width: '100%' }}>
