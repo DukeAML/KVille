@@ -358,8 +358,8 @@ export default function GroupInfo({ route }) {
         userStyle={'light'}
       >
         <View style={styles(theme).popUpHeaderView}>
-          <View style={{ flexDirection: 'row', marginLeft: '5%' }}>
-            <Icon name='account' color={theme.grey2} size={30} style={{ marginRight: 20 }} />
+          <View style={{ flexDirection: 'row'}}>
+            <Icon name='account' color={theme.grey2} size={28} style={{ marginRight: 12 }} />
             <Text style={{ fontSize: 22, fontWeight: '700' }}>{currMember.current.name} Information</Text>
           </View>
           <TouchableOpacity onPress={toggleModal}>

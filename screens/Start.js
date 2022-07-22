@@ -341,7 +341,8 @@ const styles = (theme) =>
       //Overarching Container
       flexDirection: 'column',
       flex: 1,
-      backgroundColor: theme.background,
+      //backgroundColor: theme.background,
+      backgroundColor: '#f5f7fa',
       alignItems: 'center',
       marginTop: '0%',
     },
@@ -426,11 +427,14 @@ const styles = (theme) =>
 
     listItem: {
       //for the items for each group
-      backgroundColor: theme.grey3,
+      //backgroundColor: theme.grey3,
+      backgroundColor: '#fff',
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
       alignSelf: 'center',
+      borderWidth: 0.3,
+      borderColor: '#d8d9dc',
       //width: window.width * 0.9,
       width: '90%',
       justifyContent: 'flex-start',

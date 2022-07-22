@@ -281,7 +281,7 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Availability',
             headerStyle: {
-              backgroundColor: theme.primaryContainer,
+              backgroundColor: '#f3f3f3', //theme.primaryContainer;
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
@@ -304,12 +304,12 @@ export default function Main() {
                   height={350}
                   userStyle={'light'}
                 >
-                  <View style={styles(theme).popUpHeaderView}>
-                    <View style={{ flexDirection: 'row', marginLeft: '2%' }}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }} />
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }}/>
                       <View>
-                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
-                        <Text style={{ fontSize: 17, fontWeight: '700' }}>How to use the Availability Page</Text>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:15, fontWeight: '700'}}>How to use the Availability Page</Text>
                       </View>
                     </View>
                     <TouchableOpacity onPress={toggleInfo}>
@@ -373,12 +373,12 @@ export default function Main() {
                   height={350}
                   userStyle={'light'}
                 >
-                  <View style={styles(theme).popUpHeaderView}>
-                    <View style={{ flexDirection: 'row', marginLeft: '2%' }}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }} />
+                  <View style = {styles(theme).popUpHeaderView}>
+                    <View style={{flexDirection:'row'}}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }}/>
                       <View>
-                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
-                        <Text style={{ fontSize: 18, fontWeight: '700' }}>How to use the Schedule Page</Text>
+                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
+                        <Text style={{fontSize:16, fontWeight: '700'}}>How to use the Schedule Page</Text>
                       </View>
                     </View>
                     <TouchableOpacity onPress={toggleScheduleInfo}>
