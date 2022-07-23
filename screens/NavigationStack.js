@@ -216,48 +216,18 @@ export default function NavigationStack() {
         <Drawer.Screen
           name='CreateGroup'
           component={CreateGroupScreen}
-          options={({ navigation }) => ({
-            title: 'Create Group',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerTitleStyle: {
-              color: theme.text2,
-            },
-            headerTitleAlign: 'center',
-            presentation: 'modal',
-            headerLeft: () => (
-              <Text
-                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
         <Drawer.Screen
           name='JoinGroup'
           component={JoinGroupScreen}
-          options={({ navigation }) => ({
-            title: 'Join Group',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerTitleAlign: 'center',
-            headerLeft: () => (
-              <Text
-                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
         <Drawer.Screen
           name='GroupInfo'
@@ -294,7 +264,7 @@ export default function NavigationStack() {
                   }}
                   style={{ marginRight: 20 }}
                 >
-                  <Icon name='help-circle-outline' color={'black'} size={30} />
+                  <Icon name='help-circle-outline' color={'black'} size={25} />
                 </TouchableOpacity>
 
                 <ActionSheetModal
@@ -304,12 +274,12 @@ export default function NavigationStack() {
                   height={350}
                   userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:15, fontWeight: '700'}}>How to use the Availability Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '700' }}>How to use the Availability Page</Text>
                       </View>
                     </View>
                     <TouchableOpacity onPress={toggleInfo}>
@@ -363,7 +333,7 @@ export default function NavigationStack() {
                   }}
                   style={{ marginRight: 20 }}
                 >
-                  <Icon name='help-circle-outline' color={'black'} size={30} />
+                  <Icon name='help-circle-outline' color={'black'} size={25} />
                 </TouchableOpacity>
 
                 <ActionSheetModal
@@ -373,12 +343,12 @@ export default function NavigationStack() {
                   height={350}
                   userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:16, fontWeight: '700'}}>How to use the Schedule Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '700' }}>How to use the Schedule Page</Text>
                       </View>
                     </View>
                     <TouchableOpacity onPress={toggleScheduleInfo}>

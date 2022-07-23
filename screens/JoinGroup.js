@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   KeyboardAvoidingView,
+  SafeAreaView
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,8 +55,6 @@ export default function JoinGroup({ navigation }) {
 
   const userName = useSelector((state) => state.user.currentUser.username);
 
-  //on first render sets name to user's registered name
-  //useEffect(() => {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
@@ -153,63 +152,70 @@ export default function JoinGroup({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-        <View style={styles(theme).container}>
-          <TouchableOpacity
-              style={{alignSelf:'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20}}
-              onPress={() => {
-                onJoinGroup(navigation);
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
+          <View style={styles(theme).container}>
+            <View style={styles(theme).header}>
+              <Text style={styles(theme).buttonText} onPress={() => navigation.goBack()}>
+                Cancel
+              </Text>
+              <Text style={{ fontWeight: '500', fontSize: 20 }}>Create Group</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  onJoinGroup(navigation);
+                }}
+              >
+                <Text style={styles(theme).buttonText}>Join</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '90%',
+                marginBottom: 10,
               }}
             >
-            <Text style={styles(theme).buttonText}>Join</Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '90%',
-              marginBottom: 10,
-            }}
-          >
-            <Text style={styles(theme).groupText}>Group Code</Text>
+              <Text style={styles(theme).groupText}>Group Code</Text>
+            </View>
+
+            <TextInput
+              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              autoFocus={true}
+              onChangeText={(code) => setInputGroupCode(code.trim())}
+              value={groupCode}
+              placeholder='Enter Group Code'
+            />
+
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '90%',
+                marginBottom: 10,
+                marginTop: 55,
+              }}
+            >
+              <Text style={styles(theme).groupText}>Username</Text>
+            </View>
+
+            <TextInput
+              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              value={name}
+              placeholder={name}
+              maxLength={11} //Maximize username length to 11 characters
+              onChangeText={(name) =>
+                setName(
+                  name
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '')
+                    .replace(/[^a-z0-9]/gi, '')
+                )
+              }
+            />
           </View>
-
-          <TextInput
-            style={[styles(theme).textInput, styles(theme).shadowProp]}
-            autoFocus={true}
-            onChangeText={(code) => setInputGroupCode(code.trim())}
-            value={groupCode}
-            placeholder='Enter Group Code'
-          />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '90%',
-              marginBottom: 10,
-              marginTop: 55,
-            }}
-          >
-            <Text style={styles(theme).groupText}>Username</Text>
-          </View>
-
-          <TextInput
-            style={[styles(theme).textInput, styles(theme).shadowProp]}
-            value={name}
-            placeholder={name}
-            maxLength={11} //Maximize username length to 11 characters
-            onChangeText={(name) =>
-              setName(
-                name
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-                  .replace(/\s+/g, '')
-                  .replace(/[^a-z0-9]/gi, '')
-              )
-            }
-          />
-
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
       <View
         style={{
           marginTop: 'auto',
@@ -266,6 +272,14 @@ const styles = (theme) =>
       alignItems: 'center',
       marginTop: '0%',
     },
+    header: {
+      flexDirection: 'row',
+      width: '94%',
+      height: '10%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
     textInput: {
       backgroundColor: theme.white2,
       padding: 10,
@@ -293,9 +307,9 @@ const styles = (theme) =>
       width: '50%',
     },
     buttonText: {
-      fontSize: 24,
+      fontSize: 18,
       color: theme.primary,
-      fontWeight: '700',
+      fontWeight: '600',
       //textAlign: 'center',
     },
     shadowProp: {
