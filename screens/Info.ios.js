@@ -203,42 +203,46 @@ export default function Info() {
             </Text>
           </ScrollView>
         </View>
-        <View style={{ marginHorizontal: 20, marginTop: 10 }} key='2'>
-          <Text style={styles(theme).header}>Missed Checks</Text>
+        <View key='2'>
+          <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+            <Text style={styles(theme).header}>Missed Checks</Text>
 
-          <Text style={styles(theme).contentText}>
-            Checking in entails each present group member presenting their Duke Card to a Line Monitor. If the tent
-            fails to complete this, the check will be counted as a missed check for that tent.
-          </Text>
+            <Text style={styles(theme).contentText}>
+              Checking in entails each present group member presenting their Duke Card to a Line Monitor. If the tent
+              fails to complete this, the check will be counted as a missed check for that tent.
+            </Text>
 
-          <Text style={styles(theme).contentText}>
-            Each tent is allowed one missed check per tenting period. Missing a second check will result in the tent
-            being bumped to the end of the line, behind all registered tents.
-          </Text>
+            <Text style={styles(theme).contentText}>
+              Each tent is allowed one missed check per tenting period. Missing a second check will result in the tent
+              being bumped to the end of the line, behind all registered tents.
+            </Text>
 
-          <Text style={styles(theme).contentText}>
-            An email from headlinemonitor@gmail.com to your tent captain within 24 hours will inform you of your miss.
-            If you feel a miss has been assigned in error, please contact the Head Line Monitors at
-            headlinemonitor@gmail.com to discuss your circumstances.
-          </Text>
-          <Text style={styles(theme).contentText}>
-            If K-Ville is at a maximum capacity, the tent will be dropped to the end of the resultant wait list.
-          </Text>
+            <Text style={styles(theme).contentText}>
+              An email from headlinemonitor@gmail.com to your tent captain within 24 hours will inform you of your miss.
+              If you feel a miss has been assigned in error, please contact the Head Line Monitors at
+              headlinemonitor@gmail.com to discuss your circumstances.
+            </Text>
+            <Text style={styles(theme).contentText}>
+              If K-Ville is at a maximum capacity, the tent will be dropped to the end of the resultant wait list.
+            </Text>
+          </View>
         </View>
-        <View style={{ marginHorizontal: 20, marginTop: 10 }} key='3'>
-          <Text style={styles(theme).header}>Grace</Text>
+        <View key='3'>
+          <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+            <Text style={styles(theme).header}>Grace</Text>
 
-          <Text style={styles(theme).contentText}>
-            A grace period may be announced in which no tent checks will be called. During grace, tenters need not be on
-            duty in K-Ville.
-          </Text>
+            <Text style={styles(theme).contentText}>
+              A grace period may be announced in which no tent checks will be called. During grace, tenters need not be
+              on duty in K-Ville.
+            </Text>
 
-          <Text style={styles(theme).contentText}>Grace shall be given on the following occasions:</Text>
+            <Text style={styles(theme).contentText}>Grace shall be given on the following occasions:</Text>
 
-          <BulletPoint data='For one hour after a tent check is completed.' />
-          <BulletPoint data='Two hours before and after a men’s or women’s home basketball game.' />
-          <BulletPoint data='One hour before and after a men’s or women’s away basketball game.' />
-          <BulletPoint data='For some heavy weather-related incidents.' />
+            <BulletPoint data='For one hour after a tent check is completed.' />
+            <BulletPoint data='Two hours before and after a men’s or women’s home basketball game.' />
+            <BulletPoint data='One hour before and after a men’s or women’s away basketball game.' />
+            <BulletPoint data='For some heavy weather-related incidents.' />
+          </View>
         </View>
         <View key='4'>
           <ScrollView style={{ marginHorizontal: 20, marginTop: 10 }} showsVerticalScrollIndicator={false}>
@@ -338,22 +342,25 @@ export default function Info() {
             </Text>
           </ScrollView>
         </View>
-        <View style={{ marginHorizontal: 20, marginTop: 10 }} key='5'>
-          <Text style={styles(theme).header}>Personal Checks</Text>
-          <Text style={styles(theme).contentText}>
-            P-Checks are conducted on an individual basis. Therefore, an entire tent will not be penalized should a
-            member of their tent miss too many Personal Checks.
-          </Text>
-          <Text style={styles(theme).contentText}>
-            Five Personal Checks will be called at any time on **insert date**
-          </Text>
-          <Text style={[styles(theme).contentText, { fontWeight: '700' }]}>
-            To obtain a wristband for the Carolina game, a tenter must check in at THREE of the FIVE checks.
-          </Text>
-          <Text style={styles(theme).contentText}>
-            Individuals who fail to report to three of the five Personal Checks will be ineligible to receive a
-            wristband for the Carolina game. Those students will not, however, penalize the other members in their tent
-          </Text>
+        <View key='5'>
+          <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+            <Text style={styles(theme).header}>Personal Checks</Text>
+            <Text style={styles(theme).contentText}>
+              P-Checks are conducted on an individual basis. Therefore, an entire tent will not be penalized should a
+              member of their tent miss too many Personal Checks.
+            </Text>
+            <Text style={styles(theme).contentText}>
+              Five Personal Checks will be called at any time on **insert date**
+            </Text>
+            <Text style={[styles(theme).contentText, { fontWeight: '700' }]}>
+              To obtain a wristband for the Carolina game, a tenter must check in at THREE of the FIVE checks.
+            </Text>
+            <Text style={styles(theme).contentText}>
+              Individuals who fail to report to three of the five Personal Checks will be ineligible to receive a
+              wristband for the Carolina game. Those students will not, however, penalize the other members in their
+              tent
+            </Text>
+          </View>
         </View>
       </PagerView>
     </SafeAreaView>
