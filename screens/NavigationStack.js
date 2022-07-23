@@ -40,7 +40,7 @@ import { ActionSheetModal } from '../component/ActionSheetModal';
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-export default function Main() {
+export default function NavigationStack() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());

@@ -31,7 +31,7 @@ const minMapping = {
   1: '30',
 };
 
-export default function Availability({ route }) {
+export default function Shifts({ route }) {
   const { groupCode } = route.params;
   //console.log('availability params', route.params);
 

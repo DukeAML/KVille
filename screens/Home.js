@@ -33,7 +33,7 @@ import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
-export default function Start({ navigation }) {
+export default function Home({ navigation }) {
   /* let [fontsLoaded] = useFonts({
     NovaCut_400Regular,
   }); */
