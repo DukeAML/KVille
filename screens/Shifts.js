@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
-import { Snackbar } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { Divider } from 'react-native-paper';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
-import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { BottomSheetModal } from '../component/BottomSheetModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
 
 const dayMapping = {
@@ -44,6 +41,7 @@ export default function Availability({ route }) {
   const [snackMessage, setSnackMessage] = useState('');
 
   const { theme } = useTheme();
+  const shifts = useRef();
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['shifts', firebase.auth().currentUser.uid, groupCode],
@@ -55,7 +53,7 @@ export default function Availability({ route }) {
 
   async function fetchCurrentUserShifts(groupCode) {
     await SplashScreen.preventAutoHideAsync();
-    let shifts;
+    //let shifts;
     await firebase
       .firestore()
       .collection('groups')
@@ -64,14 +62,14 @@ export default function Availability({ route }) {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((doc) => {
-        shifts = doc.data().shifts;
+        shifts.current = doc.data().shifts;
         //console.log('shifts fetched from firebase', shifts);
       });
     let parsedShifts = [];
-    for (let i = 0; i < shifts.length; i++) {
-      if (shifts[i]) {
+    for (let i = 0; i < shifts.current.length; i++) {
+      if (shifts.current[i]) {
         const start = i;
-        while (i < shifts.length && shifts[i]) {
+        while (i < shifts.current.length && shifts.current[i]) {
           i++;
         }
         const end = i - 1;
@@ -82,14 +80,49 @@ export default function Availability({ route }) {
     return parsedShifts;
   }
 
+  const postShiftUpdate = useShiftUpdate(groupCode);
+
+  function useShiftUpdate(groupCode) {
+    const queryClient = useQueryClient();
+    return useMutation((options) => markComplete(options), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: (data) => {
+        //console.log('new shift', newParsedShifts.current);
+        queryClient.setQueryData(['shifts', firebase.auth().currentUser.uid, groupCode], data);
+      },
+    });
+  }
+
+  function markComplete(options) {
+    const { item, groupCode } = options;
+
+    let newShifts = shifts.current;
+    for (let i = item.start; i <= item.end; i++) {
+      newShifts[i] = false;
+    }
+    firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        shifts: newShifts,
+      });
+
+    let parsedShifts = data;
+    parsedShifts.splice(item.id, 1);
+
+    return parsedShifts;
+  }
+
   function toggleModal() {
     setModalVisible(!isModalVisible);
   }
   function toggleDeleteModal() {
     setDeleteModalVisible(!isDeleteModalVisible);
-  }
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
   }
 
   const RenderShift = ({ item }) => {
@@ -112,14 +145,15 @@ export default function Availability({ route }) {
     return (
       <TouchableOpacity
         onPress={() => {
-          toggleModal();
+          postShiftUpdate.mutate({ item, groupCode });
+          //toggleModal();
         }}
       >
         <View
           style={[
             styles(theme).listItem,
             styles(theme).shadowProp,
-            { flexDirection: 'row', justifyContent: 'space-between' },
+            { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
           ]}
         >
           <View>
@@ -128,9 +162,10 @@ export default function Availability({ route }) {
               {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]}
             </Text>
           </View>
-          <View>
-            <Text style={styles(theme).listText}>{dayMapping[endDay]}</Text>
-            <Text style={{ color: theme.text2 }}>
+          <View style={{ width: '30%', height: 1, backgroundColor: theme.text2 }} />
+           <View>
+            <Text style={[styles(theme).listText, { textAlign: 'right' }]}>{dayMapping[endDay]}</Text>
+            <Text style={{ color: theme.text2, textAlign: 'right' }}>
               {endHour} : {minMapping[endMin]} {timeOfDayMapping[endTimeOfDay]}
             </Text>
           </View>

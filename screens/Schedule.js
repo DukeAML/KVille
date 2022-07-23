@@ -28,7 +28,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
@@ -90,28 +89,6 @@ export default function Schedule({ route }) {
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (Platform.OS === 'web') {
-  //       window.addEventListener('beforeunload', (event) => {
-  //         event.preventDefault();
-  //         updateHours(code);
-  //       });
-  //     }
-  //     return () => {
-  //       updateHours(code);
-  //       if (Platform.OS === 'web') {
-  //         window.removeEventListener('beforeunload', (event) => {
-  //           event.preventDefault();
-  //           updateHours(code);
-  //         });
-  //       }
-  //     };
-  //   }, [])
-  // );
-
-  //useWindowUnloadEffect(()=> updateHours(code), true);
-
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
     await SplashScreen.preventAutoHideAsync();
@@ -138,29 +115,6 @@ export default function Schedule({ route }) {
     }
     //console.log('previous week returned', prevSchedule);
     return prevSchedule;
-  }
-
-  function updateHours(groupCode) {
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    for (let i = 0; i < colorCodes.current.length; i++) {
-      if (colorCodes.current[i].changedHrs == 0) continue;
-      groupRef
-        .collection('members')
-        .doc(colorCodes.current[i].id)
-        .get()
-        .then((doc) => {
-          const newHours = doc.data().scheduledHrs + colorCodes.current[i].changedHrs;
-          console.log(colorCodes.current[i].changedHrs + ' new hours: ' + newHours);
-          colorCodes.current[i].changedHrs = 0;
-          return newHours;
-        })
-        .then((hours) => {
-          groupRef.collection('members').doc(colorCodes.current[i].id).update({ scheduledHrs: hours });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
   }
 
   const postEditCell = useEditCell(code, weekDisplay);
@@ -256,6 +210,7 @@ export default function Schedule({ route }) {
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current
         );
+        queryClient.invalidateQueries(['shifts', firebase.auth().currentUser.uid, groupCode]);
       },
     });
   }
