@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -20,7 +21,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import StartScreen from './Start';
+import HomeScreen from './Home';
 import CreateGroupScreen from './CreateGroup';
 import JoinGroupScreen from './JoinGroup';
 import GroupInfoScreen from './GroupInfo';
@@ -31,6 +32,7 @@ import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import SettingScreen from './Settings';
 import CountdownScreen from './Countdown';
+import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
 import { BottomSheetModal } from '../component/BottomSheetModal';
@@ -39,14 +41,15 @@ import { ActionSheetModal } from '../component/ActionSheetModal';
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-export default function Main() {
+export default function NavigationStack() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
-  const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  //const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  //const [isSettingsVisible, setSettingsVisible] = useState(false);
   const { theme } = useTheme();
 
   function toggleInfo () {
@@ -56,6 +59,10 @@ export default function Main() {
   function toggleScheduleInfo () {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
+
+  /* function toggleSettings () {
+    setSettingsVisible(!isSettingsVisible);
+  }; */
   
   const AvailabilityText = () => (
     <View>
@@ -203,74 +210,30 @@ export default function Main() {
       //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
       // }
     >
-      <Drawer.Navigator
-        initialRouteName='Start'
-        drawerContent={(props) => <DrawerContent {...props} />}
-      >
+      <Drawer.Navigator initialRouteName='Start' drawerContent={(props) => <DrawerContent {...props} />}>
         <Drawer.Screen
-          name='Start'
-          component={StartScreen}
+          name='Home'
+          component={HomeScreen}
           options={{
             headerShown: false,
             swipeEnabled: false,
-            // headerStyle: {
-            //   backgroundColor: "#1f509a",
-            //   borderBottomWidth: 0,
-            //   shadowColor: "transparent",
-            // },
-            // headerTitleStyle: {
-            //   fontFamily: "NovaCut",
-            //   color: "#fff",
-            //   fontSize: 30,
-            //   left: "0%",
-            // },
           }}
         />
         <Drawer.Screen
           name='CreateGroup'
           component={CreateGroupScreen}
-          options={({ navigation }) => ({
-            title: 'Create Group',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerTitleStyle: {
-              color: theme.text2,
-            },
-            headerTitleAlign: 'center',
-            presentation: 'modal',
-            headerLeft: () => (
-              <Text
-                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
         <Drawer.Screen
           name='JoinGroup'
           component={JoinGroupScreen}
-          options={({ navigation }) => ({
-            title: 'Join Group',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerTitleAlign: 'center',
-            headerLeft: () => (
-              <Text
-                style={{ color: theme.primary, marginLeft: 10, fontWeight: '600' }}
-                onPress={() => navigation.goBack()}
-              >
-                Cancel
-              </Text>
-            ),
-          })}
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
         <Drawer.Screen
           name='GroupInfo'
@@ -280,17 +243,24 @@ export default function Main() {
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
+              //borderColor: theme.popOutBorder,
               shadowColor: 'transparent',
             },
             headerTitleStyle: {
               fontSize: 28,
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+            headerRight: () => (
+              <View>
+                <TouchableOpacity
+                  onPress={toggleSettings}
+                  style={{ marginRight: 20 }}
+                >
+                  <Icon name='cog-outline' color={theme.grey1} size={30} />
+                </TouchableOpacity>
+
+                
+              </View>
             ),
           })}
         />
@@ -300,17 +270,11 @@ export default function Main() {
           options={({ navigation }) => ({
             title: 'Availability',
             headerStyle: {
-              backgroundColor: theme.primaryContainer,
+              backgroundColor: '#f3f3f3', //theme.primaryContainer;
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             headerRight: () => (
               <View>
                 <TouchableOpacity
@@ -319,49 +283,59 @@ export default function Main() {
                   }}
                   style={{ marginRight: 20 }}
                 >
-                  <Icon name='help-circle-outline' color={'black'} size={30} />
+                  <Icon name='help-circle-outline' color={'black'} size={25} />
                 </TouchableOpacity>
 
                 <ActionSheetModal
-                  isVisible = {isInfoVisible}
+                  isVisible={isInfoVisible}
                   onBackdropPress={toggleInfo}
-                  swipeDown = {false}
-        
-                  height = {350}
-                  userStyle = {'light'}
+                  swipeDown={false}
+                  height={350}
+                  userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:17, fontWeight: '700'}}>How to use the Availability Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '700' }}>How to use the Availability Page</Text>
                       </View>
-                      
                     </View>
                     <TouchableOpacity onPress={toggleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
                     </TouchableOpacity>
                   </View>
 
-                  <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles(theme).textView}
-                  >
-                    <AvailabilityText/>
+                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <AvailabilityText />
                   </ScrollView>
-                  
-                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <TouchableOpacity 
-                      onPress={toggleInfo} 
-                      style = {styles(theme).closeBtn}
-                    >
-                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+
+                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleInfo} style={styles(theme).closeBtn}>
+                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
                     </TouchableOpacity>
                   </View>
                 </ActionSheetModal>
               </View>
             ),
+          })}
+        />
+        <Drawer.Screen
+          name='ShiftsScreen'
+          component={ShiftsScreen}
+          options={({ navigation }) => ({
+            title: 'Shifts This Week',
+            headerStyle: {
+              backgroundColor: theme.primaryContainer,
+              borderBottomWidth: 0,
+              //shadowColor: 'transparent',
+              shadowColor: '#171717',
+              shadowOffset: { width: -2, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+              elevation: 20,
+            },
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -374,13 +348,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             headerRight: () => (
               <View>
                 <TouchableOpacity
@@ -389,44 +357,36 @@ export default function Main() {
                   }}
                   style={{ marginRight: 20 }}
                 >
-                  <Icon name='help-circle-outline' color={'black'} size={30} />
+                  <Icon name='help-circle-outline' color={'black'} size={25} />
                 </TouchableOpacity>
 
                 <ActionSheetModal
                   isVisible={isScheduleInfoVisible}
                   onBackdropPress={toggleScheduleInfo}
-                  swipeDown = {false}
-        
-                  height = {350}
-                  userStyle = {'light'}
+                  swipeDown={false}
+                  height={350}
+                  userStyle={'light'}
                 >
-                  <View style = {styles(theme).popUpHeaderView}>
-                    <View style={{flexDirection:'row', marginLeft:'2%'}}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 20 }}/>
+                  <View style={styles(theme).popUpHeaderView}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
                       <View>
-                        <Text style= {{fontWeight: '500'}}>Helpful Tips</Text>
-                        <Text style={{fontSize:18, fontWeight: '700'}}>How to use the Schedule Page</Text>
+                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '700' }}>How to use the Schedule Page</Text>
                       </View>
-                      
                     </View>
                     <TouchableOpacity onPress={toggleScheduleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }}/>
+                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
                     </TouchableOpacity>
                   </View>
 
-                  <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles(theme).textView}
-                  >
-                    <ScheduleText/>
+                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <ScheduleText />
                   </ScrollView>
-                  
-                  <View style ={{height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <TouchableOpacity 
-                      onPress={toggleScheduleInfo} 
-                      style = {styles(theme).closeBtn}
-                    >
-                      <Text style ={{color: theme.text1, fontSize: 20, fontWeight: '600'}}>Ok</Text>
+
+                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleScheduleInfo} style={styles(theme).closeBtn}>
+                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
                     </TouchableOpacity>
                   </View>
                 </ActionSheetModal>
@@ -444,13 +404,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -463,32 +417,20 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
           name='InfoScreen'
           component={InfoScreen}
           options={({ navigation }) => ({
-            title: 'Tent Details',
+            title: 'Tenting Information',
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
@@ -501,13 +443,7 @@ export default function Main() {
               borderBottomWidth: 0,
               shadowColor: 'transparent',
             },
-            headerLeft: () => (
-              <IconButton
-                icon='menu'
-                size={25}
-                onPress={() => navigation.openDrawer()}
-              ></IconButton>
-            ),
+            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
       </Drawer.Navigator>
@@ -547,6 +483,31 @@ const styles = (theme) => StyleSheet.create({
     alignItems:'center',
     justifyContent: 'center', 
     borderRadius: 15
+  },
+
+  headerContainer: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  headerText: {
+    //text for different setting headers
+    fontSize: 20,
+    fontWeight: '700',
+    color: theme.grey2,
+  },
+  textInput: {
+    backgroundColor: theme.white2,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: '90%',
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'left',
+    borderRadius: 15,
+    marginBottom: 23,
+    borderColor: theme.grey2,
   },
 });
 

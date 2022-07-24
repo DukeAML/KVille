@@ -28,7 +28,7 @@ if (firebase.apps.length === 0) {
 
 import RegisterScreen from './component/auth/Register';
 import LoginScreen from './component/auth/Login';
-import MainScreen from './screens/Main';
+import NavigationStack from './screens/NavigationStack';
 import ForgotPasswordScreen from './component/auth/ForgotPassword';
 import { persistor, store } from './redux/store/index';
 import ThemeProvider from './context/ThemeProvider';
@@ -141,7 +141,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <ThemeProvider>
-          <MainScreen />
+          <NavigationStack />
         </ThemeProvider>
       </Provider>
     </QueryClientProvider>

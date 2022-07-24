@@ -13,7 +13,7 @@ import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-componen
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
-import { Snackbar} from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
@@ -63,7 +63,7 @@ export default function Availability({ route }) {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  const [selectedDay, setSelectedDay] = useState(7);
+  const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
     minute: 0,
@@ -198,15 +198,15 @@ export default function Availability({ route }) {
     toggleDeleteModal();
   };
 
-  function toggleModal () {
+  function toggleModal() {
     setModalVisible(!isModalVisible);
-  };
-  function toggleDeleteModal () {
+  }
+  function toggleDeleteModal() {
     setDeleteModalVisible(!isDeleteModalVisible);
-  };
-  function toggleSnackBar () {
+  }
+  function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
-  };
+  }
 
   const element = (cellData, index, availability) => (
     <TouchableOpacity
@@ -246,8 +246,8 @@ export default function Availability({ route }) {
       <ActionSheetModal
         isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
-        height = {55}
-        userStyle = 'light'
+        height={55}
+        userStyle='light'
       >
         <TouchableOpacity
           onPress={() => deleteAvailability.mutate()}
@@ -268,10 +268,10 @@ export default function Availability({ route }) {
         isVisible={isModalVisible}
         onBackdropPress={toggleModal}
         //onSwipeComplete={toggleModal}
-        swipeDown = {false}
-        barSize = {'none'}
-        height='75%'
-        userStyle='dark'
+        swipeDown={false}
+        barSize={'none'}
+        height='90%'
+        userStyle='light'
       >
         <Snackbar
           visible={isSnackVisible}
@@ -282,28 +282,33 @@ export default function Availability({ route }) {
           <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
         </Snackbar>
 
-        <View style = {{height:'10%', width: '100%',}}>
-         <TouchableOpacity 
-            onPress={toggleModal} 
-            style = {{flexDirection: 'row', width: '96%', justifyContent: 'flex-end', marginTop: 10}}>
-              <Icon name='close-circle' color={theme.grey2} size={26}/>
+        <View
+          style={{
+            height: '10%',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderBottomWidth: 1,
+          }}
+        >
+          <BottomSheetModal.Header fontSize={24} verticalMargin={0}>
+            Add New Busy Time
+          </BottomSheetModal.Header>
+          <TouchableOpacity onPress={toggleModal} style={{ justifyContent: 'center', position: 'absolute', right: 15 }}>
+            <Icon name='close-circle' color={theme.grey2} size={26} />
           </TouchableOpacity>
-
-          <BottomSheetModal.Header fontSize = {24} verticalMargin = {0}>Add New Busy Time</BottomSheetModal.Header>
         </View>
-
-        
 
         <View style={styles(theme).modalBody}>
           <View style={styles(theme).selectDay}>
-            <View style ={styles(theme).modalTextView}>
+            <View style={styles(theme).modalTextView}>
               <Text style={styles(theme).modalText}>Select Day: </Text>
             </View>
 
-            <View style={{width: '100%', height: '75%', alignItems: 'center'}}>
+            <View style={{ width: '100%', height: '75%', alignItems: 'center' }}>
               <Picker
                 selectedValue={selectedDay}
-                
                 onValueChange={(itemValue, itemIndex) => {
                   setSelectedDay(itemValue);
                 }}
@@ -312,7 +317,6 @@ export default function Availability({ route }) {
                 }
                 itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
               >
-                <Picker.Item label='' value={7}/>
                 <Picker.Item label='Sunday' value={0} />
                 <Picker.Item label='Monday' value={1} />
                 <Picker.Item label='Tuesday' value={2} />
@@ -322,15 +326,13 @@ export default function Availability({ route }) {
                 <Picker.Item label='Saturday' value={6} />
               </Picker>
             </View>
-
-            
           </View>
-              
+
           <View style={styles(theme).selectTime}>
-            <View style ={styles(theme).modalTextView}>
+            <View style={styles(theme).modalTextView}>
               <Text style={styles(theme).modalText}>Start Time: </Text>
             </View>
-            
+
             <View style={styles(theme).timePickerBody}>
               <Picker
                 selectedValue={startTime.hour}
@@ -379,7 +381,7 @@ export default function Availability({ route }) {
           </View>
 
           <View style={styles(theme).selectTime}>
-            <View style ={styles(theme).modalTextView}>
+            <View style={styles(theme).modalTextView}>
               <Text style={styles(theme).modalText}>End Time: </Text>
             </View>
 
@@ -436,25 +438,35 @@ export default function Availability({ route }) {
             <Text style={styles(theme).btnText}>Cancel</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles(theme).addBtn} onPress={() => postAvailability.mutate()}>
-            <Text style={styles(theme).btnText}>Add</Text>
+          <TouchableOpacity
+            style={[
+              styles(theme).addBtn,
+              { backgroundColor: theme.primary, width: '30%', height: '60%', borderRadius: 15 },
+            ]}
+            onPress={() => postAvailability.mutate()}
+          >
+            <Text style={[styles(theme).btnText, { color: theme.text1 }]}>Add</Text>
           </TouchableOpacity>
         </View>
       </BottomSheetModal>
-
-
 
       <Table borderStyle={{ borderColor: 'transparent' }}>
         <Row
           data={agenda.tableHead}
           style={StyleSheet.flatten(styles(theme).head)}
-          widthArr = {[dimensions.window.width/12, dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), 
-            dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84), dimensions.window.width*(11/84)]}
+          widthArr={[
+            dimensions.window.width / 12,
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+          ]}
           textStyle={{ textAlign: 'center', fontWeight: '700' }}
         />
       </Table>
-
-
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -462,13 +474,24 @@ export default function Availability({ route }) {
         //scrollEventThrottle = {16}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
       >
-        <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent'}} style={{ flexDirection: 'row' }}>
-          <TableWrapper style={StyleSheet.flatten([{ width: dimensions.window.width / 12, marginTop:34, alignItems: 'center'/* , borderWidth:1 */}])}>
+        <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent' }} style={{ flexDirection: 'row' }}>
+          <TableWrapper
+            style={StyleSheet.flatten([
+              { width: dimensions.window.width / 12, marginTop: 34, alignItems: 'center' /* , borderWidth:1 */ },
+            ])}
+          >
             <Col
               data={agenda.tableTime}
               //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
-              heightArr = {new Array(23).fill(cellHeight*2)}
-              textStyle={{ textAlign: 'center', fontWeight:'700', fontSize: 10, width: '70%', color: '#717573', marginLeft: 2/* , borderWidth:1, */ }}
+              heightArr={new Array(23).fill(cellHeight * 2)}
+              textStyle={{
+                textAlign: 'center',
+                fontWeight: '700',
+                fontSize: 10,
+                width: '70%',
+                color: '#717573',
+                marginLeft: 2 /* , borderWidth:1, */,
+              }}
             />
           </TableWrapper>
 
@@ -485,7 +508,7 @@ export default function Availability({ route }) {
                     data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
                     //{data[48 * cellIndex + index].toString()}
 
-                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width *(11/84) }])}
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width * (11 / 84) }])}
                   />
                 ))}
               </TableWrapper>
@@ -519,15 +542,15 @@ const styles = (theme) =>
       flex: 1,
       padding: 0,
       //backgroundColor: '#D2D5DC',
-      backgroundColor :  '#f5f5f5'
+      backgroundColor: '#f5f5f5',
     },
     text: {
       textAlign: 'center',
     },
-    modalTextView: {height: '25%', width : '100%', justifyContent: 'center'},
+    modalTextView: { height: '25%', width: '100%', justifyContent: 'center' },
     modalText: {
       fontSize: 18,
-      color: theme.text1,
+      color: theme.text2,
       textAlign: 'center',
       //borderWidth:1,
     },
@@ -538,8 +561,8 @@ const styles = (theme) =>
       justifyContent: 'space-evenly',
       //borderWidth:1,
     },
-    picker: { height: '100%', width: '35%', },
-    pickerItem: { height: '100%', },
+    picker: { height: '100%', width: '35%' },
+    pickerItem: { height: '100%' },
     selectDay: {
       alignItems: 'center',
       width: '70%',
@@ -572,12 +595,12 @@ const styles = (theme) =>
       justifyContent: 'center',
     },
     btnText: {
-      color: theme.text1,
+      color: theme.text2,
       fontSize: 24,
       fontWeight: '600',
     },
     head: {
-      backgroundColor: theme.background,
+      backgroundColor: '#f3f3f3', //theme.background;
       height: 35,
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,
@@ -591,7 +614,7 @@ const styles = (theme) =>
     row: {
       height: cellHeight,
       flexDirection: 'row',
-      borderBottomWidth:1,
+      borderBottomWidth: 1,
       borderColor: '#cfcfcf',
       //borderColor: '#a7aebe',
     },
@@ -610,7 +633,7 @@ const styles = (theme) =>
       height: 42,
       backgroundColor: theme.primary,
       borderRadius: 7,
-      borderWidth :1,
+      borderWidth: 1,
       alignSelf: 'center',
     },
     addContainer: {
