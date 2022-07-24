@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import Modal from 'react-native-modal';
 import { useTheme } from '../context/ThemeProvider';
 
@@ -49,7 +49,7 @@ const ActionSheetModal = ({ toggleModal , backgroundColor, swipeDown = true, hei
             swipeDirection={swipeDown ? ['down'] : null}
             {...props}
         >
-            <View style = {{width: '95%', alignSelf: 'center', height: adjustedHeight}}>
+            <SafeAreaView style = {{width: '95%', alignSelf: 'center', height: adjustedHeight}}>
                 <View style={[styles(theme).TopSectionView, {backgroundColor: background, height: height, opacity: opacity}]}>
                     {children}
                 </View>
@@ -62,7 +62,7 @@ const ActionSheetModal = ({ toggleModal , backgroundColor, swipeDown = true, hei
                     </TouchableOpacity>
                 ): null}
                 
-            </View>
+            </SafeAreaView>
         </Modal>
     );
   }

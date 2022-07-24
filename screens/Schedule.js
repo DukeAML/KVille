@@ -18,7 +18,7 @@ import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar, Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { FAB, Portal, Provider } from 'react-native-paper';
 
@@ -28,7 +28,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
@@ -75,7 +74,7 @@ export default function Schedule({ route }) {
   const newSchedule = useRef([]);
   const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
-  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
+  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0 }]);
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
@@ -89,28 +88,6 @@ export default function Schedule({ route }) {
   //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (Platform.OS === 'web') {
-  //       window.addEventListener('beforeunload', (event) => {
-  //         event.preventDefault();
-  //         updateHours(code);
-  //       });
-  //     }
-  //     return () => {
-  //       updateHours(code);
-  //       if (Platform.OS === 'web') {
-  //         window.removeEventListener('beforeunload', (event) => {
-  //           event.preventDefault();
-  //           updateHours(code);
-  //         });
-  //       }
-  //     };
-  //   }, [])
-  // );
-
-  //useWindowUnloadEffect(()=> updateHours(code), true);
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
@@ -138,29 +115,6 @@ export default function Schedule({ route }) {
     }
     //console.log('previous week returned', prevSchedule);
     return prevSchedule;
-  }
-
-  function updateHours(groupCode) {
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    for (let i = 0; i < colorCodes.current.length; i++) {
-      if (colorCodes.current[i].changedHrs == 0) continue;
-      groupRef
-        .collection('members')
-        .doc(colorCodes.current[i].id)
-        .get()
-        .then((doc) => {
-          const newHours = doc.data().scheduledHrs + colorCodes.current[i].changedHrs;
-          console.log(colorCodes.current[i].changedHrs + ' new hours: ' + newHours);
-          colorCodes.current[i].changedHrs = 0;
-          return newHours;
-        })
-        .then((hours) => {
-          groupRef.collection('members').doc(colorCodes.current[i].id).update({ scheduledHrs: hours });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
   }
 
   const postEditCell = useEditCell(code, weekDisplay);
@@ -256,6 +210,7 @@ export default function Schedule({ route }) {
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current
         );
+        queryClient.invalidateQueries(['shifts', firebase.auth().currentUser.uid, groupCode]);
       },
     });
   }
@@ -560,17 +515,19 @@ export default function Schedule({ route }) {
           cancelButton={true}
           height={win.height * 0.15}
         >
-          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
+          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%'}}>
             <View
               style={{
-                height: '100%',
-                width: '100%',
+                flex: 1,
                 justifyContent: 'center',
+                alignItems: 'center',
                 borderBottomWidth: 1,
                 borderColor: '#cfcfcf',
+                flexDirection: 'row'
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+              <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
+              <Icon name='chevron-down' color={theme.icon1} size={30} style={{marginLeft: 10}}/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -594,7 +551,7 @@ export default function Schedule({ route }) {
                 style={{
                   textAlign: 'center',
                   color: 'white',
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: '500',
                 }}
               >
