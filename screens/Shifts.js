@@ -165,6 +165,7 @@ export default function Availability({ route }) {
         data={data}
         renderItem={renderShift}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+        showsVerticalScrollIndicator = {false}
         //ItemSeparatorComponent={() => <Divider />}
         //keyExtractor={(item) => item.id}
       />
@@ -176,7 +177,7 @@ const styles = (theme) =>
   StyleSheet.create({
     screenContainer: {
       flex: 1,
-      backgroundColor: '#D2D5DC',
+      backgroundColor: theme.background,//'#D2D5DC',
       // flexGrow: 1,
       // overflow: 'hidden',
     }, //for the entire page's container
