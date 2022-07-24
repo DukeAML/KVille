@@ -48,7 +48,7 @@ export default function NavigationStack() {
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
-  //const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   //const [isSettingsVisible, setSettingsVisible] = useState(false);
   const { theme } = useTheme();
 

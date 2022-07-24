@@ -24,6 +24,7 @@ import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
+import { BottomSheetModal } from '../component/BottomSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
 
 export default function GroupInfo({ route }) {
@@ -34,6 +35,7 @@ export default function GroupInfo({ route }) {
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
+  
 
   const { theme } = useTheme();
 
@@ -337,6 +339,90 @@ export default function GroupInfo({ route }) {
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
       ></FlatList>
+
+      <BottomSheetModal
+        isVisible={isSettingsVisible}
+        onBackdropPress={toggleSettings}
+        swipeDown={false}
+        barSize={'none'}
+        height={'80%'}
+        userStyle={'light'}
+        color = {theme.background}
+      >
+        <View
+          style = {{
+            flexDirection: 'row',
+            width: '100%',
+            height: '12%',
+            justifyContent:'space-between',
+            alignItems: 'center',
+            backgroundColor: '#fff'
+            }}
+          >
+          <Text style={{width:'20%', borderWidth:1}}></Text>
+          <Text style = {{width:'60%', textAlign: 'center', fontSize: 24, fontWeight: '700', borderWidth:1}}>Group Settings</Text>
+          <TouchableOpacity
+            onPress={toggleSettings}
+            style = {{width:'20%', alignItems: 'center', borderWidth:1}}
+          >
+            <Text style={{fontSize: 18, color: theme.primary}}>Done</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{width: '100%', height:'88%', alignItems: 'center'}}>
+          <View style={styles(theme).headerContainer}>
+            <Text style={styles(theme).headerText}>Name in Group</Text>
+            <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+          </View>
+          <TextInput
+            style={styles(theme).textInput}
+            //value={name}
+            //placeholder={name}
+            /* onChangeText={(name) =>
+              setName(
+                name
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/\s+/g, '')
+                  .replace(/[^a-z0-9]/gi, '')
+              )
+            } */
+          />
+          {groupRole == 'Creator'}
+          <View style={styles(theme).headerContainer}>
+            <Text style={styles(theme).headerText}>Group Name</Text>
+            <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }}/>
+          </View>
+          <TextInput
+            style={styles(theme).textInput}
+            value={currGroupName}
+            placeholder={currGroupName}
+            onChangeText={(groupName) => setCurrGroupName(groupName)}
+          />
+          <View style={styles(theme).headerContainer}>
+            <Text style={styles(theme).headerText}>Tent Type</Text>
+            <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+          </View>
+          
+          <TouchableOpacity 
+            style={styles(theme).removeBtn} 
+            //onPress={toggleConfirmation}
+          >
+            {groupRole === 'Creator' ? (
+              <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
+            ) : (
+              <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
+            )}
+          </TouchableOpacity>
+
+        </View>
+
+
+        
+
+      </BottomSheetModal>
+
+
 
       {/*Member Information Modal Component*/}
       <ActionSheetModal
