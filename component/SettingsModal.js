@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import { Text, View, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
+import { Formik } from 'formik';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -15,57 +14,18 @@ import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSl
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 
-export default function Settings({ route, navigation }) {
-  const { groupCode, groupName, userName, tentType } = route.params;
-  const groupRole = useSelector((state) => state.user.currGroupRole);
-  const [isReady, setIsReady] = useState(false);
+export default function SettingsModal({ params, navigation }) {
+  const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  const [currGroupName, setCurrGroupName] = useState(groupName);
-  const [name, setName] = useState(userName);
-  const [tent, setTent] = useState(tentType);
   const dispatch = useDispatch();
   const { theme } = useTheme();
 
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-  useFocusEffect(
-    useCallback(() => {
-      let mounted = true;
-      async function prepare() {
-        try {
-          await SplashScreen.preventAutoHideAsync();
-
-          if (mounted) {
-            setCurrGroupName(groupName);
-            setName(userName);
-            setTent(tentType);
-          }
-          //console.log('fetched isCreator from firebase', isCreator);
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          // Tell the application to render
-          setIsReady(true);
-        }
-      }
-      if (mounted) {
-        prepare();
-      }
-
-      return () => {
-        setCurrGroupName(groupName);
-        setName(userName);
-        setTent(tentType);
-        //setIsReady(false);
-        mounted = false;
-      };
-    }, [route.params])
-  );
-
-  function onSave() {
+  function onSave({groupName, userName, tentType}) {
     let groupIndex;
     let groupCodeArr;
     userRef
@@ -76,7 +36,7 @@ export default function Settings({ route, navigation }) {
         console.log('group index', groupIndex);
         groupCodeArr[groupIndex] = {
           groupCode: groupCode,
-          groupName: currGroupName,
+          groupName: groupName,
         };
         return userDoc;
       })
@@ -98,8 +58,8 @@ export default function Settings({ route, navigation }) {
 
     groupRef
       .update({
-        name: currGroupName,
-        tentType: tent,
+        name: groupName,
+        tentType: tentType,
       })
       .then(() => {
         console.log('successfully saved group settings');
@@ -115,7 +75,7 @@ export default function Settings({ route, navigation }) {
       .collection('members')
       .doc(firebase.auth().currentUser.uid)
       .update({
-        name: name,
+        name: userName,
       })
       .then(() => {
         console.log('successfully updated name');
@@ -126,9 +86,9 @@ export default function Settings({ route, navigation }) {
         setSnackMessage('Error saving user name');
         return;
       });
-    dispatch(setUserName(name));
-    dispatch(setTentType(tent));
-    dispatch(setGroupName(currGroupName));
+    dispatch(setUserName(userName));
+    dispatch(setTentType(tentType));
+    dispatch(setGroupName(groupName));
     toggleSnackBar();
     setSnackMessage('Saved');
   }
@@ -170,99 +130,74 @@ export default function Settings({ route, navigation }) {
     setSnackVisible(!isSnackVisible);
   }
 
-  const onLayoutRootView = useCallback(async () => {
-    if (isReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isReady]);
-
-  if (!isReady) {
-    return null;
-  }
-
   return (
-    <View style={styles(theme).settingsContainer} onLayout={onLayoutRootView}>
-      <View style={styles(theme).topBanner}>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name='cog-outline' color={theme.icon1} size={35} />
+    <View style={styles(theme).settingsContainer}>
+      <Formik
+        initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
+        onSubmit={(values) => onSave(values)}
+        style={{borderWidth: 1}}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values }) => (
+          <>
+            <View style={styles(theme).topBanner}>
+              <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 30 }]}>
+                Settings
+              </Text>
 
-          <Text
-            style={[
-              styles(theme).headerText,
-              { color: theme.text1, alignSelf: 'center', fontSize: 30, marginLeft: 10 },
-            ]}
-          >
-            Settings
-          </Text>
-        </View>
-        <TouchableOpacity onPress={onSave}>
-          <Text
-            style={[
-              styles(theme).groupText,
-              {
-                fontSize: 18,
-                fontWeight: '700',
-                color: theme.primary,
-              },
-            ]}
-          >
-            Save
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles(theme).headerContainer}>
-        <Text style={styles(theme).headerText}>Name</Text>
-        <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
-      </View>
-      <TextInput
-        style={styles(theme).textInput}
-        value={name}
-        placeholder={name}
-        onChangeText={(name) =>
-          setName(
-            name
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/\s+/g, '')
-              .replace(/[^a-z0-9]/gi, '')
-          )
-        }
-      />
-      {groupRole === 'Creator' ? (
-        <View style={styles(theme).headerContainer}>
-          <Text style={styles(theme).headerText}>Group Name</Text>
-          <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
-        </View>
-      ) : null}
-      {groupRole === 'Creator' ? (
-        <TextInput
-          style={styles(theme).textInput}
-          value={currGroupName}
-          placeholder={currGroupName}
-          onChangeText={(groupName) => setCurrGroupName(groupName)}
-        />
-      ) : null}
-      {groupRole === 'Creator' ? (
-        <View style={styles(theme).headerContainer}>
-          <Text style={styles(theme).headerText}>Tent Type</Text>
-          <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
-        </View>
-      ) : null}
-      {groupRole === 'Creator' ? (
-        <Picker
-          selectedValue={tent}
-          onValueChange={(itemValue, itemIndex) => {
-            setTent(itemValue);
-          }}
-          style={Platform.OS === 'ios' ? styles(theme).picker : { width: '90%', height: 30 }}
-          itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
-        >
-          <Picker.Item label='Black' value='Black' />
-          <Picker.Item label='Blue' value='Blue' />
-          <Picker.Item label='White' value='White' />
-          <Picker.Item label='Walk up line' value='Walk up line' />
-        </Picker>
-      ) : null}
+              <TouchableOpacity onPress={handleSubmit} style={{position: 'absolute', right: 20, top: 10}}>
+                <Text
+                  style={[
+                    styles(theme).groupText,
+                    {
+                      fontSize: 18,
+                      fontWeight: '700',
+                      color: theme.primary,
+                    },
+                  ]}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles(theme).headerContainer}>
+              <Text style={styles(theme).headerText}>Name</Text>
+              <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+            </View>
+            <TextInput
+              name='userName'
+              placeholder='User Name'
+              style={styles(theme).textInput}
+              onChangeText={handleChange('userName')}
+              onBlur={handleBlur('userName')}
+              value={values.userName}
+            />
+
+            {groupRole === 'Creator' ? (
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={styles(theme).headerContainer}>
+                  <Text style={styles(theme).headerText}>Group Name</Text>
+                  <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+                </View>
+                <TextInput
+                  name='groupName'
+                  placeholder='Group Name'
+                  style={styles(theme).textInput}
+                  onChangeText={handleChange('groupName')}
+                  onBlur={handleBlur('groupName')}
+                  value={values.groupName}
+                />
+
+                <View style={styles(theme).headerContainer}>
+                  <Text style={styles(theme).headerText}>Tent Type</Text>
+                  <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+                </View>
+              </View>
+            ) : null}
+          </>
+        )}
+      </Formik>
+
       <TouchableOpacity style={styles(theme).button} onPress={toggleConfirmation}>
         {groupRole === 'Creator' ? (
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
@@ -304,9 +239,12 @@ const styles = (theme) =>
   StyleSheet.create({
     settingsContainer: {
       flexDirection: 'column',
-      flex: 1,
       alignItems: 'center',
       backgroundColor: theme.background,
+      width: '100%',
+      height: '100%',
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
     },
     topBanner: {
       //for the top container holding top 'settings' and save button
@@ -314,7 +252,10 @@ const styles = (theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 30,
-      width: '90%',
+      width: '100%',
+      marginVertical: 10,
+      paddingBottom: 10,
+      borderBottomWidth: 1,
     },
     headerContainer: {
       flexDirection: 'row',

@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Divider, IconButton } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -25,9 +26,13 @@ import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
+import { BottomSheetModal } from '../component/BottomSheetModal';
+import SettingsModal from '../component/SettingsModal';
 
 export default function GroupInfo({ route, navigation }) {
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+  const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
@@ -315,7 +320,7 @@ export default function GroupInfo({ route, navigation }) {
     return null;
   }
   return (
-    <View
+    <SafeAreaView
       style={styles(theme).container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
@@ -463,7 +468,18 @@ export default function GroupInfo({ route, navigation }) {
           onSwipeComplete={toggleConfirmation}
         />
       </ActionSheetModal>
-    </View>
+
+      <BottomSheetModal
+        isVisible={isSettingsVisible}
+        onBackdropPress={toggleSettings}
+        swipeDown={false}
+        barSize={'none'}
+        height='90%'
+        userStyle='light'
+      >
+        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation}/>
+      </BottomSheetModal>
+    </SafeAreaView>
   );
 }
 
