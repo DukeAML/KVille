@@ -22,9 +22,9 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../component/ConfirmationModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 export default function GroupInfo({ route }) {
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters

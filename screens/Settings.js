@@ -13,7 +13,7 @@ import 'firebase/compat/firestore';
 
 import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-import { ConfirmationModal } from '../component/ConfirmationModal';
+import { ConfirmationModal } from '../components/ConfirmationModal';
 
 export default function Settings({ route, navigation }) {
   const { groupCode, groupName, userName, tentType } = route.params;

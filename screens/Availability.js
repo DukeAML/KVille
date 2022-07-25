@@ -23,9 +23,9 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { BottomSheetModal } from '../component/BottomSheetModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { BottomSheetModal } from '../components/BottomSheetModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 const window = Dimensions.get('window');
 

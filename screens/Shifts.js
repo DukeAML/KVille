@@ -11,7 +11,7 @@ import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 const dayMapping = {
   0: 'Sunday',

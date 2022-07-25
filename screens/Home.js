@@ -29,7 +29,7 @@ import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
