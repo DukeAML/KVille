@@ -238,31 +238,34 @@ export default function NavigationStack() {
         <Drawer.Screen
           name='GroupInfo'
           component={GroupInfoScreen}
-          options={({ navigation }) => ({
-            title: 'Group Overview',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              //borderColor: theme.popOutBorder,
-              shadowColor: 'transparent',
-            },
-            headerTitleStyle: {
-              fontSize: 28,
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-            headerRight: () => (
-              <View>
-                <TouchableOpacity
-                  onPress={toggleSettings}
-                  style={{ marginRight: 20 }}
-                >
-                  <Icon name='cog-outline' color={theme.grey1} size={30} />
-                </TouchableOpacity>
+          options={{
+            headerShown: false,
+            swipeEnabled: true,
+          }}
+          // options={({ navigation }) => ({
+          //   title: 'Group Overview',
+          //   headerStyle: {
+          //     backgroundColor: theme.primaryContainer,
+          //     borderBottomWidth: 0,
+          //     //borderColor: theme.popOutBorder,
+          //     shadowColor: 'transparent',
+          //   },
+          //   headerTitleStyle: {
+          //     fontSize: 28,
+          //   },
+          //   headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+          //   // headerRight: () => (
+          //   //   <View>
+          //   //     <TouchableOpacity
+          //   //       onPress={toggleSettings}
+          //   //       style={{ marginRight: 20 }}
+          //   //     >
+          //   //       <Icon name='cog-outline' color={theme.grey1} size={30} />
+          //   //     </TouchableOpacity>
 
-                
-              </View>
-            ),
-          })}
+          //   //   </View>
+          //   // ),
+          // })}
         />
         <Drawer.Screen
           name='AvailabilityScreen'
