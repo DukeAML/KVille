@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState }  from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { createContext, useContext }  from 'react';
+import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import Modal from 'react-native-modal';
 import { useTheme } from '../context/ThemeProvider';
 
@@ -8,7 +8,7 @@ let ModalContext = createContext();
 
 //Function for creating context for interior components
 function useModal() {
-    const context = React.useContext(ModalContext);
+    const context = useContext(ModalContext);
     if (!context) {
       throw new Error("useModal must be used in or within a Modal Component");
     }
@@ -54,13 +54,13 @@ const BottomSheetModal = ({ height = '50%', color, swipeDown = true, barSize = '
                 swipeDirection={swipeDown ? ['down'] : null}
                 {...props}
             >
-                <View style={[styles(theme).ModalContainer, {height: height, backgroundColor:background}]}>
+                <SafeAreaView style={[styles(theme).ModalContainer, {height: height, backgroundColor:background}]}>
                   {barSize == 'default' ? (<View style={[styles(theme).modalBar, {backgroundColor:headerColor}]}></View>) : 
                       barSize == 'small' ? (<View style={[styles(theme).modalSmallBar, {backgroundColor:headerColor}]}></View>):
                         null}
 
                   {children}
-                </View>
+                </SafeAreaView>
             </Modal>
         </ModalContext.Provider>
       );
