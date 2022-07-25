@@ -203,6 +203,9 @@ export default function Shifts({ route }) {
         data={data}
         renderItem={RenderShift}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+        showsVerticalScrollIndicator = {false}
+        //ItemSeparatorComponent={() => <Divider />}
+        //keyExtractor={(item) => item.id}
         ListEmptyComponent={<EmptyComponent />}
       />
     </View>
@@ -213,7 +216,7 @@ const styles = (theme) =>
   StyleSheet.create({
     screenContainer: {
       flex: 1,
-      backgroundColor: '#D2D5DC',
+      backgroundColor: theme.background,//'#D2D5DC',
       // flexGrow: 1,
       // overflow: 'hidden',
     }, //for the entire page's container

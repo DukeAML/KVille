@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -48,6 +49,7 @@ export default function NavigationStack() {
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
+  //const [isSettingsVisible, setSettingsVisible] = useState(false);
   const { theme } = useTheme();
 
   function toggleInfo () {
@@ -57,6 +59,10 @@ export default function NavigationStack() {
   function toggleScheduleInfo () {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
+
+  /* function toggleSettings () {
+    setSettingsVisible(!isSettingsVisible);
+  }; */
   
   const AvailabilityText = () => (
     <View>
@@ -237,12 +243,25 @@ export default function NavigationStack() {
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
+              //borderColor: theme.popOutBorder,
               shadowColor: 'transparent',
             },
             headerTitleStyle: {
               fontSize: 28,
             },
             headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+            headerRight: () => (
+              <View>
+                <TouchableOpacity
+                  onPress={toggleSettings}
+                  style={{ marginRight: 20 }}
+                >
+                  <Icon name='cog-outline' color={theme.grey1} size={30} />
+                </TouchableOpacity>
+
+                
+              </View>
+            ),
           })}
         />
         <Drawer.Screen
@@ -305,11 +324,16 @@ export default function NavigationStack() {
           name='ShiftsScreen'
           component={ShiftsScreen}
           options={({ navigation }) => ({
-            title: 'Shifts',
+            title: 'Shifts This Week',
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
-              shadowColor: 'transparent',
+              //shadowColor: 'transparent',
+              shadowColor: '#171717',
+              shadowOffset: { width: -2, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+              elevation: 20,
             },
             headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
@@ -400,7 +424,7 @@ export default function NavigationStack() {
           name='InfoScreen'
           component={InfoScreen}
           options={({ navigation }) => ({
-            title: '',
+            title: 'Tenting Information',
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,
@@ -459,6 +483,31 @@ const styles = (theme) => StyleSheet.create({
     alignItems:'center',
     justifyContent: 'center', 
     borderRadius: 15
+  },
+
+  headerContainer: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  headerText: {
+    //text for different setting headers
+    fontSize: 20,
+    fontWeight: '700',
+    color: theme.grey2,
+  },
+  textInput: {
+    backgroundColor: theme.white2,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: '90%',
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'left',
+    borderRadius: 15,
+    marginBottom: 23,
+    borderColor: theme.grey2,
   },
 });
 

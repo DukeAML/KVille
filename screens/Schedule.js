@@ -697,7 +697,7 @@ const styles = (theme) =>
       justifyContent: 'space-between',
       borderBottomRightRadius: 20,
       borderBottomLeftRadius: 20,
-      backgroundColor: theme.background,
+      backgroundColor: theme.primaryContainer,
     },
     button: {
       //for the day buttons at top of screen

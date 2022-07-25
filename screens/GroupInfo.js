@@ -479,7 +479,14 @@ const styles = (theme) =>
       width: '90%',
       backgroundColor: theme.white1,
       borderRadius: 8,
+      borderWidth: 0.3,
+      borderColor: theme.popOutBorder,
       alignSelf: 'center',
+      shadowColor: '#171717',
+      shadowOffset: { width: -1.5, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 15,
     },
     contentText: {
       //style of text inside boxText
