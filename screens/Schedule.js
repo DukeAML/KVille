@@ -30,10 +30,10 @@ import 'firebase/compat/firestore';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../component/ConfirmationModal';
-import { BottomSheetModal } from '../component/BottomSheetModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { BottomSheetModal } from '../components/BottomSheetModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);

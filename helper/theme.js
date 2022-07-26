@@ -1,7 +1,7 @@
 export const lightTheme = {
   background: '#f5f7fa', //#C2C6D0',
-  primary: '#012169',//'#1F509A',
-  primaryContainer: '#f3f3f3',//'#C2C6D0',
+  primary: '#00539B',
+  primaryContainer: '#f3f3f3', //'#C2C6D0',
   secondary: '#1E3F66',
   tertiary: '#2E5984',
   quaternary: '#0FA4DC',

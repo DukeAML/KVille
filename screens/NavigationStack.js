@@ -35,8 +35,8 @@ import CountdownScreen from './Countdown';
 import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import {useTheme} from '../context/ThemeProvider';
-import { BottomSheetModal } from '../component/BottomSheetModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
+import { BottomSheetModal } from '../components/BottomSheetModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
@@ -49,7 +49,6 @@ export default function NavigationStack() {
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
-  //const [isSettingsVisible, setSettingsVisible] = useState(false);
   const { theme } = useTheme();
 
   function toggleInfo () {
@@ -60,9 +59,6 @@ export default function NavigationStack() {
     setScheduleInfoVisible(!isScheduleInfoVisible);
   };
 
-  /* function toggleSettings () {
-    setSettingsVisible(!isSettingsVisible);
-  }; */
   
   const AvailabilityText = () => (
     <View>
@@ -242,30 +238,6 @@ export default function NavigationStack() {
             headerShown: false,
             swipeEnabled: true,
           }}
-          // options={({ navigation }) => ({
-          //   title: 'Group Overview',
-          //   headerStyle: {
-          //     backgroundColor: theme.primaryContainer,
-          //     borderBottomWidth: 0,
-          //     //borderColor: theme.popOutBorder,
-          //     shadowColor: 'transparent',
-          //   },
-          //   headerTitleStyle: {
-          //     fontSize: 28,
-          //   },
-          //   headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          //   // headerRight: () => (
-          //   //   <View>
-          //   //     <TouchableOpacity
-          //   //       onPress={toggleSettings}
-          //   //       style={{ marginRight: 20 }}
-          //   //     >
-          //   //       <Icon name='cog-outline' color={theme.grey1} size={30} />
-          //   //     </TouchableOpacity>
-
-          //   //   </View>
-          //   // ),
-          // })}
         />
         <Drawer.Screen
           name='AvailabilityScreen'

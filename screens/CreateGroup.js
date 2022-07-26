@@ -31,7 +31,7 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
-import { ActionSheetModal } from '../component/ActionSheetModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
