@@ -1,0 +1,312 @@
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Picker } from '@react-native-picker/picker';
+import { Snackbar } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
+import { Formik } from 'formik';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
+import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
+import { useTheme } from '../context/ThemeProvider';
+import { ConfirmationModal } from '../component/ConfirmationModal';
+
+export default function SettingsModal({ params, navigation }) {
+  const { groupCode, groupName, userName, tentType, groupRole } = params;
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [isSnackVisible, setSnackVisible] = useState(false);
+  const [snackMessage, setSnackMessage] = useState('');
+  const dispatch = useDispatch();
+  const { theme } = useTheme();
+
+  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
+  const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+
+  function onSave({groupName, userName, tentType}) {
+    let groupIndex;
+    let groupCodeArr;
+    userRef
+      .get()
+      .then((userDoc) => {
+        groupCodeArr = userDoc.data().groupCode;
+        groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
+        console.log('group index', groupIndex);
+        groupCodeArr[groupIndex] = {
+          groupCode: groupCode,
+          groupName: groupName,
+        };
+        return userDoc;
+      })
+      .then((doc) => {
+        userRef
+          .update({
+            groupCode: groupCodeArr,
+          })
+          .then(() => {
+            console.log('successfully saved groupName');
+          })
+          .catch((error) => {
+            console.log(error);
+            toggleSnackBar();
+            setSnackMessage('Error saving group name');
+            return;
+          });
+      });
+
+    groupRef
+      .update({
+        name: groupName,
+        tentType: tentType,
+      })
+      .then(() => {
+        console.log('successfully saved group settings');
+      })
+      .catch((error) => {
+        console.log(error);
+        toggleSnackBar();
+        setSnackMessage('Error saving group settings');
+        return;
+      });
+
+    groupRef
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        name: userName,
+      })
+      .then(() => {
+        console.log('successfully updated name');
+      })
+      .catch((error) => {
+        console.log(error);
+        toggleSnackBar();
+        setSnackMessage('Error saving user name');
+        return;
+      });
+    dispatch(setUserName(userName));
+    dispatch(setTentType(tentType));
+    dispatch(setGroupName(groupName));
+    toggleSnackBar();
+    setSnackMessage('Saved');
+  }
+
+  function leaveGroup() {
+    userRef.update({
+      groupCode: firebase.firestore.FieldValue.arrayRemove({
+        groupCode: groupCode,
+        groupName: currGroupName,
+      }),
+    });
+    if (groupRole === 'Creator') {
+      groupRef
+        .delete()
+        .then(() => {
+          console.log('Group successfully deleted!');
+        })
+        .catch((error) => {
+          console.error('Error removing group: ', error);
+        });
+    } else {
+      groupRef
+        .collection('members')
+        .doc(firebase.auth().currentUser.uid)
+        .delete()
+        .then(() => {
+          console.log('Current user successfully removed from group!');
+        })
+        .catch((error) => {
+          console.error('Error removing user: ', error);
+        });
+    }
+  }
+
+  function toggleConfirmation() {
+    setConfirmationVisible(!isConfirmationVisible);
+  }
+  function toggleSnackBar() {
+    setSnackVisible(!isSnackVisible);
+  }
+
+  return (
+    <View style={styles(theme).settingsContainer}>
+      <Formik
+        initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
+        onSubmit={(values) => onSave(values)}
+        style={{borderWidth: 1}}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values }) => (
+          <>
+            <View style={styles(theme).topBanner}>
+              <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 30 }]}>
+                Settings
+              </Text>
+
+              <TouchableOpacity onPress={handleSubmit} style={{position: 'absolute', right: 20, top: 10}}>
+                <Text
+                  style={[
+                    styles(theme).groupText,
+                    {
+                      fontSize: 18,
+                      fontWeight: '700',
+                      color: theme.primary,
+                    },
+                  ]}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles(theme).headerContainer}>
+              <Text style={styles(theme).headerText}>Name</Text>
+              <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+            </View>
+            <TextInput
+              name='userName'
+              placeholder='User Name'
+              style={styles(theme).textInput}
+              onChangeText={handleChange('userName')}
+              onBlur={handleBlur('userName')}
+              value={values.userName}
+            />
+
+            {groupRole === 'Creator' ? (
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={styles(theme).headerContainer}>
+                  <Text style={styles(theme).headerText}>Group Name</Text>
+                  <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+                </View>
+                <TextInput
+                  name='groupName'
+                  placeholder='Group Name'
+                  style={styles(theme).textInput}
+                  onChangeText={handleChange('groupName')}
+                  onBlur={handleBlur('groupName')}
+                  value={values.groupName}
+                />
+
+                <View style={styles(theme).headerContainer}>
+                  <Text style={styles(theme).headerText}>Tent Type</Text>
+                  <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
+                </View>
+              </View>
+            ) : null}
+          </>
+        )}
+      </Formik>
+
+      <TouchableOpacity style={styles(theme).button} onPress={toggleConfirmation}>
+        {groupRole === 'Creator' ? (
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
+        ) : (
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
+        )}
+      </TouchableOpacity>
+
+      <ConfirmationModal
+        body={
+          groupRole === 'Creator'
+            ? 'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
+            : 'Are you sure you want to LEAVE this group? This will delete all your information in this group and CANNOT be undone.'
+        }
+        buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
+        buttonAction={() => {
+          leaveGroup();
+          navigation.navigate('Start');
+        }}
+        toggleModal={toggleConfirmation}
+        isVisible={isConfirmationVisible}
+        onBackdropPress={() => setConfirmationVisible(false)}
+        onSwipeComplete={toggleConfirmation}
+        userStyle='light'
+      />
+      <Snackbar
+        visible={isSnackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
+      </Snackbar>
+    </View>
+  );
+}
+
+const styles = (theme) =>
+  StyleSheet.create({
+    settingsContainer: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      backgroundColor: theme.background,
+      width: '100%',
+      height: '100%',
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
+    },
+    topBanner: {
+      //for the top container holding top 'settings' and save button
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 30,
+      width: '100%',
+      marginVertical: 10,
+      paddingBottom: 10,
+      borderBottomWidth: 1,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      width: '90%',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    headerText: {
+      //text for different setting headers
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      width: '90%',
+      fontSize: 18,
+      fontWeight: '500',
+      textAlign: 'left',
+      borderRadius: 15,
+      marginBottom: 23,
+      borderColor: theme.grey2,
+    },
+    picker: {
+      height: '25%',
+      width: '90%',
+    },
+    pickerItem: {
+      height: '100%',
+    },
+    BottomModalView: {
+      margin: 0,
+      justifyContent: 'flex-end',
+    },
+    button: {
+      backgroundColor: theme.white2,
+      borderRadius: 15,
+      padding: 15,
+      position: 'absolute',
+      bottom: 0,
+      width: '90%',
+      alignItems: 'center',
+    },
+    shadowProp: {
+      //shadow for the text input and image
+      shadowColor: '#171717',
+      shadowOffset: { width: -2, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 20,
+    },
+  });

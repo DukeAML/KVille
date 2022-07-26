@@ -302,9 +302,7 @@ export default function Availability({ route }) {
 
         <View style={styles(theme).modalBody}>
           <View style={styles(theme).selectDay}>
-            <View style={styles(theme).modalTextView}>
-              <Text style={styles(theme).modalText}>Select Day: </Text>
-            </View>
+            <Text style={styles(theme).modalText}>Select Day: </Text>
 
             <View style={{ width: '100%', height: '75%', alignItems: 'center' }}>
               <Picker
@@ -329,9 +327,7 @@ export default function Availability({ route }) {
           </View>
 
           <View style={styles(theme).selectTime}>
-            <View style={styles(theme).modalTextView}>
-              <Text style={styles(theme).modalText}>Start Time: </Text>
-            </View>
+            <Text style={styles(theme).modalText}>Start Time: </Text>
 
             <View style={styles(theme).timePickerBody}>
               <Picker
@@ -381,9 +377,7 @@ export default function Availability({ route }) {
           </View>
 
           <View style={styles(theme).selectTime}>
-            <View style={styles(theme).modalTextView}>
-              <Text style={styles(theme).modalText}>End Time: </Text>
-            </View>
+            <Text style={styles(theme).modalText}>End Time: </Text>
 
             <View style={styles(theme).timePickerBody}>
               <Picker
@@ -547,22 +541,27 @@ const styles = (theme) =>
     text: {
       textAlign: 'center',
     },
-    modalTextView: { height: '25%', width: '100%', justifyContent: 'center' },
     modalText: {
       fontSize: 18,
       color: theme.text2,
       textAlign: 'center',
-      //borderWidth:1,
+      padding: 0,
     },
     modalBody: {
       alignItems: 'center',
       width: '100%',
       height: '80%',
-      justifyContent: 'space-evenly',
+      //justifyContent: 'space-evenly',
       //borderWidth:1,
     },
-    picker: { height: '100%', width: '35%' },
-    pickerItem: { height: '100%' },
+    picker: {
+      height: '100%',
+      width: '35%',
+
+    },
+    pickerItem: {
+      height: '100%',
+    },
     selectDay: {
       alignItems: 'center',
       width: '70%',
@@ -573,12 +572,11 @@ const styles = (theme) =>
       alignItems: 'center',
       height: '35%',
       width: '90%',
-      //borderWidth:1,
     },
     timePickerBody: {
       flexDirection: 'row',
       width: '100%',
-      height: '75%',
+      height: '90%',
       justifyContent: 'center',
       //borderWidth:1,
     },
@@ -588,7 +586,6 @@ const styles = (theme) =>
       height: '10%',
       alignItems: 'center',
       justifyContent: 'space-evenly',
-      //borderWidth:1,
     },
     addBtn: {
       alignItems: 'center',

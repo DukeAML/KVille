@@ -14,7 +14,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { Divider } from 'react-native-paper';
+import { Divider, IconButton } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -27,9 +28,13 @@ import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
+import { BottomSheetModal } from '../component/BottomSheetModal';
+import SettingsModal from '../component/SettingsModal';
 
 export default function GroupInfo({ route }) {
   const { groupCode, groupName, groupRole, userName, tentType } = route.params; // take in navigation parameters
+  /* const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType); */
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
@@ -65,6 +70,10 @@ export default function GroupInfo({ route }) {
   function toggleRemoveGroup() {
     setRemoveGroupVisible(!isRemoveGroupVisible);
   }
+
+  function toggleSettings () {
+    setSettingsVisible(!isSettingsVisible);
+  };
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
@@ -329,13 +338,18 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <View
+    <SafeAreaView
       style={styles(theme).container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
     >
-      <Text style={styles(theme).header}>Group Name</Text>
+      <View style={styles(theme).containerHeader}>
+        <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
+        <Text style={{fontSize: 30, fontWeight: '600'}}>Group Overview</Text>
+        <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings}/>
+      </View>
 
+      <Text style={styles(theme).header}>Group Name</Text>
       <View style={styles(theme).boxText}>
         <Text style={styles(theme).contentText}>{groupName}</Text>
       </View>
@@ -354,7 +368,7 @@ export default function GroupInfo({ route }) {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
+        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
 
       <TouchableOpacity onPress={toggleSettings}>
@@ -598,7 +612,18 @@ export default function GroupInfo({ route }) {
           onSwipeComplete={toggleConfirmation}
         />
       </ActionSheetModal>
-    </View>
+
+      <BottomSheetModal
+        isVisible={isSettingsVisible}
+        onBackdropPress={toggleSettings}
+        swipeDown={false}
+        barSize={'none'}
+        height='90%'
+        userStyle='light'
+      >
+        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation}/>
+      </BottomSheetModal>
+    </SafeAreaView>
   );
 }
 
@@ -607,12 +632,18 @@ const styles = (theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.primaryContainer,
+      alignItems: 'center',
+    },
+    containerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
     },
     header: {
       //view of top headers above boxText
       marginBottom: 10,
       marginTop: 4,
-      alignSelf: 'center',
       color: theme.grey1,
       width: '90%',
       fontSize: 22,
@@ -626,7 +657,6 @@ const styles = (theme) =>
       borderRadius: 8,
       borderWidth: 0.3,
       borderColor: theme.popOutBorder,
-      alignSelf: 'center',
       shadowColor: '#171717',
       shadowOffset: { width: -1.5, height: 2 },
       shadowOpacity: 0.1,
