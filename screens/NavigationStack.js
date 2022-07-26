@@ -234,19 +234,10 @@ export default function NavigationStack() {
         <Drawer.Screen
           name='GroupInfo'
           component={GroupInfoScreen}
-          options={({ navigation }) => ({
-            title: 'Group Overview',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              //borderColor: theme.popOutBorder,
-              shadowColor: 'transparent',
-            },
-            headerTitleStyle: {
-              fontSize: 28,
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          })}
+          options={{
+            headerShown: false,
+            swipeEnabled: true,
+          }}
         />
         <Drawer.Screen
           name='AvailabilityScreen'
