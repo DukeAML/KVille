@@ -30,7 +30,6 @@ import AvailabilityScreen from './Availability';
 import ScheduleScreen from './Schedule';
 import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
-import SettingScreen from './Settings';
 import CountdownScreen from './Countdown';
 import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
@@ -400,19 +399,6 @@ export default function NavigationStack() {
           component={InfoScreen}
           options={({ navigation }) => ({
             title: 'Tenting Information',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          })}
-        />
-        <Drawer.Screen
-          name='SettingScreen'
-          component={SettingScreen}
-          options={({ navigation }) => ({
-            title: 'Settings',
             headerStyle: {
               backgroundColor: theme.primaryContainer,
               borderBottomWidth: 0,

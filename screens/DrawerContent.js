@@ -186,18 +186,6 @@ export default function DrawerContent(props) {
                 props.navigation.navigate('InfoScreen');
               }}
             />
-            <DrawerItem
-              icon={({ color, size }) => <Icon name='cog-outline' color={color} size={size} />}
-              label='Settings'
-              onPress={() => {
-                props.navigation.navigate('SettingScreen', {
-                  groupCode,
-                  groupName,
-                  userName,
-                  tentType,
-                });
-              }}
-            />
             <DrawerItem label='Log out' onPress={() => onLogout()} />
           </Drawer.Section>
           <Drawer.Section title='Preferences'>
