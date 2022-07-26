@@ -30,6 +30,11 @@ const minMapping = {
   0: '00',
   1: '30',
 };
+const colorMapping = {
+  'Morning Shift': '#FDF1DB',
+  'Afternoon Shift': '#FCEBE5',
+  'Night Shift': '#E5DBFF',
+};
 
 export default function Shifts({ route }) {
   const { groupCode } = route.params;
@@ -142,35 +147,29 @@ export default function Shifts({ route }) {
       Math.floor((endTime - 24 * endTimeOfDay) / 2) == 0 ? 12 : Math.floor((endTime - 24 * endTimeOfDay) / 2);
     const endMin = endTime % 2;
 
+    const shiftTime =
+      startHour > 6 && startTimeOfDay == 0
+        ? 'Morning Shift'
+        : startHour > 12 && startHour <= 5 && startTimeOfDay == 1
+        ? 'Afternoon Shift'
+        : 'Night Shift';
+    const sameDay = dayMapping[startDay] != dayMapping[endDay];
+
     return (
-      <TouchableOpacity
-        onPress={() => {
-          postShiftUpdate.mutate({ item, groupCode });
-          //toggleModal();
-        }}
-      >
-        <View
-          style={[
-            styles(theme).listItem,
-            styles(theme).shadowProp,
-            { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-          ]}
-        >
-          <View>
-            <Text style={styles(theme).listText}>{dayMapping[startDay]}</Text>
-            <Text style={{ color: theme.text2 }}>
-              {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]}
-            </Text>
-          </View>
-          <View style={{ width: '30%', height: 1, backgroundColor: theme.text2 }} />
-           <View>
-            <Text style={[styles(theme).listText, { textAlign: 'right' }]}>{dayMapping[endDay]}</Text>
-            <Text style={{ color: theme.text2, textAlign: 'right' }}>
-              {endHour} : {minMapping[endMin]} {timeOfDayMapping[endTimeOfDay]}
-            </Text>
-          </View>
+      <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
+        <View style={{ borderBottomWidth: 1, width: '100%', height: '60%' }}>
+          <Text style={styles(theme).listText}>
+            {dayMapping[startDay]} {sameDay ? '(- ' : ''}{sameDay ? dayMapping[endDay] : ''}{sameDay ? ') ' : ''}{shiftTime}
+          </Text>
         </View>
-      </TouchableOpacity>
+        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 10 }}>
+          <Icon name='clock-outline' color={theme.icon2} size={20} />
+          <Text style={{ color: theme.text2, textAlign: 'center', marginLeft: 10 }}>
+            {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]} - {endHour} : {minMapping[endMin]}{' '}
+            {timeOfDayMapping[endTimeOfDay]}
+          </Text>
+        </View>
+      </View>
     );
   };
 
@@ -203,7 +202,7 @@ export default function Shifts({ route }) {
         data={data}
         renderItem={RenderShift}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        showsVerticalScrollIndicator = {false}
+        showsVerticalScrollIndicator={false}
         //ItemSeparatorComponent={() => <Divider />}
         //keyExtractor={(item) => item.id}
         ListEmptyComponent={<EmptyComponent />}
@@ -216,19 +215,22 @@ const styles = (theme) =>
   StyleSheet.create({
     screenContainer: {
       flex: 1,
-      backgroundColor: theme.background,//'#D2D5DC',
+      backgroundColor: theme.background, //'#D2D5DC',
       // flexGrow: 1,
       // overflow: 'hidden',
     }, //for the entire page's container
     listItem: {
       //for the items for each group
+      flexDirection: 'column',
+      //justifyContent: 'space-between',
+      alignItems: 'start',
       backgroundColor: theme.grey3,
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
       alignSelf: 'center',
       width: '90%',
-      justifyContent: 'flex-start',
+      height: 100,
     },
     listText: {
       //for the text inside the group cards
