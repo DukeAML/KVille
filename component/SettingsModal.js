@@ -143,7 +143,7 @@ export default function SettingsModal({ params, navigation }) {
         onSubmit={(values) => onSave(values)}
         style={{borderWidth: 1}}
       >
-        {({ handleChange, handleBlur, handleSubmit, values }) => (
+        {({ handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched, values }) => (
           <>
             <View style={styles(theme).topBanner}>
               <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
@@ -193,13 +193,60 @@ export default function SettingsModal({ params, navigation }) {
                   onPress = {toggleTentChange}
                   style = {styles(theme).tentChangeBtn}
                 >
-                  <Text style={styles(theme).modalText}>{tentType}</Text>
+                  <Text style={styles(theme).modalText}>{values.tentType}</Text>
                 </TouchableOpacity>
 
               </View>
             ) : null}
+
+            {groupRole == 'Creator' ? (
+              <ActionSheetModal
+                isVisible={isTentChangeVisible}
+                onBackdropPress={toggleTentChange}
+                onSwipeComplete={toggleTentChange}
+                toggleModal={toggleTentChange}
+                cancelButton={true}
+                height={180}
+                userStyle={'dark'}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setFieldValue('tentType', 'Black');
+                    setFieldTouched('tentType');
+                    toggleTentChange();
+                  }} //change to changing tent type
+                  style={styles(theme).tentChangeListItem}
+                >
+                  <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Black</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setFieldValue('tentType', 'Blue');
+                    setFieldTouched('tentType');
+                    toggleTentChange();
+                  }}
+                  style={styles(theme).tentChangeListItem}
+                >
+                  <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Blue</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setFieldValue('tentType', 'White');
+                    setFieldTouched('tentType');
+                    toggleTentChange();
+                  }}
+                  style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
+                >
+                  <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>White</Text>
+                </TouchableOpacity>
+              </ActionSheetModal>
+            ) : null}
           </>
+          
         )}
+        
       </Formik>
 
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
@@ -210,38 +257,7 @@ export default function SettingsModal({ params, navigation }) {
         )}
       </TouchableOpacity>
 
-      {groupRole == 'Creator' ? (
-        <ActionSheetModal
-          isVisible={isTentChangeVisible}
-          onBackdropPress={toggleTentChange}
-          onSwipeComplete={toggleTentChange}
-          toggleModal={toggleTentChange}
-          cancelButton={true}
-          height={180}
-          userStyle={'dark'}
-        >
-          <TouchableOpacity
-            //onPress={() => handleChange('Black')} //change to changing tent type
-            style={styles(theme).tentChangeListItem}
-          >
-            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Black</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            //onPress={() => handleChange('Blue')}
-            style={styles(theme).tentChangeListItem}
-          >
-            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Blue</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            //onPress={() => handleChange('White')}
-            style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
-          >
-            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>White</Text>
-          </TouchableOpacity>
-        </ActionSheetModal>
-      ) : null}
+      
 
       <ConfirmationModal
         body={

@@ -39,11 +39,6 @@ export default function GroupInfo({ route, navigation }) {
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
   //The following hooks are for the settings modal
   const [isSettingsVisible, setSettingsVisible] = useState(false);
-  
-  const [isRemoveGroupVisible, setRemoveGroupVisible] = useState(false);
-  const [name, setName] = useState(userName);
-  const [tent, setTent] = useState(tentType);
-  const [currGroupName, setCurrGroupName] = useState(groupName);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
@@ -63,16 +58,6 @@ export default function GroupInfo({ route, navigation }) {
   function toggleSettings () {
     setSettingsVisible(!isSettingsVisible);
   }
-  function toggleTentChange() {
-    setTentChangeVisible(!isTentChangeVisible);
-  }
-  function toggleRemoveGroup() {
-    setRemoveGroupVisible(!isRemoveGroupVisible);
-  }
-
-  function toggleSettings () {
-    setSettingsVisible(!isSettingsVisible);
-  };
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['group', groupCode],
@@ -370,122 +355,6 @@ export default function GroupInfo({ route, navigation }) {
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
 
-{/*       <BottomSheetModal
-        isVisible={isSettingsVisible}
-        onBackdropPress={toggleSettings}
-        swipeDown={false}
-        barSize={'none'}
-        height={'80%'}
-        userStyle={'light'}
-        color = {theme.background}
-      >
-        <View
-          style = {{
-            flexDirection: 'row',
-            width: '100%',
-            height: '12%',
-            justifyContent:'space-between',
-            alignItems: 'center',
-            backgroundColor: '#fff'
-            }}
-          >
-          <Text style={{width:'20%', borderWidth:1}}></Text>
-          <Text style = {{width:'60%', textAlign: 'center', fontSize: 24, fontWeight: '700', borderWidth:1}}>Group Settings</Text>
-          <TouchableOpacity
-            onPress={toggleSettings}
-            style = {{width:'20%', alignItems: 'center', borderWidth:1}}
-          >
-            <Text style={{fontSize: 18, color: theme.primary}}>Done</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{width: '100%', height:'88%', alignItems: 'center'}}>
-          <View style={styles(theme).headerContainer}>
-            <Text style={styles(theme).headerText}>Name in Group</Text>
-            <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
-          </View>
-          <TextInput
-            style={styles(theme).textInput}
-            value={name}
-            placeholder={name}
-            onChangeText={(name) =>
-              setName(
-                name
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-                  .replace(/\s+/g, '')
-                  .replace(/[^a-z0-9]/gi, '')
-              )
-            }
-          />
-          {groupRole == 'Creator'}
-          <View style={styles(theme).headerContainer}>
-            <Text style={styles(theme).headerText}>Group Name</Text>
-            <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }}/>
-          </View>
-          <TextInput
-            style={styles(theme).textInput}
-            value={currGroupName}
-            placeholder={currGroupName}
-            onChangeText={(groupName) => setCurrGroupName(groupName)}
-          />
-          <View style={styles(theme).headerContainer}>
-            <Text style={styles(theme).headerText}>Tent Type</Text>
-            <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
-          </View>
-          <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
-              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400' }}>{tent}</Text>
-              <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles(theme).removeBtn} 
-            //onPress={toggleConfirmation}
-          >
-            {groupRole === 'Creator' ? (
-              <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
-            ) : (
-              <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
-            )}
-          </TouchableOpacity>
-
-
-          {groupRole == 'Creator' ? (
-            <ActionSheetModal
-              isVisible={isTentChangeVisible}
-              onBackdropPress={toggleTentChange}
-              onSwipeComplete={toggleTentChange}
-              toggleModal={toggleTentChange}
-              cancelButton={true}
-              height={180}
-              userStyle={'dark'}
-            >
-              <TouchableOpacity
-                //onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing tent type
-                style={styles(theme).roleChangeListItem}
-              >
-                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Black</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                //onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
-                style={styles(theme).roleChangeListItem}
-              >
-                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Blue</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                //onPress={() => postGroupRole.mutate({ groupRole: 'Member', groupCode })}
-                style={[styles(theme).roleChangeListItem, { borderBottomWidth: 0 }]}
-              >
-                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>White</Text>
-              </TouchableOpacity>
-            </ActionSheetModal>
-          ) : null}
-
-        </View>
-      </BottomSheetModal> */}
-
 
 
       {/*Member Information Modal Component*/}
@@ -607,9 +476,9 @@ export default function GroupInfo({ route, navigation }) {
       <BottomSheetModal
         isVisible={isSettingsVisible}
         onBackdropPress={toggleSettings}
-        swipeDown={false}
+        swipeDown={true}
         barSize={'none'}
-        height='90%'
+        height= {(groupRole == 'Creator' || 'Admin')? '90%': '50%'}
         userStyle='light'
       >
         <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation}/>
