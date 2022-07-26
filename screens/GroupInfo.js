@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Divider } from 'react-native-paper';
-
+import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -34,6 +34,7 @@ export default function GroupInfo({ route }) {
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
+  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold });
 
   const { theme } = useTheme();
 
@@ -302,7 +303,7 @@ export default function GroupInfo({ route }) {
     );
   };
 
-  if (isLoading) {
+  if (isLoading || !fontsLoaded) {
     return <LoadingIndicator />;
   }
   if (isError) {
@@ -471,7 +472,7 @@ const styles = (theme) =>
       color: theme.grey1,
       width: '90%',
       fontSize: 22,
-      fontWeight: '700',
+      fontFamily: 'Merriweather_700Bold',
     },
     boxText: {
       //View of top 2 boxes of text (groupCode and groupName)
@@ -491,9 +492,10 @@ const styles = (theme) =>
     contentText: {
       //style of text inside boxText
       fontSize: 24,
-      fontWeight: '700',
+      //fontWeight: '700',
       textAlign: 'center',
       marginHorizontal: 8,
+      //fontFamily: 'Merriweather_400Regular'
     },
     listItem: {
       //style of a member list item

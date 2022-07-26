@@ -50,10 +50,6 @@ export default function App() {
         // LogBox.ignoreLogs([
         //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
         // ]);
-
-        // await Font.loadAsync({
-        //   NovaCut: require('./assets/fonts/NovaCut-Regular.ttf'),
-        // });
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({

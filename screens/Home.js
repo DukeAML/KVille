@@ -10,7 +10,6 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-//import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
@@ -34,9 +33,6 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 const window = Dimensions.get('window');
 
 export default function Home({ navigation }) {
-  /* let [fontsLoaded] = useFonts({
-    NovaCut_400Regular,
-  }); */
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
     fetchGroups,
@@ -411,13 +407,6 @@ const styles = (theme) =>
       textAlign: 'left',
       marginLeft: 15,
     },
-
-    /*   banner: {
-  color: "#fff",
-  fontFamily: "NovaCut_400Regular",
-  fontSize: 36,
-  left: "0%"
-}, */
     image: {
       //for the duke basketball logos
       width: 45,
