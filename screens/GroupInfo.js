@@ -15,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Divider } from 'react-native-paper';
 import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
+import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -34,7 +35,7 @@ export default function GroupInfo({ route }) {
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
-  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold });
+  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, OpenSans_400Regular });
 
   const { theme } = useTheme();
 
@@ -258,7 +259,7 @@ export default function GroupInfo({ route }) {
         {!isLoading ? (
           <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
             <Text style={styles(theme).listText}>{item.name}</Text>
-            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
+            <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
           </View>
         ) : null}
       </TouchableOpacity>
@@ -282,13 +283,13 @@ export default function GroupInfo({ route }) {
           >
             <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
               <Text style={styles(theme).listText}>{name}</Text>
-              <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+              <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
             </View>
           </Swipeable>
         ) : (
           <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
             <Text style={styles(theme).listText}>{name}</Text>
-            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+            <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -471,7 +472,7 @@ const styles = (theme) =>
       alignSelf: 'center',
       color: theme.grey1,
       width: '90%',
-      fontSize: 22,
+      fontSize: 20,
       fontFamily: 'Merriweather_700Bold',
     },
     boxText: {
@@ -492,10 +493,9 @@ const styles = (theme) =>
     contentText: {
       //style of text inside boxText
       fontSize: 24,
-      //fontWeight: '700',
       textAlign: 'center',
       marginHorizontal: 8,
-      //fontFamily: 'Merriweather_400Regular'
+      fontFamily: 'OpenSans_400Regular',
     },
     listItem: {
       //style of a member list item
@@ -514,8 +514,7 @@ const styles = (theme) =>
     listText: {
       //text of a member item
       fontSize: 15,
-      //fontFamily: 'sans-serif',
-      fontWeight: '500',
+      fontFamily: 'OpenSans_400Regular',
       color: theme.text1,
     },
     modalText: {
