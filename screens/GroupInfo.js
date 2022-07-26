@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  TextInput,
   SafeAreaView,
 } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -28,10 +29,17 @@ import { BottomSheetModal } from '../component/BottomSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
 
 export default function GroupInfo({ route }) {
-  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+  const { groupCode, groupName, groupRole, userName, tentType } = route.params; // take in navigation parameters
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
+  //The following hooks are for the settings modal
+  const [isSettingsVisible, setSettingsVisible] = useState(false);
+  const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  const [isRemoveGroupVisible, setRemoveGroupVisible] = useState(false);
+  const [name, setName] = useState(userName);
+  const [tent, setTent] = useState(tentType);
+  const [currGroupName, setCurrGroupName] = useState(groupName);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
@@ -47,6 +55,15 @@ export default function GroupInfo({ route }) {
   }
   function toggleRoleChange() {
     setRoleChangeVisible(!isRoleChangeVisible);
+  }
+  function toggleSettings () {
+    setSettingsVisible(!isSettingsVisible);
+  }
+  function toggleTentChange() {
+    setTentChangeVisible(!isTentChangeVisible);
+  }
+  function toggleRemoveGroup() {
+    setRemoveGroupVisible(!isRemoveGroupVisible);
   }
 
   const { isLoading, isError, error, data, refetch } = useQuery(
@@ -340,6 +357,10 @@ export default function GroupInfo({ route }) {
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
       ></FlatList>
 
+      <TouchableOpacity onPress={toggleSettings}>
+        <Text>toggle settings modal</Text>
+      </TouchableOpacity>
+
       <BottomSheetModal
         isVisible={isSettingsVisible}
         onBackdropPress={toggleSettings}
@@ -376,9 +397,9 @@ export default function GroupInfo({ route }) {
           </View>
           <TextInput
             style={styles(theme).textInput}
-            //value={name}
-            //placeholder={name}
-            /* onChangeText={(name) =>
+            value={name}
+            placeholder={name}
+            onChangeText={(name) =>
               setName(
                 name
                   .normalize('NFD')
@@ -386,7 +407,7 @@ export default function GroupInfo({ route }) {
                   .replace(/\s+/g, '')
                   .replace(/[^a-z0-9]/gi, '')
               )
-            } */
+            }
           />
           {groupRole == 'Creator'}
           <View style={styles(theme).headerContainer}>
@@ -403,6 +424,10 @@ export default function GroupInfo({ route }) {
             <Text style={styles(theme).headerText}>Tent Type</Text>
             <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
           </View>
+          <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
+              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400' }}>{tent}</Text>
+              <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles(theme).removeBtn} 
@@ -414,6 +439,40 @@ export default function GroupInfo({ route }) {
               <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
             )}
           </TouchableOpacity>
+
+
+          {groupRole == 'Creator' ? (
+            <ActionSheetModal
+              isVisible={isTentChangeVisible}
+              onBackdropPress={toggleTentChange}
+              onSwipeComplete={toggleTentChange}
+              toggleModal={toggleTentChange}
+              cancelButton={true}
+              height={180}
+              userStyle={'dark'}
+            >
+              <TouchableOpacity
+                //onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing tent type
+                style={styles(theme).roleChangeListItem}
+              >
+                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Black</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                //onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
+                style={styles(theme).roleChangeListItem}
+              >
+                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Blue</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                //onPress={() => postGroupRole.mutate({ groupRole: 'Member', groupCode })}
+                style={[styles(theme).roleChangeListItem, { borderBottomWidth: 0 }]}
+              >
+                <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>White</Text>
+              </TouchableOpacity>
+            </ActionSheetModal>
+          ) : null}
 
         </View>
 
@@ -651,5 +710,31 @@ const styles = (theme) =>
       shadowOffset: { width: -2, height: 3 },
       shadowOpacity: 0.2,
       shadowRadius: 3,
+    },
+
+    /** STYLES for settings Modal */
+    headerContainer: {
+      flexDirection: 'row',
+      width: '90%',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    headerText: {
+      //text for different setting headers
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      width: '90%',
+      fontSize: 18,
+      fontWeight: '500',
+      textAlign: 'left',
+      borderRadius: 15,
+      marginBottom: 23,
+      borderColor: theme.grey2,
     },
   });

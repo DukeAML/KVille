@@ -253,7 +253,7 @@ export default function NavigationStack() {
             headerRight: () => (
               <View>
                 <TouchableOpacity
-                  onPress={toggleSettings}
+                  //onPress={toggleSettings}
                   style={{ marginRight: 20 }}
                 >
                   <Icon name='cog-outline' color={theme.grey1} size={30} />

@@ -20,7 +20,6 @@ export default function Settings({ route, navigation }) {
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const [isReady, setIsReady] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
-  const [isSettingsVisible, setSettingsVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const [currGroupName, setCurrGroupName] = useState(groupName);
@@ -166,9 +165,6 @@ export default function Settings({ route, navigation }) {
 
   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  };
-  function toggleSettings () {
-    setSettingsVisible(!isSettingsVisible);
   };
   function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
