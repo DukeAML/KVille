@@ -132,6 +132,8 @@ export default function DrawerContent(props) {
                   groupCode: groupCode,
                   groupName: groupName,
                   groupRole: groupRole,
+                  userName,
+                  tentType,
                 });
               }}
             />

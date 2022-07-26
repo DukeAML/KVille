@@ -165,10 +165,10 @@ export default function Settings({ route, navigation }) {
 
   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  }
+  };
   function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
-  }
+  };
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {

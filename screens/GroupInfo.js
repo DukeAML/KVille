@@ -7,14 +7,18 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  TextInput,
   SafeAreaView,
 } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { Divider } from 'react-native-paper';
+
+import { Divider, IconButton } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -22,15 +26,21 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../components/ConfirmationModal';
-import { ActionSheetModal } from '../components/ActionSheetModal';
-import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ConfirmationModal } from '../component/ConfirmationModal';
+import { ActionSheetModal } from '../component/ActionSheetModal';
+import { BottomSheetModal } from '../component/BottomSheetModal';
+import { LoadingIndicator } from '../component/LoadingIndicator';
+import SettingsModal from '../component/SettingsModal';
 
-export default function GroupInfo({ route }) {
-  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+export default function GroupInfo({ route, navigation }) {
+  const { groupCode, groupName, groupRole} = route.params; // take in navigation parameters
+  const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
+  //The following hooks are for the settings modal
+  const [isSettingsVisible, setSettingsVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
   const [userMember, setUserMember] = useState();
@@ -46,6 +56,9 @@ export default function GroupInfo({ route }) {
   }
   function toggleRoleChange() {
     setRoleChangeVisible(!isRoleChangeVisible);
+  }
+  function toggleSettings () {
+    setSettingsVisible(!isSettingsVisible);
   }
 
   const { isLoading, isError, error, data, refetch } = useQuery(
@@ -311,13 +324,18 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <View
+    <SafeAreaView
       style={styles(theme).container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
     >
-      <Text style={styles(theme).header}>Group Name</Text>
+      <View style={styles(theme).containerHeader}>
+        <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
+        <Text style={{fontSize: 30, fontWeight: '600'}}>Group Overview</Text>
+        <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings}/>
+      </View>
 
+      <Text style={styles(theme).header}>Group Name</Text>
       <View style={styles(theme).boxText}>
         <Text style={styles(theme).contentText}>{groupName}</Text>
       </View>
@@ -336,8 +354,10 @@ export default function GroupInfo({ route }) {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
+        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
+
+
 
       {/*Member Information Modal Component*/}
       <ActionSheetModal
@@ -454,7 +474,19 @@ export default function GroupInfo({ route }) {
           onSwipeComplete={toggleConfirmation}
         />
       </ActionSheetModal>
-    </View>
+
+      <BottomSheetModal
+        isVisible={isSettingsVisible}
+        onBackdropPress={toggleSettings}
+        swipeDown={true}
+        barSize={'none'}
+        height= {(groupRole == 'Creator' || 'Admin')? '90%': '50%'}
+        userStyle='light'
+      >
+        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation} toggleModal={toggleSettings}/>
+
+      </BottomSheetModal>
+    </SafeAreaView>
   );
 }
 
@@ -463,12 +495,18 @@ const styles = (theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.primaryContainer,
+      alignItems: 'center',
+    },
+    containerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
     },
     header: {
       //view of top headers above boxText
       marginBottom: 10,
       marginTop: 4,
-      alignSelf: 'center',
       color: theme.grey1,
       width: '90%',
       fontSize: 22,
@@ -482,7 +520,6 @@ const styles = (theme) =>
       borderRadius: 8,
       borderWidth: 0.3,
       borderColor: theme.popOutBorder,
-      alignSelf: 'center',
       shadowColor: '#171717',
       shadowOffset: { width: -1.5, height: 2 },
       shadowOpacity: 0.1,
@@ -568,4 +605,30 @@ const styles = (theme) =>
       shadowOpacity: 0.2,
       shadowRadius: 3,
     },
+
+    /** STYLES for settings Modal */
+/*     headerContainer: {
+      flexDirection: 'row',
+      width: '90%',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    headerText: {
+      //text for different setting headers
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      width: '90%',
+      fontSize: 18,
+      fontWeight: '500',
+      textAlign: 'left',
+      borderRadius: 15,
+      marginBottom: 23,
+      borderColor: theme.grey2,
+    }, */
   });
