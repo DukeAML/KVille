@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, SectionList, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
@@ -70,15 +70,47 @@ export default function Shifts({ route }) {
         shifts.current = doc.data().shifts;
         //console.log('shifts fetched from firebase', shifts);
       });
-    let parsedShifts = [];
+    let parsedShifts = [
+      {
+        title: 'Sunday',
+        data: []
+      },
+      {
+        title: 'Monday',
+        data: [],
+      },
+      {
+        title: 'Tuesday',
+        data: [],
+      },
+      {
+        title: 'Wednesday',
+        data: [],
+      },
+      {
+        title: 'Thursday',
+        data: [],
+      },
+      {
+        title: 'Friday',
+        data: [],
+      },
+      {
+        title: 'Saturday',
+        data: [],
+      },
+
+    ];
     for (let i = 0; i < shifts.current.length; i++) {
       if (shifts.current[i]) {
         const start = i;
+        const startDay = Math.floor(start / 48);
+
         while (i < shifts.current.length && shifts.current[i]) {
           i++;
         }
         const end = i - 1;
-        parsedShifts.push({ id: parsedShifts.length, start: start, end: end });
+        parsedShifts[startDay].data.push({ start: start, end: end });
       }
     }
     console.log(parsedShifts);
@@ -158,9 +190,7 @@ export default function Shifts({ route }) {
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
         <View style={{ borderBottomWidth: 1, width: '100%', height: '60%' }}>
-          <Text style={styles(theme).listText}>
-            {dayMapping[startDay]} {sameDay ? '(- ' : ''}{sameDay ? dayMapping[endDay] : ''}{sameDay ? ') ' : ''}{shiftTime}
-          </Text>
+          <Text style={styles(theme).listText}>{shiftTime}</Text>
         </View>
         <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 10 }}>
           <Icon name='clock-outline' color={theme.icon2} size={20} />
@@ -198,13 +228,13 @@ export default function Shifts({ route }) {
 
   return (
     <View style={styles(theme).screenContainer} onLayout={onLayoutRootView}>
-      <FlatList
-        data={data}
+      <SectionList
+        sections={data}
+        keyExtractor={(item, index) => item + index}
         renderItem={RenderShift}
+        renderSectionHeader={({ section: { title, data } }) => data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
-        //ItemSeparatorComponent={() => <Divider />}
-        //keyExtractor={(item) => item.id}
         ListEmptyComponent={<EmptyComponent />}
       />
     </View>
@@ -237,6 +267,11 @@ const styles = (theme) =>
       fontSize: 15,
       fontWeight: '500',
       color: theme.text2,
+    },
+    sectionHeader: {
+      fontSize: 24,
+      marginLeft: '10%',
+
     },
     shadowProp: {
       //shadow for the group cards
