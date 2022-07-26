@@ -28,19 +28,18 @@ import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from '../component/ActionSheetModal';
 import { BottomSheetModal } from '../component/BottomSheetModal';
 import { LoadingIndicator } from '../component/LoadingIndicator';
-import { BottomSheetModal } from '../component/BottomSheetModal';
 import SettingsModal from '../component/SettingsModal';
 
-export default function GroupInfo({ route }) {
-  const { groupCode, groupName, groupRole, userName, tentType } = route.params; // take in navigation parameters
-  /* const userName = useSelector((state) => state.user.currUserName);
-  const tentType = useSelector((state) => state.user.currTentType); */
+export default function GroupInfo({ route, navigation }) {
+  const { groupCode, groupName, groupRole} = route.params; // take in navigation parameters
+  const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
   //The following hooks are for the settings modal
   const [isSettingsVisible, setSettingsVisible] = useState(false);
-  const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  
   const [isRemoveGroupVisible, setRemoveGroupVisible] = useState(false);
   const [name, setName] = useState(userName);
   const [tent, setTent] = useState(tentType);
@@ -371,11 +370,7 @@ export default function GroupInfo({ route }) {
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
 
-      <TouchableOpacity onPress={toggleSettings}>
-        <Text>toggle settings modal</Text>
-      </TouchableOpacity>
-
-      <BottomSheetModal
+{/*       <BottomSheetModal
         isVisible={isSettingsVisible}
         onBackdropPress={toggleSettings}
         swipeDown={false}
@@ -489,11 +484,7 @@ export default function GroupInfo({ route }) {
           ) : null}
 
         </View>
-
-
-        
-
-      </BottomSheetModal>
+      </BottomSheetModal> */}
 
 
 
@@ -622,6 +613,7 @@ export default function GroupInfo({ route }) {
         userStyle='light'
       >
         <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation}/>
+
       </BottomSheetModal>
     </SafeAreaView>
   );
@@ -743,7 +735,7 @@ const styles = (theme) =>
     },
 
     /** STYLES for settings Modal */
-    headerContainer: {
+/*     headerContainer: {
       flexDirection: 'row',
       width: '90%',
       justifyContent: 'space-between',
@@ -766,5 +758,5 @@ const styles = (theme) =>
       borderRadius: 15,
       marginBottom: 23,
       borderColor: theme.grey2,
-    },
+    }, */
   });

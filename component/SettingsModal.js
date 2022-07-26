@@ -13,10 +13,13 @@ import 'firebase/compat/firestore';
 import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../component/ConfirmationModal';
+import { ActionSheetModal } from './ActionSheetModal';
 
 export default function SettingsModal({ params, navigation }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  const [tent, setTent] = useState(tentType);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const dispatch = useDispatch();
@@ -126,6 +129,9 @@ export default function SettingsModal({ params, navigation }) {
   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
   }
+  function toggleTentChange() {
+    setTentChangeVisible(!isTentChangeVisible);
+  }
   function toggleSnackBar() {
     setSnackVisible(!isSnackVisible);
   }
@@ -140,21 +146,12 @@ export default function SettingsModal({ params, navigation }) {
         {({ handleChange, handleBlur, handleSubmit, values }) => (
           <>
             <View style={styles(theme).topBanner}>
-              <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 30 }]}>
+              <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
                 Settings
               </Text>
 
-              <TouchableOpacity onPress={handleSubmit} style={{position: 'absolute', right: 20, top: 10}}>
-                <Text
-                  style={[
-                    styles(theme).groupText,
-                    {
-                      fontSize: 18,
-                      fontWeight: '700',
-                      color: theme.primary,
-                    },
-                  ]}
-                >
+              <TouchableOpacity onPress={handleSubmit} style={{position: 'absolute', right: 20, top: 15}}>
+                <Text style={{fontSize: 18,fontWeight: '700',color: theme.primary}}>
                   Save
                 </Text>
               </TouchableOpacity>
@@ -174,7 +171,7 @@ export default function SettingsModal({ params, navigation }) {
             />
 
             {groupRole === 'Creator' ? (
-              <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{width: '100%', alignItems: 'center', height: '55%'}}>
                 <View style={styles(theme).headerContainer}>
                   <Text style={styles(theme).headerText}>Group Name</Text>
                   <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
@@ -192,19 +189,59 @@ export default function SettingsModal({ params, navigation }) {
                   <Text style={styles(theme).headerText}>Tent Type</Text>
                   <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
+                <TouchableOpacity
+                  onPress = {toggleTentChange}
+                  style = {styles(theme).tentChangeBtn}
+                >
+                  <Text style={styles(theme).modalText}>{tentType}</Text>
+                </TouchableOpacity>
+
               </View>
             ) : null}
           </>
         )}
       </Formik>
 
-      <TouchableOpacity style={styles(theme).button} onPress={toggleConfirmation}>
+      <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         {groupRole === 'Creator' ? (
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
         ) : (
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
         )}
       </TouchableOpacity>
+
+      {groupRole == 'Creator' ? (
+        <ActionSheetModal
+          isVisible={isTentChangeVisible}
+          onBackdropPress={toggleTentChange}
+          onSwipeComplete={toggleTentChange}
+          toggleModal={toggleTentChange}
+          cancelButton={true}
+          height={180}
+          userStyle={'dark'}
+        >
+          <TouchableOpacity
+            //onPress={() => handleChange('Black')} //change to changing tent type
+            style={styles(theme).tentChangeListItem}
+          >
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Black</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            //onPress={() => handleChange('Blue')}
+            style={styles(theme).tentChangeListItem}
+          >
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Blue</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            //onPress={() => handleChange('White')}
+            style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
+          >
+            <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>White</Text>
+          </TouchableOpacity>
+        </ActionSheetModal>
+      ) : null}
 
       <ConfirmationModal
         body={
@@ -249,13 +286,17 @@ const styles = (theme) =>
     topBanner: {
       //for the top container holding top 'settings' and save button
       flexDirection: 'row',
+      backgroundColor: theme.white1,
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 30,
       width: '100%',
-      marginVertical: 10,
+      paddingVertical: 10,
       paddingBottom: 10,
-      borderBottomWidth: 1,
+      borderBottomWidth: 0.5,
+      borderColor: theme.popOutBorder,
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
     },
     headerContainer: {
       flexDirection: 'row',
@@ -269,8 +310,12 @@ const styles = (theme) =>
       fontWeight: '700',
       color: theme.grey2,
     },
+    modalText:{ //text for diff modal texts
+      fontSize: 18,
+      fontWeight: '500',
+    },
     textInput: {
-      backgroundColor: theme.white2,
+      backgroundColor: theme.white1,
       paddingVertical: 10,
       paddingHorizontal: 15,
       width: '90%',
@@ -280,26 +325,45 @@ const styles = (theme) =>
       borderRadius: 15,
       marginBottom: 23,
       borderColor: theme.grey2,
+      borderWidth: 1,
     },
-    picker: {
-      height: '25%',
+    tentChangeListItem: {
+      //Style of an item in the member tentChange modal (for creator only)
+      flexDirection: 'row',
+      height: '33%',
+      width: '95%',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderColor: '#cfcfcf',
+    },
+    tentChangeBtn: {
+      //remove button for removing member if the user is the Creator
+      flexDirection: 'row',
       width: '90%',
-    },
-    pickerItem: {
-      height: '100%',
+      height: 45,
+      backgroundColor: theme.white1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 15,
+      borderColor: theme.grey2,
+      borderWidth: 1,
     },
     BottomModalView: {
       margin: 0,
       justifyContent: 'flex-end',
     },
-    button: {
-      backgroundColor: theme.white2,
+    leaveButton: {
+      backgroundColor: '#ececec',
       borderRadius: 15,
       padding: 15,
       position: 'absolute',
-      bottom: 0,
+      bottom: 10,
       width: '90%',
       alignItems: 'center',
+      borderWidth: 0.5,
+      borderColor: theme.popOutBorder,
     },
     shadowProp: {
       //shadow for the text input and image
