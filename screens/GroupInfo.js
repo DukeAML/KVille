@@ -481,7 +481,7 @@ export default function GroupInfo({ route, navigation }) {
         height= {(groupRole == 'Creator' || 'Admin')? '90%': '50%'}
         userStyle='light'
       >
-        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation}/>
+        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation} toggleModal={toggleSettings}/>
 
       </BottomSheetModal>
     </SafeAreaView>

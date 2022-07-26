@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Picker } from '@react-native-picker/picker';
 import { Snackbar } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 
 import firebase from 'firebase/compat/app';
@@ -15,11 +14,10 @@ import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../component/ConfirmationModal';
 import { ActionSheetModal } from './ActionSheetModal';
 
-export default function SettingsModal({ params, navigation }) {
+export default function SettingsModal({ params, navigation, toggleModal }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
-  const [tent, setTent] = useState(tentType);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const dispatch = useDispatch();
@@ -28,7 +26,7 @@ export default function SettingsModal({ params, navigation }) {
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-  function onSave({groupName, userName, tentType}) {
+  function onSave({ groupName, userName, tentType }) {
     let groupIndex;
     let groupCodeArr;
     userRef
@@ -94,6 +92,7 @@ export default function SettingsModal({ params, navigation }) {
     dispatch(setGroupName(groupName));
     toggleSnackBar();
     setSnackMessage('Saved');
+    toggleModal();
   }
 
   function leaveGroup() {
@@ -141,19 +140,20 @@ export default function SettingsModal({ params, navigation }) {
       <Formik
         initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
         onSubmit={(values) => onSave(values)}
-        style={{borderWidth: 1}}
+        style={{ borderWidth: 1 }}
       >
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched, values }) => (
           <>
             <View style={styles(theme).topBanner}>
+              <TouchableOpacity onPress={toggleModal}>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Cancel</Text>
+              </TouchableOpacity>
               <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
                 Settings
               </Text>
 
-              <TouchableOpacity onPress={handleSubmit} style={{position: 'absolute', right: 20, top: 15}}>
-                <Text style={{fontSize: 18,fontWeight: '700',color: theme.primary}}>
-                  Save
-                </Text>
+              <TouchableOpacity onPress={handleSubmit} >
+                <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
               </TouchableOpacity>
             </View>
 
@@ -171,7 +171,7 @@ export default function SettingsModal({ params, navigation }) {
             />
 
             {groupRole === 'Creator' ? (
-              <View style={{width: '100%', alignItems: 'center', height: '55%'}}>
+              <View style={{ width: '100%', alignItems: 'center', height: '55%' }}>
                 <View style={styles(theme).headerContainer}>
                   <Text style={styles(theme).headerText}>Group Name</Text>
                   <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
@@ -189,13 +189,10 @@ export default function SettingsModal({ params, navigation }) {
                   <Text style={styles(theme).headerText}>Tent Type</Text>
                   <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
-                <TouchableOpacity
-                  onPress = {toggleTentChange}
-                  style = {styles(theme).tentChangeBtn}
-                >
+                <TouchableOpacity onPress={toggleTentChange} style={styles(theme).tentChangeBtn}>
                   <Text style={styles(theme).modalText}>{values.tentType}</Text>
+                  <Icon name='chevron-down' color={theme.grey2} size={20} />
                 </TouchableOpacity>
-
               </View>
             ) : null}
 
@@ -244,9 +241,7 @@ export default function SettingsModal({ params, navigation }) {
               </ActionSheetModal>
             ) : null}
           </>
-          
         )}
-        
       </Formik>
 
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
@@ -256,8 +251,6 @@ export default function SettingsModal({ params, navigation }) {
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Leave Group</Text>
         )}
       </TouchableOpacity>
-
-      
 
       <ConfirmationModal
         body={
@@ -304,9 +297,9 @@ const styles = (theme) =>
       flexDirection: 'row',
       backgroundColor: theme.white1,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       marginBottom: 30,
-      width: '100%',
+      width: '90%',
       paddingVertical: 10,
       paddingBottom: 10,
       borderBottomWidth: 0.5,
@@ -326,7 +319,8 @@ const styles = (theme) =>
       fontWeight: '700',
       color: theme.grey2,
     },
-    modalText:{ //text for diff modal texts
+    modalText: {
+      //text for diff modal texts
       fontSize: 18,
       fontWeight: '500',
     },
@@ -361,10 +355,11 @@ const styles = (theme) =>
       height: 45,
       backgroundColor: theme.white1,
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       borderRadius: 15,
       borderColor: theme.grey2,
       borderWidth: 1,
+      paddingHorizontal: 15,
     },
     BottomModalView: {
       margin: 0,
@@ -380,13 +375,5 @@ const styles = (theme) =>
       alignItems: 'center',
       borderWidth: 0.5,
       borderColor: theme.popOutBorder,
-    },
-    shadowProp: {
-      //shadow for the text input and image
-      shadowColor: '#171717',
-      shadowOffset: { width: -2, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 20,
     },
   });
