@@ -1,7 +1,7 @@
 export const lightTheme = {
-  background: '#C2C6D0',
-  primary: '#1F509A',
-  primaryContainer: '#C2C6D0',
+  background: '#f5f7fa', //#C2C6D0',
+  primary: '#00539B',
+  primaryContainer: '#f3f3f3', //'#C2C6D0',
   secondary: '#1E3F66',
   tertiary: '#2E5984',
   quaternary: '#0FA4DC',
@@ -13,6 +13,7 @@ export const lightTheme = {
   grey4: '#555555',
   grey5: '#8e8e8e',
   grey6: '#a9a9a9',
+  popOutBorder: '#d8d9dc',
   greyModal: '#565656',
   text1: '#fff',
   text2: '#000',

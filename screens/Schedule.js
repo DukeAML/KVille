@@ -18,7 +18,7 @@ import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar, Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { FAB, Portal, Provider } from 'react-native-paper';
 
@@ -28,13 +28,12 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { useWindowUnloadEffect } from '../hooks/useWindowUnloadEffect';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../component/ConfirmationModal';
-import { BottomSheetModal } from '../component/BottomSheetModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { BottomSheetModal } from '../components/BottomSheetModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -73,8 +72,9 @@ export default function Schedule({ route }) {
   const oldMember = useRef('');
   const editIndex = useRef(0);
   const newSchedule = useRef([]);
+  const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
-  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#D0342C', changedHrs: 0 }]);
+  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0 }]);
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
@@ -88,28 +88,6 @@ export default function Schedule({ route }) {
   //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (Platform.OS === 'web') {
-        window.addEventListener('beforeunload', (event) => {
-          event.preventDefault();
-          updateHours(code);
-        });
-      }
-      return () => {
-        updateHours(code);
-        if (Platform.OS === 'web') {
-          window.removeEventListener('beforeunload', (event) => {
-            event.preventDefault();
-            updateHours(code);
-          });
-        }
-      };
-    }, [])
-  );
-
-  //useWindowUnloadEffect(()=> updateHours(code), true);
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
@@ -139,29 +117,6 @@ export default function Schedule({ route }) {
     return prevSchedule;
   }
 
-  function updateHours(groupCode) {
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    for (let i = 0; i < colorCodes.current.length; i++) {
-      if (colorCodes.current[i].changedHrs == 0) continue;
-      groupRef
-        .collection('members')
-        .doc(colorCodes.current[i].id)
-        .get()
-        .then((doc) => {
-          const newHours = doc.data().scheduledHrs + colorCodes.current[i].changedHrs;
-          console.log(colorCodes.current[i].changedHrs + ' new hours: ' + newHours);
-          colorCodes.current[i].changedHrs = 0;
-          return newHours;
-        })
-        .then((hours) => {
-          groupRef.collection('members').doc(colorCodes.current[i].id).update({ scheduledHrs: hours });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }
-
   const postEditCell = useEditCell(code, weekDisplay);
 
   function useEditCell(groupCode, weekDisplay) {
@@ -171,10 +126,12 @@ export default function Schedule({ route }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.setQueryData(
+        if (editSuccessful.current){
+          queryClient.setQueryData(
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current
-        );
+          );
+        } else return;
       },
     });
   }
@@ -183,34 +140,60 @@ export default function Schedule({ route }) {
   async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    
     let currSchedule = data;
-    currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
-    const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
-    const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
+    //Must check if the member already exists in the array
+    if (newMember !== 'empty' && data[index].trim().split(' ').includes(newMember)){
+      setSnackMessage('Member already in chosen timeslot');
+      toggleSnackBar();
+      editSuccessful.current = false;
+    } else {
+      
+      currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
+      const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
+      const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
 
-    // let oldHours;
-    // let newHours;
-    // await groupRef.collection('members').doc(colorCodes.current[indexofOld].id).get().then((doc) => {
-    //   oldHours = doc.data().scheduledHrs - 0.5;
-    // });
-    // await groupRef.collection('members').doc(colorCodes.current[indexofNew].id).get().then((doc) => {
-    //   newHours = doc.data().scheduledHrs + 0.5;
-    // });
-    // groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
-    //   scheduledHrs: oldHours
-    // })
-    // groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
-    //   scheduledHrs: newHours,
-    // });
+       let oldHours;
+       let newHours;
+       let oldShifts;
+       let newShifts;
+       await groupRef
+         .collection('members')
+         .doc(colorCodes.current[indexofOld].id)
+         .get()
+         .then((doc) => {
+           oldHours = doc.data().scheduledHrs - 0.5;
+           oldShifts = doc.data().shifts;
+           oldShifts[index] = false;
+         });
+       await groupRef
+         .collection('members')
+         .doc(colorCodes.current[indexofNew].id)
+         .get()
+         .then((doc) => {
+           newHours = doc.data().scheduledHrs + 0.5;
+           newShifts = doc.data().shifts;
+           newShifts[index] = true;
+         });
+       groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
+         scheduledHrs: oldHours,
+         shifts: oldShifts,
+       });
+       groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
+         scheduledHrs: newHours,
+         shifts: newShifts,
+       });
 
-    colorCodes.current[indexofOld].changedHrs -= 0.5;
-    colorCodes.current[indexofNew].changedHrs += 0.5;
+      //colorCodes.current[indexofOld].changedHrs -= 0.5;
+      //colorCodes.current[indexofNew].changedHrs += 0.5;
 
-    groupRef.update({
-      groupSchedule: currSchedule,
-    });
+      groupRef.update({
+        groupSchedule: currSchedule,
+      });
 
-    newSchedule.current = currSchedule;
+      newSchedule.current = currSchedule;
+      editSuccessful.current = true;
+    }
   }
 
   const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
@@ -227,6 +210,7 @@ export default function Schedule({ route }) {
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current
         );
+        queryClient.invalidateQueries(['shifts', firebase.auth().currentUser.uid, groupCode]);
       },
     });
   }
@@ -365,7 +349,6 @@ export default function Schedule({ route }) {
             onPress={() => {
               editIndex.current = index;
               oldMember.current = person;
-              //setOldMember(person);
               console.log('index: ', index);
               toggleModal();
             }}
@@ -532,17 +515,19 @@ export default function Schedule({ route }) {
           cancelButton={true}
           height={win.height * 0.15}
         >
-          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
+          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%'}}>
             <View
               style={{
-                height: '100%',
-                width: '100%',
+                flex: 1,
                 justifyContent: 'center',
+                alignItems: 'center',
                 borderBottomWidth: 1,
                 borderColor: '#cfcfcf',
+                flexDirection: 'row'
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>{newMember}</Text>
+              <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
+              <Icon name='chevron-down' color={theme.icon1} size={30} style={{marginLeft: 10}}/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -566,7 +551,7 @@ export default function Schedule({ route }) {
                 style={{
                   textAlign: 'center',
                   color: 'white',
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: '500',
                 }}
               >
@@ -671,7 +656,7 @@ export default function Schedule({ route }) {
         <Snackbar
           visible={isSnackVisible}
           onDismiss={() => setSnackVisible(false)}
-          wrapperStyle={{ top: 0 }}
+          wrapperStyle={{ top: 40 }}
           duration={1300}
         >
           <View style={{ width: '100%' }}>
@@ -712,7 +697,7 @@ const styles = (theme) =>
       justifyContent: 'space-between',
       borderBottomRightRadius: 20,
       borderBottomLeftRadius: 20,
-      backgroundColor: theme.background,
+      backgroundColor: theme.primaryContainer,
     },
     button: {
       //for the day buttons at top of screen

@@ -26,10 +26,10 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-import RegisterScreen from './component/auth/Register';
-import LoginScreen from './component/auth/Login';
-import MainScreen from './screens/Main';
-import ForgotPasswordScreen from './component/auth/ForgotPassword';
+import RegisterScreen from './components/auth/Register';
+import LoginScreen from './components/auth/Login';
+import NavigationStack from './screens/NavigationStack';
+import ForgotPasswordScreen from './components/auth/ForgotPassword';
 import { persistor, store } from './redux/store/index';
 import ThemeProvider from './context/ThemeProvider';
 
@@ -50,10 +50,6 @@ export default function App() {
         // LogBox.ignoreLogs([
         //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
         // ]);
-
-        // await Font.loadAsync({
-        //   NovaCut: require('./assets/fonts/NovaCut-Regular.ttf'),
-        // });
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({
@@ -141,7 +137,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <ThemeProvider>
-          <MainScreen />
+          <NavigationStack />
         </ThemeProvider>
       </Provider>
     </QueryClientProvider>

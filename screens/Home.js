@@ -10,7 +10,6 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-//import { useFonts, NovaCut_400Regular } from '@expo-google-fonts/nova-cut';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
@@ -29,14 +28,11 @@ import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 const window = Dimensions.get('window');
 
-export default function Start({ navigation }) {
-  /* let [fontsLoaded] = useFonts({
-    NovaCut_400Regular,
-  }); */
+export default function Home({ navigation }) {
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
     fetchGroups,
@@ -76,33 +72,33 @@ export default function Start({ navigation }) {
 
   const dispatch = useDispatch();
 
-  function toggleModal () {
+  function toggleModal() {
     setModalVisible(!isModalVisible);
   }
-  
-  function openMenu () {
+
+  function openMenu() {
     setMenuVisible(true);
   }
 
-  function closeMenu () {
-    setMenuVisible(false)
+  function closeMenu() {
+    setMenuVisible(false);
   }
 
   const EmptyGroup = () => {
     return (
       <View
-        style={!isLoading ? [
+        style={[
           styles(theme).listItem,
           styles(theme).shadowProp,
           { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
-        ]: null}
+        ]}
       >
-        
-        {!isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
-        {!isLoading ? <View style={{ flexDirection: 'column' }}>
+        <Image source={DukeBasketballLogo} style={styles(theme).image} />
+
+        <View style={{ flexDirection: 'column' }}>
           <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
           <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
-        </View> : null}
+        </View>
       </View>
     );
   };
@@ -176,9 +172,9 @@ export default function Start({ navigation }) {
     );
   };
 
-  function onLogout () {
+  function onLogout() {
     firebase.auth().signOut();
-  };
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -241,74 +237,72 @@ export default function Start({ navigation }) {
           </TouchableOpacity>
         </View>
 
-
-        <SafeAreaView style = {{width: '100%', height: '70%'}}>
+        <SafeAreaView style={{ width: '100%', height: '70%' }}>
           <FlatList
             data={data}
             renderItem={renderGroup}
-            ListEmptyComponent={<EmptyGroup />}
             keyExtractor={(item) => item.code}
+            //ListEmptyComponent={<EmptyGroup/>}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-            style={{ width: '100%', flexGrow: 1, height: '100%'/* , borderWidth:1 */}}
+            style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
           />
         </SafeAreaView>
 
-        <View>
-          <Modal
-            isVisible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
-            //customBackdrop={<View style={{ flex: 1 }} />}
-          >
-            <View style={styles(theme).popUp}>
-              <Text style={styles(theme).popUpHeader}>Add Group</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
-                  navigation.navigate('JoinGroup');
-                }}
-                style = {{width: '100%', alignSelf: 'center'}}
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          //customBackdrop={<View style={{ flex: 1 }} />}
+        >
+          <SafeAreaView style={styles(theme).popUp}>
+            <Text style={styles(theme).popUpHeader}>Add Group</Text>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
+                navigation.navigate('JoinGroup');
+              }}
+              style={{ width: '100%', alignSelf: 'center' }}
+            >
+              <View
+                style={[
+                  styles(theme).popButton,
+                  {
+                    borderBottomLeftRadius: 3,
+                    borderBottomRightRadius: 3,
+                    borderTopLeftRadius: 11,
+                    borderTopRightRadius: 11,
+                  },
+                ]}
               >
-                <View
-                  style={[
-                    styles(theme).popButton,
-                    {
-                      borderBottomLeftRadius: 3,
-                      borderBottomRightRadius: 3,
-                      borderTopLeftRadius: 11,
-                      borderTopRightRadius: 11,
-                    },
-                  ]}
-                >
-                  <Icon name='account-plus-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
-                  <Text style={styles(theme).buttonText}>Join Group</Text>
-                </View>
-              </TouchableOpacity>
+                <Icon name='account-plus-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
+                <Text style={styles(theme).buttonText}>Join Group</Text>
+              </View>
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
-                  navigation.navigate('CreateGroup');
-                }}
-                style = {{width: '100%', alignSelf: 'center'}}
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
+                navigation.navigate('CreateGroup');
+              }}
+              style={{ width: '100%', alignSelf: 'center' }}
+            >
+              <View
+                style={[
+                  styles(theme).popButton,
+                  {
+                    borderBottomLeftRadius: 11,
+                    borderBottomRightRadius: 11,
+                    borderTopLeftRadius: 3,
+                    borderTopRightRadius: 3,
+                  },
+                ]}
               >
-                <View
-                  style={[
-                    styles(theme).popButton,
-                    {
-                      borderBottomLeftRadius: 11,
-                      borderBottomRightRadius: 11,
-                      borderTopLeftRadius: 3,
-                      borderTopRightRadius: 3,
-                    },
-                  ]}
-                >
-                  <Icon name='account-circle-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
-                  <Text style={styles(theme).buttonText}>Create New Group</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-          {/* <Button
+                <Icon name='account-circle-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
+                <Text style={styles(theme).buttonText}>Create New Group</Text>
+              </View>
+            </TouchableOpacity>
+          </SafeAreaView>
+        </Modal>
+        {/* <Button
           title='Create Group Schedule'
           onPress={() =>
             createGroupSchedule('sX5bkvgE', 'Black').then((groupSchedule) => {
@@ -325,11 +319,10 @@ export default function Start({ navigation }) {
             })
           }
         /> */}
-          {/* <Button
+        {/* <Button
               title="Add test case"
               onPress={() => createTestCases()}
             /> */}
-        </View>
       </View>
     </Provider>
   );
@@ -341,14 +334,11 @@ const styles = (theme) =>
       //Overarching Container
       flexDirection: 'column',
       flex: 1,
-      backgroundColor: theme.background,
+      //backgroundColor: theme.background,
+      backgroundColor: '#f5f7fa',
       alignItems: 'center',
       marginTop: '0%',
     },
-    /*   header: {
-  left: "0%",
-  width: "100%"
-}, */
     topBanner: {
       //for the top container holding "welcome to k-ville"
       alignItems: 'center',
@@ -385,7 +375,7 @@ const styles = (theme) =>
       fontWeight: '600',
       color: theme.text1,
       height: 40,
-      width: "89%",
+      width: '89%',
       marginTop: 15,
       textAlign: 'center',
       fontSize: 24,
@@ -408,13 +398,6 @@ const styles = (theme) =>
       textAlign: 'left',
       marginLeft: 15,
     },
-
-    /*   banner: {
-  color: "#fff",
-  fontFamily: "NovaCut_400Regular",
-  fontSize: 36,
-  left: "0%"
-}, */
     image: {
       //for the duke basketball logos
       width: 45,
@@ -426,11 +409,14 @@ const styles = (theme) =>
 
     listItem: {
       //for the items for each group
-      backgroundColor: theme.grey3,
+      //backgroundColor: theme.grey3,
+      backgroundColor: '#fff',
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
       alignSelf: 'center',
+      borderWidth: 0.3,
+      borderColor: '#d8d9dc',
       //width: window.width * 0.9,
       width: '90%',
       justifyContent: 'flex-start',

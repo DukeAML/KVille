@@ -118,31 +118,27 @@ export default function DrawerContent(props) {
 
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='home-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='home-outline' color={color} size={size} />}
               label='Home'
               onPress={() => {
-                props.navigation.navigate('Start');
+                props.navigation.navigate('Home');
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='account-group-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='account-group-outline' color={color} size={size} />}
               label='Group Information'
               onPress={() => {
                 props.navigation.navigate('GroupInfo', {
                   groupCode: groupCode,
                   groupName: groupName,
                   groupRole: groupRole,
+                  userName,
+                  tentType,
                 });
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='calendar-text-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='calendar-text-outline' color={color} size={size} />}
               label='Your Availability'
               onPress={() => {
                 props.navigation.navigate('AvailabilityScreen', {
@@ -151,9 +147,16 @@ export default function DrawerContent(props) {
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='calendar-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='calendar-check-outline' color={color} size={size} />}
+              label='Your Shifts'
+              onPress={() => {
+                props.navigation.navigate('ShiftsScreen', {
+                  groupCode,
+                });
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => <Icon name='calendar-outline' color={color} size={size} />}
               label='Schedule'
               onPress={() => {
                 props.navigation.navigate('ScheduleScreen', {
@@ -163,44 +166,24 @@ export default function DrawerContent(props) {
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='timer-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='timer-outline' color={color} size={size} />}
               label='Countdown'
               onPress={() => {
                 props.navigation.navigate('CountdownScreen');
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='alert-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='alert-outline' color={color} size={size} />}
               label='Line Monitoring'
               onPress={() => {
                 props.navigation.navigate('MonitorScreen');
               }}
             />
             <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='information-outline' color={color} size={size} />
-              )}
+              icon={({ color, size }) => <Icon name='information-outline' color={color} size={size} />}
               label='Information'
               onPress={() => {
                 props.navigation.navigate('InfoScreen');
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name='cog-outline' color={color} size={size} />
-              )}
-              label='Settings'
-              onPress={() => {
-                props.navigation.navigate('SettingScreen', {
-                  groupCode,
-                  groupName,
-                  userName,
-                  tentType,
-                });
               }}
             />
             <DrawerItem label='Log out' onPress={() => onLogout()} />

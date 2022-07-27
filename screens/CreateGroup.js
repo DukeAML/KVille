@@ -10,8 +10,9 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -30,6 +31,7 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
+import { ActionSheetModal } from '../components/ActionSheetModal';
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
@@ -45,10 +47,12 @@ export default function CreateGroup({ navigation }) {
     tentType: '',
     groupCode: '',
     userName: '',
-    tentType: '',
+    tentType: 'Select Tent Type',
   });
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
+  const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  //const [selectedTent, setSelectedTent] = useState('Select Tent Type');
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
   const dispatch = useDispatch();
@@ -59,6 +63,10 @@ export default function CreateGroup({ navigation }) {
   let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.username);
+
+  function toggleTentChange() {
+    setTentChangeVisible(!isTentChangeVisible);
+  }
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -94,7 +102,7 @@ export default function CreateGroup({ navigation }) {
       setSnackMessage('Enter group name');
       return;
     }
-    if (group.tentType == '') {
+    if (group.tentType == 'Select Tent Type') {
       toggleSnackBar();
       setSnackMessage('Select tent type');
       return;
@@ -116,6 +124,7 @@ export default function CreateGroup({ navigation }) {
       inTent: false,
       availability: availability,
       scheduledHrs: 0,
+      shifts: []
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
@@ -154,95 +163,125 @@ export default function CreateGroup({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-        <View style={styles(theme).groupContainer}>
-          <TouchableOpacity
-            style={{alignSelf:'flex-end', marginRight: '5%', alignItems: 'flex-end', marginVertical: 20}}
-            onPress={() => {
-              onCreateGroup();
-              console.log(group.groupCode);
-              console.log(groupRole);
-            }}
-          >
-          <Text style={styles(theme).btnTxt}>Create</Text>
-        </TouchableOpacity>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
+          <View style={styles(theme).groupContainer}>
+            <View style={styles(theme).groupHeader}>
+              <Text
+                style={styles(theme).btnTxt}
+                onPress={() => navigation.goBack()}
+              >
+                Cancel
+              </Text>
+              <Text style={{fontWeight: '500', fontSize: 20}}>Create Group</Text>
+              <TouchableOpacity
 
-          <View style={{ width: '90%' }}>
-            <Text style={styles(theme).headerText}>Group Name</Text>
-          </View>
-          <TextInput
-            style={styles(theme).textInput}
-            autoFocus={true}
-            placeholder='Enter Group Name'
-            value={group.groupName}
-            maxLength={28}
-            onChangeText={(groupName) => setGroup({ ...group, groupName: groupName })}
-          />
+                onPress={() => {
+                  onCreateGroup();
+                  console.log(group.groupCode);
+                  console.log(groupRole);
+                }}
+              >
+                <Text style={styles(theme).btnTxt}>Create</Text>
+              </TouchableOpacity>
+            </View>
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Group Code</Text>
-          <View
-            style={[
-              styles(theme).textInput,
-              {
-                backgroundColor: theme.white1,
-                height: 50,
-                width: '90%',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                alignItems: 'center',
-                //flex: 0.2
-              },
-            ]}
-          >
-            <Text
-              selectable={true}
-              style={{
-                textAlign: 'center',
-                fontSize: 26,
-                fontWeight: '700',
-                //flex: 1,
-              }}
+            <View style={{ width: '90%' }}>
+              <Text style={styles(theme).headerText}>Group Name</Text>
+            </View>
+            <TextInput
+              style={styles(theme).textInput}
+              autoFocus={true}
+              placeholder='Enter Group Name'
+              value={group.groupName}
+              maxLength={28}
+              onChangeText={(groupName) => setGroup({ ...group, groupName: groupName })}
+            />
+
+            <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Group Code</Text>
+            <View
+              style={[
+                styles(theme).textInput,
+                {
+                  backgroundColor: theme.white1,
+                  height: 50,
+                  width: '90%',
+                  justifyContent: 'center',
+                },
+              ]}
             >
-              {group.groupCode}
-            </Text>
+              <Text selectable={true} style={{ textAlign: 'center', fontSize: 26, fontWeight: '700' }}>
+                {group.groupCode}
+              </Text>
+            </View>
+
+            <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
+            <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
+              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400' }}>{group.tentType}</Text>
+              <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+
+            <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
+
+            <TextInput
+              style={[styles(theme).textInput, { borderWidth: 2, borderColor: theme.grey5 }]}
+              value={group.userName}
+              placeholder={group.userName}
+              maxLength={11}
+              onChangeText={(userName) =>
+                setGroup({
+                  ...group,
+                  userName: userName
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '')
+                    .replace(/[^a-z0-9]/gi, ''),
+                })
+              }
+            />
           </View>
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
-          <Picker
-            selectedValue={group.tentType}
-            onValueChange={(itemValue, itemIndex) => {
-              setGroup({ ...group, tentType: itemValue });
-            }}
-            style={Platform.OS === 'ios' ? styles(theme).picker : { width: '90%', height: 30 }}
-            itemStyle={Platform.OS === 'ios' ? styles(theme).pickerItem : {}}
+          <ActionSheetModal
+            isVisible={isTentChangeVisible}
+            onBackdropPress={toggleTentChange}
+            onSwipeComplete={toggleTentChange}
+            toggleModal={toggleTentChange}
+            cancelButton={true}
+            height={180}
+            userStyle={'light'}
           >
-            <Picker.Item label='' value='' />
-            <Picker.Item label='Black' value='Black' />
-            <Picker.Item label='Blue' value='Blue' />
-            <Picker.Item label='White' value='White' />
-            <Picker.Item label='Walk up line' value='Walk up line' />
-          </Picker>
+            <TouchableOpacity
+              onPress={() => {
+                setGroup({ ...group, tentType: 'Black' });
+                toggleTentChange();
+              }} //change to new tent type
+              style={styles(theme).tentChangeListItem}
+            >
+              <Text style={styles(theme).modalText}>Black</Text>
+            </TouchableOpacity>
 
-          <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setGroup({ ...group, tentType: 'Blue' });
+                toggleTentChange();
+              }} //change to new tent type
+              style={styles(theme).tentChangeListItem}
+            >
+              <Text style={styles(theme).modalText}>Blue</Text>
+            </TouchableOpacity>
 
-          <TextInput
-            style={[styles(theme).textInput, { borderWidth: 2, borderColor: theme.grey5 }]}
-            value={group.userName}
-            placeholder={group.userName}
-            maxLength={11}
-            onChangeText={(userName) =>
-              setGroup({
-                ...group,
-                userName: userName
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-                  .replace(/\s+/g, '')
-                  .replace(/[^a-z0-9]/gi, ''),
-              })
-            }
-          />
-        </View>
-      </KeyboardAvoidingView>
+            <TouchableOpacity
+              onPress={() => {
+                setGroup({ ...group, tentType: 'White' });
+                toggleTentChange();
+              }} //change to new tent type
+              style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
+            >
+              <Text style={styles(theme).modalText}>White</Text>
+            </TouchableOpacity>
+          </ActionSheetModal>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
 
       <View
         style={{
@@ -280,7 +319,7 @@ export default function CreateGroup({ navigation }) {
           }}
         ></View>
       </View>
-      
+
       <Snackbar
         visible={isSnackVisible}
         onDismiss={() => setSnackVisible(false)}
@@ -300,6 +339,14 @@ const styles = (theme) =>
       flex: 1,
       alignItems: 'center',
       backgroundColor: theme.background,
+    },
+    groupHeader: {
+      flexDirection: 'row',
+      width: '94%',
+      height: '10%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 20,
     },
     backgroundImage: {
       flex: 1,
@@ -356,6 +403,36 @@ const styles = (theme) =>
       borderColor: theme.grey2,
       borderWidth: 2,
     },
+    selectTent: {
+      width: '90%',
+      height: 45,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: theme.grey2,
+      backgroundColor: '#ececec',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+    },
+    tentChangeListItem: {
+      //Style of an item in the member tentChange modal (for creator only)
+      flexDirection: 'row',
+      height: '33%',
+      width: '95%',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderColor: '#cfcfcf',
+    },
+    modalText: {
+      //style of text within the modals (member info text and tentChange text)
+      fontSize: 18,
+      fontWeight: '500',
+      color: theme.text2,
+    },
     picker: {
       width: '90%',
       height: '20%',
@@ -364,7 +441,7 @@ const styles = (theme) =>
     pickerItem: {
       height: '100%',
     },
-/*     createBtn: {
+    /*     createBtn: {
       backgroundColor: theme.primary,
       padding: 15,
       borderRadius: 30,
@@ -372,9 +449,9 @@ const styles = (theme) =>
       width: '50%',
     }, */
     btnTxt: {
-      fontSize: 24,
+      fontSize: 18,
       color: theme.primary,
-      fontWeight: '700',
+      fontWeight: '600',
     },
     triangle: {
       //position: "relative",

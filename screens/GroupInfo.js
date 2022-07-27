@@ -1,10 +1,24 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Animated, Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  Animated,
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  TextInput,
+  SafeAreaView,
+} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { Divider } from 'react-native-paper';
+
+import { Divider, IconButton } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
+import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -13,27 +27,24 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../component/ConfirmationModal';
-import { ActionSheetModal } from '../component/ActionSheetModal';
-import { LoadingIndicator } from '../component/LoadingIndicator';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { ActionSheetModal } from '../components/ActionSheetModal';
+import { BottomSheetModal } from '../components/BottomSheetModal';
+import { LoadingIndicator } from '../components/LoadingIndicator';
+import SettingsModal from '../components/SettingsModal';
 
-/* let currentUserName;
-
-firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
-.get().then((doc) => {
-  if (doc.exists) currentUserName = doc.data().username;
-}).catch((error) => {
-  console.log("Error getting document:", error);
-});*/
-
-export default function GroupInfo({ route }) {
+export default function GroupInfo({ route, navigation }) {
   const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+  const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
+  //The following hooks are for the settings modal
+  const [isSettingsVisible, setSettingsVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
-  const [userMember, setUserMember] = useState();
+  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, OpenSans_400Regular });
 
   const { theme } = useTheme();
 
@@ -45,6 +56,9 @@ export default function GroupInfo({ route }) {
   }
   function toggleRoleChange() {
     setRoleChangeVisible(!isRoleChangeVisible);
+  }
+  function toggleSettings() {
+    setSettingsVisible(!isSettingsVisible);
   }
 
   const { isLoading, isError, error, data, refetch } = useQuery(
@@ -60,7 +74,7 @@ export default function GroupInfo({ route }) {
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
-    let data = [];
+    let data = [{}];
     await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
@@ -73,14 +87,13 @@ export default function GroupInfo({ route }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
-            // data[0] = {
-            // id: memID,
-            // name: currName,
-            // inTent: tentCondition,
-            // hours: scheduledHours,
-            // };
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+              role: groupRole,
+            };
           } else {
             data.push({
               id: memID,
@@ -107,14 +120,13 @@ export default function GroupInfo({ route }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            //userMember.current = { id: memID, name: currName, inTent: tentCondition, hours: scheduledHours };
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
-            // data[0] = {
-            //   id: memID,
-            //   name: currName,
-            //   inTent: tentCondition,
-            //   hours: scheduledHours,
-            // };
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+              role: groupRole,
+            };
           } else {
             data.push({
               id: memID,
@@ -266,22 +278,12 @@ export default function GroupInfo({ route }) {
         onPress={() => {
           toggleModal();
           currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
-          //setCurrMember({ name: name, id: id, hours: hours });
-          //setCurrIndex(indexOfUser);
         }}
       >
-        {!isLoading ? (
-          <View
-            style={[
-              styles(theme).listItem,
-              styles(theme).shadowProp,
-              { flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor, marginVertical: 15 },
-            ]}
-          >
-            <Text style={styles(theme).listText}>{item.name}</Text>
-            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {item.hours} hrs</Text>
-          </View>
-        ) : null}
+        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
+          <Text style={styles(theme).listText}>{item.name}</Text>
+          <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -293,8 +295,6 @@ export default function GroupInfo({ route }) {
         onPress={() => {
           toggleModal();
           currMember.current = { name: name, id: id, hours: hours, role: role };
-          //setCurrMember({ name: name, id: id, hours: hours, role: role });
-          //setCurrIndex(indexOfUser);
         }}
       >
         {groupRole == 'Creator' ? (
@@ -303,29 +303,15 @@ export default function GroupInfo({ route }) {
             onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours, role: role })}
             friction={2}
           >
-            <View
-              style={[
-                styles(theme).listItem,
-                backgroundColor,
-                styles(theme).shadowProp,
-                { flexDirection: 'row', justifyContent: 'space-evenly' },
-              ]}
-            >
+            <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
               <Text style={styles(theme).listText}>{name}</Text>
-              <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+              <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
             </View>
           </Swipeable>
         ) : (
-          <View
-            style={[
-              styles(theme).listItem,
-              backgroundColor,
-              styles(theme).shadowProp,
-              { flexDirection: 'row', justifyContent: 'space-evenly' },
-            ]}
-          >
+          <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
             <Text style={styles(theme).listText}>{name}</Text>
-            <Text style={{ color: theme.text1 }}>Scheduled Hrs: {hours} hrs</Text>
+            <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -340,7 +326,7 @@ export default function GroupInfo({ route }) {
     );
   };
 
-  if (isLoading) {
+  if (isLoading || !fontsLoaded) {
     return <LoadingIndicator />;
   }
   if (isError) {
@@ -348,13 +334,18 @@ export default function GroupInfo({ route }) {
     return null;
   }
   return (
-    <View
+    <SafeAreaView
       style={styles(theme).container}
       onLayout={onLayoutRootView}
       //showsVerticalScrollIndicator={false}
     >
-      <Text style={styles(theme).header}>Group Name</Text>
+      <View style={styles(theme).containerHeader}>
+        <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
+        <Text style={{ fontSize: 30, fontWeight: '600' }}>Group Overview</Text>
+        <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings} />
+      </View>
 
+      <Text style={styles(theme).header}>Group Name</Text>
       <View style={styles(theme).boxText}>
         <Text style={styles(theme).contentText}>{groupName}</Text>
       </View>
@@ -368,12 +359,12 @@ export default function GroupInfo({ route }) {
 
       {/* List of Members in Group*/}
       <FlatList
-        data={data}
+        data={data.slice(1)}
         renderItem={renderMember}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
+        ListHeaderComponent={data.length != 0 ? <UserMember item={data[0]} /> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%' /* , borderWidth:1 */ }}
+        style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
 
       {/*Member Information Modal Component*/}
@@ -385,8 +376,8 @@ export default function GroupInfo({ route }) {
         userStyle={'light'}
       >
         <View style={styles(theme).popUpHeaderView}>
-          <View style={{ flexDirection: 'row', marginLeft: '5%' }}>
-            <Icon name='account' color={theme.grey2} size={30} style={{ marginRight: 20 }} />
+          <View style={{ flexDirection: 'row' }}>
+            <Icon name='account' color={theme.grey2} size={28} style={{ marginRight: 12 }} />
             <Text style={{ fontSize: 22, fontWeight: '700' }}>{currMember.current.name} Information</Text>
           </View>
           <TouchableOpacity onPress={toggleModal}>
@@ -410,13 +401,16 @@ export default function GroupInfo({ route }) {
 
             {groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
               <TouchableOpacity
-                style={styles(theme).popUpHalfBody}
-                onPress={()=> {
+                style={[styles(theme).popUpHalfBody, { justifyContent: 'space-between' }]}
+                onPress={() => {
                   toggleRoleChange();
                 }} //change later to admin change
               >
-                <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
-                <Text style={styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <Icon name='account-group' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
+                  <Text style={styles(theme).modalText}>Group Role: {currMember.current.role}</Text>
+                </View>
+                <Icon name='chevron-down' color={theme.grey2} size={20} />
               </TouchableOpacity>
             ) : (
               <View style={styles(theme).popUpHalfBody}>
@@ -435,7 +429,6 @@ export default function GroupInfo({ route }) {
             </View>
           ) : null}
         </View>
-
         {groupRole == 'Creator' ? (
           <ActionSheetModal
             isVisible={isRoleChangeVisible}
@@ -471,25 +464,40 @@ export default function GroupInfo({ route }) {
             </TouchableOpacity>
           </ActionSheetModal>
         ) : null}
+
+        {/* Remove Member Confirmation Modal */}
+        <ConfirmationModal
+          body={
+            'Are you sure you want to REMOVE ' +
+            currMember.current.name +
+            ' from the group? This action CANNOT be undone.'
+          }
+          buttonText={'Remove ' + currMember.current.name}
+          buttonAction={() => {
+            postRemoveMember.mutate();
+          }}
+          toggleModal={toggleConfirmation}
+          isVisible={isConfirmationVisible}
+          onBackdropPress={() => setConfirmationVisible(false)}
+          onSwipeComplete={toggleConfirmation}
+        />
       </ActionSheetModal>
 
-      {/* Remove Member Confirmation Modal */}
-      <ConfirmationModal
-        body={
-          'Are you sure you want to REMOVE ' +
-          currMember.current.name +
-          ' from the group? This action CANNOT be undone.'
-        }
-        buttonText={'Remove ' + currMember.current.name}
-        buttonAction={() => {
-          postRemoveMember.mutate();
-        }}
-        toggleModal={toggleConfirmation}
-        isVisible={isConfirmationVisible}
-        onBackdropPress={() => setConfirmationVisible(false)}
-        onSwipeComplete={toggleConfirmation}
-      />
-    </View>
+      <BottomSheetModal
+        isVisible={isSettingsVisible}
+        onBackdropPress={toggleSettings}
+        swipeDown={true}
+        barSize={'none'}
+        height={groupRole == 'Creator' || 'Admin' ? '90%' : '50%'}
+        userStyle='light'
+      >
+        <SettingsModal
+          params={{ groupCode, groupName, userName, tentType, groupRole }}
+          navigation={navigation}
+          toggleModal={toggleSettings}
+        />
+      </BottomSheetModal>
+    </SafeAreaView>
   );
 }
 
@@ -498,16 +506,22 @@ const styles = (theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.primaryContainer,
+      alignItems: 'center',
+    },
+    containerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
     },
     header: {
       //view of top headers above boxText
       marginBottom: 10,
       marginTop: 4,
-      alignSelf: 'center',
       color: theme.grey1,
       width: '90%',
-      fontSize: 22,
-      fontWeight: '700',
+      fontSize: 20,
+      fontFamily: 'Merriweather_700Bold',
     },
     boxText: {
       //View of top 2 boxes of text (groupCode and groupName)
@@ -515,14 +529,20 @@ const styles = (theme) =>
       width: '90%',
       backgroundColor: theme.white1,
       borderRadius: 8,
-      alignSelf: 'center',
+      borderWidth: 0.3,
+      borderColor: theme.popOutBorder,
+      shadowColor: '#171717',
+      shadowOffset: { width: -1.5, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 15,
     },
     contentText: {
       //style of text inside boxText
       fontSize: 24,
-      fontWeight: '700',
       textAlign: 'center',
       marginHorizontal: 8,
+      fontFamily: 'OpenSans_400Regular',
     },
     listItem: {
       //style of a member list item
@@ -534,12 +554,14 @@ const styles = (theme) =>
       width: '100%',
       alignSelf: 'center',
       alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
     },
     listText: {
       //text of a member item
       fontSize: 15,
-      //fontFamily: 'sans-serif',
-      fontWeight: '500',
+      fontFamily: 'OpenSans_400Regular',
       color: theme.text1,
     },
     modalText: {
@@ -561,7 +583,7 @@ const styles = (theme) =>
       alignSelf: 'center',
       height: '50%',
       width: '90%',
-      justifyContent: 'center',
+      justifyContent: 'start',
       alignItems: 'center',
       borderRadius: 16,
     },
