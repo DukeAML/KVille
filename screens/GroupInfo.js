@@ -34,7 +34,7 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
 
 export default function GroupInfo({ route, navigation }) {
-  const { groupCode, groupName, groupRole} = route.params; // take in navigation parameters
+  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -44,7 +44,6 @@ export default function GroupInfo({ route, navigation }) {
   const [isSettingsVisible, setSettingsVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
-  const [userMember, setUserMember] = useState();
   const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, OpenSans_400Regular });
 
   const { theme } = useTheme();
@@ -58,7 +57,7 @@ export default function GroupInfo({ route, navigation }) {
   function toggleRoleChange() {
     setRoleChangeVisible(!isRoleChangeVisible);
   }
-  function toggleSettings () {
+  function toggleSettings() {
     setSettingsVisible(!isSettingsVisible);
   }
 
@@ -75,7 +74,7 @@ export default function GroupInfo({ route, navigation }) {
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
-    let data = [];
+    let data = [{}];
     await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
@@ -88,7 +87,13 @@ export default function GroupInfo({ route, navigation }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+              role: groupRole,
+            };
           } else {
             data.push({
               id: memID,
@@ -115,7 +120,13 @@ export default function GroupInfo({ route, navigation }) {
           let groupRole = doc.data().groupRole;
           let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            setUserMember({ id: memID, name: currName, inTent: tentCondition, hours: scheduledHours, role: groupRole });
+            data[0] = {
+              id: memID,
+              name: currName,
+              inTent: tentCondition,
+              hours: scheduledHours,
+              role: groupRole,
+            };
           } else {
             data.push({
               id: memID,
@@ -269,12 +280,10 @@ export default function GroupInfo({ route, navigation }) {
           currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
         }}
       >
-        {!isLoading ? (
-          <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
-            <Text style={styles(theme).listText}>{item.name}</Text>
-            <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
-          </View>
-        ) : null}
+        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
+          <Text style={styles(theme).listText}>{item.name}</Text>
+          <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -332,8 +341,8 @@ export default function GroupInfo({ route, navigation }) {
     >
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
-        <Text style={{fontSize: 30, fontWeight: '600'}}>Group Overview</Text>
-        <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings}/>
+        <Text style={{ fontSize: 30, fontWeight: '600' }}>Group Overview</Text>
+        <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings} />
       </View>
 
       <Text style={styles(theme).header}>Group Name</Text>
@@ -350,15 +359,13 @@ export default function GroupInfo({ route, navigation }) {
 
       {/* List of Members in Group*/}
       <FlatList
-        data={data}
+        data={data.slice(1)}
         renderItem={renderMember}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={userMember == null ? null : <UserMember item={userMember} />}
+        ListHeaderComponent={data.length != 0 ? <UserMember item={data[0]} /> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
       ></FlatList>
-
-
 
       {/*Member Information Modal Component*/}
       <ActionSheetModal
@@ -481,11 +488,14 @@ export default function GroupInfo({ route, navigation }) {
         onBackdropPress={toggleSettings}
         swipeDown={true}
         barSize={'none'}
-        height= {(groupRole == 'Creator' || 'Admin')? '90%': '50%'}
+        height={groupRole == 'Creator' || 'Admin' ? '90%' : '50%'}
         userStyle='light'
       >
-        <SettingsModal params={{groupCode, groupName, userName, tentType, groupRole}} navigation={navigation} toggleModal={toggleSettings}/>
-
+        <SettingsModal
+          params={{ groupCode, groupName, userName, tentType, groupRole }}
+          navigation={navigation}
+          toggleModal={toggleSettings}
+        />
       </BottomSheetModal>
     </SafeAreaView>
   );

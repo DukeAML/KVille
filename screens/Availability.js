@@ -512,16 +512,7 @@ export default function Availability({ route }) {
       </ScrollView>
       <View style={styles(theme).addContainer}>
         <TouchableOpacity onPress={toggleModal}>
-          <View
-            style={{
-              height: 50,
-              width: 50,
-              backgroundColor: theme.background,
-              borderRadius: 12,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
+          <View style={styles(theme).FAB}>
             <Icon name={'plus'} color={theme.text2} size={30} />
           </View>
         </TouchableOpacity>
@@ -557,7 +548,6 @@ const styles = (theme) =>
     picker: {
       height: '100%',
       width: '35%',
-
     },
     pickerItem: {
       height: '100%',
@@ -640,6 +630,14 @@ const styles = (theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       right: 25,
-      bottom: 15,
+      bottom: 20,
+    },
+    FAB: {
+      height: 50,
+      width: 50,
+      backgroundColor: theme.grey3,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });

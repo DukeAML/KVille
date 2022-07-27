@@ -87,23 +87,18 @@ export default function Home({ navigation }) {
   const EmptyGroup = () => {
     return (
       <View
-        style={
-          !isLoading
-            ? [
-                styles(theme).listItem,
-                styles(theme).shadowProp,
-                { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
-              ]
-            : null
-        }
+        style={[
+          styles(theme).listItem,
+          styles(theme).shadowProp,
+          { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
+        ]}
       >
-        {!isLoading ? <Image source={DukeBasketballLogo} style={styles(theme).image} /> : null}
-        {!isLoading ? (
-          <View style={{ flexDirection: 'column' }}>
-            <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
-            <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
-          </View>
-        ) : null}
+        <Image source={DukeBasketballLogo} style={styles(theme).image} />
+
+        <View style={{ flexDirection: 'column' }}>
+          <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
+          <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
+        </View>
       </View>
     );
   };
@@ -246,13 +241,13 @@ export default function Home({ navigation }) {
           <FlatList
             data={data}
             renderItem={renderGroup}
-            ListEmptyComponent={<EmptyGroup />}
             keyExtractor={(item) => item.code}
+            //ListEmptyComponent={<EmptyGroup/>}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
           />
         </SafeAreaView>
-        
+
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
@@ -344,10 +339,6 @@ const styles = (theme) =>
       alignItems: 'center',
       marginTop: '0%',
     },
-    /*   header: {
-  left: "0%",
-  width: "100%"
-}, */
     topBanner: {
       //for the top container holding "welcome to k-ville"
       alignItems: 'center',
