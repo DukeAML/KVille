@@ -280,16 +280,23 @@ export default function GroupInfo({ route, navigation }) {
           currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
         }}
       >
-        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15}]}>
+        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
           <Text style={styles(theme).listText}>{item.name}</Text>
-          <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
+          {item.inTent ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: theme.text1 }}>In Tent</Text>
+              <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+            </View>
+          ) : null}
+          {/* <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text> */}
         </View>
       </TouchableOpacity>
     );
   };
 
   //Render Item for Each List Item of group members
-  const Member = ({ name, id, hours, role, backgroundColor }) => {
+  const Member = ({ name, id, hours, role, inTent }) => {
+    const backgroundColor = inTent ? {backgroundColor: '#3eb489'} : {backgroundColor: '#1f509a'};
     return (
       <TouchableOpacity
         onPress={() => {
@@ -305,13 +312,19 @@ export default function GroupInfo({ route, navigation }) {
           >
             <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
               <Text style={styles(theme).listText}>{name}</Text>
-              <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
+              {inTent ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ color: theme.text1 }}>In Tent</Text>
+                  <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+                </View>
+              ) : null}
+              {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
             </View>
           </Swipeable>
         ) : (
           <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
             <Text style={styles(theme).listText}>{name}</Text>
-            <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
+            {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
           </View>
         )}
       </TouchableOpacity>
@@ -320,10 +333,7 @@ export default function GroupInfo({ route, navigation }) {
 
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
-    const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return (
-      <Member name={item.name} id={item.id} hours={item.hours} role={item.role} backgroundColor={{ backgroundColor }} />
-    );
+    return <Member name={item.name} id={item.id} hours={item.hours} role={item.role} inTent={item.inTent} />;
   };
 
   if (isLoading || !fontsLoaded) {
@@ -358,6 +368,7 @@ export default function GroupInfo({ route, navigation }) {
       </View>
 
       {/* List of Members in Group*/}
+      <Text style={styles(theme).header} >Members</Text>
       <FlatList
         data={data.slice(1)}
         renderItem={renderMember}
