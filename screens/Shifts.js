@@ -182,10 +182,10 @@ export default function Shifts({ route }) {
     const shiftTime =
       startHour > 6 && startTimeOfDay == 0
         ? 'Morning Shift'
-        : startHour > 12 && startHour <= 5 && startTimeOfDay == 1
+        : startHour > 0 && startHour <= 5 && startTimeOfDay == 1
         ? 'Afternoon Shift'
         : 'Night Shift';
-    const sameDay = dayMapping[startDay] != dayMapping[endDay];
+    //const sameDay = dayMapping[startDay] != dayMapping[endDay];
 
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
