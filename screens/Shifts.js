@@ -232,9 +232,12 @@ export default function Shifts({ route }) {
         sections={data}
         keyExtractor={(item, index) => item + index}
         renderItem={RenderShift}
-        renderSectionHeader={({ section: { title, data } }) => data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null}
+        renderSectionHeader={({ section: { title, data } }) =>
+          data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null
+        }
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
+        stickySectionHeadersEnabled={false}
         //ListEmptyComponent={<EmptyComponent />}
       />
     </View>
