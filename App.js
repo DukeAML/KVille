@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { StatusBar } from 'expo-status-bar';
 
 import firebase from 'firebase/compat/app';
 
@@ -99,16 +100,8 @@ export default function App() {
           <ThemeProvider>
             <NavigationContainer onReady={onLayoutRootView}>
               <Stack.Navigator initialRouteName='Login'>
-                <Stack.Screen
-                  name='Register'
-                  component={RegisterScreen}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='Login'
-                  component={LoginScreen}
-                  options={{ headerShown: false }}
-                />
+                <Stack.Screen name='Register' component={RegisterScreen} options={{ headerShown: false }} />
+                <Stack.Screen name='Login' component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                   name='ForgotPassword'
                   component={ForgotPasswordScreen}
@@ -125,6 +118,7 @@ export default function App() {
                   })}
                 />
               </Stack.Navigator>
+              <StatusBar style='light' />
             </NavigationContainer>
           </ThemeProvider>
         </PersistGate>

@@ -9,6 +9,7 @@ import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch } from 'react-redux';
+import { StatusBar } from 'expo-status-bar';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -381,6 +382,7 @@ export default function NavigationStack() {
           })}
         />
       </Drawer.Navigator>
+      <StatusBar style='dark' />
     </NavigationContainer>
   );
 }
