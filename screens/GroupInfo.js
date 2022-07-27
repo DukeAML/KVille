@@ -280,7 +280,7 @@ export default function GroupInfo({ route, navigation }) {
           currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
         }}
       >
-        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
+        <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15}]}>
           <Text style={styles(theme).listText}>{item.name}</Text>
           <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
         </View>
@@ -613,5 +613,10 @@ const styles = (theme) =>
       shadowOffset: { width: -2, height: 3 },
       shadowOpacity: 0.2,
       shadowRadius: 3,
+    },
+    highlightShadow: {
+      shadowColor: '#ff0',
+      shadowRadius: 10,
+      shadowOpacity: 0.8,
     },
   });

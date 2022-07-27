@@ -235,7 +235,7 @@ export default function Shifts({ route }) {
         renderSectionHeader={({ section: { title, data } }) => data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyComponent />}
+        //ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );
