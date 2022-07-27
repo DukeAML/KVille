@@ -261,7 +261,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
         buttonAction={() => {
           leaveGroup();
-          navigation.navigate('Start');
+          navigation.navigate('Home');
         }}
         toggleModal={toggleConfirmation}
         isVisible={isConfirmationVisible}
