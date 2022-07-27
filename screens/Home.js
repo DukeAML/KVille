@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef} from 'react';
 import {
   Text,
   View,
@@ -17,6 +17,7 @@ import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
+import CountDown from 'react-native-countdown-component';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -33,6 +34,13 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 const window = Dimensions.get('window');
 
 export default function Home({ navigation }) {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isMenuVisible, setMenuVisible] = useState(false);
+  const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
+
+  const { theme } = useTheme();
+  const dispatch = useDispatch();
+
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
     fetchGroups,
@@ -65,12 +73,6 @@ export default function Home({ navigation }) {
       });
     return data;
   }
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isMenuVisible, setMenuVisible] = useState(false);
-  const { theme } = useTheme();
-
-  const dispatch = useDispatch();
 
   function toggleModal() {
     setModalVisible(!isModalVisible);
@@ -237,7 +239,7 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <SafeAreaView style={{ width: '100%', height: '70%' }}>
+        <SafeAreaView style={{ width: '100%', height: '50%'}}>
           <FlatList
             data={data}
             renderItem={renderGroup}
@@ -247,6 +249,24 @@ export default function Home({ navigation }) {
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
           />
         </SafeAreaView>
+
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%'}}>
+          <Text style={{position: 'absolute', top: 0}}>Countdown to UNC</Text>
+          <CountDown
+            size={30}
+            until={time.current}
+            onFinish={() => alert('Finished')}
+            digitStyle={{
+              backgroundColor: '#FFF',
+              borderWidth: 2,
+              borderColor: theme.primary,
+            }}
+            digitTxtStyle={{ color: theme.primary }}
+            timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
+            separatorStyle={{ color: theme.primary, alignSelf: 'center', flex: 1, paddingTop: 15, justifyContent: 'center', }}
+            showSeparator={true}
+          />
+        </View>
 
         <Modal
           isVisible={isModalVisible}

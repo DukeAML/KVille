@@ -23,11 +23,9 @@ import AvailabilityScreen from './Availability';
 import ScheduleScreen from './Schedule';
 import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
-import CountdownScreen from './Countdown';
 import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 
 const Drawer = createDrawerNavigator();
@@ -354,19 +352,6 @@ export default function NavigationStack() {
                 </ActionSheetModal>
               </View>
             ),
-          })}
-        />
-        <Drawer.Screen
-          name='CountdownScreen'
-          component={CountdownScreen}
-          options={({ navigation }) => ({
-            title: 'Countdown to UNC',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
           })}
         />
         <Drawer.Screen
