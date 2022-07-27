@@ -1,13 +1,6 @@
 import 'react-native-gesture-handler'; //must be at top
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView,
-  TextInput,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Linking, Platform } from 'react-native';
@@ -33,7 +26,7 @@ import InfoScreen from './Info';
 import CountdownScreen from './Countdown';
 import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
-import {useTheme} from '../context/ThemeProvider';
+import { useTheme } from '../context/ThemeProvider';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 
@@ -50,41 +43,38 @@ export default function NavigationStack() {
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   const { theme } = useTheme();
 
-  function toggleInfo () {
+  function toggleInfo() {
     setInfoVisible(!isInfoVisible);
-  };
+  }
 
-  function toggleScheduleInfo () {
+  function toggleScheduleInfo() {
     setScheduleInfoVisible(!isScheduleInfoVisible);
-  };
+  }
 
-  
   const AvailabilityText = () => (
     <View>
       <Text style={styles(theme).InfoText}>
-        This page is for your availability throughout the week. You will input
-        what times of the week you are not available for tenting.
+        This page is for your availability throughout the week. You will input what times of the week you are not
+        available for tenting.
       </Text>
       <Text style={styles(theme).InfoText}>
-        To do so, click the add button on the bottom right to add a new busy
-        time and input the date, start time, and end time.
+        To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
+        end time.
       </Text>
       <Text style={styles(theme).InfoText}>
-        Do this for your entire weekly schedule. You can delete blocks to edit
-        your times.
+        Do this for your entire weekly schedule. You can delete blocks to edit your times.
       </Text>
       <Text style={styles(theme).InfoText}>
-        This schedule should remain saved from week to week, but you may edit
-        every week if you have changes to your schedule.
+        This schedule should remain saved from week to week, but you may edit every week if you have changes to your
+        schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        Make sure to fill out your availability every week before you Create a
-        New Group Schedule or your busy times will not be accounted for in the
-        group schedule.
+        Make sure to fill out your availability every week before you Create a New Group Schedule or your busy times
+        will not be accounted for in the group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        NOTE: If you mark yourself as available at 1am on a day, you will be
-        marked availabile for the whole noght shift from 1am to 7am
+        NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole noght shift
+        from 1am to 7am
       </Text>
     </View>
   );
@@ -92,31 +82,24 @@ export default function NavigationStack() {
   const ScheduleText = () => (
     <View>
       <Text style={styles(theme).InfoText}>
-        This page is for your group schedule for the week (from Sunday to
-        Saturday midnight).
+        This page is for your group schedule for the week (from Sunday to Saturday midnight).
       </Text>
       <Text style={styles(theme).InfoText}>
-        Groups should aim to create a new weekly schedule every week after every
-        member fills out their availability for that week
+        Groups should aim to create a new weekly schedule every week after every member fills out their availability for
+        that week
       </Text>
       <Text style={styles(theme).InfoText}>
-        Once all members of the group have filled out their availability for the
-        week, one member should tap the ‘Create New Schedule’ button to
-        automatically generate a schedule that optimizes for equal distribution
-        of time.
+        Once all members of the group have filled out their availability for the week, one member should tap the ‘Create
+        New Schedule’ button to automatically generate a schedule that optimizes for equal distribution of time.
       </Text>
       <Text style={styles(theme).InfoText}>
-        After the schedule is made, edits can be made by clicking on the time
-        slot and changing the member for that time. After making your edits,
-        make sure to tap ‘Push Edits’ so that all other group members see the
-        changes.
+        After the schedule is made, edits can be made by clicking on the time slot and changing the member for that
+        time. After making your edits, make sure to tap ‘Push Edits’ so that all other group members see the changes.
       </Text>
+      <Text style={styles(theme).InfoText}>Note: You can’t make edits to the schedule at the same time.</Text>
       <Text style={styles(theme).InfoText}>
-        Note: You can’t make edits to the schedule at the same time.
-      </Text>
-      <Text style={styles(theme).InfoText}>
-        The number of scheduled hours for each member should be displayed on the
-        group information page to make sure hours are distributed evenly.
+        The number of scheduled hours for each member should be displayed on the group information page to make sure
+        hours are distributed evenly.
       </Text>
     </View>
   );
@@ -177,14 +160,15 @@ export default function NavigationStack() {
         } else {
           console.log('does not exist');
         }
-      }).then(()=>{
+      })
+      .then(() => {
         console.log('cleared data and fetched user');
-      }).catch((error)=> {
-        console.error(error)
+      })
+      .catch((error) => {
+        console.error(error);
       });
-    
-      return () => (mounted=false);
 
+    return () => (mounted = false);
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -205,7 +189,11 @@ export default function NavigationStack() {
       //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
       // }
     >
-      <Drawer.Navigator initialRouteName='Start' drawerContent={(props) => <DrawerContent {...props} />}>
+      <Drawer.Navigator
+        initialRouteName='Start'
+        drawerContent={(props) => <DrawerContent {...props} />}
+        screenOptions={{ drawerType: 'front' }}
+      >
         <Drawer.Screen
           name='Home'
           component={HomeScreen}
@@ -412,63 +400,65 @@ export default function NavigationStack() {
   );
 }
 
-const styles = (theme) => StyleSheet.create({
-  popUpHeaderView:{ //view of the header of the info popup modal
-    flexDirection: 'row',
-    height: '18%',
-    width: '94%',
-    marginTop: '2%',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  textView: {
-    height:'67%', 
-    width: '94%', 
-    backgroundColor: '#f3f3f3',
-    //borderWidth: 1, 
-    borderRadius: 18, 
-    paddingVertical: 10, 
-    paddingHorizontal: 15
-  },
-  InfoText: {
-    color: theme.text2,
-    marginVertical: 5,
-    textAlign: 'left',
-    fontSize: 16,
-  }, 
-  closeBtn:{ //remove button for removing member if the user is the Creator
-    flexDirection:'row', 
-    height: '70%',
-    width: '70%',
-    backgroundColor: '#3B65A2', 
-    alignItems:'center',
-    justifyContent: 'center', 
-    borderRadius: 15
-  },
+const styles = (theme) =>
+  StyleSheet.create({
+    popUpHeaderView: {
+      //view of the header of the info popup modal
+      flexDirection: 'row',
+      height: '18%',
+      width: '94%',
+      marginTop: '2%',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    textView: {
+      height: '67%',
+      width: '94%',
+      backgroundColor: '#f3f3f3',
+      //borderWidth: 1,
+      borderRadius: 18,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+    },
+    InfoText: {
+      color: theme.text2,
+      marginVertical: 5,
+      textAlign: 'left',
+      fontSize: 16,
+    },
+    closeBtn: {
+      //remove button for removing member if the user is the Creator
+      flexDirection: 'row',
+      height: '70%',
+      width: '70%',
+      backgroundColor: '#3B65A2',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 15,
+    },
 
-  headerContainer: {
-    flexDirection: 'row',
-    width: '90%',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  headerText: {
-    //text for different setting headers
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.grey2,
-  },
-  textInput: {
-    backgroundColor: theme.white2,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    width: '90%',
-    fontSize: 18,
-    fontWeight: '500',
-    textAlign: 'left',
-    borderRadius: 15,
-    marginBottom: 23,
-    borderColor: theme.grey2,
-  },
-});
-
+    headerContainer: {
+      flexDirection: 'row',
+      width: '90%',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    headerText: {
+      //text for different setting headers
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.grey2,
+    },
+    textInput: {
+      backgroundColor: theme.white2,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      width: '90%',
+      fontSize: 18,
+      fontWeight: '500',
+      textAlign: 'left',
+      borderRadius: 15,
+      marginBottom: 23,
+      borderColor: theme.grey2,
+    },
+  });
