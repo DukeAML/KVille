@@ -9,7 +9,7 @@ import {
   Image,
   Dimensions,
   KeyboardAvoidingView,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -100,41 +100,55 @@ export default function JoinGroup({ navigation }) {
         if (result == 'full') {
           return;
         }
-        groupName = docSnapshot.data().name;
-        dispatch(setGroupCode(groupCode));
-        dispatch(setUserName(name));
-        dispatch(setGroupName(groupName));
-        dispatch(setTentType(docSnapshot.data().tentType));
-        dispatch(setGroupRole('Member'));
-        //updates current user's info
-        await userRef.update({
-          groupCode: firebase.firestore.FieldValue.arrayUnion({
-            groupCode: groupCode,
-            groupName: docSnapshot.data().name,
-          }),
-        });
-        //adds current user to member list
-        await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
-          groupRole: 'Member',
-          name: name,
-          inTent: false,
-          availability: availability,
-          scheduledHrs: 0,
-          shifts: [],
-        });
-        await userRef
+
+        groupRef
+          .collection('members')
+          .where('name', '==', name)
           .get()
-          .then((snapshot) => {
-            dispatch(setCurrentUser(snapshot.data()));
-            return snapshot;
-          })
-          .then((snapshot) => {
-            navigation.navigate('GroupInfo', {
-              groupCode: groupCode,
-              groupName: groupName,
-              groupRole: 'Member',
-            });
+          .then(async (snapshot) => {
+            if (snapshot.empty) {
+              groupName = docSnapshot.data().name;
+              dispatch(setGroupCode(groupCode));
+              dispatch(setUserName(name));
+              dispatch(setGroupName(groupName));
+              dispatch(setTentType(docSnapshot.data().tentType));
+              dispatch(setGroupRole('Member'));
+              //updates current user's info
+              await userRef.update({
+                groupCode: firebase.firestore.FieldValue.arrayUnion({
+                  groupCode: groupCode,
+                  groupName: docSnapshot.data().name,
+                }),
+              });
+              //adds current user to member list
+              await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
+                groupRole: 'Member',
+                name: name,
+                inTent: false,
+                availability: availability,
+                scheduledHrs: 0,
+                shifts: [],
+              });
+              await userRef
+                .get()
+                .then((snapshot) => {
+                  dispatch(setCurrentUser(snapshot.data()));
+                  return snapshot;
+                })
+                .then((snapshot) => {
+                  navigation.navigate('GroupInfo', {
+                    groupCode: groupCode,
+                    groupName: groupName,
+                    groupRole: 'Member',
+                  });
+                });
+            } else {
+              toggleSnackBar();
+              setSnackMessage('Name already taken');
+            }
           });
+          return
+
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {

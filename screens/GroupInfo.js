@@ -77,7 +77,7 @@ export default function GroupInfo({ route, navigation }) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
     let data = [{}];
-    await SplashScreen.preventAutoHideAsync();
+    //await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
       .get()
@@ -241,11 +241,11 @@ export default function GroupInfo({ route, navigation }) {
     toggleModal();
   }
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (!isLoading) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [isLoading]);
 
   const RenderRightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -326,6 +326,12 @@ export default function GroupInfo({ route, navigation }) {
         ) : (
           <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
             <Text style={styles(theme).listText}>{name}</Text>
+            {inTent ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ color: theme.text1 }}>In Tent</Text>
+                <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+              </View>
+            ) : null}
             {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
           </View>
         )}
@@ -348,8 +354,7 @@ export default function GroupInfo({ route, navigation }) {
   return (
     <SafeAreaView
       style={styles(theme).container}
-      onLayout={onLayoutRootView}
-      //showsVerticalScrollIndicator={false}
+      //onLayout={onLayoutRootView}
     >
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
