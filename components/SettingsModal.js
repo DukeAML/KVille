@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Snackbar } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -26,7 +27,22 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-  function onSave({ groupName, userName, tentType }) {
+  const postSave = useOnSave(groupCode);
+
+  function useOnSave(groupCode) {
+    const queryClient = useQueryClient();
+    return useMutation((options) => onSave(options), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['group', groupCode]);
+      },
+    });
+  }
+
+  function onSave(options) {
+    const { groupName, userName, tentType } = options
     let groupIndex;
     let groupCodeArr;
     userRef
@@ -139,7 +155,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     <View style={styles(theme).settingsContainer}>
       <Formik
         initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
-        onSubmit={(values) => onSave(values)}
+        onSubmit={(values) => postSave.mutate(values)}
         style={{ borderWidth: 1 }}
       >
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched, values }) => (
@@ -152,7 +168,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                 Settings
               </Text>
 
-              <TouchableOpacity onPress={handleSubmit} >
+              <TouchableOpacity onPress={handleSubmit}>
                 <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
               </TouchableOpacity>
             </View>
