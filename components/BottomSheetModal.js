@@ -48,20 +48,23 @@ const BottomSheetModal = ({ height = '50%', color, swipeDown = true, barSize = '
       if (color !== undefined) background = color; 
 
       return (
-        <ModalContext.Provider value={{headerColor}}>
-            <Modal
-                style={styles(theme).BottomModalView}
-                swipeDirection={swipeDown ? ['down'] : null}
-                {...props}
-            >
-                <SafeAreaView style={[styles(theme).ModalContainer, {height: height, backgroundColor:background}]}>
-                  {barSize == 'default' ? (<View style={[styles(theme).modalBar, {backgroundColor:headerColor}]}></View>) : 
-                      barSize == 'small' ? (<View style={[styles(theme).modalSmallBar, {backgroundColor:headerColor}]}></View>):
-                        null}
+        <ModalContext.Provider value={{ headerColor }}>
+          <Modal
+            style={styles(theme).BottomModalView}
+            swipeDirection={swipeDown ? ['down'] : null}
+            backdropTransitionOutTiming={0}
+            {...props}
+          >
+            <SafeAreaView style={[styles(theme).ModalContainer, { height: height, backgroundColor: background }]}>
+              {barSize == 'default' ? (
+                <View style={[styles(theme).modalBar, { backgroundColor: headerColor }]}></View>
+              ) : barSize == 'small' ? (
+                <View style={[styles(theme).modalSmallBar, { backgroundColor: headerColor }]}></View>
+              ) : null}
 
-                  {children}
-                </SafeAreaView>
-            </Modal>
+              {children}
+            </SafeAreaView>
+          </Modal>
         </ModalContext.Provider>
       );
     }

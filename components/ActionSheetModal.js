@@ -44,26 +44,28 @@ const ActionSheetModal = ({ toggleModal , backgroundColor, swipeDown = true, hei
     const adjustedHeight = cancelButton ? height+110 : height+30; //accounts for vertical margin and cancel button
 
     return (
-        <Modal
-            style={styles(theme).BottomModalView}
-            swipeDirection={swipeDown ? ['down'] : null}
-            {...props}
-        >
-            <SafeAreaView style = {{width: '95%', alignSelf: 'center', height: adjustedHeight}}>
-                <View style={[styles(theme).TopSectionView, {backgroundColor: background, height: height, opacity: opacity}]}>
-                    {children}
-                </View>
-                {cancelButton ? (
-                    <TouchableOpacity
-                        onPress= {()=> toggleModal()}
-                        style={[styles(theme).CancelBtn, {backgroundColor: background, opacity:opacity}]}
-                    >
-                    <Text style= {[styles(theme).CancelBtnText, { color: '#1988f8' }]}>Cancel</Text>
-                    </TouchableOpacity>
-                ): null}
-                
-            </SafeAreaView>
-        </Modal>
+      <Modal
+        style={styles(theme).BottomModalView}
+        swipeDirection={swipeDown ? ['down'] : null}
+        backdropTransitionOutTiming={0}
+        {...props}
+      >
+        <SafeAreaView style={{ width: '95%', alignSelf: 'center', height: adjustedHeight }}>
+          <View
+            style={[styles(theme).TopSectionView, { backgroundColor: background, height: height, opacity: opacity }]}
+          >
+            {children}
+          </View>
+          {cancelButton ? (
+            <TouchableOpacity
+              onPress={() => toggleModal()}
+              style={[styles(theme).CancelBtn, { backgroundColor: background, opacity: opacity }]}
+            >
+              <Text style={[styles(theme).CancelBtnText, { color: '#1988f8' }]}>Cancel</Text>
+            </TouchableOpacity>
+          ) : null}
+        </SafeAreaView>
+      </Modal>
     );
   }
 };

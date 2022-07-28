@@ -239,7 +239,7 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <SafeAreaView style={{ width: '100%', height: '50%'}}>
+        <SafeAreaView style={{ width: '100%', height: '50%' }}>
           <FlatList
             data={data}
             renderItem={renderGroup}
@@ -250,8 +250,8 @@ export default function Home({ navigation }) {
           />
         </SafeAreaView>
 
-        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%'}}>
-          <Text style={{position: 'absolute', top: 0}}>Countdown to UNC</Text>
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
+          <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
           <CountDown
             size={30}
             until={time.current}
@@ -263,7 +263,13 @@ export default function Home({ navigation }) {
             }}
             digitTxtStyle={{ color: theme.primary }}
             timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
-            separatorStyle={{ color: theme.primary, alignSelf: 'center', flex: 1, paddingTop: 15, justifyContent: 'center', }}
+            separatorStyle={{
+              color: theme.primary,
+              alignSelf: 'center',
+              flex: 1,
+              paddingTop: 15,
+              justifyContent: 'center',
+            }}
             showSeparator={true}
           />
         </View>
@@ -271,6 +277,7 @@ export default function Home({ navigation }) {
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
+          backdropTransitionOutTiming={0}
           //customBackdrop={<View style={{ flex: 1 }} />}
         >
           <SafeAreaView style={styles(theme).popUp}>

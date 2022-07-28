@@ -34,6 +34,7 @@ const ConfirmationModal = ({ toggleModal , buttonAction, body, buttonText, userS
         <Modal
             style={styles(theme).BottomModalView}
             swipeDirection={['down']}
+            backdropTransitionOutTiming={0}
             {...props}
         >
             <View>
