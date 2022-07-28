@@ -89,7 +89,7 @@ const styles = (theme) =>
     confirmationPop: {
       //Style for top part container
       width: '95%',
-      height: 130,
+      height: 150,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'space-evenly',
