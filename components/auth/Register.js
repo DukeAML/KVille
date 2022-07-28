@@ -74,9 +74,6 @@ export default function Register(props) {
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
-              if (snapshot.exists) {
-                return;
-              }
               // firebase
               //   .auth()
               //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
@@ -98,7 +95,7 @@ export default function Register(props) {
               setIsValid({
                 bool: true,
                 boolSnack: true,
-                message: 'Something went wrong',
+                message: 'The email address is already in use by another account',
               });
             });
         } else {
@@ -108,10 +105,10 @@ export default function Register(props) {
             boolSnack: true,
             message: 'Username Taken',
           });
-          //return;
         }
       })
       .catch((error) => {
+        console.error(error);
         setIsValid({
           bool: true,
           boolSnack: true,
