@@ -42,73 +42,85 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
 
   function onSave(options) {
-    const { groupName, userName, tentType } = options
+    const { groupName, userName, tentType } = options;
     let groupIndex;
     let groupCodeArr;
-    userRef
-      .get()
-      .then((userDoc) => {
-        groupCodeArr = userDoc.data().groupCode;
-        groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
-        console.log('group index', groupIndex);
-        groupCodeArr[groupIndex] = {
-          groupCode: groupCode,
-          groupName: groupName,
-        };
-        return userDoc;
-      })
-      .then((doc) => {
-        userRef
-          .update({
-            groupCode: groupCodeArr,
-          })
-          .then(() => {
-            console.log('successfully saved groupName');
-          })
-          .catch((error) => {
-            console.log(error);
-            toggleSnackBar();
-            setSnackMessage('Error saving group name');
-            return;
-          });
-      });
-
-    groupRef
-      .update({
-        name: groupName,
-        tentType: tentType,
-      })
-      .then(() => {
-        console.log('successfully saved group settings');
-      })
-      .catch((error) => {
-        console.log(error);
-        toggleSnackBar();
-        setSnackMessage('Error saving group settings');
-        return;
-      });
 
     groupRef
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        name: userName,
-      })
-      .then(() => {
-        console.log('successfully updated name');
-      })
-      .catch((error) => {
-        console.log(error);
-        toggleSnackBar();
-        setSnackMessage('Error saving user name');
-        return;
+      .where('name', '==', userName)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          userRef
+            .get()
+            .then((userDoc) => {
+              groupCodeArr = userDoc.data().groupCode;
+              groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
+              console.log('group index', groupIndex);
+              groupCodeArr[groupIndex] = {
+                groupCode: groupCode,
+                groupName: groupName,
+              };
+              return userDoc;
+            })
+            .then((doc) => {
+              userRef
+                .update({
+                  groupCode: groupCodeArr,
+                })
+                .then(() => {
+                  console.log('successfully saved groupName');
+                })
+                .catch((error) => {
+                  console.log(error);
+                  toggleSnackBar();
+                  setSnackMessage('Error saving group name');
+                  return;
+                });
+            });
+
+          groupRef
+            .update({
+              name: groupName,
+              tentType: tentType,
+            })
+            .then(() => {
+              console.log('successfully saved group settings');
+            })
+            .catch((error) => {
+              console.log(error);
+              toggleSnackBar();
+              setSnackMessage('Error saving group settings');
+              return;
+            });
+
+          groupRef
+            .collection('members')
+            .doc(firebase.auth().currentUser.uid)
+            .update({
+              name: userName,
+            })
+            .then(() => {
+              console.log('successfully updated name');
+            })
+            .catch((error) => {
+              console.log(error);
+              toggleSnackBar();
+              setSnackMessage('Error saving user name');
+              return;
+            });
+          dispatch(setUserName(userName));
+          dispatch(setTentType(tentType));
+          dispatch(setGroupName(groupName));
+          toggleSnackBar();
+          setSnackMessage('Saved');
+          toggleModal();
+        } else {
+          toggleSnackBar();
+          setSnackMessage('Username taken');
+        }
       });
-    dispatch(setUserName(userName));
-    dispatch(setTentType(tentType));
-    dispatch(setGroupName(groupName));
-    toggleSnackBar();
-    setSnackMessage('Saved');
-    toggleModal();
   }
 
   function leaveGroup() {
@@ -302,7 +314,7 @@ const styles = (theme) =>
     settingsContainer: {
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       width: '100%',
       height: '100%',
       borderTopRightRadius: 20,
@@ -311,17 +323,17 @@ const styles = (theme) =>
     topBanner: {
       //for the top container holding top 'settings' and save button
       flexDirection: 'row',
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 30,
-      width: '90%',
+      width: '100%',
       paddingVertical: 10,
-      paddingBottom: 10,
       borderBottomWidth: 0.5,
       borderColor: theme.popOutBorder,
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
+      paddingHorizontal: 20,
     },
     headerContainer: {
       flexDirection: 'row',
@@ -341,7 +353,7 @@ const styles = (theme) =>
       fontWeight: '500',
     },
     textInput: {
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       paddingVertical: 10,
       paddingHorizontal: 15,
       width: '90%',
@@ -350,8 +362,8 @@ const styles = (theme) =>
       textAlign: 'left',
       borderRadius: 15,
       marginBottom: 23,
-      borderColor: theme.grey2,
-      borderWidth: 1,
+      // borderColor: theme.grey2,
+      // borderWidth: 1,
     },
     tentChangeListItem: {
       //Style of an item in the member tentChange modal (for creator only)
@@ -369,12 +381,12 @@ const styles = (theme) =>
       flexDirection: 'row',
       width: '90%',
       height: 45,
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       alignItems: 'center',
       justifyContent: 'space-between',
       borderRadius: 15,
-      borderColor: theme.grey2,
-      borderWidth: 1,
+      // borderColor: theme.grey2,
+      // borderWidth: 1,
       paddingHorizontal: 15,
     },
     BottomModalView: {
