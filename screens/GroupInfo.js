@@ -9,6 +9,7 @@ import {
   RefreshControl,
   TextInput,
   SafeAreaView,
+  Keyboard
 } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -58,6 +59,7 @@ export default function GroupInfo({ route, navigation }) {
     setRoleChangeVisible(!isRoleChangeVisible);
   }
   function toggleSettings() {
+    Keyboard.dismiss();
     setSettingsVisible(!isSettingsVisible);
   }
 

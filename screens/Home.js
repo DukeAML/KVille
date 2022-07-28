@@ -278,6 +278,7 @@ export default function Home({ navigation }) {
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
           backdropTransitionOutTiming={0}
+          keyboardDismissMode={'on-drag'}
           //customBackdrop={<View style={{ flex: 1 }} />}
         >
           <SafeAreaView style={styles(theme).popUp}>
