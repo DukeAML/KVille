@@ -181,7 +181,7 @@ export default function JoinGroup({ navigation }) {
 
             <TextInput
               style={[styles(theme).textInput, styles(theme).shadowProp]}
-              autoFocus={true}
+              //autoFocus={true}
               onChangeText={(code) => setInputGroupCode(code.trim())}
               value={groupCode}
               placeholder='Enter Group Code'

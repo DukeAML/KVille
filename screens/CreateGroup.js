@@ -191,7 +191,7 @@ export default function CreateGroup({ navigation }) {
             </View>
             <TextInput
               style={styles(theme).textInput}
-              autoFocus={true}
+              //autoFocus={true}
               placeholder='Enter Group Name'
               value={group.groupName}
               maxLength={28}
@@ -379,7 +379,6 @@ const styles = (theme) =>
       height: '70%',
       width: '80%',
       marginVertical: 50,
-      //justifyContent: 'space-between'
     },
     text: {
       color: theme.text1,
@@ -441,21 +440,12 @@ const styles = (theme) =>
     pickerItem: {
       height: '100%',
     },
-    /*     createBtn: {
-      backgroundColor: theme.primary,
-      padding: 15,
-      borderRadius: 30,
-      marginTop: 30,
-      width: '50%',
-    }, */
     btnTxt: {
       fontSize: 18,
       color: theme.primary,
       fontWeight: '600',
     },
     triangle: {
-      //position: "relative",
-      //zIndex: 1,
       height: 0,
       width: 0,
       borderTopWidth: 150,
