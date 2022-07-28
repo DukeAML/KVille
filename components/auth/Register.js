@@ -17,7 +17,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import {useTheme} from '../../context/ThemeProvider'
+import { useTheme } from '../../context/ThemeProvider';
 
 const window = Dimensions.get('window');
 
@@ -29,7 +29,7 @@ export default function Register(props) {
   const [isValid, setIsValid] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [dimensions, setDimensions] = useState({ window });
-  const {theme} = useTheme();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -38,7 +38,7 @@ export default function Register(props) {
     return () => subscription?.remove();
   });
 
-  function onRegister () {
+  function onRegister() {
     if (username.length == 0 || email.length == 0 || password.length == 0) {
       setIsValid({
         bool: true,
@@ -69,18 +69,19 @@ export default function Register(props) {
       .where('username', '==', username)
       .get()
       .then((snapshot) => {
-        if (!snapshot.exist) {
+        if (snapshot.empty) {
           firebase
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
-              if (snapshot.exist) {
+              if (snapshot.exists) {
                 return;
               }
-              firebase
-                .auth()
-                .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                .then(function () {});
+              // firebase
+              //   .auth()
+              //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+              //   .then(() => console.log('persistence set'))
+              //   .catch((error) => console.error(error));
               firebase
                 .firestore()
                 .collection('users')
@@ -89,33 +90,41 @@ export default function Register(props) {
                   email,
                   username,
                   groupCode,
-                });
+                })
+                .catch((error) => console.error(error));
             })
-            .catch(() => {
+            .catch((error) => {
+              console.error(error);
               setIsValid({
                 bool: true,
                 boolSnack: true,
                 message: 'Something went wrong',
               });
             });
+        } else {
+          console.error(error);
+          setIsValid({
+            bool: true,
+            boolSnack: true,
+            message: 'Username Taken',
+          });
+          //return;
         }
       })
-      .catch(() => {
+      .catch((error) => {
         setIsValid({
           bool: true,
           boolSnack: true,
           message: 'Something went wrong',
         });
       });
-  };
+  }
 
   return (
     <View style={styles(theme).container}>
       <KeyboardAvoidingView behavior='padding' style={styles(theme).container}>
         <View style={styles(theme).banner}>
-          <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>
-            REGISTER
-          </Text>
+          <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>REGISTER</Text>
           <View style={styles(theme).imageContainer}>
             <Image
               style={[
@@ -150,11 +159,7 @@ export default function Register(props) {
         <View style={styles(theme).formCenter}>
           <View style={styles(theme).section}>
             <View style={styles(theme).icon}>
-              <Icon
-                name='account-circle-outline'
-                color={theme.icon2}
-                size={25}
-              />
+              <Icon name='account-circle-outline' color={theme.icon2} size={25} />
             </View>
             <TextInput
               style={styles(theme).textInput}
@@ -204,11 +209,7 @@ export default function Register(props) {
                 return false;
               }}
             >
-              <Icon
-                name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-                color={theme.icon2}
-                size={20}
-              />
+              <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
             </TouchableOpacity>
           </View>
 
@@ -224,9 +225,7 @@ export default function Register(props) {
             setIsValid({ boolSnack: false });
           }}
         >
-          <Text style={{ textAlign: 'center', color: theme.text1 }}>
-            {isValid.message}
-          </Text>
+          <Text style={{ textAlign: 'center', color: theme.text1 }}>{isValid.message}</Text>
         </Snackbar>
       </KeyboardAvoidingView>
       <View style={styles(theme).bottomButton}>
@@ -242,133 +241,134 @@ export default function Register(props) {
   );
 }
 
-const styles = (theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.white2,
-  },
-  banner: {
-    //position: 'absolute',
-    backgroundColor: theme.primary,
-    width: '100%',
-    height: '50%',
-    //justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imageContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 30,
-    backgroundColor: 'transparent',
-    width: 90,
-    height: '100%',
-    //justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-    margin: 0,
-  },
-  // dimImage: {
-  //   borderWidth: 1,
-  //   height: '100%',
-  //   width: 90,
-  //   alignItems: 'center',
-  // },
-  boldImage: {
-    position: 'absolute',
-    bottom: 0,
-    backgroundColor: theme.white2,
-    borderRadius: 15,
-    width: 90,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-  },
-  logo: {
-    height: 60,
-    width: 60,
-    resizeMode: 'contain',
-  },
-  slant: {
-    position: 'absolute',
-    bottom: 0,
-    zIndex: 1,
-    marginLeft: 0,
-    //backgroundColor: '#fff',
-    height: 0,
-    width: 0,
-    borderStyle: 'solid',
-    borderTopWidth: 150,
-    borderRightColor: theme.white2,
-    borderBottomColor: theme.white2,
-    borderTopColor: 'transparent',
-    //borderLeftColor: 'transparent',
-  },
-  formCenter: {
-    justifyContent: 'start',
-    alignContent: 'center',
-    flex: 1,
-    margin: 25,
-  },
-  section: {
-    flexDirection: 'row',
-    //justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.white2,
-    height: 40,
-    borderRadius: 20,
-    margin: 10,
-    //marginTop: 10,
-    shadowColor: theme.primary,
-    elevation: 20,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 7,
-  },
-  icon: {
-    position: 'absolute',
-    left: -10,
-    height: 50,
-    width: 50,
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.white2,
-    shadowColor: theme.primary,
-    elevation: 20,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 7,
-  },
-  textInput: {
-    marginLeft: 50,
-    flexDirection: 'row',
-    flex: 1,
-    backgroundColor: theme.white2,
-    padding: 10,
-    borderRadius: 20,
-    height: '100%',
-    //outlineWidth: 0,
-    //justifyContent: "center",
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    backgroundColor: theme.primary,
-    height: 30,
-    marginTop: 40,
-    borderRadius: 50,
-  },
-  bottomButton: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    justifyContent: 'center',
-    borderTopColor: 'gray',
-    borderTopWidth: 1,
-    padding: 10,
-    textAlign: 'center',
-    marginBottom: 60,
-  },
-});
+const styles = (theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.white2,
+    },
+    banner: {
+      //position: 'absolute',
+      backgroundColor: theme.primary,
+      width: '100%',
+      height: '50%',
+      //justifyContent: 'center',
+      alignItems: 'center',
+    },
+    imageContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 30,
+      backgroundColor: 'transparent',
+      width: 90,
+      height: '100%',
+      //justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 2,
+      margin: 0,
+    },
+    // dimImage: {
+    //   borderWidth: 1,
+    //   height: '100%',
+    //   width: 90,
+    //   alignItems: 'center',
+    // },
+    boldImage: {
+      position: 'absolute',
+      bottom: 0,
+      backgroundColor: theme.white2,
+      borderRadius: 15,
+      width: 90,
+      height: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 2,
+    },
+    logo: {
+      height: 60,
+      width: 60,
+      resizeMode: 'contain',
+    },
+    slant: {
+      position: 'absolute',
+      bottom: 0,
+      zIndex: 1,
+      marginLeft: 0,
+      //backgroundColor: '#fff',
+      height: 0,
+      width: 0,
+      borderStyle: 'solid',
+      borderTopWidth: 150,
+      borderRightColor: theme.white2,
+      borderBottomColor: theme.white2,
+      borderTopColor: 'transparent',
+      //borderLeftColor: 'transparent',
+    },
+    formCenter: {
+      justifyContent: 'start',
+      alignContent: 'center',
+      flex: 1,
+      margin: 25,
+    },
+    section: {
+      flexDirection: 'row',
+      //justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.white2,
+      height: 40,
+      borderRadius: 20,
+      margin: 10,
+      //marginTop: 10,
+      shadowColor: theme.primary,
+      elevation: 20,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 7,
+    },
+    icon: {
+      position: 'absolute',
+      left: -10,
+      height: 50,
+      width: 50,
+      borderRadius: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.white2,
+      shadowColor: theme.primary,
+      elevation: 20,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 7,
+    },
+    textInput: {
+      marginLeft: 50,
+      flexDirection: 'row',
+      flex: 1,
+      backgroundColor: theme.white2,
+      padding: 10,
+      borderRadius: 20,
+      height: '100%',
+      //outlineWidth: 0,
+      //justifyContent: "center",
+    },
+    button: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      width: '100%',
+      backgroundColor: theme.primary,
+      height: 30,
+      marginTop: 40,
+      borderRadius: 50,
+    },
+    bottomButton: {
+      flexDirection: 'row',
+      alignContent: 'center',
+      justifyContent: 'center',
+      borderTopColor: 'gray',
+      borderTopWidth: 1,
+      padding: 10,
+      textAlign: 'center',
+      marginBottom: 60,
+    },
+  });

@@ -68,7 +68,7 @@ export default function GroupInfo({ route, navigation }) {
     () => fetchGroupMembers(groupCode),
     { initialData: [] }
   );
-  useRefreshOnFocus(refetch);
+  //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

@@ -88,9 +88,7 @@ export default function Login(props) {
     <View style={styles(theme).container}>
       <KeyboardAvoidingView behavior='padding' style={styles(theme).container}>
         <View style={styles(theme).banner}>
-          <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>
-            LOGIN
-          </Text>
+          <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>LOGIN</Text>
           <View style={styles(theme).imageContainer}>
             <Image
               style={[
@@ -125,11 +123,7 @@ export default function Login(props) {
         <View style={styles(theme).formCenter}>
           <View style={styles(theme).section}>
             <View style={styles(theme).icon}>
-              <Icon
-                name='account-circle-outline'
-                color={theme.icon2}
-                size={25}
-              />
+              <Icon name='account-circle-outline' color={theme.icon2} size={25} />
             </View>
             <TextInput
               style={styles(theme).textInput}
@@ -158,11 +152,7 @@ export default function Login(props) {
                 return false;
               }}
             >
-              <Icon
-                name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-                color={theme.icon2}
-                size={20}
-              />
+              <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
             </TouchableOpacity>
           </View>
 
@@ -188,12 +178,14 @@ export default function Login(props) {
             Sign Up
           </Text>
         </View>
-        <Text
-          style={{ margin: 10, color: theme.quaternary, textAlign: 'center' }}
-          onPress={() => props.navigation.navigate('ForgotPassword')}
-        >
-          Forgot Password?
-        </Text>
+        <View style ={{width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+          <Text
+            style={{ margin: 10, color: theme.quaternary, textAlign: 'center'}}
+            onPress={() => props.navigation.navigate('ForgotPassword')}
+          >
+            Forgot Password?
+          </Text>
+        </View>
       </View>
       <Snackbar
         visible={isSnackVisible}
@@ -201,9 +193,7 @@ export default function Login(props) {
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>
-          {snackMessage}
-        </Text>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
       </Snackbar>
     </View>
   );
