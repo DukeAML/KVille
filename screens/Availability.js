@@ -21,7 +21,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
-import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -81,11 +80,10 @@ export default function Availability({ route }) {
     () => fetchAvailability(groupCode)
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-  //useRefreshOnFocus(refetch);
 
   async function fetchAvailability(groupCode) {
     await SplashScreen.preventAutoHideAsync();
-    //let availability;
+
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
     await firebase
@@ -243,6 +241,81 @@ export default function Availability({ route }) {
 
   return (
     <View style={styles(theme).container} onLayout={onLayoutRootView}>
+      <Table borderStyle={{ borderColor: 'transparent' }}>
+        <Row
+          data={agenda.tableHead}
+          style={StyleSheet.flatten(styles(theme).head)}
+          widthArr={[
+            dimensions.window.width / 12,
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+            dimensions.window.width * (11 / 84),
+          ]}
+          textStyle={{ textAlign: 'center', fontWeight: '700' }}
+        />
+      </Table>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        //onScroll = {onScroll}
+        //scrollEventThrottle = {16}
+        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+      >
+        <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent' }} style={{ flexDirection: 'row' }}>
+          <TableWrapper
+            style={StyleSheet.flatten([
+              { width: dimensions.window.width / 12, marginTop: 34, alignItems: 'center' /* , borderWidth:1 */ },
+            ])}
+          >
+            <Col
+              data={agenda.tableTime}
+              //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
+              heightArr={new Array(23).fill(cellHeight * 2)}
+              textStyle={{
+                textAlign: 'center',
+                fontWeight: '700',
+                fontSize: 10,
+                width: '70%',
+                color: '#717573',
+                marginLeft: 2 /* , borderWidth:1, */,
+              }}
+            />
+          </TableWrapper>
+
+          <TableWrapper style={{ flex: 1 }}>
+            {tableData.map((rowData, index) => (
+              <TableWrapper
+                key={index}
+                //style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
+                style={StyleSheet.flatten(styles(theme).row)}
+              >
+                {rowData.map((cellData, cellIndex) => (
+                  <Cell
+                    key={cellIndex}
+                    data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
+                    //{data[48 * cellIndex + index].toString()}
+
+                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width * (11 / 84) }])}
+                  />
+                ))}
+              </TableWrapper>
+            ))}
+          </TableWrapper>
+        </Table>
+      </ScrollView>
+
+      <View style={styles(theme).addContainer}>
+        <TouchableOpacity onPress={toggleModal}>
+          <View style={styles(theme).FAB}>
+            <Icon name={'plus'} color={theme.text2} size={30} />
+          </View>
+        </TouchableOpacity>
+      </View>
+
       <ActionSheetModal
         isVisible={isDeleteModalVisible}
         onBackdropPress={toggleDeleteModal}
@@ -443,80 +516,6 @@ export default function Availability({ route }) {
           </TouchableOpacity>
         </View>
       </BottomSheetModal>
-
-      <Table borderStyle={{ borderColor: 'transparent' }}>
-        <Row
-          data={agenda.tableHead}
-          style={StyleSheet.flatten(styles(theme).head)}
-          widthArr={[
-            dimensions.window.width / 12,
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-            dimensions.window.width * (11 / 84),
-          ]}
-          textStyle={{ textAlign: 'center', fontWeight: '700' }}
-        />
-      </Table>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        //onScroll = {onScroll}
-        //scrollEventThrottle = {16}
-        refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-      >
-        <Table borderStyle={{ borderWidth: 0, borderColor: 'transparent' }} style={{ flexDirection: 'row' }}>
-          <TableWrapper
-            style={StyleSheet.flatten([
-              { width: dimensions.window.width / 12, marginTop: 34, alignItems: 'center' /* , borderWidth:1 */ },
-            ])}
-          >
-            <Col
-              data={agenda.tableTime}
-              //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
-              heightArr={new Array(23).fill(cellHeight * 2)}
-              textStyle={{
-                textAlign: 'center',
-                fontWeight: '700',
-                fontSize: 10,
-                width: '70%',
-                color: '#717573',
-                marginLeft: 2 /* , borderWidth:1, */,
-              }}
-            />
-          </TableWrapper>
-
-          <TableWrapper style={{ flex: 1 }}>
-            {tableData.map((rowData, index) => (
-              <TableWrapper
-                key={index}
-                //style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
-                style={StyleSheet.flatten(styles(theme).row)}
-              >
-                {rowData.map((cellData, cellIndex) => (
-                  <Cell
-                    key={cellIndex}
-                    data={data[48 * cellIndex + index][0] ? cellData : element(cellData, 48 * cellIndex + index, data)}
-                    //{data[48 * cellIndex + index].toString()}
-
-                    style={StyleSheet.flatten([styles(theme).cell, { width: dimensions.window.width * (11 / 84) }])}
-                  />
-                ))}
-              </TableWrapper>
-            ))}
-          </TableWrapper>
-        </Table>
-      </ScrollView>
-      <View style={styles(theme).addContainer}>
-        <TouchableOpacity onPress={toggleModal}>
-          <View style={styles(theme).FAB}>
-            <Icon name={'plus'} color={theme.text2} size={30} />
-          </View>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -591,12 +590,12 @@ const styles = (theme) =>
       height: 35,
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,
-
       shadowColor: '#171717',
       shadowOffset: { width: 0, height: -5 },
       shadowOpacity: 0.9,
-      shadowRadius: 20,
-      elevation: 5,
+      shadowRadius: 10,
+      elevation: 3,
+      overflow: 'visible'
     },
     row: {
       height: cellHeight,
