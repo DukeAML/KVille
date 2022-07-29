@@ -6,6 +6,7 @@ import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -94,7 +95,8 @@ export default function DrawerContent(props) {
     setConfirmationVisible(!isConfirmationVisible);
   }
 
-  function onLogout() {
+  async function onLogout() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
     firebase.auth().signOut();
   }
 

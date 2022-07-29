@@ -18,6 +18,7 @@ import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
 import CountDown from 'react-native-countdown-component';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -174,7 +175,8 @@ export default function Home({ navigation }) {
     );
   };
 
-  function onLogout() {
+  async function onLogout() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
     firebase.auth().signOut();
   }
 
