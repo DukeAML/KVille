@@ -34,6 +34,7 @@ import NavigationStack from './screens/NavigationStack';
 import ForgotPasswordScreen from './components/auth/ForgotPassword';
 import { persistor, store } from './redux/store/index';
 import ThemeProvider from './context/ThemeProvider';
+import Snackbar from './components/Snackbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -148,9 +149,12 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider>
-          <NavigationStack />
-        </ThemeProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider>
+            <Snackbar/>
+            <NavigationStack />
+          </ThemeProvider>
+        </PersistGate>
       </Provider>
     </QueryClientProvider>
   );

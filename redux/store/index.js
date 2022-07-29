@@ -6,9 +6,11 @@ import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 
 import userReducer from '../reducers/userSlice';
+import snackbarReducer from '../reducers/snackbarSlice';
 
 const reducers = combineReducers({
   user: userReducer,
+  snackbar: snackbarReducer
 });
 
 const persistConfig = {
