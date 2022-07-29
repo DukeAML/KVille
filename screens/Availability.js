@@ -82,7 +82,7 @@ export default function Availability({ route }) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchAvailability(groupCode) {
-    await SplashScreen.preventAutoHideAsync();
+    //await SplashScreen.preventAutoHideAsync();
 
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
@@ -224,11 +224,11 @@ export default function Availability({ route }) {
     return () => subscription?.remove();
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (!isLoading) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [isLoading]);
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -240,7 +240,7 @@ export default function Availability({ route }) {
   }
 
   return (
-    <View style={styles(theme).container} onLayout={onLayoutRootView}>
+    <View style={styles(theme).container} >
       <Table borderStyle={{ borderColor: 'transparent' }}>
         <Row
           data={agenda.tableHead}
