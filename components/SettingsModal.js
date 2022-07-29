@@ -20,6 +20,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  const [isModalSnackVisible, setModalSnackVisible] = useState(false);
+  const [modalSnackMessage, setModalSnackMessage] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
 
@@ -41,85 +43,101 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
 
   function onSave(options) {
-    const { groupName, userName, tentType } = options;
+    const { newGroupName, newUserName, newTentType } = options;
     let groupIndex;
     let groupCodeArr;
+    let valid = true;
 
-    groupRef
-      .collection('members')
-      .where('name', '==', userName)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) {
+    if (newGroupName != groupName || newTentType != tentType) {
+      userRef
+        .get()
+        .then((userDoc) => {
+          groupCodeArr = userDoc.data().groupCode;
+          groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
+          console.log('group index', groupIndex);
+          groupCodeArr[groupIndex] = {
+            groupCode: groupCode,
+            groupName: newGroupName,
+          };
+          return userDoc;
+        })
+        .then((doc) => {
           userRef
-            .get()
-            .then((userDoc) => {
-              groupCodeArr = userDoc.data().groupCode;
-              groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
-              console.log('group index', groupIndex);
-              groupCodeArr[groupIndex] = {
-                groupCode: groupCode,
-                groupName: groupName,
-              };
-              return userDoc;
-            })
-            .then((doc) => {
-              userRef
-                .update({
-                  groupCode: groupCodeArr,
-                })
-                .then(() => {
-                  console.log('successfully saved groupName');
-                })
-                .catch((error) => {
-                  console.log(error);
-                  dispatch(toggleSnackBar());
-                  dispatch(setSnackMessage('Error saving group name'));
-                  return;
-                });
-            });
-
-          groupRef
             .update({
-              name: groupName,
-              tentType: tentType,
+              groupCode: groupCodeArr,
             })
             .then(() => {
-              console.log('successfully saved group settings');
+              console.log('successfully saved groupName');
             })
             .catch((error) => {
               console.log(error);
-              dispatch(toggleSnackBar());
-              dispatch(setSnackMessage('Error saving group settings'));
+              setModalSnackMessage('Error saving group name');
+              toggleModalSnackBar();
               return;
             });
+        });
+      groupRef
+        .update({
+          name: newGroupName,
+          tentType: newTentType,
+        })
+        .then(() => {
+          console.log('successfully saved group settings');
+        })
+        .catch((error) => {
+          console.log(error);
+          setModalSnackMessage('Error saving group settings');
+          toggleModalSnackBar();
+          return;
+        });
+      dispatch(setTentType(newTentType));
+      dispatch(setGroupName(newGroupName));
+    }
 
-          groupRef
-            .collection('members')
-            .doc(firebase.auth().currentUser.uid)
-            .update({
-              name: userName,
-            })
-            .then(() => {
-              console.log('successfully updated name');
-            })
-            .catch((error) => {
-              console.log(error);
-              dispatch(toggleSnackBar());
-              dispatch(setSnackMessage('Error saving user name'));
-              return;
-            });
-          dispatch(setUserName(userName));
-          dispatch(setTentType(tentType));
-          dispatch(setGroupName(groupName));
-          dispatch(toggleSnackBar());
-          dispatch(setSnackMessage('Saved'));
-          toggleModal();
-        } else {
-          dispatch(toggleSnackBar());
-          dispatch(setSnackMessage('Username taken'));
-        }
-      });
+    if (newUserName != userName) {
+      groupRef
+        .collection('members')
+        .where('name', '==', newUserName)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            groupRef
+              .collection('members')
+              .doc(firebase.auth().currentUser.uid)
+              .update({
+                name: newUserName,
+              })
+              .then(() => {
+                console.log('successfully updated name');
+              })
+              .catch((error) => {
+                console.log(error);
+                setModalSnackMessage('Error saving user name');
+                toggleModalSnackBar();
+                return;
+              });
+            dispatch(setUserName(newUserName));
+          } else {
+            setModalSnackMessage('Username taken');
+            toggleModalSnackBar();
+            valid = false
+            return;
+          }
+        })
+        .then(() => {
+          if (valid) {
+            dispatch(toggleSnackBar());
+            dispatch(setSnackMessage('Saved'));
+            toggleModal();
+          }
+        });
+    } else {
+      if (valid) {
+        dispatch(toggleSnackBar());
+        dispatch(setSnackMessage('Saved'));
+        toggleModal();
+      }
+    }
   }
 
   function leaveGroup() {
@@ -158,11 +176,14 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   function toggleTentChange() {
     setTentChangeVisible(!isTentChangeVisible);
   }
+  function toggleModalSnackBar() {
+    setModalSnackVisible(!isModalSnackVisible);
+  }
 
   return (
     <View style={styles(theme).settingsContainer}>
       <Formik
-        initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
+        initialValues={{ newUserName: userName, newGroupName: groupName, newTentType: tentType }}
         onSubmit={(values) => postSave.mutate(values)}
         style={{ borderWidth: 1 }}
       >
@@ -186,12 +207,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
             </View>
             <TextInput
-              name='userName'
+              name='newUserName'
               placeholder='User Name'
               style={styles(theme).textInput}
-              onChangeText={handleChange('userName')}
-              onBlur={handleBlur('userName')}
-              value={values.userName}
+              onChangeText={handleChange('newUserName')}
+              onBlur={handleBlur('newUserName')}
+              value={values.newUserName}
             />
 
             {groupRole === 'Creator' ? (
@@ -201,12 +222,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                   <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
                 <TextInput
-                  name='groupName'
+                  name='newGroupName'
                   placeholder='Group Name'
                   style={styles(theme).textInput}
-                  onChangeText={handleChange('groupName')}
-                  onBlur={handleBlur('groupName')}
-                  value={values.groupName}
+                  onChangeText={handleChange('newGroupName')}
+                  onBlur={handleBlur('newGroupName')}
+                  value={values.newGroupName}
                 />
 
                 <View style={styles(theme).headerContainer}>
@@ -214,7 +235,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                   <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
                 <TouchableOpacity onPress={toggleTentChange} style={styles(theme).tentChangeBtn}>
-                  <Text style={styles(theme).modalText}>{values.tentType}</Text>
+                  <Text style={styles(theme).modalText}>{values.newTentType}</Text>
                   <Icon name='chevron-down' color={theme.grey2} size={20} />
                 </TouchableOpacity>
               </View>
@@ -232,8 +253,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'Black');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'Black');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }} //change to changing tent type
                   style={styles(theme).tentChangeListItem}
@@ -243,8 +264,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
 
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'Blue');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'Blue');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }}
                   style={styles(theme).tentChangeListItem}
@@ -254,8 +275,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
 
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'White');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'White');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }}
                   style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
@@ -293,6 +314,14 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         onSwipeComplete={toggleConfirmation}
         userStyle='light'
       />
+      <Snackbar
+        visible={isModalSnackVisible}
+        onDismiss={() => setModalSnackVisible(false)}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+      >
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{modalSnackMessage}</Text>
+      </Snackbar>
     </View>
   );
 }
