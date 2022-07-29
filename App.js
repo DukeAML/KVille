@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
 
@@ -48,6 +49,22 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
+
+        // const user = await AsyncStorage.getItem('USER');
+        // const userObj = JSON.parse(user)
+        // if (userObj != null) {
+        //   console.log('user', userObj);
+        //   firebase
+        //     .auth()
+        //     .updateCurrentUser(userObj)
+        //     .then(() => {
+        //       console.log('login successful');
+        //     })
+        //     .catch((error) => {
+        //       console.log(error);
+        //     });
+        //   //return;
+        // }
         // LogBox.ignoreLogs([
         //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
         // ]);
@@ -58,6 +75,7 @@ export default function App() {
               loggedIn: false,
             });
           } else {
+            //AsyncStorage.setItem('USER', JSON.stringify(user));
             setState({
               isReady: true,
               loggedIn: true,
