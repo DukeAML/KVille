@@ -14,13 +14,12 @@ import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSl
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { ActionSheetModal } from './ActionSheetModal';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 export default function SettingsModal({ params, navigation, toggleModal }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
 
@@ -74,8 +73,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                 })
                 .catch((error) => {
                   console.log(error);
-                  toggleSnackBar();
-                  setSnackMessage('Error saving group name');
+                  dispatch(toggleSnackBar());
+                  dispatch(setSnackMessage('Error saving group name'));
                   return;
                 });
             });
@@ -90,8 +89,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             })
             .catch((error) => {
               console.log(error);
-              toggleSnackBar();
-              setSnackMessage('Error saving group settings');
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Error saving group settings'));
               return;
             });
 
@@ -106,19 +105,19 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             })
             .catch((error) => {
               console.log(error);
-              toggleSnackBar();
-              setSnackMessage('Error saving user name');
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Error saving user name'));
               return;
             });
           dispatch(setUserName(userName));
           dispatch(setTentType(tentType));
           dispatch(setGroupName(groupName));
-          toggleSnackBar();
-          setSnackMessage('Saved');
+          dispatch(toggleSnackBar());
+          dispatch(setSnackMessage('Saved'));
           toggleModal();
         } else {
-          toggleSnackBar();
-          setSnackMessage('Username taken');
+          dispatch(toggleSnackBar());
+          dispatch(setSnackMessage('Username taken'));
         }
       });
   }
@@ -158,9 +157,6 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
   function toggleTentChange() {
     setTentChangeVisible(!isTentChangeVisible);
-  }
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
   }
 
   return (
@@ -297,14 +293,6 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         onSwipeComplete={toggleConfirmation}
         userStyle='light'
       />
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-      </Snackbar>
     </View>
   );
 }

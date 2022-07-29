@@ -13,17 +13,15 @@ const CustomizedSnackbar = () => {
   const { theme } = useTheme();
 
   return (
-    <View style={{zIndex: 999}}>
-      <Snackbar
-        visible={snackbarOpen}
-        onDismiss={() => dispatch(toggleSnackBar())}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-        elevation={5}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1}}>{snackbarMessage}</Text>
-      </Snackbar>
-    </View>
+    <Snackbar
+      visible={snackbarOpen}
+      onDismiss={() => dispatch(toggleSnackBar())}
+      wrapperStyle={{ top: 0 }}
+      duration={2000}
+      elevation={5}
+    >
+      <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackbarMessage}</Text>
+    </Snackbar>
   );
 };
 

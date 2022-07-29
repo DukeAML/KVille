@@ -9,7 +9,7 @@ import {
   RefreshControl,
   TextInput,
   SafeAreaView,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -298,7 +298,7 @@ export default function GroupInfo({ route, navigation }) {
 
   //Render Item for Each List Item of group members
   const Member = ({ name, id, hours, role, inTent }) => {
-    const backgroundColor = inTent ? {backgroundColor: '#3eb489'} : {backgroundColor: '#1f509a'};
+    const backgroundColor = inTent ? { backgroundColor: '#3eb489' } : { backgroundColor: '#1f509a' };
     return (
       <TouchableOpacity
         onPress={() => {
@@ -375,7 +375,7 @@ export default function GroupInfo({ route, navigation }) {
       </View>
 
       {/* List of Members in Group*/}
-      <Text style={styles(theme).header} >Members</Text>
+      <Text style={styles(theme).header}>Members</Text>
       <FlatList
         data={data.slice(1)}
         renderItem={renderMember}

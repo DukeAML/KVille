@@ -28,6 +28,7 @@ import ShiftsScreen from './Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
+import Snackbar from '../components/Snackbar';
 
 const Drawer = createDrawerNavigator();
 //const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
@@ -181,209 +182,213 @@ export default function NavigationStack() {
   }
 
   return (
-    <NavigationContainer
-      initialState={initialState}
-      onReady={onLayoutRootView}
-      // onStateChange={(state) =>
-      //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-      // }
-    >
-      <Drawer.Navigator
-        initialRouteName='Start'
-        drawerContent={(props) => <DrawerContent {...props} />}
-        screenOptions={{ drawerType: 'front' }}
+    <View style={{ flex: 1, zIndex: 1 }}>
+      <NavigationContainer
+        initialState={initialState}
+        onReady={onLayoutRootView}
+        // onStateChange={(state) =>
+        //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+        // }
+        
       >
-        <Drawer.Screen
-          name='Home'
-          component={HomeScreen}
-          options={{
-            headerShown: false,
-            swipeEnabled: false,
-          }}
-        />
-        <Drawer.Screen
-          name='CreateGroup'
-          component={CreateGroupScreen}
-          options={{
-            headerShown: false,
-            swipeEnabled: false,
-          }}
-        />
-        <Drawer.Screen
-          name='JoinGroup'
-          component={JoinGroupScreen}
-          options={{
-            headerShown: false,
-            swipeEnabled: false,
-          }}
-        />
-        <Drawer.Screen
-          name='GroupInfo'
-          component={GroupInfoScreen}
-          options={{
-            headerShown: false,
-            swipeEnabled: true,
-          }}
-        />
-        <Drawer.Screen
-          name='AvailabilityScreen'
-          component={AvailabilityScreen}
-          options={({ navigation }) => ({
-            title: 'Availability',
-            headerStyle: {
-              backgroundColor: '#f3f3f3', //theme.primaryContainer;
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-            headerRight: () => (
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    toggleInfo();
-                  }}
-                  style={{ marginRight: 20 }}
-                >
-                  <Icon name='help-circle-outline' color={'black'} size={25} />
-                </TouchableOpacity>
+        <Drawer.Navigator
+          initialRouteName='Start'
+          drawerContent={(props) => <DrawerContent {...props} />}
+          screenOptions={{ drawerType: 'front' }}
+        >
+          <Drawer.Screen
+            name='Home'
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='CreateGroup'
+            component={CreateGroupScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='JoinGroup'
+            component={JoinGroupScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='GroupInfo'
+            component={GroupInfoScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: true,
+            }}
+          />
+          <Drawer.Screen
+            name='AvailabilityScreen'
+            component={AvailabilityScreen}
+            options={({ navigation }) => ({
+              title: 'Availability',
+              headerStyle: {
+                backgroundColor: '#f3f3f3', //theme.primaryContainer;
+                borderBottomWidth: 0,
+                shadowColor: 'transparent',
+              },
+              headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+              headerRight: () => (
+                <View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      toggleInfo();
+                    }}
+                    style={{ marginRight: 20 }}
+                  >
+                    <Icon name='help-circle-outline' color={'black'} size={25} />
+                  </TouchableOpacity>
 
-                <ActionSheetModal
-                  isVisible={isInfoVisible}
-                  onBackdropPress={toggleInfo}
-                  swipeDown={false}
-                  height={350}
-                  userStyle={'light'}
-                >
-                  <View style={styles(theme).popUpHeaderView}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
-                      <View>
-                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
-                        <Text style={{ fontSize: 15, fontWeight: '700' }}>How to use the Availability Page</Text>
+                  <ActionSheetModal
+                    isVisible={isInfoVisible}
+                    onBackdropPress={toggleInfo}
+                    swipeDown={false}
+                    height={350}
+                    userStyle={'light'}
+                  >
+                    <View style={styles(theme).popUpHeaderView}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
+                        <View>
+                          <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                          <Text style={{ fontSize: 15, fontWeight: '700' }}>How to use the Availability Page</Text>
+                        </View>
                       </View>
+                      <TouchableOpacity onPress={toggleInfo}>
+                        <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={toggleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
-                    </TouchableOpacity>
-                  </View>
 
-                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
-                    <AvailabilityText />
-                  </ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                      <AvailabilityText />
+                    </ScrollView>
 
-                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={toggleInfo} style={styles(theme).closeBtn}>
-                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
-                    </TouchableOpacity>
-                  </View>
-                </ActionSheetModal>
-              </View>
-            ),
-          })}
-        />
-        <Drawer.Screen
-          name='ShiftsScreen'
-          component={ShiftsScreen}
-          options={({ navigation }) => ({
-            title: 'Shifts This Week',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              //shadowColor: 'transparent',
-              shadowColor: '#171717',
-              shadowOffset: { width: -2, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 5,
-              elevation: 20,
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          })}
-        />
-        <Drawer.Screen
-          name='ScheduleScreen'
-          component={ScheduleScreen}
-          options={({ navigation }) => ({
-            title: 'Group Schedule',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-            headerRight: () => (
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    toggleScheduleInfo();
-                  }}
-                  style={{ marginRight: 20 }}
-                >
-                  <Icon name='help-circle-outline' color={'black'} size={25} />
-                </TouchableOpacity>
+                    <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                      <TouchableOpacity onPress={toggleInfo} style={styles(theme).closeBtn}>
+                        <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </ActionSheetModal>
+                </View>
+              ),
+            })}
+          />
+          <Drawer.Screen
+            name='ShiftsScreen'
+            component={ShiftsScreen}
+            options={({ navigation }) => ({
+              title: 'Shifts This Week',
+              headerStyle: {
+                backgroundColor: theme.primaryContainer,
+                borderBottomWidth: 0,
+                //shadowColor: 'transparent',
+                shadowColor: '#171717',
+                shadowOffset: { width: -2, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 5,
+                elevation: 20,
+              },
+              headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+            })}
+          />
+          <Drawer.Screen
+            name='ScheduleScreen'
+            component={ScheduleScreen}
+            options={({ navigation }) => ({
+              title: 'Group Schedule',
+              headerStyle: {
+                backgroundColor: theme.primaryContainer,
+                borderBottomWidth: 0,
+                shadowColor: 'transparent',
+              },
+              headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+              headerRight: () => (
+                <View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      toggleScheduleInfo();
+                    }}
+                    style={{ marginRight: 20 }}
+                  >
+                    <Icon name='help-circle-outline' color={'black'} size={25} />
+                  </TouchableOpacity>
 
-                <ActionSheetModal
-                  isVisible={isScheduleInfoVisible}
-                  onBackdropPress={toggleScheduleInfo}
-                  swipeDown={false}
-                  height={350}
-                  userStyle={'light'}
-                >
-                  <View style={styles(theme).popUpHeaderView}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
-                      <View>
-                        <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
-                        <Text style={{ fontSize: 16, fontWeight: '700' }}>How to use the Schedule Page</Text>
+                  <ActionSheetModal
+                    isVisible={isScheduleInfoVisible}
+                    onBackdropPress={toggleScheduleInfo}
+                    swipeDown={false}
+                    height={350}
+                    userStyle={'light'}
+                  >
+                    <View style={styles(theme).popUpHeaderView}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Icon name='lightbulb' color={theme.grey2} size={40} style={{ marginRight: 15 }} />
+                        <View>
+                          <Text style={{ fontWeight: '500' }}>Helpful Tips</Text>
+                          <Text style={{ fontSize: 16, fontWeight: '700' }}>How to use the Schedule Page</Text>
+                        </View>
                       </View>
+                      <TouchableOpacity onPress={toggleScheduleInfo}>
+                        <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={toggleScheduleInfo}>
-                      <Icon name='close-circle' color={theme.grey2} size={32} style={{ marginTop: 4 }} />
-                    </TouchableOpacity>
-                  </View>
 
-                  <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
-                    <ScheduleText />
-                  </ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                      <ScheduleText />
+                    </ScrollView>
 
-                  <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={toggleScheduleInfo} style={styles(theme).closeBtn}>
-                      <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
-                    </TouchableOpacity>
-                  </View>
-                </ActionSheetModal>
-              </View>
-            ),
-          })}
-        />
-        <Drawer.Screen
-          name='MonitorScreen'
-          component={MonitorScreen}
-          options={({ navigation }) => ({
-            title: '',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          })}
-        />
-        <Drawer.Screen
-          name='InfoScreen'
-          component={InfoScreen}
-          options={({ navigation }) => ({
-            title: 'Tenting Information',
-            headerStyle: {
-              backgroundColor: theme.primaryContainer,
-              borderBottomWidth: 0,
-              shadowColor: 'transparent',
-            },
-            headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
-          })}
-        />
-      </Drawer.Navigator>
-      <StatusBar style='dark' />
-    </NavigationContainer>
+                    <View style={{ height: '13%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                      <TouchableOpacity onPress={toggleScheduleInfo} style={styles(theme).closeBtn}>
+                        <Text style={{ color: theme.text1, fontSize: 20, fontWeight: '600' }}>Ok</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </ActionSheetModal>
+                </View>
+              ),
+            })}
+          />
+          <Drawer.Screen
+            name='MonitorScreen'
+            component={MonitorScreen}
+            options={({ navigation }) => ({
+              title: '',
+              headerStyle: {
+                backgroundColor: theme.primaryContainer,
+                borderBottomWidth: 0,
+                shadowColor: 'transparent',
+              },
+              headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+            })}
+          />
+          <Drawer.Screen
+            name='InfoScreen'
+            component={InfoScreen}
+            options={({ navigation }) => ({
+              title: 'Tenting Information',
+              headerStyle: {
+                backgroundColor: theme.primaryContainer,
+                borderBottomWidth: 0,
+                shadowColor: 'transparent',
+              },
+              headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
+            })}
+          />
+        </Drawer.Navigator>
+        <StatusBar style='dark' />
+        <Snackbar />
+      </NavigationContainer>
+    </View>
   );
 }
 

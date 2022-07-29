@@ -11,7 +11,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Snackbar } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
@@ -19,6 +19,7 @@ import 'firebase/compat/auth';
 
 import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 import { useTheme } from '../../context/ThemeProvider';
+import { toggleSnackBar, setSnackMessage } from '../../redux/reducers/snackbarSlice';
 
 const window = Dimensions.get('window');
 
@@ -26,10 +27,9 @@ export default function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const [isReady, setIsReady] = useState(false);
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let mounted = true
@@ -60,10 +60,6 @@ export default function Login(props) {
     return () => (mounted = false);
   });
 
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
-  }
-
   function onSignUp() {
     firebase
       .auth()
@@ -85,8 +81,8 @@ export default function Login(props) {
         if (error.message.includes('The password is invalid')) {
           message = 'Incorrect password';
         }
-        toggleSnackBar();
-        setSnackMessage(message);
+        dispatch(setSnackMessage(message));
+        dispatch(toggleSnackBar());
         return;
       });
     //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -216,14 +212,6 @@ export default function Login(props) {
           </Text>
         </View>
       </View>
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-      </Snackbar>
     </View>
   );
 }

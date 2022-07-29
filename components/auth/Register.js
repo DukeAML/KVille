@@ -9,15 +9,16 @@ import {
   Image,
   KeyboardAvoidingView,
 } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../../context/ThemeProvider';
+import { toggleSnackBar, setSnackMessage } from '../../redux/reducers/snackbarSlice';
+import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 
 const window = Dimensions.get('window');
 
@@ -26,10 +27,10 @@ export default function Register(props) {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [groupCode, setGroupCode] = useState([]);
-  const [isValid, setIsValid] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -40,27 +41,13 @@ export default function Register(props) {
 
   function onRegister() {
     if (username.length == 0 || email.length == 0 || password.length == 0) {
-      setIsValid({
-        bool: true,
-        boolSnack: true,
-        message: 'Please fill out everything',
-      });
+      dispatch(setSnackMessage('Please fill out everything'));
+      dispatch(toggleSnackBar());
       return;
     }
     if (password.length < 6) {
-      setIsValid({
-        bool: true,
-        boolSnack: true,
-        message: 'passwords must be at least 6 characters',
-      });
-      return;
-    }
-    if (password.length < 6) {
-      setIsValid({
-        bool: true,
-        boolSnack: true,
-        message: 'passwords must be at least 6 characters',
-      });
+      dispatch(setSnackMessage('Passwords must be at least 6 characters'));
+      dispatch(toggleSnackBar());
       return;
     }
     firebase
@@ -92,28 +79,19 @@ export default function Register(props) {
             })
             .catch((error) => {
               console.error(error);
-              setIsValid({
-                bool: true,
-                boolSnack: true,
-                message: 'The email address is already in use by another account',
-              });
+              dispatch(setSnackMessage('The email address is already in use by another account'));
+              dispatch(toggleSnackBar());
             });
         } else {
           console.error(error);
-          setIsValid({
-            bool: true,
-            boolSnack: true,
-            message: 'Username Taken',
-          });
+          dispatch(setSnackMessage('Username Taken'));
+          dispatch(toggleSnackBar());
         }
       })
       .catch((error) => {
         console.error(error);
-        setIsValid({
-          bool: true,
-          boolSnack: true,
-          message: 'Something went wrong',
-        });
+        dispatch(setSnackMessage('Something went wrong'));
+        dispatch(toggleSnackBar());
       });
   }
 
@@ -214,16 +192,6 @@ export default function Register(props) {
             <Text style={{ color: theme.text1 }}>Register</Text>
           </TouchableOpacity>
         </View>
-        <Snackbar
-          visible={isValid.boolSnack}
-          duration={2000}
-          wrapperStyle={{ top: 0 }}
-          onDismiss={() => {
-            setIsValid({ boolSnack: false });
-          }}
-        >
-          <Text style={{ textAlign: 'center', color: theme.text1 }}>{isValid.message}</Text>
-        </Snackbar>
       </KeyboardAvoidingView>
       <View style={styles(theme).bottomButton}>
         <Text>Already have an account? </Text>

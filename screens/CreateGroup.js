@@ -10,10 +10,9 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
@@ -32,6 +31,7 @@ import {
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { ActionSheetModal } from '../components/ActionSheetModal';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
@@ -49,8 +49,6 @@ export default function CreateGroup({ navigation }) {
     userName: '',
     tentType: 'Select Tent Type',
   });
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
   //const [selectedTent, setSelectedTent] = useState('Select Tent Type');
   const [dimensions, setDimensions] = useState({ window });
@@ -98,13 +96,13 @@ export default function CreateGroup({ navigation }) {
   //Create group function
   function onCreateGroup() {
     if (group.groupName == '') {
-      toggleSnackBar();
-      setSnackMessage('Enter group name');
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Enter group name'));
       return;
     }
     if (group.tentType == 'Select Tent Type') {
-      toggleSnackBar();
-      setSnackMessage('Select tent type');
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Select tent type'));
       return;
     }
     groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
@@ -124,7 +122,7 @@ export default function CreateGroup({ navigation }) {
       inTent: false,
       availability: availability,
       scheduledHrs: 0,
-      shifts: []
+      shifts: [],
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
@@ -157,25 +155,17 @@ export default function CreateGroup({ navigation }) {
       });
   }
 
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
-  }
-
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
           <View style={styles(theme).groupContainer}>
             <View style={styles(theme).groupHeader}>
-              <Text
-                style={styles(theme).btnTxt}
-                onPress={() => navigation.goBack()}
-              >
+              <Text style={styles(theme).btnTxt} onPress={() => navigation.goBack()}>
                 Cancel
               </Text>
-              <Text style={{fontWeight: '500', fontSize: 20}}>Create Group</Text>
+              <Text style={{ fontWeight: '500', fontSize: 20 }}>Create Group</Text>
               <TouchableOpacity
-
                 onPress={() => {
                   onCreateGroup();
                   console.log(group.groupCode);
@@ -319,15 +309,6 @@ export default function CreateGroup({ navigation }) {
           }}
         ></View>
       </View>
-
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-      </Snackbar>
     </View>
   );
 }

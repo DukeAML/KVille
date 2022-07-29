@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
 } from 'react-native';
-import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
@@ -28,6 +27,7 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 let availability = new Array(336);
 availability.fill(true);
@@ -38,8 +38,6 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState('');
   const [name, setName] = useState('');
   const [dimensions, setDimensions] = useState({ window });
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -72,8 +70,8 @@ export default function JoinGroup({ navigation }) {
   async function onJoinGroup(navigation) {
     console.log('group code', groupCode);
     if (groupCode == '') {
-      toggleSnackBar();
-      setSnackMessage('Enter group code');
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Enter group code'));
       return;
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -91,8 +89,8 @@ export default function JoinGroup({ navigation }) {
             console.log(collSnap.size);
             if (collSnap.size == 12) {
               console.log('Group is full');
-              toggleSnackBar();
-              setSnackMessage('Group already full');
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Group already full'));
               return 'full';
             }
           });
@@ -143,8 +141,8 @@ export default function JoinGroup({ navigation }) {
                   });
                 });
             } else {
-              toggleSnackBar();
-              setSnackMessage('Name already taken');
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Name already taken'));
             }
           });
           return
@@ -153,15 +151,11 @@ export default function JoinGroup({ navigation }) {
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
         console.log('No group exists');
-        toggleSnackBar();
-        setSnackMessage("Invalid group code: group doesn't exist");
+        dispatch(toggleSnackBar());
+        dispatch(setSnackMessage("Invalid group code: group doesn't exist"));
         return;
       }
     });
-  }
-
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
   }
 
   return (
@@ -265,14 +259,6 @@ export default function JoinGroup({ navigation }) {
           }}
         ></View>
       </View>
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-      </Snackbar>
     </View>
   );
 }

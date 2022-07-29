@@ -138,6 +138,7 @@ export default function App() {
                 />
               </Stack.Navigator>
               <StatusBar style='light' />
+              <Snackbar />
             </NavigationContainer>
           </ThemeProvider>
         </PersistGate>
@@ -151,7 +152,6 @@ export default function App() {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ThemeProvider>
-            <Snackbar/>
             <NavigationStack />
           </ThemeProvider>
         </PersistGate>
