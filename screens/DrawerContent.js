@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Title, Drawer, Switch } from 'react-native-paper';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -106,21 +106,6 @@ export default function DrawerContent(props) {
             <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Title style={styles.title}>Krzyzewskiville</Title>
             </View>
-
-            {/* <View style={styles.row}>
-              <View style={styles.section}>
-                <Paragraph style={[styles.paragraph, styles.caption]}>
-                  80
-                </Paragraph>
-                <Caption style={styles.caption}>Following</Caption>
-              </View>
-              <View style={styles.section}>
-                <Paragraph style={[styles.paragraph, styles.caption]}>
-                  100
-                </Paragraph>
-                <Caption style={styles.caption}>Followers</Caption>
-              </View>
-            </View> */}
           </View>
 
           <Drawer.Section style={styles.drawerSection}>
@@ -190,46 +175,25 @@ export default function DrawerContent(props) {
           <Drawer.Section title='Status'>
             <View style={styles.status}>
               <Text style={{ color: '#000' }}>In Tent</Text>
-              <Switch value={status} onValueChange={onToggleSwitch} />
+              <Switch value={status} onValueChange={onToggleSwitch} color='#3eb489' />
             </View>
           </Drawer.Section>
-          <View
-            style={{
-              width: '100%',
-              height: '10%',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 50,
-            }}
-          >
-            <TouchableOpacity
-              onPress={toggleConfirmation}
-              style={{
-                borderRadius: 50,
-                backgroundColor: '#e5e5e5',
-                width: '50%',
-                height: '80%',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ color: '' }}>Log out</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* <DrawerItem
-            label='Log out'
-            onPress={() => onLogout()}
-            labelStyle={{ textAlign: 'center', borderWidth: 1, width: '100%' }}
-            style={{ justifyContent: 'center', borderWidth: 1, paddingRight: 0 }}
-          /> */}
         </View>
       </DrawerContentScrollView>
+      <Drawer.Section style={styles.bottomDrawerSection}>
+        <DrawerItem
+          icon={({ color, size }) => <Icon name='logout' color={color} size={size} />}
+          label='Log Out'
+          onPress={toggleConfirmation}
+        />
+      </Drawer.Section>
 
       <ConfirmationModal
         body={'Are you sure you want to log out?'}
         buttonText={'Log out'}
-        buttonAction={() => {onLogout();}}
+        buttonAction={() => {
+          onLogout();
+        }}
         toggleModal={toggleConfirmation}
         isVisible={isConfirmationVisible}
         onBackdropPress={toggleConfirmation}
