@@ -215,7 +215,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               value={values.newUserName}
             />
 
-            {groupRole === 'Creator' ? (
+            {groupRole === 'Creator' || groupRole == 'Admin' ? (
               <View style={{ width: '100%', alignItems: 'center', height: '55%' }}>
                 <View style={styles(theme).headerContainer}>
                   <Text style={styles(theme).headerText}>Group Name</Text>
@@ -241,7 +241,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               </View>
             ) : null}
 
-            {groupRole == 'Creator' ? (
+            {groupRole == 'Creator' || groupRole == 'Admin' ? (
               <ActionSheetModal
                 isVisible={isTentChangeVisible}
                 onBackdropPress={toggleTentChange}

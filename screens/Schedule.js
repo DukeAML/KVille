@@ -21,7 +21,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { FAB, Portal, Provider } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -60,6 +60,7 @@ const win = Dimensions.get('window'); //Global Var for screen size
 export default function Schedule({ route }) {
   const { code, tentType } = route.params; //parameters needed: groupCode and tentType
   //console.log('Schedule screen params', route.params);
+  const groupRole = useSelector((state)=>state.user.currGroupRole);
 
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
@@ -334,7 +335,7 @@ export default function Schedule({ route }) {
           ? colorCodes.current[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
-    if (weekDisplay == 'Current Week') {
+    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') ) {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
@@ -361,7 +362,7 @@ export default function Schedule({ route }) {
           </TouchableOpacity>
         </View>
       );
-    } else if (weekDisplay == 'Previous Week') {
+    } else {
       return (
         <View style={{ flex: 1 }}>
           <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>

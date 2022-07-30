@@ -457,13 +457,13 @@ export default function GroupInfo({ route, navigation }) {
             height={180}
             userStyle={'dark'}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing member role
               style={styles(theme).roleChangeListItem}
             >
               <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }} />
               <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Creator</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
