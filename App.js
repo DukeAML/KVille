@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
+import { Platform } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
@@ -12,6 +13,8 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -42,22 +45,58 @@ const Stack = createNativeStackNavigator();
 
 const queryClient = new QueryClient();
 
-TaskManager.defineTask('KVILLE', ({ data: { eventType, region }, error }) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-  if (eventType === Location.GeofencingEventType.Enter) {
-    console.log("You've entered region:", region);
-  } else if (eventType === Location.GeofencingEventType.Exit) {
-    console.log("You've left region:", region);
-  }
-});
-
 export default function App() {
   const [state, setState] = useState({
     isReady: false,
   });
+
+  TaskManager.defineTask('KVILLE', ({ data: { eventType, region }, error }) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (eventType === Location.GeofencingEventType.Enter) {
+      console.log("You've entered region:", region);
+      if (state.loggedIn) {
+        updateTentStatus(true);
+      }
+    } else if (eventType === Location.GeofencingEventType.Exit) {
+      console.log("You've left region:", region);
+      if (state.loggedIn) {
+        updateTentStatus(false);
+      }
+    }
+  });
+
+  async function updateTentStatus(status) {
+    const currentUser = firebase.auth().currentUser.uid;
+    console.log(currentUser);
+    if (currentUser != null) {
+      let groupCodes;
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(currentUser)
+        .get()
+        .then((doc) => {
+          groupCodes = doc.data().groupCode;
+        })
+        .catch((error) => console.error(error));
+      console.log('groupCodes', groupCodes);
+      for (let i = 0; i < groupCodes.length; i++) {
+        firebase
+          .firestore()
+          .collection('groups')
+          .doc(groupCodes[i].groupCode)
+          .collection('members')
+          .doc(currentUser)
+          .update({
+            inTent: status,
+          })
+          .catch((error) => console.error(error));
+      }
+    }
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -96,11 +135,13 @@ export default function App() {
           return;
         } else {
           console.log('geofencing started');
-          Location.startGeofencingAsync('KVILLE', [{ latitude: -82.222604, longitude: 34.82397, radius: 1000 }]);
+          Location.startGeofencingAsync('KVILLE', [{ latitude: 35.997435, longitude: -78.940823, radius: 150 }]);
         }
       }
     }
-    location();
+    if (Platform.OS !== 'web') {
+      location();
+    }
     if (mounted) {
       prepare();
     }
