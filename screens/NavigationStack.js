@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Linking, Platform } from 'react-native';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
@@ -31,7 +31,7 @@ import { ActionSheetModal } from '../components/ActionSheetModal';
 import Snackbar from '../components/Snackbar';
 
 const Drawer = createDrawerNavigator();
-//const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function NavigationStack() {
   //uncomment this to reset redux states
@@ -108,45 +108,6 @@ export default function NavigationStack() {
 
   //Navigation State persistence, saves user's location in app
   useEffect(() => {
-    //   const restoreState = async () => {
-    //     try {
-    //       const initialUrl = await Linking.getInitialURL();
-
-    //       if (initialUrl == null) {
-    //         // Only restore state if there's no deep link and we're not on web
-    //         const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
-    //         const state = savedStateString
-    //           ? JSON.parse(savedStateString)
-    //           : undefined;
-
-    //         if (state !== undefined) {
-    //           setInitialState(state);
-    //         }
-    //       }
-    //     } finally {
-    //       setIsReady(true);
-    //     }
-    //   };
-    // if (!isReady) {
-    //   restoreState();
-    // }
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Tell the application to render
-        setIsReady(true);
-      }
-    }
-
-    prepare();
-  }, [isReady]);
-
-  useEffect(() => {
-    // clearData(dispatch);
-    // fetchUser(dispatch);
     let mounted = true;
     dispatch(reset());
     firebase
@@ -167,15 +128,74 @@ export default function NavigationStack() {
       .catch((error) => {
         console.error(error);
       });
+    const restoreState = async () => {
+      try {
+        const initialUrl = await Linking.getInitialURL();
+        console.log('initialUrl', initialUrl);
 
-    return () => (mounted = false);
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (isReady) {
-      await SplashScreen.hideAsync();
+        if (Platform.OS !== 'web' && initialUrl == null) {
+          // Only restore state if there's no deep link and we're not on web
+          const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+          const state = savedStateString ? JSON.parse(savedStateString) : undefined;
+          console.log('state', state);
+          if (state !== undefined) {
+            setInitialState(state);
+          }
+        }
+      } finally {
+        setIsReady(true);
+      }
+    };
+    if (!isReady) {
+      restoreState();
     }
+    // async function prepare() {
+    //   try {
+    //     await SplashScreen.preventAutoHideAsync();
+    //   } catch (e) {
+    //     console.warn(e);
+    //   } finally {
+    //     // Tell the application to render
+    //     setIsReady(true);
+    //   }
+    // }
+
+    // prepare();
+    return () => (mounted = false);
   }, [isReady]);
+
+  // useEffect(() => {
+  //   // clearData(dispatch);
+  //   // fetchUser(dispatch);
+  //   let mounted = true;
+  //   dispatch(reset());
+  //   firebase
+  //     .firestore()
+  //     .collection('users')
+  //     .doc(firebase.auth().currentUser.uid)
+  //     .get()
+  //     .then((snapshot) => {
+  //       if (mounted && snapshot.exists) {
+  //         dispatch(setCurrentUser(snapshot.data()));
+  //       } else {
+  //         console.log('does not exist');
+  //       }
+  //     })
+  //     .then(() => {
+  //       console.log('cleared data and fetched user');
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+
+  //   return () => (mounted = false);
+  // }, []);
+
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (isReady) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [isReady]);
 
   if (!isReady) {
     return null;
@@ -185,11 +205,11 @@ export default function NavigationStack() {
     <View style={{ flex: 1, zIndex: 1 }}>
       <NavigationContainer
         initialState={initialState}
-        onReady={onLayoutRootView}
-        // onStateChange={(state) =>
-        //   AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-        // }
-        
+        //onReady={onLayoutRootView}
+        onStateChange={(state) => {
+          console.log('state', state);
+          AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
+        }}
       >
         <Drawer.Navigator
           initialRouteName='Start'
