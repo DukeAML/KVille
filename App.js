@@ -8,6 +8,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
 
 import firebase from 'firebase/compat/app';
 
@@ -40,6 +42,18 @@ const Stack = createNativeStackNavigator();
 
 const queryClient = new QueryClient();
 
+TaskManager.defineTask('KVILLE', ({ data: { eventType, region }, error }) => {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  if (eventType === Location.GeofencingEventType.Enter) {
+    console.log("You've entered region:", region);
+  } else if (eventType === Location.GeofencingEventType.Exit) {
+    console.log("You've left region:", region);
+  }
+});
+
 export default function App() {
   const [state, setState] = useState({
     isReady: false,
@@ -51,24 +65,6 @@ export default function App() {
       try {
         await SplashScreen.preventAutoHideAsync();
 
-        // const user = await AsyncStorage.getItem('USER');
-        // const userObj = JSON.parse(user)
-        // if (userObj != null) {
-        //   console.log('user', userObj);
-        //   firebase
-        //     .auth()
-        //     .updateCurrentUser(userObj)
-        //     .then(() => {
-        //       console.log('login successful');
-        //     })
-        //     .catch((error) => {
-        //       console.log(error);
-        //     });
-        //   //return;
-        // }
-        // LogBox.ignoreLogs([
-        //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
-        // ]);
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({
@@ -87,6 +83,24 @@ export default function App() {
         console.warn(e);
       }
     }
+    async function location() {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
+      } else {
+        let { status } = await Location.requestBackgroundPermissionsAsync();
+        console.log(status);
+        if (status !== 'granted') {
+          console.log('Background permissions were denied');
+          return;
+        } else {
+          console.log('geofencing started');
+          Location.startGeofencingAsync('KVILLE', [{ latitude: -82.222604, longitude: 34.82397, radius: 1000 }]);
+        }
+      }
+    }
+    location();
     if (mounted) {
       prepare();
     }
