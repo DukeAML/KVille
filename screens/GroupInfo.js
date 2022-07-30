@@ -9,6 +9,7 @@ import {
   RefreshControl,
   TextInput,
   SafeAreaView,
+  Keyboard,
 } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -33,8 +34,11 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
 
-export default function GroupInfo({ route, navigation }) {
-  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+export default function GroupInfo({ navigation }) {
+  //const { groupCode } = route.params; // take in navigation parameters
+  const groupCode = useSelector((state)=>state.user.currGroupCode);
+  const groupName = useSelector((state)=>state.user.currGroupName);
+  const groupRole = useSelector((state)=>state.user.currGroupRole);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -58,6 +62,7 @@ export default function GroupInfo({ route, navigation }) {
     setRoleChangeVisible(!isRoleChangeVisible);
   }
   function toggleSettings() {
+    Keyboard.dismiss();
     setSettingsVisible(!isSettingsVisible);
   }
 
@@ -66,7 +71,7 @@ export default function GroupInfo({ route, navigation }) {
     () => fetchGroupMembers(groupCode),
     { initialData: [] }
   );
-  useRefreshOnFocus(refetch);
+  //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
@@ -75,7 +80,7 @@ export default function GroupInfo({ route, navigation }) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
     let data = [{}];
-    await SplashScreen.preventAutoHideAsync();
+    //await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
       .get()
@@ -142,7 +147,7 @@ export default function GroupInfo({ route, navigation }) {
         console.error(error);
         throw error;
       });
-    console.log('groupInfo data', data);
+    //console.log('groupInfo data', data);
     return data;
   }
 
@@ -239,11 +244,11 @@ export default function GroupInfo({ route, navigation }) {
     toggleModal();
   }
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (!isLoading) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [isLoading]);
 
   const RenderRightActions = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -282,14 +287,21 @@ export default function GroupInfo({ route, navigation }) {
       >
         <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
           <Text style={styles(theme).listText}>{item.name}</Text>
-          <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text>
+          {item.inTent ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: theme.text1 }}>In Tent</Text>
+              <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+            </View>
+          ) : null}
+          {/* <Text style={styles(theme).listText}>Scheduled Hrs: {item.hours} hrs</Text> */}
         </View>
       </TouchableOpacity>
     );
   };
 
   //Render Item for Each List Item of group members
-  const Member = ({ name, id, hours, role, backgroundColor }) => {
+  const Member = ({ name, id, hours, role, inTent }) => {
+    const backgroundColor = inTent ? { backgroundColor: '#3eb489' } : { backgroundColor: '#1f509a' };
     return (
       <TouchableOpacity
         onPress={() => {
@@ -305,13 +317,25 @@ export default function GroupInfo({ route, navigation }) {
           >
             <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
               <Text style={styles(theme).listText}>{name}</Text>
-              <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
+              {inTent ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ color: theme.text1 }}>In Tent</Text>
+                  <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+                </View>
+              ) : null}
+              {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
             </View>
           </Swipeable>
         ) : (
           <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
             <Text style={styles(theme).listText}>{name}</Text>
-            <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text>
+            {inTent ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ color: theme.text1 }}>In Tent</Text>
+                <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
+              </View>
+            ) : null}
+            {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
           </View>
         )}
       </TouchableOpacity>
@@ -320,10 +344,7 @@ export default function GroupInfo({ route, navigation }) {
 
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
-    const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
-    return (
-      <Member name={item.name} id={item.id} hours={item.hours} role={item.role} backgroundColor={{ backgroundColor }} />
-    );
+    return <Member name={item.name} id={item.id} hours={item.hours} role={item.role} inTent={item.inTent} />;
   };
 
   if (isLoading || !fontsLoaded) {
@@ -336,8 +357,7 @@ export default function GroupInfo({ route, navigation }) {
   return (
     <SafeAreaView
       style={styles(theme).container}
-      onLayout={onLayoutRootView}
-      //showsVerticalScrollIndicator={false}
+      //onLayout={onLayoutRootView}
     >
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
@@ -358,6 +378,7 @@ export default function GroupInfo({ route, navigation }) {
       </View>
 
       {/* List of Members in Group*/}
+      <Text style={styles(theme).header}>Members</Text>
       <FlatList
         data={data.slice(1)}
         renderItem={renderMember}
@@ -439,13 +460,13 @@ export default function GroupInfo({ route, navigation }) {
             height={180}
             userStyle={'dark'}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => postGroupRole.mutate({ groupRole: 'Creator', groupCode })} //change to changing member role
               style={styles(theme).roleChangeListItem}
             >
               <Icon name='chess-king' color={theme.text1} size={25} style={{ marginRight: 15 }} />
               <Text style={[styles(theme).modalText, { color: theme.text1, marginRight: 15 }]}>Creator</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={() => postGroupRole.mutate({ groupRole: 'Admin', groupCode })}
@@ -613,5 +634,10 @@ const styles = (theme) =>
       shadowOffset: { width: -2, height: 3 },
       shadowOpacity: 0.2,
       shadowRadius: 3,
+    },
+    highlightShadow: {
+      shadowColor: '#ff0',
+      shadowRadius: 10,
+      shadowOpacity: 0.8,
     },
   });

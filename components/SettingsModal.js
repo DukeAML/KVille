@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Snackbar } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -13,86 +14,130 @@ import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSl
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { ActionSheetModal } from './ActionSheetModal';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 export default function SettingsModal({ params, navigation, toggleModal }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
+  const [isModalSnackVisible, setModalSnackVisible] = useState(false);
+  const [modalSnackMessage, setModalSnackMessage] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
 
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-  function onSave({ groupName, userName, tentType }) {
+  const postSave = useOnSave(groupCode);
+
+  function useOnSave(groupCode) {
+    const queryClient = useQueryClient();
+    return useMutation((options) => onSave(options), {
+      onError: (error) => {
+        console.error(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['group', groupCode]);
+      },
+    });
+  }
+
+  function onSave(options) {
+    const { newGroupName, newUserName, newTentType } = options;
     let groupIndex;
     let groupCodeArr;
-    userRef
-      .get()
-      .then((userDoc) => {
-        groupCodeArr = userDoc.data().groupCode;
-        groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
-        console.log('group index', groupIndex);
-        groupCodeArr[groupIndex] = {
-          groupCode: groupCode,
-          groupName: groupName,
-        };
-        return userDoc;
-      })
-      .then((doc) => {
-        userRef
-          .update({
-            groupCode: groupCodeArr,
-          })
-          .then(() => {
-            console.log('successfully saved groupName');
-          })
-          .catch((error) => {
-            console.log(error);
-            toggleSnackBar();
-            setSnackMessage('Error saving group name');
+    let valid = true;
+
+    if (newGroupName != groupName || newTentType != tentType) {
+      userRef
+        .get()
+        .then((userDoc) => {
+          groupCodeArr = userDoc.data().groupCode;
+          groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
+          console.log('group index', groupIndex);
+          groupCodeArr[groupIndex] = {
+            groupCode: groupCode,
+            groupName: newGroupName,
+          };
+          return userDoc;
+        })
+        .then((doc) => {
+          userRef
+            .update({
+              groupCode: groupCodeArr,
+            })
+            .then(() => {
+              console.log('successfully saved groupName');
+            })
+            .catch((error) => {
+              console.log(error);
+              setModalSnackMessage('Error saving group name');
+              toggleModalSnackBar();
+              return;
+            });
+        });
+      groupRef
+        .update({
+          name: newGroupName,
+          tentType: newTentType,
+        })
+        .then(() => {
+          console.log('successfully saved group settings');
+        })
+        .catch((error) => {
+          console.log(error);
+          setModalSnackMessage('Error saving group settings');
+          toggleModalSnackBar();
+          return;
+        });
+      dispatch(setTentType(newTentType));
+      dispatch(setGroupName(newGroupName));
+    }
+
+    if (newUserName != userName) {
+      groupRef
+        .collection('members')
+        .where('name', '==', newUserName)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            groupRef
+              .collection('members')
+              .doc(firebase.auth().currentUser.uid)
+              .update({
+                name: newUserName,
+              })
+              .then(() => {
+                console.log('successfully updated name');
+              })
+              .catch((error) => {
+                console.log(error);
+                setModalSnackMessage('Error saving user name');
+                toggleModalSnackBar();
+                return;
+              });
+            dispatch(setUserName(newUserName));
+          } else {
+            setModalSnackMessage('Username taken');
+            toggleModalSnackBar();
+            valid = false
             return;
-          });
-      });
-
-    groupRef
-      .update({
-        name: groupName,
-        tentType: tentType,
-      })
-      .then(() => {
-        console.log('successfully saved group settings');
-      })
-      .catch((error) => {
-        console.log(error);
-        toggleSnackBar();
-        setSnackMessage('Error saving group settings');
-        return;
-      });
-
-    groupRef
-      .collection('members')
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        name: userName,
-      })
-      .then(() => {
-        console.log('successfully updated name');
-      })
-      .catch((error) => {
-        console.log(error);
-        toggleSnackBar();
-        setSnackMessage('Error saving user name');
-        return;
-      });
-    dispatch(setUserName(userName));
-    dispatch(setTentType(tentType));
-    dispatch(setGroupName(groupName));
-    toggleSnackBar();
-    setSnackMessage('Saved');
-    toggleModal();
+          }
+        })
+        .then(() => {
+          if (valid) {
+            dispatch(toggleSnackBar());
+            dispatch(setSnackMessage('Saved'));
+            toggleModal();
+          }
+        });
+    } else {
+      if (valid) {
+        dispatch(toggleSnackBar());
+        dispatch(setSnackMessage('Saved'));
+        toggleModal();
+      }
+    }
   }
 
   function leaveGroup() {
@@ -131,15 +176,15 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   function toggleTentChange() {
     setTentChangeVisible(!isTentChangeVisible);
   }
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
+  function toggleModalSnackBar() {
+    setModalSnackVisible(!isModalSnackVisible);
   }
 
   return (
     <View style={styles(theme).settingsContainer}>
       <Formik
-        initialValues={{ userName: userName, groupName: groupName, tentType: tentType }}
-        onSubmit={(values) => onSave(values)}
+        initialValues={{ newUserName: userName, newGroupName: groupName, newTentType: tentType }}
+        onSubmit={(values) => postSave.mutate(values)}
         style={{ borderWidth: 1 }}
       >
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched, values }) => (
@@ -152,7 +197,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                 Settings
               </Text>
 
-              <TouchableOpacity onPress={handleSubmit} >
+              <TouchableOpacity onPress={handleSubmit}>
                 <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
               </TouchableOpacity>
             </View>
@@ -162,27 +207,27 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
             </View>
             <TextInput
-              name='userName'
+              name='newUserName'
               placeholder='User Name'
               style={styles(theme).textInput}
-              onChangeText={handleChange('userName')}
-              onBlur={handleBlur('userName')}
-              value={values.userName}
+              onChangeText={handleChange('newUserName')}
+              onBlur={handleBlur('newUserName')}
+              value={values.newUserName}
             />
 
-            {groupRole === 'Creator' ? (
+            {groupRole === 'Creator' || groupRole == 'Admin' ? (
               <View style={{ width: '100%', alignItems: 'center', height: '55%' }}>
                 <View style={styles(theme).headerContainer}>
                   <Text style={styles(theme).headerText}>Group Name</Text>
                   <Icon name='circle-edit-outline' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
                 <TextInput
-                  name='groupName'
+                  name='newGroupName'
                   placeholder='Group Name'
                   style={styles(theme).textInput}
-                  onChangeText={handleChange('groupName')}
-                  onBlur={handleBlur('groupName')}
-                  value={values.groupName}
+                  onChangeText={handleChange('newGroupName')}
+                  onBlur={handleBlur('newGroupName')}
+                  value={values.newGroupName}
                 />
 
                 <View style={styles(theme).headerContainer}>
@@ -190,13 +235,13 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                   <Icon name='home-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
                 </View>
                 <TouchableOpacity onPress={toggleTentChange} style={styles(theme).tentChangeBtn}>
-                  <Text style={styles(theme).modalText}>{values.tentType}</Text>
+                  <Text style={styles(theme).modalText}>{values.newTentType}</Text>
                   <Icon name='chevron-down' color={theme.grey2} size={20} />
                 </TouchableOpacity>
               </View>
             ) : null}
 
-            {groupRole == 'Creator' ? (
+            {groupRole == 'Creator' || groupRole == 'Admin' ? (
               <ActionSheetModal
                 isVisible={isTentChangeVisible}
                 onBackdropPress={toggleTentChange}
@@ -208,8 +253,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'Black');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'Black');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }} //change to changing tent type
                   style={styles(theme).tentChangeListItem}
@@ -219,8 +264,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
 
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'Blue');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'Blue');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }}
                   style={styles(theme).tentChangeListItem}
@@ -230,8 +275,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
 
                 <TouchableOpacity
                   onPress={() => {
-                    setFieldValue('tentType', 'White');
-                    setFieldTouched('tentType');
+                    setFieldValue('newTentType', 'White');
+                    setFieldTouched('newTentType');
                     toggleTentChange();
                   }}
                   style={[styles(theme).tentChangeListItem, { borderBottomWidth: 0 }]}
@@ -261,7 +306,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
         buttonAction={() => {
           leaveGroup();
-          navigation.navigate('Start');
+          navigation.navigate('Home');
         }}
         toggleModal={toggleConfirmation}
         isVisible={isConfirmationVisible}
@@ -270,12 +315,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         userStyle='light'
       />
       <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
+        visible={isModalSnackVisible}
+        onDismiss={() => setModalSnackVisible(false)}
         wrapperStyle={{ top: 0 }}
         duration={2000}
       >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{modalSnackMessage}</Text>
       </Snackbar>
     </View>
   );
@@ -286,7 +331,7 @@ const styles = (theme) =>
     settingsContainer: {
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       width: '100%',
       height: '100%',
       borderTopRightRadius: 20,
@@ -295,17 +340,17 @@ const styles = (theme) =>
     topBanner: {
       //for the top container holding top 'settings' and save button
       flexDirection: 'row',
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 30,
-      width: '90%',
+      width: '100%',
       paddingVertical: 10,
-      paddingBottom: 10,
       borderBottomWidth: 0.5,
       borderColor: theme.popOutBorder,
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
+      paddingHorizontal: 20,
     },
     headerContainer: {
       flexDirection: 'row',
@@ -325,7 +370,7 @@ const styles = (theme) =>
       fontWeight: '500',
     },
     textInput: {
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       paddingVertical: 10,
       paddingHorizontal: 15,
       width: '90%',
@@ -334,8 +379,8 @@ const styles = (theme) =>
       textAlign: 'left',
       borderRadius: 15,
       marginBottom: 23,
-      borderColor: theme.grey2,
-      borderWidth: 1,
+      // borderColor: theme.grey2,
+      // borderWidth: 1,
     },
     tentChangeListItem: {
       //Style of an item in the member tentChange modal (for creator only)
@@ -353,12 +398,12 @@ const styles = (theme) =>
       flexDirection: 'row',
       width: '90%',
       height: 45,
-      backgroundColor: theme.white1,
+      backgroundColor: theme.background,
       alignItems: 'center',
       justifyContent: 'space-between',
       borderRadius: 15,
-      borderColor: theme.grey2,
-      borderWidth: 1,
+      // borderColor: theme.grey2,
+      // borderWidth: 1,
       paddingHorizontal: 15,
     },
     BottomModalView: {

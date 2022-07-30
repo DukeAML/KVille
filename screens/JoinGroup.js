@@ -9,9 +9,8 @@ import {
   Image,
   Dimensions,
   KeyboardAvoidingView,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
-import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
@@ -28,6 +27,7 @@ import {
 } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 let availability = new Array(336);
 availability.fill(true);
@@ -38,8 +38,6 @@ export default function JoinGroup({ navigation }) {
   const [groupCode, setInputGroupCode] = useState('');
   const [name, setName] = useState('');
   const [dimensions, setDimensions] = useState({ window });
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -72,8 +70,8 @@ export default function JoinGroup({ navigation }) {
   async function onJoinGroup(navigation) {
     console.log('group code', groupCode);
     if (groupCode == '') {
-      toggleSnackBar();
-      setSnackMessage('Enter group code');
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Enter group code'));
       return;
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -91,8 +89,8 @@ export default function JoinGroup({ navigation }) {
             console.log(collSnap.size);
             if (collSnap.size == 12) {
               console.log('Group is full');
-              toggleSnackBar();
-              setSnackMessage('Group already full');
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Group already full'));
               return 'full';
             }
           });
@@ -100,54 +98,64 @@ export default function JoinGroup({ navigation }) {
         if (result == 'full') {
           return;
         }
-        groupName = docSnapshot.data().name;
-        dispatch(setGroupCode(groupCode));
-        dispatch(setUserName(name));
-        dispatch(setGroupName(groupName));
-        dispatch(setTentType(docSnapshot.data().tentType));
-        dispatch(setGroupRole('Member'));
-        //updates current user's info
-        await userRef.update({
-          groupCode: firebase.firestore.FieldValue.arrayUnion({
-            groupCode: groupCode,
-            groupName: docSnapshot.data().name,
-          }),
-        });
-        //adds current user to member list
-        await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
-          groupRole: 'Member',
-          name: name,
-          inTent: false,
-          availability: availability,
-          scheduledHrs: 0,
-          shifts: [],
-        });
-        await userRef
+
+        groupRef
+          .collection('members')
+          .where('name', '==', name)
           .get()
-          .then((snapshot) => {
-            dispatch(setCurrentUser(snapshot.data()));
-            return snapshot;
-          })
-          .then((snapshot) => {
-            navigation.navigate('GroupInfo', {
-              groupCode: groupCode,
-              groupName: groupName,
-              groupRole: 'Member',
-            });
+          .then(async (snapshot) => {
+            if (snapshot.empty) {
+              groupName = docSnapshot.data().name;
+              dispatch(setGroupCode(groupCode));
+              dispatch(setUserName(name));
+              dispatch(setGroupName(groupName));
+              dispatch(setTentType(docSnapshot.data().tentType));
+              dispatch(setGroupRole('Member'));
+              //updates current user's info
+              await userRef.update({
+                groupCode: firebase.firestore.FieldValue.arrayUnion({
+                  groupCode: groupCode,
+                  groupName: docSnapshot.data().name,
+                }),
+              });
+              //adds current user to member list
+              await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
+                groupRole: 'Member',
+                name: name,
+                inTent: false,
+                availability: availability,
+                scheduledHrs: 0,
+                shifts: [],
+              });
+              await userRef
+                .get()
+                .then((snapshot) => {
+                  dispatch(setCurrentUser(snapshot.data()));
+                  return snapshot;
+                })
+                .then((snapshot) => {
+                  navigation.navigate('GroupInfo', {
+                    groupCode: groupCode,
+                    groupName: groupName,
+                    groupRole: 'Member',
+                  });
+                });
+            } else {
+              dispatch(toggleSnackBar());
+              dispatch(setSnackMessage('Name already taken'));
+            }
           });
+          return
+
         // dispatch(inGroup());
         // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
       } else {
         console.log('No group exists');
-        toggleSnackBar();
-        setSnackMessage("Invalid group code: group doesn't exist");
+        dispatch(toggleSnackBar());
+        dispatch(setSnackMessage("Invalid group code: group doesn't exist"));
         return;
       }
     });
-  }
-
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
   }
 
   return (
@@ -181,7 +189,7 @@ export default function JoinGroup({ navigation }) {
 
             <TextInput
               style={[styles(theme).textInput, styles(theme).shadowProp]}
-              autoFocus={true}
+              //autoFocus={true}
               onChangeText={(code) => setInputGroupCode(code.trim())}
               value={groupCode}
               placeholder='Enter Group Code'
@@ -251,14 +259,6 @@ export default function JoinGroup({ navigation }) {
           }}
         ></View>
       </View>
-      <Snackbar
-        visible={isSnackVisible}
-        onDismiss={() => setSnackVisible(false)}
-        wrapperStyle={{ top: 0 }}
-        duration={2000}
-      >
-        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-      </Snackbar>
     </View>
   );
 }

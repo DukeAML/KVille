@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
 
@@ -32,6 +34,7 @@ import NavigationStack from './screens/NavigationStack';
 import ForgotPasswordScreen from './components/auth/ForgotPassword';
 import { persistor, store } from './redux/store/index';
 import ThemeProvider from './context/ThemeProvider';
+import Snackbar from './components/Snackbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +50,22 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
+
+        // const user = await AsyncStorage.getItem('USER');
+        // const userObj = JSON.parse(user)
+        // if (userObj != null) {
+        //   console.log('user', userObj);
+        //   firebase
+        //     .auth()
+        //     .updateCurrentUser(userObj)
+        //     .then(() => {
+        //       console.log('login successful');
+        //     })
+        //     .catch((error) => {
+        //       console.log(error);
+        //     });
+        //   //return;
+        // }
         // LogBox.ignoreLogs([
         //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
         // ]);
@@ -57,6 +76,7 @@ export default function App() {
               loggedIn: false,
             });
           } else {
+            //AsyncStorage.setItem('USER', JSON.stringify(user));
             setState({
               isReady: true,
               loggedIn: true,
@@ -99,16 +119,8 @@ export default function App() {
           <ThemeProvider>
             <NavigationContainer onReady={onLayoutRootView}>
               <Stack.Navigator initialRouteName='Login'>
-                <Stack.Screen
-                  name='Register'
-                  component={RegisterScreen}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='Login'
-                  component={LoginScreen}
-                  options={{ headerShown: false }}
-                />
+                <Stack.Screen name='Register' component={RegisterScreen} options={{ headerShown: false }} />
+                <Stack.Screen name='Login' component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                   name='ForgotPassword'
                   component={ForgotPasswordScreen}
@@ -125,6 +137,8 @@ export default function App() {
                   })}
                 />
               </Stack.Navigator>
+              <StatusBar style='light' />
+              <Snackbar />
             </NavigationContainer>
           </ThemeProvider>
         </PersistGate>
@@ -136,9 +150,11 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider>
-          <NavigationStack />
-        </ThemeProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider>
+            <NavigationStack />
+          </ThemeProvider>
+        </PersistGate>
       </Provider>
     </QueryClientProvider>
   );

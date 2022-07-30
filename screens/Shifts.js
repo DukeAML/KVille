@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, SectionList, RefreshControl }
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { Divider } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -36,14 +36,11 @@ const colorMapping = {
   'Night Shift': '#E5DBFF',
 };
 
-export default function Shifts({ route }) {
-  const { groupCode } = route.params;
-  //console.log('availability params', route.params);
+export default function Shifts() {
+  const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
 
   const { theme } = useTheme();
   const shifts = useRef();
@@ -73,7 +70,7 @@ export default function Shifts({ route }) {
     let parsedShifts = [
       {
         title: 'Sunday',
-        data: []
+        data: [],
       },
       {
         title: 'Monday',
@@ -99,7 +96,6 @@ export default function Shifts({ route }) {
         title: 'Saturday',
         data: [],
       },
-
     ];
     for (let i = 0; i < shifts.current.length; i++) {
       if (shifts.current[i]) {
@@ -182,10 +178,10 @@ export default function Shifts({ route }) {
     const shiftTime =
       startHour > 6 && startTimeOfDay == 0
         ? 'Morning Shift'
-        : startHour > 12 && startHour <= 5 && startTimeOfDay == 1
+        : startHour > 0 && startHour <= 5 && startTimeOfDay == 1
         ? 'Afternoon Shift'
         : 'Night Shift';
-    const sameDay = dayMapping[startDay] != dayMapping[endDay];
+    //const sameDay = dayMapping[startDay] != dayMapping[endDay];
 
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
@@ -232,10 +228,13 @@ export default function Shifts({ route }) {
         sections={data}
         keyExtractor={(item, index) => item + index}
         renderItem={RenderShift}
-        renderSectionHeader={({ section: { title, data } }) => data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null}
+        renderSectionHeader={({ section: { title, data } }) =>
+          data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null
+        }
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyComponent />}
+        stickySectionHeadersEnabled={false}
+        //ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );
@@ -271,7 +270,6 @@ const styles = (theme) =>
     sectionHeader: {
       fontSize: 24,
       marginLeft: '10%',
-
     },
     shadowProp: {
       //shadow for the group cards

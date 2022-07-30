@@ -16,11 +16,12 @@ import {
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
-import { Snackbar, Divider, Badge } from 'react-native-paper';
+import { Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { FAB, Portal, Provider } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import firebase from 'firebase/compat/app';
@@ -34,6 +35,7 @@ import { ConfirmationModal } from '../components/ConfirmationModal';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -55,15 +57,13 @@ let prevSchedule = new Array();
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
-export default function Schedule({ route }) {
-  const { code, tentType } = route.params; //parameters needed: groupCode and tentType
-  //console.log('Schedule screen params', route.params);
-
+export default function Schedule() {
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
-  const [isSnackVisible, setSnackVisible] = useState(false); // for temporary popup
-  const [snackMessage, setSnackMessage] = useState(''); //message for the temporary popup
   const [fabState, setFabState] = useState({ open: false });
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
   const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
@@ -79,10 +79,11 @@ export default function Schedule({ route }) {
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
   const { open } = fabState;
+  const dispatch = useDispatch();
 
   const { isLoading, isError, error, refetch, data } = useQuery(
-    ['groupSchedule', firebase.auth().currentUser.uid, code, weekDisplay],
-    () => fetchGroupSchedule(code, weekDisplay),
+    ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
+    () => fetchGroupSchedule(groupCode, weekDisplay),
     { initialData: [] }
   );
   //useRefreshOnFocus(refetch);
@@ -117,7 +118,7 @@ export default function Schedule({ route }) {
     return prevSchedule;
   }
 
-  const postEditCell = useEditCell(code, weekDisplay);
+  const postEditCell = useEditCell(groupCode, weekDisplay);
 
   function useEditCell(groupCode, weekDisplay) {
     const queryClient = useQueryClient();
@@ -126,10 +127,10 @@ export default function Schedule({ route }) {
         console.error(error);
       },
       onSuccess: () => {
-        if (editSuccessful.current){
+        if (editSuccessful.current) {
           queryClient.setQueryData(
-          ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
-          newSchedule.current
+            ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
+            newSchedule.current
           );
         } else return;
       },
@@ -140,49 +141,48 @@ export default function Schedule({ route }) {
   async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    
+
     let currSchedule = data;
     //Must check if the member already exists in the array
-    if (newMember !== 'empty' && data[index].trim().split(' ').includes(newMember)){
-      setSnackMessage('Member already in chosen timeslot');
-      toggleSnackBar();
+    if (newMember !== 'empty' && data[index].trim().split(' ').includes(newMember)) {
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Member already in chosen timeslot'));
       editSuccessful.current = false;
     } else {
-      
       currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
       const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
       const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
 
-       let oldHours;
-       let newHours;
-       let oldShifts;
-       let newShifts;
-       await groupRef
-         .collection('members')
-         .doc(colorCodes.current[indexofOld].id)
-         .get()
-         .then((doc) => {
-           oldHours = doc.data().scheduledHrs - 0.5;
-           oldShifts = doc.data().shifts;
-           oldShifts[index] = false;
-         });
-       await groupRef
-         .collection('members')
-         .doc(colorCodes.current[indexofNew].id)
-         .get()
-         .then((doc) => {
-           newHours = doc.data().scheduledHrs + 0.5;
-           newShifts = doc.data().shifts;
-           newShifts[index] = true;
-         });
-       groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
-         scheduledHrs: oldHours,
-         shifts: oldShifts,
-       });
-       groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
-         scheduledHrs: newHours,
-         shifts: newShifts,
-       });
+      let oldHours;
+      let newHours;
+      let oldShifts;
+      let newShifts;
+      await groupRef
+        .collection('members')
+        .doc(colorCodes.current[indexofOld].id)
+        .get()
+        .then((doc) => {
+          oldHours = doc.data().scheduledHrs - 0.5;
+          oldShifts = doc.data().shifts;
+          oldShifts[index] = false;
+        });
+      await groupRef
+        .collection('members')
+        .doc(colorCodes.current[indexofNew].id)
+        .get()
+        .then((doc) => {
+          newHours = doc.data().scheduledHrs + 0.5;
+          newShifts = doc.data().shifts;
+          newShifts[index] = true;
+        });
+      groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
+        scheduledHrs: oldHours,
+        shifts: oldShifts,
+      });
+      groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
+        scheduledHrs: newHours,
+        shifts: newShifts,
+      });
 
       //colorCodes.current[indexofOld].changedHrs -= 0.5;
       //colorCodes.current[indexofNew].changedHrs += 0.5;
@@ -196,7 +196,7 @@ export default function Schedule({ route }) {
     }
   }
 
-  const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
+  const postSchedule = useUpdateSchedule(groupCode, tentType, weekDisplay);
 
   function useUpdateSchedule(groupCode, tentType, weekDisplay) {
     const queryClient = useQueryClient();
@@ -215,9 +215,9 @@ export default function Schedule({ route }) {
     });
   }
 
-  async function createNewGroupSchedule(code, tentType) {
+  async function createNewGroupSchedule(groupCode, tentType) {
     //let newSchedule;
-    await createGroupSchedule(code, tentType)
+    await createGroupSchedule(groupCode, tentType)
       .then((groupSchedule) => {
         console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
@@ -230,11 +230,11 @@ export default function Schedule({ route }) {
       })
       .catch((error) => {
         console.error(error);
-        setSnackMessage('Not enough members');
-        toggleSnackBar();
+        dispatch(toggleSnackBar());
+        dispatch(setSnackMessage('Not enough members'));
       });
     console.log('create new schedule', newSchedule);
-    return firebase.firestore().collection('groups').doc(code).update({
+    return firebase.firestore().collection('groups').doc(groupCode).update({
       groupSchedule: newSchedule.current,
       previousSchedule: prevSchedule,
       previousMemberArr: colorCodes.current,
@@ -255,10 +255,6 @@ export default function Schedule({ route }) {
   function toggleConfirmation() {
     //to toggle the popup for the edit confirmation
     setConfirmationVisible(!isConfirmationVisible);
-  }
-
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
   }
 
   function onFabStateChange({ open }) {
@@ -307,12 +303,8 @@ export default function Schedule({ route }) {
           }}
           style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
-          <View
-            style={{height: height, justifyContent: 'center'}}
-          >
-            <Text style={{textAlign: 'center', color: 'white', fontSize: 18}}>
-              {name}
-            </Text>
+          <View style={{ height: height, justifyContent: 'center' }}>
+            <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>{name}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -342,7 +334,7 @@ export default function Schedule({ route }) {
           ? colorCodes.current[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
-    if (weekDisplay == 'Current Week') {
+    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
@@ -354,17 +346,22 @@ export default function Schedule({ route }) {
             }}
           >
             <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
-              <Text 
-                style={person == 'empty' ? [styles(theme).btnText, {color: theme.error, fontWeight: '700'}]:
-                  styles(theme).btnText} 
-                adjustsFontSizeToFit minimumFontScale={0.5}>
+              <Text
+                style={
+                  person == 'empty'
+                    ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
+                    : styles(theme).btnText
+                }
+                adjustsFontSizeToFit
+                minimumFontScale={0.5}
+              >
                 {person}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
       );
-    } else if (weekDisplay == 'Previous Week') {
+    } else {
       return (
         <View style={{ flex: 1 }}>
           <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
@@ -515,7 +512,7 @@ export default function Schedule({ route }) {
           cancelButton={true}
           height={win.height * 0.15}
         >
-          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%'}}>
+          <TouchableOpacity onPress={toggleMemberModal} style={{ height: '50%', width: '100%' }}>
             <View
               style={{
                 flex: 1,
@@ -523,11 +520,11 @@ export default function Schedule({ route }) {
                 alignItems: 'center',
                 borderBottomWidth: 1,
                 borderColor: '#cfcfcf',
-                flexDirection: 'row'
+                flexDirection: 'row',
               }}
             >
               <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
-              <Icon name='chevron-down' color={theme.icon1} size={30} style={{marginLeft: 10}}/>
+              <Icon name='chevron-down' color={theme.icon1} size={30} style={{ marginLeft: 10 }} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -540,7 +537,7 @@ export default function Schedule({ route }) {
                   index: editIndex.current,
                   oldMember: oldMember.current,
                   newMember: newMember,
-                  groupCode: code,
+                  groupCode: groupCode,
                 });
               }
             }}
@@ -592,8 +589,8 @@ export default function Schedule({ route }) {
           buttonAction={() => {
             //toggleConfirmation();
             postSchedule.mutate();
-            setSnackMessage('New Schedule Created');
-            toggleSnackBar();
+            dispatch(setSnackMessage('New Schedule created'));
+            dispatch(toggleSnackBar());
           }}
           isVisible={isConfirmationVisible}
           onBackdropPress={() => setConfirmationVisible(false)}
@@ -653,16 +650,6 @@ export default function Schedule({ route }) {
             }}
           />
         </Portal>
-        <Snackbar
-          visible={isSnackVisible}
-          onDismiss={() => setSnackVisible(false)}
-          wrapperStyle={{ top: 40 }}
-          duration={1300}
-        >
-          <View style={{ width: '100%' }}>
-            <Text style={{ textAlign: 'center' }}>{snackMessage}</Text>
-          </View>
-        </Snackbar>
       </View>
     </Provider>
   );

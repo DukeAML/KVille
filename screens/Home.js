@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef} from 'react';
 import {
   Text,
   View,
@@ -17,6 +17,8 @@ import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
+import CountDown from 'react-native-countdown-component';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -33,6 +35,13 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 const window = Dimensions.get('window');
 
 export default function Home({ navigation }) {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isMenuVisible, setMenuVisible] = useState(false);
+  const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
+
+  const { theme } = useTheme();
+  const dispatch = useDispatch();
+
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
     fetchGroups,
@@ -53,7 +62,7 @@ export default function Home({ navigation }) {
       .get()
       .then((doc) => {
         let currGroup = doc.data().groupCode;
-        console.log("Current user's groups", currGroup);
+        //console.log("Current user's groups", currGroup);
         data = currGroup.map((group) => ({
           code: group.groupCode,
           groupName: group.groupName,
@@ -65,12 +74,6 @@ export default function Home({ navigation }) {
       });
     return data;
   }
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isMenuVisible, setMenuVisible] = useState(false);
-  const { theme } = useTheme();
-
-  const dispatch = useDispatch();
 
   function toggleModal() {
     setModalVisible(!isModalVisible);
@@ -172,7 +175,8 @@ export default function Home({ navigation }) {
     );
   };
 
-  function onLogout() {
+  async function onLogout() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
     firebase.auth().signOut();
   }
 
@@ -237,7 +241,7 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <SafeAreaView style={{ width: '100%', height: '70%' }}>
+        <SafeAreaView style={{ width: '100%', height: '50%' }}>
           <FlatList
             data={data}
             renderItem={renderGroup}
@@ -248,9 +252,35 @@ export default function Home({ navigation }) {
           />
         </SafeAreaView>
 
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
+          <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
+          <CountDown
+            size={30}
+            until={time.current}
+            onFinish={() => alert('Finished')}
+            digitStyle={{
+              backgroundColor: '#FFF',
+              borderWidth: 2,
+              borderColor: theme.primary,
+            }}
+            digitTxtStyle={{ color: theme.primary }}
+            timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
+            separatorStyle={{
+              color: theme.primary,
+              alignSelf: 'center',
+              flex: 1,
+              paddingTop: 15,
+              justifyContent: 'center',
+            }}
+            showSeparator={true}
+          />
+        </View>
+
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
+          backdropTransitionOutTiming={0}
+          keyboardDismissMode={'on-drag'}
           //customBackdrop={<View style={{ flex: 1 }} />}
         >
           <SafeAreaView style={styles(theme).popUp}>
