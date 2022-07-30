@@ -15,6 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -53,9 +54,8 @@ let availability;
 // let availabilityUI = new Array(336);
 // availabilityUI.fill([true, 0]);
 
-export default function Availability({ route }) {
-  const { groupCode } = route.params;
-  //console.log('availability params', route.params);
+export default function Availability() {
+  const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -240,7 +240,7 @@ export default function Availability({ route }) {
   }
 
   return (
-    <View style={styles(theme).container} >
+    <View style={styles(theme).container}>
       <Table borderStyle={{ borderColor: 'transparent' }}>
         <Row
           data={agenda.tableHead}
@@ -330,7 +330,7 @@ export default function Availability({ route }) {
             alignItems: 'center',
             width: '100%',
             height: '100%',
-            borderRadius: 20
+            borderRadius: 20,
           }}
         >
           <Icon name={'trash-can-outline'} color={theme.error} size={26} />
@@ -598,7 +598,7 @@ const styles = (theme) =>
       shadowOpacity: 0.9,
       shadowRadius: 10,
       elevation: 3,
-      overflow: 'visible'
+      overflow: 'visible',
     },
     row: {
       height: cellHeight,

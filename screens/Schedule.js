@@ -57,11 +57,10 @@ let prevSchedule = new Array();
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
-export default function Schedule({ route }) {
-  const { code, tentType } = route.params; //parameters needed: groupCode and tentType
-  //console.log('Schedule screen params', route.params);
-  const groupRole = useSelector((state)=>state.user.currGroupRole);
-
+export default function Schedule() {
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
+  const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -83,8 +82,8 @@ export default function Schedule({ route }) {
   const dispatch = useDispatch();
 
   const { isLoading, isError, error, refetch, data } = useQuery(
-    ['groupSchedule', firebase.auth().currentUser.uid, code, weekDisplay],
-    () => fetchGroupSchedule(code, weekDisplay),
+    ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
+    () => fetchGroupSchedule(groupCode, weekDisplay),
     { initialData: [] }
   );
   //useRefreshOnFocus(refetch);
@@ -119,7 +118,7 @@ export default function Schedule({ route }) {
     return prevSchedule;
   }
 
-  const postEditCell = useEditCell(code, weekDisplay);
+  const postEditCell = useEditCell(groupCode, weekDisplay);
 
   function useEditCell(groupCode, weekDisplay) {
     const queryClient = useQueryClient();
@@ -197,7 +196,7 @@ export default function Schedule({ route }) {
     }
   }
 
-  const postSchedule = useUpdateSchedule(code, tentType, weekDisplay);
+  const postSchedule = useUpdateSchedule(groupCode, tentType, weekDisplay);
 
   function useUpdateSchedule(groupCode, tentType, weekDisplay) {
     const queryClient = useQueryClient();
@@ -216,9 +215,9 @@ export default function Schedule({ route }) {
     });
   }
 
-  async function createNewGroupSchedule(code, tentType) {
+  async function createNewGroupSchedule(groupCode, tentType) {
     //let newSchedule;
-    await createGroupSchedule(code, tentType)
+    await createGroupSchedule(groupCode, tentType)
       .then((groupSchedule) => {
         console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
@@ -235,7 +234,7 @@ export default function Schedule({ route }) {
         dispatch(setSnackMessage('Not enough members'));
       });
     console.log('create new schedule', newSchedule);
-    return firebase.firestore().collection('groups').doc(code).update({
+    return firebase.firestore().collection('groups').doc(groupCode).update({
       groupSchedule: newSchedule.current,
       previousSchedule: prevSchedule,
       previousMemberArr: colorCodes.current,
@@ -335,7 +334,7 @@ export default function Schedule({ route }) {
           ? colorCodes.current[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
-    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') ) {
+    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
@@ -538,7 +537,7 @@ export default function Schedule({ route }) {
                   index: editIndex.current,
                   oldMember: oldMember.current,
                   newMember: newMember,
-                  groupCode: code,
+                  groupCode: groupCode,
                 });
               }
             }}

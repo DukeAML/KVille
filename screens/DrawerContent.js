@@ -122,41 +122,28 @@ export default function DrawerContent(props) {
               icon={({ color, size }) => <Icon name='account-group-outline' color={color} size={size} />}
               label='Group Overview'
               onPress={() => {
-                props.navigation.navigate('GroupInfo', {
-                  groupCode: groupCode,
-                  groupName: groupName,
-                  groupRole: groupRole,
-                  userName,
-                  tentType,
-                });
+                props.navigation.navigate('GroupInfo');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => <Icon name='calendar-text-outline' color={color} size={size} />}
               label='Your Availability'
               onPress={() => {
-                props.navigation.navigate('AvailabilityScreen', {
-                  groupCode,
-                });
+                props.navigation.navigate('AvailabilityScreen');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => <Icon name='calendar-check-outline' color={color} size={size} />}
               label='Your Shifts'
               onPress={() => {
-                props.navigation.navigate('ShiftsScreen', {
-                  groupCode,
-                });
+                props.navigation.navigate('ShiftsScreen');
               }}
             />
             <DrawerItem
               icon={({ color, size }) => <Icon name='calendar-outline' color={color} size={size} />}
               label='Schedule'
               onPress={() => {
-                props.navigation.navigate('ScheduleScreen', {
-                  code: groupCode,
-                  tentType: tentType,
-                });
+                props.navigation.navigate('ScheduleScreen');
               }}
             />
             <DrawerItem

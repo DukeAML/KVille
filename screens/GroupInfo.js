@@ -34,8 +34,11 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
 
-export default function GroupInfo({ route, navigation }) {
-  const { groupCode, groupName, groupRole } = route.params; // take in navigation parameters
+export default function GroupInfo({ navigation }) {
+  //const { groupCode } = route.params; // take in navigation parameters
+  const groupCode = useSelector((state)=>state.user.currGroupCode);
+  const groupName = useSelector((state)=>state.user.currGroupName);
+  const groupRole = useSelector((state)=>state.user.currGroupRole);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
   const [isModalVisible, setModalVisible] = useState(false);
