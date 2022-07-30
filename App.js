@@ -70,7 +70,6 @@ export default function App() {
 
   async function updateTentStatus(status) {
     const currentUser = firebase.auth().currentUser.uid;
-    console.log(currentUser);
     if (currentUser != null) {
       let groupCodes;
       await firebase
@@ -82,7 +81,6 @@ export default function App() {
           groupCodes = doc.data().groupCode;
         })
         .catch((error) => console.error(error));
-      console.log('groupCodes', groupCodes);
       for (let i = 0; i < groupCodes.length; i++) {
         firebase
           .firestore()
