@@ -328,6 +328,9 @@ export default function Availability({ route }) {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+            width: '100%',
+            height: '100%',
+            borderRadius: 20
           }}
         >
           <Icon name={'trash-can-outline'} color={theme.error} size={26} />

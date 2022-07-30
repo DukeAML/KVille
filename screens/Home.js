@@ -62,7 +62,7 @@ export default function Home({ navigation }) {
       .get()
       .then((doc) => {
         let currGroup = doc.data().groupCode;
-        console.log("Current user's groups", currGroup);
+        //console.log("Current user's groups", currGroup);
         data = currGroup.map((group) => ({
           code: group.groupCode,
           groupName: group.groupName,

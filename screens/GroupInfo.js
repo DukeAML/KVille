@@ -144,7 +144,7 @@ export default function GroupInfo({ route, navigation }) {
         console.error(error);
         throw error;
       });
-    console.log('groupInfo data', data);
+    //console.log('groupInfo data', data);
     return data;
   }
 
