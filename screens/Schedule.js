@@ -61,6 +61,7 @@ export default function Schedule() {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
+  
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
