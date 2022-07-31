@@ -116,7 +116,7 @@ export default function NavigationStack() {
   //Navigation State persistence, saves user's location in app
   useEffect(() => {
     let mounted = true;
-    //dispatch(reset());
+
     firebase
       .firestore()
       .collection('users')
@@ -142,18 +142,6 @@ export default function NavigationStack() {
 
         if (Platform.OS !== 'web' /*&& initialUrl == null*/) {
           // Only restore state if there's no deep link and we're not on web
-          // const newGroupCode = await AsyncStorage.getItem('GROUP_CODE');
-          // const newGroupName = await AsyncStorage.getItem('GROUP_NAME');
-          // const newGroupRole = await AsyncStorage.getItem('GROUP_ROLE');
-          // const newUserName = await AsyncStorage.getItem('USER_NAME');
-          // const newTentType = await AsyncStorage.getItem('TENT_TYPE');
-          // console.log(newGroupCode + ' ' + newGroupName + ' ' + newGroupRole + ' ' + newUserName + ' ' + newTentType);
-          // dispatch(setGroupCode(newGroupCode));
-          // dispatch(setGroupName(newGroupName));
-          // dispatch(setGroupRole(newGroupRole));
-          // dispatch(setUserName(newUserName));
-          // dispatch(setTentType(newTentType));
-
           const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
           const state = savedStateString ? JSON.parse(savedStateString) : undefined;
           //console.log('state', state);
@@ -168,18 +156,6 @@ export default function NavigationStack() {
     if (!isReady) {
       restoreState();
     }
-    // async function prepare() {
-    //   try {
-    //     await SplashScreen.preventAutoHideAsync();
-    //   } catch (e) {
-    //     console.warn(e);
-    //   } finally {
-    //     // Tell the application to render
-    //     setIsReady(true);
-    //   }
-    // }
-
-    // prepare();
     return () => (mounted = false);
   }, [isReady]);
 
@@ -210,12 +186,6 @@ export default function NavigationStack() {
   //   return () => (mounted = false);
   // }, []);
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (isReady) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [isReady]);
-
   if (!isReady) {
     return null;
   }
@@ -226,12 +196,6 @@ export default function NavigationStack() {
         initialState={initialState}
         //onReady={onLayoutRootView}
         onStateChange={(state) => {
-          console.log(groupCode + ' ' + groupName + ' ' + groupRole + ' ' + userName + ' ' + tentType);
-          AsyncStorage.setItem('GROUP_CODE', groupCode);
-          AsyncStorage.setItem('GROUP_NAME', groupName);
-          AsyncStorage.setItem('GROUP_ROLE', groupRole);
-          AsyncStorage.setItem('USER_NAME', userName);
-          AsyncStorage.setItem('TENT_TYPE', tentType);
           AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
         }}
       >
