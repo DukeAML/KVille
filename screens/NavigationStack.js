@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 
 import firebase from 'firebase/compat/app';
@@ -29,26 +29,20 @@ import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import Snackbar from '../components/Snackbar';
-import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function NavigationStack() {
-  const groupCode = useSelector((state) => state.user.currGroupCode);
-  const groupName = useSelector((state) => state.user.currGroupName);
-  const groupRole = useSelector((state) => state.user.currGroupRole);
-  const userName = useSelector((state) => state.user.currUserName);
-  const tentType = useSelector((state) => state.user.currTentType);
-
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
-  //dispatch(clearData());
+  //dispatch(reset());
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   function toggleInfo() {
     setInfoVisible(!isInfoVisible);
@@ -110,8 +104,6 @@ export default function NavigationStack() {
       </Text>
     </View>
   );
-
-  const dispatch = useDispatch();
 
   //Navigation State persistence, saves user's location in app
   useEffect(() => {

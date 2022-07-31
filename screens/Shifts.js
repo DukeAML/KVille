@@ -109,7 +109,7 @@ export default function Shifts() {
         parsedShifts[startDay].data.push({ start: start, end: end });
       }
     }
-    console.log(parsedShifts);
+    //console.log(parsedShifts);
     return parsedShifts;
   }
 

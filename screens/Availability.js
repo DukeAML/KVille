@@ -95,7 +95,7 @@ export default function Availability() {
       .get()
       .then((doc) => {
         availability = doc.data().availability;
-        console.log('availability fetched from firebase', availability);
+        //console.log('availability fetched from firebase', availability);
       });
     for (let i = 0; i < availability.length; i++) {
       if (!availability[i]) {
