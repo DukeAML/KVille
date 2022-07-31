@@ -12,16 +12,18 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import { reset } from '../redux/reducers/userSlice';
 
 // import { reset } from "../redux/reducers/userSlice";
 
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const dispatch = useDispatch();
 
   const groupCode = useSelector((state) => state.user.currGroupCode);
   console.log('group code', groupCode);
-  
+
   const useUpdateTentStatus = (groupCode) => {
     const queryClient = useQueryClient();
     return useMutation((status) => updateTentStatus(groupCode, status), {
@@ -93,6 +95,7 @@ export default function DrawerContent(props) {
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    dispatch(reset());
     firebase.auth().signOut();
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef} from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   Text,
   View,
@@ -25,7 +25,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
-import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
+import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
@@ -177,6 +177,7 @@ export default function Home({ navigation }) {
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    dispatch(reset());
     firebase.auth().signOut();
   }
 
