@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 
 import firebase from 'firebase/compat/app';
@@ -29,11 +29,18 @@ import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import Snackbar from '../components/Snackbar';
+import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } from '../redux/reducers/userSlice';
 
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function NavigationStack() {
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+  const groupName = useSelector((state) => state.user.currGroupName);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
+  const userName = useSelector((state) => state.user.currUserName);
+  const tentType = useSelector((state) => state.user.currTentType);
+
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
   //dispatch(clearData());
@@ -109,7 +116,7 @@ export default function NavigationStack() {
   //Navigation State persistence, saves user's location in app
   useEffect(() => {
     let mounted = true;
-    dispatch(reset());
+    //dispatch(reset());
     firebase
       .firestore()
       .collection('users')
@@ -133,11 +140,23 @@ export default function NavigationStack() {
         const initialUrl = await Linking.getInitialURL();
         console.log('initialUrl', initialUrl);
 
-        if (Platform.OS !== 'web' && initialUrl == null) {
+        if (Platform.OS !== 'web' /*&& initialUrl == null*/) {
           // Only restore state if there's no deep link and we're not on web
+          // const newGroupCode = await AsyncStorage.getItem('GROUP_CODE');
+          // const newGroupName = await AsyncStorage.getItem('GROUP_NAME');
+          // const newGroupRole = await AsyncStorage.getItem('GROUP_ROLE');
+          // const newUserName = await AsyncStorage.getItem('USER_NAME');
+          // const newTentType = await AsyncStorage.getItem('TENT_TYPE');
+          // console.log(newGroupCode + ' ' + newGroupName + ' ' + newGroupRole + ' ' + newUserName + ' ' + newTentType);
+          // dispatch(setGroupCode(newGroupCode));
+          // dispatch(setGroupName(newGroupName));
+          // dispatch(setGroupRole(newGroupRole));
+          // dispatch(setUserName(newUserName));
+          // dispatch(setTentType(newTentType));
+
           const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
           const state = savedStateString ? JSON.parse(savedStateString) : undefined;
-          console.log('state', state);
+          //console.log('state', state);
           if (state !== undefined) {
             setInitialState(state);
           }
@@ -207,7 +226,12 @@ export default function NavigationStack() {
         initialState={initialState}
         //onReady={onLayoutRootView}
         onStateChange={(state) => {
-          console.log('state', state);
+          console.log(groupCode + ' ' + groupName + ' ' + groupRole + ' ' + userName + ' ' + tentType);
+          AsyncStorage.setItem('GROUP_CODE', groupCode);
+          AsyncStorage.setItem('GROUP_NAME', groupName);
+          AsyncStorage.setItem('GROUP_ROLE', groupRole);
+          AsyncStorage.setItem('USER_NAME', userName);
+          AsyncStorage.setItem('TENT_TYPE', tentType);
           AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
         }}
       >

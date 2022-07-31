@@ -21,10 +21,6 @@ export default function DrawerContent(props) {
 
   const groupCode = useSelector((state) => state.user.currGroupCode);
   console.log('group code', groupCode);
-  const groupName = useSelector((state) => state.user.currGroupName);
-  const userName = useSelector((state) => state.user.currUserName);
-  const tentType = useSelector((state) => state.user.currTentType);
-  const groupRole = useSelector((state) => state.user.currGroupRole);
   
   const useUpdateTentStatus = (groupCode) => {
     const queryClient = useQueryClient();
@@ -61,7 +57,7 @@ export default function DrawerContent(props) {
     useCallback(() => {
       let mounted = true;
       console.log('useFocusEffect triggered');
-      if (mounted && groupCode != '') {
+      if (mounted && groupCode != '' && groupCode != null) {
         firebase
           .firestore()
           .collection('groups')
