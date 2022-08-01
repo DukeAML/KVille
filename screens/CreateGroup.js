@@ -50,7 +50,6 @@ export default function CreateGroup({ navigation }) {
     tentType: 'Select Tent Type',
   });
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
-  //const [selectedTent, setSelectedTent] = useState('Select Tent Type');
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
   const dispatch = useDispatch();
@@ -74,12 +73,10 @@ export default function CreateGroup({ navigation }) {
   });
 
   //on first render sets name to user's registered name
-  //useEffect(() => {
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
       if (mounted) {
-        //setGroup({ ...group, userName: userName });
         setGroup({
           ...group,
           groupCode: generateGroupCode(GROUP_CODE_LENGTH),

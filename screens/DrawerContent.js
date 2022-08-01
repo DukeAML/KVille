@@ -14,8 +14,6 @@ import 'firebase/compat/auth';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
 
-// import { reset } from "../redux/reducers/userSlice";
-
 export default function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);

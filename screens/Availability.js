@@ -36,7 +36,6 @@ const agenda = {
   '12 pm',' 1 pm', ' 2 pm', ' 3 pm', ' 4 pm', ' 5 pm', ' 6 pm', ' 7 pm', ' 8 pm', ' 9 pm', '10 pm', '11 pm',],
 };
 
-//const tableData = Array.from(Array(24).fill(""), () => new Array(7).fill(""));
 const tableData = [];
 for (let i = 0; i < 48; i += 1) {
   const rowData = [];
@@ -47,12 +46,8 @@ for (let i = 0; i < 48; i += 1) {
 }
 
 const cellHeight = 35;
-
 let currIndex;
-
 let availability;
-// let availabilityUI = new Array(336);
-// availabilityUI.fill([true, 0]);
 
 export default function Availability() {
   const groupCode = useSelector((state) => state.user.currGroupCode);
@@ -290,7 +285,6 @@ export default function Availability() {
             {tableData.map((rowData, index) => (
               <TableWrapper
                 key={index}
-                //style={StyleSheet.flatten([styles(theme).row, index % 2 && { backgroundColor: theme.white2 }])}
                 style={StyleSheet.flatten(styles(theme).row)}
               >
                 {rowData.map((cellData, cellIndex) => (

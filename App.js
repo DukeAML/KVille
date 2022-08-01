@@ -8,7 +8,6 @@ import { Platform } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 
@@ -109,7 +108,6 @@ export default function App() {
               loggedIn: false,
             });
           } else {
-            //AsyncStorage.setItem('USER', JSON.stringify(user));
             setState({
               isReady: true,
               loggedIn: true,
@@ -152,14 +150,6 @@ export default function App() {
       await SplashScreen.hideAsync();
     }
   }, [state.isReady]);
-
-  //       //set persistence so user stays logged in; currently(5/14) not working
-  //       firebase
-  //         .auth()
-  //         .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  //         .then(() => {
-  //           console.log("persistence set");
-  //         });
 
   if (!state.isReady) {
     return null;
