@@ -386,7 +386,7 @@ export default function GroupInfo({ navigation }) {
         ListHeaderComponent={data.length != 0 ? <UserMember item={data[0]} /> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
-      ></FlatList>
+      />
 
       {/*Member Information Modal Component*/}
       <ActionSheetModal
