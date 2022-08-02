@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback , memo} from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Title, Drawer, Switch } from 'react-native-paper';
@@ -14,7 +14,7 @@ import 'firebase/compat/auth';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
 
-export default function DrawerContent(props) {
+export default memo(function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const dispatch = useDispatch();
@@ -188,7 +188,7 @@ export default function DrawerContent(props) {
       />
     </View>
   );
-}
+})
 
 const styles = StyleSheet.create({
   drawerContent: {
