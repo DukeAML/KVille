@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, memo } from 'react';
 import {
   StyleSheet,
   View,
@@ -273,7 +273,7 @@ export default function Schedule() {
     refetch();
   }
 
-  const TimeColumn = () => {
+  const TimeColumn = memo(function () {
     //component for side table of 12am-12am time segments
     return (
       <Table style={{ width: '7%' }}>
@@ -285,43 +285,34 @@ export default function Schedule() {
         />
       </Table>
     );
-  };
+  });
 
-  //Component for the popup list of members for each member
-  const Member = ({ name }) => {
-    /* function formatAsPercent(num) {
-      return `${parseFloat(num).toFixed(2)}%`;
-    } 
-    let height = formatAsPercent(100 * (1 / colorCodes.length));*/
+  //to render flatList in member list popup
+  const renderMember = ({ item }) => {
     let height = win.height * 0.45 * (1 / colorCodes.current.length) + 8;
     return (
       <View style={{ width: '100%' }}>
         <TouchableOpacity
           onPress={() => {
-            setNewMember(name);
+            setNewMember(item.name);
             toggleMemberModal();
             console.log('height', height);
           }}
           style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
           <View style={{ height: height, justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>{name}</Text>
+            <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>{item.name}</Text>
           </View>
         </TouchableOpacity>
       </View>
     );
   };
 
-  //to render flatList in member list popup
-  const renderMember = ({ item }) => {
-    return <Member name={item.name} />;
-  };
-
   // Component for each single cell timeslot
   //    Parameters:
   //      index: index of cell within the entire schedule array
   //      person: string holding the person currently scheduled for the time cell
-  const OneCell = ({ index, person }) => {
+  const OneCell = memo(({ index, person }) => {
     //changes background based on who the member is
     const indexofUser =
       weekDisplay == 'Current Week'
@@ -373,7 +364,7 @@ export default function Schedule() {
         </View>
       );
     }
-  };
+  });
 
   /*Component for each row to list the people in that time shift
     # of people on the row is dependent on the tentType and time of day
@@ -403,7 +394,7 @@ export default function Schedule() {
   };
 
   //Component for the table for one day's schedule
-  const DailyTable = ({ day }) => {
+  const DailyTable = memo(function ({ day }) {
     //if (schedule == undefined) return null;
     let indexAdder = 0;
     //depending on day parameter, change index in GLOBAL schedule array
@@ -445,14 +436,14 @@ export default function Schedule() {
         </Table>
       </View>
     );
-  };
+  });
 
   const customSpringStyles = useAnimatedStyle(() => {
     return {
       transform: [
         {
           translateX: withSpring(dayHighlightOffset.value * (win.width / 7), {
-            damping: 20,
+            damping: 50,
             stiffness: 90,
           }),
         },
@@ -618,7 +609,6 @@ export default function Schedule() {
             contentContainerStyle={{ paddingBottom: 30 }}
             style={{ width: '100%' }}
           >
-            {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
             <View style={{ flexDirection: 'row', marginTop: 10, width: '100%' }}>
               <TimeColumn />
               <DailyTable day={renderDay} />
