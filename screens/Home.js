@@ -31,6 +31,7 @@ import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
 
 const window = Dimensions.get('window');
 
@@ -192,7 +193,7 @@ export default function Home({ navigation }) {
   }
   if (isError) {
     console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation}/>;
   }
   return (
     <Provider>
@@ -252,6 +253,8 @@ export default function Home({ navigation }) {
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
           />
         </SafeAreaView>
+
+
 
         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
           <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>

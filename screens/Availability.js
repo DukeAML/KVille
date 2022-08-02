@@ -26,6 +26,8 @@ import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
+
 
 const window = Dimensions.get('window');
 
@@ -231,7 +233,7 @@ export default function Availability() {
 
   if (isError) {
     console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation}/>;
   }
 
   return (

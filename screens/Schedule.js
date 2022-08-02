@@ -35,6 +35,7 @@ import { ConfirmationModal } from '../components/ConfirmationModal';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -499,7 +500,7 @@ export default function Schedule() {
 
   if (isError) {
     console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation}/>;
   }
 
   return (

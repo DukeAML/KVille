@@ -37,7 +37,7 @@ function useModal() {
 const BottomSheetModal = ({
   height = '50%',
   color,
-  swipeDown = true,
+  swipeDown,
   barSize = 'default',
   userStyle,
   children,
@@ -59,7 +59,7 @@ const BottomSheetModal = ({
       <ModalContext.Provider value={{ headerColor }}>
         <Modal
           style={styles(theme).BottomModalView}
-          swipeDirection={swipeDown ? ['down'] : null}
+          swipeDirection= {swipeDown ? 'down' : null}
           backdropTransitionOutTiming={0}
           keyboardDismissMode={'on-drag'}
           {...props}

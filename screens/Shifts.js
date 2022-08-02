@@ -12,6 +12,8 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
+
 
 const dayMapping = {
   0: 'Sunday',
@@ -219,7 +221,7 @@ export default function Shifts() {
 
   if (isError) {
     console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation}/>;
   }
 
   return (

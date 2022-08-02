@@ -33,6 +33,7 @@ import { ActionSheetModal } from '../components/ActionSheetModal';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
+import { ErrorPage } from '../components/ErrorPage';
 
 export default function GroupInfo({ navigation }) {
   const groupCode = useSelector((state)=>state.user.currGroupCode);
@@ -40,7 +41,7 @@ export default function GroupInfo({ navigation }) {
   const groupRole = useSelector((state)=>state.user.currGroupRole);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
-  
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isRoleChangeVisible, setRoleChangeVisible] = useState(false);
@@ -352,7 +353,7 @@ export default function GroupInfo({ navigation }) {
   }
   if (isError) {
     console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation}/>;
   }
   return (
     <SafeAreaView
@@ -507,7 +508,7 @@ export default function GroupInfo({ navigation }) {
       <BottomSheetModal
         isVisible={isSettingsVisible}
         onBackdropPress={toggleSettings}
-        swipeDown={true}
+        swipeDown={false}
         barSize={'none'}
         height={groupRole == 'Creator' || 'Admin' ? '90%' : '50%'}
         userStyle='light'
