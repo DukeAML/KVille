@@ -62,7 +62,7 @@ export default function Schedule() {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
-  
+
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -80,6 +80,7 @@ export default function Schedule() {
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
+  const isCurrentWeek = useSharedValue(1);
   const { open } = fabState;
   const dispatch = useDispatch();
 
@@ -267,9 +268,11 @@ export default function Schedule() {
     if (weekDisplay == 'Current Week') {
       console.log('showing previous week', weekDisplay);
       setWeekDisplay('Previous Week');
+      isCurrentWeek.value = 0;
     } else {
       console.log('showing current week');
       setWeekDisplay('Current Week');
+      isCurrentWeek.value = 1;
     }
     refetch();
   }
@@ -277,7 +280,7 @@ export default function Schedule() {
   const TimeColumn = memo(function () {
     //component for side table of 12am-12am time segments
     return (
-      <Table style={{ width: '7%' }}>
+      <Table style={{ width: '7%', marginTop: -31 }}>
         <Col
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
@@ -424,7 +427,7 @@ export default function Schedule() {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 31, width: '90%' }}>
+      <View style={{ marginTop: 0, width: '90%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -444,6 +447,18 @@ export default function Schedule() {
       transform: [
         {
           translateX: withSpring(dayHighlightOffset.value * (win.width / 7), {
+            damping: 50,
+            stiffness: 90,
+          }),
+        },
+      ],
+    };
+  });
+  const toggleWeekSpring = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withSpring(isCurrentWeek.value * (win.width * 0.3), {
             damping: 50,
             stiffness: 90,
           }),
@@ -491,7 +506,7 @@ export default function Schedule() {
 
   if (isError) {
     console.error(error);
-    return <ErrorPage navigation={navigation}/>;
+    return <ErrorPage navigation={navigation} />;
   }
 
   return (
@@ -602,6 +617,17 @@ export default function Schedule() {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
+        <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={styles(theme).toggleWeekContainer}>
+            <Animated.View style={[styles(theme).toggleWeekHighlight, toggleWeekSpring]} />
+            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
+              <Text>Previous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
+              <Text>Current</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -610,38 +636,35 @@ export default function Schedule() {
             contentContainerStyle={{ paddingBottom: 30 }}
             style={{ width: '100%' }}
           >
-            <View style={{ flexDirection: 'row', marginTop: 10, width: '100%' }}>
+            <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
               <TimeColumn />
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
         </View>
-        {groupRole != 'Member' ? (<Portal>
-          <FAB.Group
-            open={open}
-            icon={'plus'}
-            style={{ position: 'absolute' }}
-            fabStyle={{ backgroundColor: '#9FA6B7' }}
-            actions={[
-              // {
-              //   icon: 'toggle-switch-outline',
-              //   label: weekDisplay,
-              //   onPress: () => toggleWeek(),
-              // },
-              {
-                icon: 'calendar',
-                label: 'Create New Schedule',
-                onPress: () => toggleConfirmation(),
-              },
-            ]}
-            onStateChange={onFabStateChange}
-            onPress={() => {
-              if (open) {
-                // do something if the speed dial is open
-              }
-            }}
-          />
-        </Portal>) : null }
+        {groupRole != 'Member' ? (
+          <Portal>
+            <FAB.Group
+              open={open}
+              icon={'plus'}
+              style={{ position: 'absolute' }}
+              fabStyle={{ backgroundColor: '#9FA6B7' }}
+              actions={[
+                {
+                  icon: 'calendar',
+                  label: 'Create New Schedule',
+                  onPress: () => toggleConfirmation(),
+                },
+              ]}
+              onStateChange={onFabStateChange}
+              onPress={() => {
+                if (open) {
+                  // do something if the speed dial is open
+                }
+              }}
+            />
+          </Portal>
+        ) : null}
       </View>
     </Provider>
   );
@@ -669,6 +692,37 @@ const styles = (theme) =>
       width: win.width / 7,
       height: 38,
       borderRadius: 100,
+    },
+    toggleWeekContainer: {
+      borderRadius: 10,
+      width: '60%',
+      height: 30,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      borderWidth: 1,
+      marginTop: 20,
+      backgroundColor: '#FAFAFA',
+      padding: 1,
+      borderColor: '#fff',
+    },
+    toggleWeekHighlight: {
+      position: 'absolute',
+      width: '50%',
+      height: '100%',
+      left: 0,
+      borderRadius: 10,
+      backgroundColor: '#FCFCFC',
+      shadowColor: '#171717',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+    },
+    toggleWeekButton: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
     },
     buttonContainer: {
       //container for the top buttons
