@@ -118,7 +118,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               });
             dispatch(setUserName(newUserName));
           } else {
-            setModalSnackMessage('Username taken');
+            setModalSnackMessage('Nickname taken');
             toggleModalSnackBar();
             valid = false
             return;
@@ -203,12 +203,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             </View>
 
             <View style={styles(theme).headerContainer}>
-              <Text style={styles(theme).headerText}>Name</Text>
+              <Text style={styles(theme).headerText}>Nickname</Text>
               <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
             </View>
             <TextInput
               name='newUserName'
-              placeholder='User Name'
+              placeholder='Nickname'
               style={styles(theme).textInput}
               onChangeText={handleChange('newUserName')}
               onBlur={handleBlur('newUserName')}

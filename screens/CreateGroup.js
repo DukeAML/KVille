@@ -208,7 +208,7 @@ export default function CreateGroup({ navigation }) {
               <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
 
-            <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Username</Text>
+            <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Nickname</Text>
 
             <TextInput
               style={[styles(theme).textInput, { borderWidth: 2, borderColor: theme.grey5 }]}
