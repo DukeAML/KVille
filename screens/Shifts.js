@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, SectionList, RefreshControl } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, SectionList, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
@@ -13,7 +13,6 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
-
 
 const dayMapping = {
   0: 'Sunday',
@@ -187,15 +186,15 @@ export default function Shifts() {
 
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
-        <View style={{ borderBottomWidth: 1, width: '100%', height: '60%' }}>
-          <Text style={styles(theme).listText}>{shiftTime}</Text>
-        </View>
-        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', height: '60%' }}>
           <Icon name='clock-outline' color={theme.icon2} size={20} />
-          <Text style={{ color: theme.text2, textAlign: 'center', marginLeft: 10 }}>
+          <Text style={styles(theme).timeText}>
             {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]} - {endHour} : {minMapping[endMin]}{' '}
             {timeOfDayMapping[endTimeOfDay]}
           </Text>
+        </View>
+        <View style={{ borderTopWidth: 1, width: '100%', height: '40%', justifyContent: 'center' }}>
+          <Text style={styles(theme).listText}>{shiftTime}</Text>
         </View>
       </View>
     );
@@ -221,7 +220,7 @@ export default function Shifts() {
 
   if (isError) {
     console.error(error);
-    return <ErrorPage navigation={navigation}/>;
+    return <ErrorPage navigation={navigation} />;
   }
 
   return (
@@ -266,12 +265,20 @@ const styles = (theme) =>
     listText: {
       //for the text inside the group cards
       fontSize: 15,
-      fontWeight: '500',
+      fontWeight: '400',
       color: theme.text2,
+    },
+    timeText: {
+      color: theme.text2,
+      textAlign: 'center',
+      marginLeft: 10,
+      fontSize: 15,
+      fontWeight: '500',
     },
     sectionHeader: {
       fontSize: 24,
-      marginLeft: '10%',
+      marginLeft: '5%',
+      marginTop: 20,
     },
     shadowProp: {
       //shadow for the group cards
