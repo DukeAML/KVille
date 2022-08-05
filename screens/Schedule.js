@@ -616,18 +616,18 @@ export default function Schedule() {
             </View>
           </ScrollView>
         </View>
-        <Portal>
+        {groupRole != 'Member' ? (<Portal>
           <FAB.Group
             open={open}
             icon={'plus'}
             style={{ position: 'absolute' }}
             fabStyle={{ backgroundColor: '#9FA6B7' }}
             actions={[
-              {
-                icon: 'toggle-switch-outline',
-                label: weekDisplay,
-                onPress: () => toggleWeek(),
-              },
+              // {
+              //   icon: 'toggle-switch-outline',
+              //   label: weekDisplay,
+              //   onPress: () => toggleWeek(),
+              // },
               {
                 icon: 'calendar',
                 label: 'Create New Schedule',
@@ -641,7 +641,7 @@ export default function Schedule() {
               }
             }}
           />
-        </Portal>
+        </Portal>) : null }
       </View>
     </Provider>
   );
