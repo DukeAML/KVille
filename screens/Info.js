@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   Text,
   View,
@@ -56,15 +56,15 @@ const WHITETENT = {
   ],
 };
 
+const window = Dimensions.get('window'); 
+
 export default function Info() {
   const { theme } = useTheme();
-  //Variables for sizing images
-  const win = Dimensions.get('window');
-  const ratioSignImg = win.width / 1000;
-  //const ratioBoundaryImg = win.width / 1450;
+  const ratioSignImg = window.width / 1000;
+  //const ratioBoundaryImg = window.width / 1450;
   //variables for geting y-position of headers
   let hourPos, tentCheckPos, missPos, gracePos, tentPos, pCheckPos;
-  const ref = React.useRef(); //creates reference for scrollView
+  const ref = useRef(); //creates reference for scrollView
 
   //render item for bullet points
   const BulletPoint = ({ data }) => (
@@ -140,7 +140,7 @@ export default function Info() {
         >
           <Image
             style={{
-              width: win.width,
+              width: window.width,
               height: 568 * ratioSignImg,
               resizeMode: 'contain',
               alignSelf: 'center',
@@ -251,7 +251,7 @@ export default function Info() {
         >
           <Image
             style={{
-              width: win.width,
+              width: window.width,
               height: 568 * ratioSignImg,
               resizeMode: 'contain',
               alignSelf: 'center',
@@ -492,7 +492,7 @@ const styles = (theme) =>
     },
     button: {
       backgroundColor: theme.primary,
-      width: '17%',
+      width: window.width/6,
       height: 50,
       alignItems: 'center',
       justifyContent: 'center',

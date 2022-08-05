@@ -42,11 +42,13 @@ const WHITETENT = {
   ],
 };
 
+const window = Dimensions.get('window');
+
 export default function Info() {
   const { theme } = useTheme();
   //Variables for sizing images
-  const win = Dimensions.get('window');
-  const ratioSignImg = win.width / 1000;
+  
+  const ratioSignImg = window.width / 1000;
 
   const pageViewRef = useRef(PagerView);
 
@@ -99,7 +101,7 @@ export default function Info() {
             >
               <Image
                 style={{
-                  width: win.width,
+                  width: window.width,
                   height: 568 * ratioSignImg,
                   resizeMode: 'contain',
                   alignSelf: 'center',
@@ -188,7 +190,7 @@ export default function Info() {
             >
               <Image
                 style={{
-                  width: win.width,
+                  width: window.width,
                   height: 568 * ratioSignImg,
                   resizeMode: 'contain',
                   alignSelf: 'center',
@@ -381,7 +383,7 @@ const styles = (theme) =>
     },
     button: {
       backgroundColor: theme.primary,
-      width: '17%',
+      width: window.width/6,
       height: 50,
       alignItems: 'center',
       justifyContent: 'center',
