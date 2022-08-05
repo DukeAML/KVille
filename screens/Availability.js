@@ -270,7 +270,6 @@ export default function Availability() {
           >
             <Col
               data={agenda.tableTime}
-              //heightArr={[ 60,60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]}
               heightArr={new Array(23).fill(cellHeight * 2)}
               textStyle={{
                 textAlign: 'center',
@@ -278,7 +277,7 @@ export default function Availability() {
                 fontSize: 10,
                 width: '70%',
                 color: '#717573',
-                marginLeft: 2 /* , borderWidth:1, */,
+                marginLeft: 2
               }}
             />
           </TableWrapper>
