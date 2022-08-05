@@ -507,7 +507,7 @@ export default function Availability() {
           <TouchableOpacity
             style={[
               styles(theme).addBtn,
-              { backgroundColor: theme.primary, width: '30%', height: '60%', borderRadius: 15 },
+              { backgroundColor: theme.primary, width: '40%', height: '60%', borderRadius: 15 },
             ]}
             onPress={() => postAvailability.mutate()}
           >
@@ -578,6 +578,7 @@ const styles = (theme) =>
     addBtn: {
       alignItems: 'center',
       justifyContent: 'center',
+      width: '50%'
     },
     btnText: {
       color: theme.text2,

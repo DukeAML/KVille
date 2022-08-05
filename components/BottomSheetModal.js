@@ -37,7 +37,7 @@ function useModal() {
 const BottomSheetModal = ({
   height = '50%',
   color,
-  swipeDown,
+  swipeDown = true,
   barSize = 'default',
   userStyle,
   children,

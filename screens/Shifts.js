@@ -247,6 +247,7 @@ const styles = (theme) =>
     screenContainer: {
       flex: 1,
       backgroundColor: theme.background, //'#D2D5DC',
+      paddingVertical: 15,
       // flexGrow: 1,
       // overflow: 'hidden',
     }, //for the entire page's container
@@ -261,7 +262,7 @@ const styles = (theme) =>
       borderRadius: 10,
       alignSelf: 'center',
       width: '90%',
-      height: 100,
+      height: 90,
     },
     listText: {
       //for the text inside the group cards
@@ -271,7 +272,7 @@ const styles = (theme) =>
     },
     sectionHeader: {
       fontSize: 24,
-      marginLeft: '10%',
+      marginLeft: '6%',
     },
     shadowProp: {
       //shadow for the group cards
