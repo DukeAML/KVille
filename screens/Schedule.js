@@ -305,7 +305,7 @@ export default function Schedule() {
           style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
           <View style={{ height: height, justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>{item.name}</Text>
+            <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }}>{item.name}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -332,7 +332,14 @@ export default function Schedule() {
         : '#fff'; //gets background color from the colorCodes Array
     if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
       return (
-        <View style={{ flex: 1 }}>
+        <View 
+          /* style={[   //trying to make border radius of table round
+            { flex: 1 }, 
+            index==0 ? {borderTopLeftRadius:10, borderTopRightRadius:10}: 
+              index==47 ? 
+              {borderBottomLeftRadius:10, borderBottomRightRadius:10}: null]} */
+          style={{ flex: 1 }}
+        >
           <TouchableOpacity
             onPress={() => {
               editIndex.current = index;
@@ -350,6 +357,7 @@ export default function Schedule() {
                 }
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
+                numberOfLines = {1}
               >
                 {person}
               </Text>
@@ -517,6 +525,7 @@ export default function Schedule() {
           onBackdropPress={toggleModal}
           onSwipeComplete={toggleModal}
           toggleModal={toggleModal}
+          userStyle = {'light'}
           cancelButton={true}
           height={win.height * 0.15}
         >
@@ -531,8 +540,8 @@ export default function Schedule() {
                 flexDirection: 'row',
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
-              <Icon name='chevron-down' color={theme.icon1} size={30} style={{ marginLeft: 10 }} />
+              <Text style={{ textAlign: 'center', fontSize: 24, color: 'black' }}>{newMember}</Text>
+              <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -555,7 +564,7 @@ export default function Schedule() {
               <Text
                 style={{
                   textAlign: 'center',
-                  color: 'white',
+                  color: 'black',
                   fontSize: 20,
                   fontWeight: '500',
                 }}
@@ -568,6 +577,7 @@ export default function Schedule() {
             isVisible={isMemberModalVisible}
             onBackdropPress={() => setMemberModalVisible(false)}
             onSwipeComplete={toggleMemberModal}
+            userStyle={'light'}
           >
             <View
               style={{
@@ -601,6 +611,7 @@ export default function Schedule() {
             dispatch(toggleSnackBar());
           }}
           isVisible={isConfirmationVisible}
+          userStyle={'light'}
           onBackdropPress={() => setConfirmationVisible(false)}
           onSwipeComplete={toggleConfirmation}
         />
@@ -771,7 +782,6 @@ const styles = (theme) =>
       //style for one row of the table
       flexDirection: 'row',
       backgroundColor: 'lavender',
-      //width: win.width * 0.9,
       width: '100%',
       height: 31,
       alignItems: 'center',
@@ -780,11 +790,9 @@ const styles = (theme) =>
     },
     timeSlotBtn: {
       //Button for oneCell of the Table
-      //width: 58,
       height: 30,
       backgroundColor: '#78B7BB',
-      //borderRadius: 2,
-      //alignSelf: 'stretch',
+      paddingHorizontal: 1,
       justifyContent: 'center',
     },
     btnText: {

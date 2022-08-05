@@ -32,11 +32,13 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
+import { ActionSheetModal } from '../components/ActionSheetModal';
 
 const window = Dimensions.get('window');
 
 export default function Home({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isCountVisible, setCountVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
 
@@ -78,6 +80,10 @@ export default function Home({ navigation }) {
 
   function toggleModal() {
     setModalVisible(!isModalVisible);
+  }
+
+  function toggleCount() {
+    setCountVisible(!isCountVisible);
   }
 
   function openMenu() {
@@ -253,32 +259,56 @@ export default function Home({ navigation }) {
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
           />
         </SafeAreaView>
-
-
-
-        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
-          <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
-          <CountDown
-            size={30}
-            until={time.current}
-            onFinish={() => alert('Finished')}
-            digitStyle={{
-              backgroundColor: '#FFF',
-              borderWidth: 2,
-              borderColor: theme.primary,
+        
+        <View style = {{width: '100%', height: '20%', justifyContent: 'flex-end', alignItems: 'center'/* , borderWidth: 1 */}}>
+          <TouchableOpacity
+            style={{
+              width:'85%', 
+              height: '40%', 
+              backgroundColor: theme.primary, 
+              justifyContent:'center', 
+              alignItems: 'center',
+              borderRadius: 20
             }}
-            digitTxtStyle={{ color: theme.primary }}
-            timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
-            separatorStyle={{
-              color: theme.primary,
-              alignSelf: 'center',
-              flex: 1,
-              paddingTop: 15,
-              justifyContent: 'center',
-            }}
-            showSeparator={true}
-          />
+            onPress = {toggleCount}
+          >
+              <Text style={{fontSize: 26, fontWeight: '700', color: theme.text1 } }>Countdown to UNC</Text>            
+          </TouchableOpacity>
         </View>
+
+        <ActionSheetModal
+          isVisible={isCountVisible}
+          onBackdropPress={toggleCount}
+          swipeDown={false}
+          height={200}
+          userStyle={'light'}
+        >
+          <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
+            <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
+            <CountDown
+              size={30}
+              until={time.current}
+              onFinish={() => alert('Finished')}
+              digitStyle={{
+                backgroundColor: '#FFF',
+                borderWidth: 2,
+                borderColor: theme.primary,
+              }}
+              digitTxtStyle={{ color: theme.primary }}
+              timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
+              separatorStyle={{
+                color: theme.primary,
+                alignSelf: 'center',
+                flex: 1,
+                paddingTop: 15,
+                justifyContent: 'center',
+              }}
+              showSeparator={true}
+            />
+          </View>
+        </ActionSheetModal>
+       
+
 
         <Modal
           isVisible={isModalVisible}

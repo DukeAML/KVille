@@ -40,8 +40,8 @@ const ActionSheetModal = ({
     const { theme } = useTheme();
 
     //set up default styles for light and dark themes
-    let background, opacity;
-    userStyle == 'light' ? ((background = '#fff'), (opacity = '96%')) : ((background = '#565656'), (opacity = '100%'));
+    let background;
+    userStyle == 'light' ? ((background = '#fff')) : ((background = '#565656'));
 
     //overwrite dark|light theme background colors if defined
     if (backgroundColor !== undefined) background = backgroundColor;
@@ -59,14 +59,14 @@ const ActionSheetModal = ({
       >
         <SafeAreaView style={{ width: '95%', alignSelf: 'center', height: adjustedHeight }}>
           <View
-            style={[styles(theme).TopSectionView, { backgroundColor: background, height: height, opacity: opacity }]}
+            style={[styles(theme).TopSectionView, { backgroundColor: background, height: height }]}
           >
             {children}
           </View>
           {cancelButton ? (
             <TouchableOpacity
               onPress={() => toggleModal()}
-              style={[styles(theme).CancelBtn, { backgroundColor: background, opacity: opacity }]}
+              style={[styles(theme).CancelBtn, { backgroundColor: background}]}
             >
               <Text style={[styles(theme).CancelBtnText, { color: '#1988f8' }]}>Cancel</Text>
             </TouchableOpacity>

@@ -19,6 +19,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Divider, IconButton } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
+import {Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
 import firebase from 'firebase/compat/app';
@@ -49,7 +50,7 @@ export default function GroupInfo({ navigation }) {
   const [isSettingsVisible, setSettingsVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
-  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, OpenSans_400Regular });
+  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, Montserrat_400Regular, Montserrat_700Bold, OpenSans_400Regular });
 
   const { theme } = useTheme();
 
@@ -543,7 +544,8 @@ const styles = (theme) =>
       color: theme.grey1,
       width: '90%',
       fontSize: 20,
-      fontFamily: 'Merriweather_700Bold',
+      //fontFamily: 'Merriweather_700Bold',
+      fontFamily: 'Montserrat_700Bold',
     },
     boxText: {
       //View of top 2 boxes of text (groupCode and groupName)
@@ -564,7 +566,8 @@ const styles = (theme) =>
       fontSize: 24,
       textAlign: 'center',
       marginHorizontal: 8,
-      fontFamily: 'OpenSans_400Regular',
+      //fontFamily: 'OpenSans_400Regular',
+      fontFamily: 'Montserrat_400Regular',
     },
     listItem: {
       //style of a member list item
@@ -583,7 +586,8 @@ const styles = (theme) =>
     listText: {
       //text of a member item
       fontSize: 15,
-      fontFamily: 'OpenSans_400Regular',
+      //fontFamily: 'OpenSans_400Regular',
+      fontFamily: 'Montserrat_400Regular',
       color: theme.text1,
     },
     modalText: {
