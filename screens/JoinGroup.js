@@ -203,7 +203,7 @@ export default function JoinGroup({ navigation }) {
                 marginTop: 55,
               }}
             >
-              <Text style={styles(theme).groupText}>Username</Text>
+              <Text style={styles(theme).groupText}>Nickname</Text>
             </View>
 
             <TextInput
