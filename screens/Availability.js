@@ -587,8 +587,8 @@ const styles = (theme) =>
     head: {
       backgroundColor: '#f3f3f3', //theme.background;
       height: 35,
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
       shadowColor: '#171717',
       shadowOffset: { width: 0, height: -5 },
       shadowOpacity: 0.9,

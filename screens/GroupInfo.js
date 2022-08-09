@@ -14,12 +14,11 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import { Divider, IconButton } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-google-fonts/merriweather';
-import {Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
 import firebase from 'firebase/compat/app';
@@ -37,9 +36,9 @@ import SettingsModal from '../components/SettingsModal';
 import { ErrorPage } from '../components/ErrorPage';
 
 export default function GroupInfo({ navigation }) {
-  const groupCode = useSelector((state)=>state.user.currGroupCode);
-  const groupName = useSelector((state)=>state.user.currGroupName);
-  const groupRole = useSelector((state)=>state.user.currGroupRole);
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+  const groupName = useSelector((state) => state.user.currGroupName);
+  const groupRole = useSelector((state) => state.user.currGroupRole);
   const userName = useSelector((state) => state.user.currUserName);
   const tentType = useSelector((state) => state.user.currTentType);
 
@@ -50,7 +49,13 @@ export default function GroupInfo({ navigation }) {
   const [isSettingsVisible, setSettingsVisible] = useState(false);
   //These 2 hooks are used for identifying which member is clicked from the list
   const currMember = useRef({});
-  const [fontsLoaded] = useFonts({ Merriweather_400Regular, Merriweather_700Bold, Montserrat_400Regular, Montserrat_700Bold, OpenSans_400Regular });
+  const [fontsLoaded] = useFonts({
+    Merriweather_400Regular,
+    Merriweather_700Bold,
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+    OpenSans_400Regular,
+  });
 
   const { theme } = useTheme();
 
@@ -246,38 +251,6 @@ export default function GroupInfo({ navigation }) {
     toggleModal();
   }
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (!isLoading) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [isLoading]);
-
-  const RenderRightActions = (progress, dragX) => {
-    const scale = dragX.interpolate({
-      inputRange: [-50, 0.5],
-      outputRange: [1, 0.1],
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <View
-        style={{
-          width: '20%',
-          //backgroundColor: theme.error,
-          alignItems: 'center',
-          padding: 4,
-          justifyContent: 'flex-end',
-          marginVertical: 3,
-        }}
-      >
-        <Animated.Text style={{ transform: [{ scale }], color: theme.error }} onPress={toggleConfirmation}>
-          Remove
-        </Animated.Text>
-        {/* <Icon name='trash-can-outline' color={theme.icon1} size={20} style={{ right: 0 }} /> */}
-      </View>
-    );
-  };
-
   const UserMember = ({ item }) => {
     const backgroundColor = item.inTent ? '#3eb489' : '#1f509a';
     return (
@@ -311,35 +284,15 @@ export default function GroupInfo({ navigation }) {
           currMember.current = { name: name, id: id, hours: hours, role: role };
         }}
       >
-        {groupRole == 'Creator' ? (
-          <Swipeable
-            renderRightActions={RenderRightActions}
-            onSwipeableRightOpen={() => (currMember.current = { name: name, id: id, hours: hours, role: role })}
-            friction={2}
-          >
-            <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
-              <Text style={styles(theme).listText}>{name}</Text>
-              {inTent ? (
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ color: theme.text1 }}>In Tent</Text>
-                  <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
-                </View>
-              ) : null}
-              {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
+        <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
+          <Text style={styles(theme).listText}>{name}</Text>
+          {inTent ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: theme.text1 }}>In Tent</Text>
+              <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
             </View>
-          </Swipeable>
-        ) : (
-          <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
-            <Text style={styles(theme).listText}>{name}</Text>
-            {inTent ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ color: theme.text1 }}>In Tent</Text>
-                <Icon name='map-marker-check-outline' color={theme.icon1} size={28} style={{ marginLeft: 5 }} />
-              </View>
-            ) : null}
-            {/* <Text style={styles(theme).listText}>Scheduled Hrs: {hours} hrs</Text> */}
-          </View>
-        )}
+          ) : null}
+        </View>
       </TouchableOpacity>
     );
   };
@@ -354,7 +307,7 @@ export default function GroupInfo({ navigation }) {
   }
   if (isError) {
     console.error(error);
-    return <ErrorPage navigation={navigation}/>;
+    return <ErrorPage navigation={navigation} />;
   }
   return (
     <SafeAreaView
@@ -388,6 +341,7 @@ export default function GroupInfo({ navigation }) {
         ListHeaderComponent={data.length != 0 ? <UserMember item={data[0]} /> : null}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         style={{ marginHorizontal: '4%', flexGrow: 1, height: '70%', width: '90%' }}
+        showsVerticalScrollIndicator={false}
       />
 
       {/*Member Information Modal Component*/}

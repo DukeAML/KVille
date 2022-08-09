@@ -257,6 +257,7 @@ export default function Home({ navigation }) {
             //ListEmptyComponent={<EmptyGroup/>}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
+            showsVerticalScrollIndicator={false}
           />
         </SafeAreaView>
         

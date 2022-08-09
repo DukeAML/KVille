@@ -232,6 +232,7 @@ export default function Shifts() {
         renderSectionHeader={({ section: { title, data } }) =>
           data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null
         }
+        renderSectionFooter={() => <View style={{ marginBottom: 10 }}></View>}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
@@ -246,9 +247,7 @@ const styles = (theme) =>
     screenContainer: {
       flex: 1,
       backgroundColor: theme.background, //'#D2D5DC',
-      paddingVertical: 15,
-      // flexGrow: 1,
-      // overflow: 'hidden',
+      //paddingVertical: 15,
     }, //for the entire page's container
     listItem: {
       //for the items for each group
@@ -279,6 +278,7 @@ const styles = (theme) =>
     sectionHeader: {
       fontSize: 24,
       marginLeft: '6%',
+      marginTop: 10,
     },
     shadowProp: {
       //shadow for the group cards

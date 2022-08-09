@@ -292,12 +292,13 @@ export default function NavigationStack() {
               headerStyle: {
                 backgroundColor: theme.primaryContainer,
                 borderBottomWidth: 0,
-                //shadowColor: 'transparent',
                 shadowColor: '#171717',
                 shadowOffset: { width: -2, height: 4 },
                 shadowOpacity: 0.2,
                 shadowRadius: 5,
                 elevation: 20,
+                //borderBottomLeftRadius: 10,
+                //borderBottomRightRadius: 10,
               },
               headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             })}
