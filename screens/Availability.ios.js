@@ -12,7 +12,6 @@ import {
 import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import * as SplashScreen from 'expo-splash-screen';
 import { Snackbar, Divider } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -57,23 +56,11 @@ export default function Availability() {
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
   const [selectedDay, setSelectedDay] = useState(0);
-  // const [startTime, setStartTime] = useState({
-  //   hour: 0,
-  //   minute: 0,
-  //   day: 0,
-  // });
-  // const [endTime, setEndTime] = useState({
-  //   hour: 0,
-  //   minute: 0,
-  //   day: 0,
-  // });
-
   const [startTime, setStartTime] = useState(new Date(Date.now()));
   const [endTime, setEndTime] = useState(new Date(Date.now() + 3600000));
-
+  const [isDisabled, setIsDisabled] = useState(false);
+  
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -136,49 +123,30 @@ export default function Availability() {
   const postAvailability = useUpdateAvailability(groupCode);
 
   const updateAvailability = (groupCode) => {
-    console.log('startTime', startTime)
-    console.log('endTime', endTime);
-    const startTimeObj = {
-      hour: startTime.getHours(),
-      minute: startTime.getMinutes()
-    }
-    const endTimeObj = {
-      hour: endTime.getHours(),
-      minute: endTime.getMinutes(),
-    }
-    console.log(startTimeObj)
     const memberRef = firebase
       .firestore()
       .collection('groups')
       .doc(groupCode)
       .collection('members')
       .doc(firebase.auth().currentUser.uid);
-    if (selectedDay == 7) {
-      toggleSnackBar();
-      setSnackMessage('Please select a day');
-      return;
-    }
     let startIdx =
-      parseInt(selectedDay) * 48 + parseInt(startTimeObj.minute)/30 + parseInt(startTimeObj.hour) * 2;
+      parseInt(selectedDay) * 48 + Math.floor(startTime.getMinutes()/30) + startTime.getHours() * 2;
     let endIdx =
-      parseInt(selectedDay) * 48 + parseInt(endTimeObj.minute)/30 + parseInt(endTimeObj.hour) * 2;
+      parseInt(selectedDay) * 48 + Math.floor(endTime.getMinutes()/30) + endTime.getHours() * 2;
+    console.log(startIdx)
     if (endIdx == parseInt(selectedDay) * 48) {
       endIdx += 48;
     }
     if (startIdx >= endIdx) {
-      toggleSnackBar();
-      setSnackMessage('Invalid time slot');
       return;
     }
     for (let i = startIdx; i < endIdx; i++) {
       availability[i] = false;
     }
-    //availabilityUI[endIdx - 1] = [false, endIdx - startIdx];
-    //console.log('availability', availability);
+    toggleModal();
     memberRef.update({
       availability: availability,
-    });
-    toggleModal();
+    }).catch((error)=>console.error(error));
   };
 
   //const queryClient = useQueryClient();
@@ -221,9 +189,6 @@ export default function Availability() {
   function toggleDeleteModal() {
     setDeleteModalVisible(!isDeleteModalVisible);
   }
-  function toggleSnackBar() {
-    setSnackVisible(!isSnackVisible);
-  }
 
   const element = (cellData, index, availability) => (
     <TouchableOpacity
@@ -238,9 +203,19 @@ export default function Availability() {
 
   function onStartChange(event, selectedDate) {
     //setShow(false);
+    if (selectedDate.getTime() >= endTime.getTime()) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
     setStartTime(selectedDate);
   }
   function onEndChange(event, selectedDate) {
+    if (selectedDate.getTime() <= startTime.getTime()) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
     setEndTime(selectedDate);
   }
 
@@ -358,15 +333,6 @@ export default function Availability() {
         height='90%'
         userStyle='light'
       >
-        <Snackbar
-          visible={isSnackVisible}
-          onDismiss={() => setSnackVisible(false)}
-          wrapperStyle={{ top: 0 }}
-          duration={2000}
-        >
-          <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackMessage}</Text>
-        </Snackbar>
-
         <View style={styles(theme).modalBanner}>
           <TouchableOpacity style={styles(theme).addBtn} onPress={toggleModal}>
             <Text style={styles(theme).btnText}>Cancel</Text>
@@ -377,8 +343,9 @@ export default function Availability() {
           <TouchableOpacity
             style={[styles(theme).addBtn, { alignItems: 'flex-end' }]}
             onPress={() => postAvailability.mutate()}
+            disabled={isDisabled}
           >
-            <Text style={styles(theme).btnText}>Add</Text>
+            <Text style={[styles(theme).btnText, {color: isDisabled ? '#00000050': theme.primary}]}>Add</Text>
           </TouchableOpacity>
         </View>
 
@@ -420,7 +387,6 @@ export default function Availability() {
               style={{ width: '50%', justifyContent: 'center', alignItems: 'center' }}
             />
           </View>
-          <Divider />
           <View style={styles(theme).selectTime}>
             <Text style={styles(theme).modalText}>Ends</Text>
             <DateTimePicker
