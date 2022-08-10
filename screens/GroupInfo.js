@@ -463,7 +463,8 @@ export default function GroupInfo({ navigation }) {
       <BottomSheetModal
         isVisible={isSettingsVisible}
         onBackdropPress={toggleSettings}
-        swipeDown={false}
+        onSwipeComplete={toggleSettings}
+        swipeDown={true}
         barSize={'none'}
         height={groupRole == 'Creator' || 'Admin' ? '90%' : '50%'}
         userStyle='light'
