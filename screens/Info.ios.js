@@ -2,10 +2,12 @@ import React, { useRef } from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 import PagerView from 'react-native-pager-view';
+import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 
 import { useTheme } from '../context/ThemeProvider';
 import kvilleBoundary from '../assets/kvilleBoundary.jpg';
 import kvillesign from '../assets/kvillesign.jpg';
+import { LoadingIndicator } from '../components/LoadingIndicator';
 
 //DATA for The TABLES
 const NIGHTHOURS = {
@@ -45,6 +47,10 @@ const WHITETENT = {
 const window = Dimensions.get('window');
 
 export default function Info() {
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+  });
   const { theme } = useTheme();
   //Variables for sizing images
   
@@ -59,6 +65,10 @@ export default function Info() {
       <Text style={[styles(theme).contentText, { flex: 1 }]}>{data}</Text>
     </View>
   );
+
+  if (!fontsLoaded) {
+    <LoadingIndicator/>
+  }
 
   return (
     <SafeAreaView style={styles(theme).container}>
@@ -383,7 +393,7 @@ const styles = (theme) =>
     },
     button: {
       backgroundColor: theme.primary,
-      width: window.width/6,
+      width: window.width / 6,
       height: 50,
       alignItems: 'center',
       justifyContent: 'center',
@@ -399,13 +409,15 @@ const styles = (theme) =>
       marginHorizontal: 15,
       fontSize: 28,
       fontWeight: '700',
+      color: theme.grey1,
     },
     contentText: {
       fontSize: 18,
       fontWeight: '400',
       marginHorizontal: 24,
       marginVertical: 10,
-      color: theme.text2,
+      color: theme.grey1,
+      fontFamily: 'Montserrat_400Regular',
     },
 
     tentHeaderBox: {
@@ -416,12 +428,13 @@ const styles = (theme) =>
     },
     tableHead: { height: 40, backgroundColor: 'lavender' },
     tableWrapper: { flexDirection: 'row' },
-    tableTitle: { flex: 1, backgroundColor: 'lavender' },
+    tableTitle: { flex: 1, backgroundColor: 'lavender', color: theme.grey1 },
     tableRow: { height: 28 },
     tableText: {
       fontSize: 12,
       fontWeight: '500',
       textAlign: 'center',
+      color: theme.grey1,
     },
     tentTableRow: { height: 95 },
   });

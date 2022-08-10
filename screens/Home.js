@@ -119,7 +119,7 @@ export default function Home({ navigation }) {
       <View style={{ flexDirection: 'row', justifyContent: 'left' }}>
         <Image source={DukeBasketballLogo} style={styles(theme).image} />
         <View style={{ flexDirection: 'column' }}>
-          <Text style={[styles(theme).listText, { fontSize: 20 }]}>{groupName}</Text>
+          <Text style={[styles(theme).listText, { fontSize: 20, color: theme.grey1 }]}>{groupName}</Text>
           <Text style={[styles(theme).listText, { color: theme.grey4 }]}>{groupCode}</Text>
         </View>
       </View>
@@ -418,12 +418,13 @@ const styles = (theme) =>
       textAlign: 'left',
       fontWeight: '800',
       fontSize: 28,
+      color: theme.grey1,
     },
     groupText: {
       //text for 'Groups' and '+ Add Group'
       fontSize: 24,
       fontWeight: '700',
-      color: theme.grey2,
+      color: theme.grey1,
     },
     popUp: {
       //style for popup menu of add group

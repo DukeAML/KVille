@@ -316,7 +316,7 @@ export default function GroupInfo({ navigation }) {
     >
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
-        <Text style={{ fontSize: 30, fontWeight: '600' }}>Group Overview</Text>
+        <Text style={{ fontSize: 20, fontWeight: '600', color: theme.grey1 }}>Group Overview</Text>
         <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings} />
       </View>
 

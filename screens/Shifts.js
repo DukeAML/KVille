@@ -187,7 +187,7 @@ export default function Shifts() {
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
         <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', height: '60%' }}>
-          <Icon name='clock-outline' color={theme.icon2} size={20} />
+          <Icon name='clock-outline' color={theme.grey1} size={20} />
           <Text style={styles(theme).timeText}>
             {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]} - {endHour} : {minMapping[endMin]}{' '}
             {timeOfDayMapping[endTimeOfDay]}
@@ -266,10 +266,10 @@ const styles = (theme) =>
       //for the text inside the group cards
       fontSize: 15,
       fontWeight: '400',
-      color: theme.text2,
+      color: theme.grey1,
     },
     timeText: {
-      color: theme.text2,
+      color: theme.grey1,
       textAlign: 'center',
       marginLeft: 10,
       fontSize: 15,
@@ -279,6 +279,7 @@ const styles = (theme) =>
       fontSize: 24,
       marginLeft: '6%',
       marginTop: 10,
+      color: theme.grey1
     },
     shadowProp: {
       //shadow for the group cards

@@ -160,7 +160,7 @@ export default memo(function DrawerContent(props) {
           </Drawer.Section>
           <Drawer.Section title='Status'>
             <View style={styles.status}>
-              <Text style={{ color: '#000' }}>In Tent</Text>
+              <Text style={{ color: '#555555' }}>In Tent</Text>
               <Switch value={status} onValueChange={onToggleSwitch} color='#3eb489' />
             </View>
           </Drawer.Section>
