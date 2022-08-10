@@ -327,7 +327,6 @@ export default function Availability() {
       <BottomSheetModal
         isVisible={isModalVisible}
         onBackdropPress={toggleModal}
-        //onSwipeComplete={toggleModal}
         swipeDown={false}
         barSize={'none'}
         height='90%'

@@ -483,7 +483,9 @@ export default function Schedule() {
         onPress={() => {
           setRenderDay(day);
           dayHighlightOffset.value = value;
-          scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          if (data.length != 0) {
+            scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          }
         }}
       >
         <Text
