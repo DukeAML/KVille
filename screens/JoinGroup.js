@@ -167,7 +167,7 @@ export default function JoinGroup({ navigation }) {
               <Text style={styles(theme).buttonText} onPress={() => navigation.goBack()}>
                 Cancel
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 20 }}>Create Group</Text>
+              <Text style={{ fontWeight: '500', fontSize: 20 }}>Join Group</Text>
               <TouchableOpacity
                 onPress={() => {
                   onJoinGroup(navigation);
@@ -188,11 +188,12 @@ export default function JoinGroup({ navigation }) {
             </View>
 
             <TextInput
-              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              style={styles(theme).textInput}
               //autoFocus={true}
               onChangeText={(code) => setInputGroupCode(code.trim())}
               value={groupCode}
               placeholder='Enter Group Code'
+              autoCorrect={false}
             />
 
             <View
@@ -205,11 +206,10 @@ export default function JoinGroup({ navigation }) {
             >
               <Text style={styles(theme).groupText}>Nickname</Text>
             </View>
-
             <TextInput
-              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              style={styles(theme).textInput}
               value={name}
-              placeholder={name}
+              placeholder='Enter Nickname'
               maxLength={11} //Maximize username length to 11 characters
               onChangeText={(name) =>
                 setName(
@@ -220,6 +220,8 @@ export default function JoinGroup({ navigation }) {
                     .replace(/[^a-z0-9]/gi, '')
                 )
               }
+              clearTextOnFocus={true}
+              autoCorrect={false}
             />
           </View>
         </KeyboardAvoidingView>
@@ -281,12 +283,12 @@ const styles = (theme) =>
       marginBottom: 20,
     },
     textInput: {
-      backgroundColor: theme.white2,
+      backgroundColor: theme.background,
       padding: 10,
       width: '90%',
       fontSize: 20,
       fontWeight: '500',
-      textAlign: 'center',
+      //textAlign: 'center',
       borderRadius: 8,
       borderColor: theme.grey2,
       borderWidth: 2,
@@ -297,14 +299,7 @@ const styles = (theme) =>
       width: '90%',
       fontSize: 20,
       fontWeight: '700',
-      color: theme.grey2,
-    },
-    button: {
-      backgroundColor: theme.primary,
-      padding: 15,
-      borderRadius: 30,
-      marginTop: 50,
-      width: '50%',
+      color: theme.grey1,
     },
     buttonText: {
       fontSize: 18,

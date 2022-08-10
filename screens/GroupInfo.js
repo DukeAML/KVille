@@ -284,7 +284,7 @@ export default function GroupInfo({ navigation }) {
           currMember.current = { name: name, id: id, hours: hours, role: role };
         }}
       >
-        <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp, ,]}>
+        <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
           <Text style={styles(theme).listText}>{name}</Text>
           {inTent ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -508,12 +508,7 @@ const styles = (theme) =>
       backgroundColor: theme.white1,
       borderRadius: 8,
       borderWidth: 0.3,
-      borderColor: theme.popOutBorder,
-      shadowColor: '#171717',
-      shadowOffset: { width: -1.5, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
-      elevation: 15,
+      borderColor: theme.white1,
     },
     contentText: {
       //style of text inside boxText

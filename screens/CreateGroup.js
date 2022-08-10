@@ -183,6 +183,7 @@ export default function CreateGroup({ navigation }) {
               value={group.groupName}
               maxLength={28}
               onChangeText={(groupName) => setGroup({ ...group, groupName: groupName })}
+              autoCorrect={false}
             />
 
             <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Group Code</Text>
@@ -190,8 +191,8 @@ export default function CreateGroup({ navigation }) {
               style={[
                 styles(theme).textInput,
                 {
-                  backgroundColor: theme.white1,
-                  height: 50,
+                  backgroundColor: theme.background,
+                  height: 60,
                   width: '90%',
                   justifyContent: 'center',
                 },
@@ -204,16 +205,15 @@ export default function CreateGroup({ navigation }) {
 
             <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
             <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
-              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400' }}>{group.tentType}</Text>
+              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400', color: theme.grey1 }}>{group.tentType}</Text>
               <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
 
             <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Nickname</Text>
-
             <TextInput
-              style={[styles(theme).textInput, { borderWidth: 2, borderColor: theme.grey5 }]}
+              style={styles(theme).textInput}
               value={group.userName}
-              placeholder={group.userName}
+              placeholder='Enter Nickname'
               maxLength={11}
               onChangeText={(userName) =>
                 setGroup({
@@ -225,6 +225,7 @@ export default function CreateGroup({ navigation }) {
                     .replace(/[^a-z0-9]/gi, ''),
                 })
               }
+              clearTextOnFocus={true}
             />
           </View>
 
@@ -351,7 +352,7 @@ const styles = (theme) =>
       fontSize: 20,
       marginBottom: 10,
       fontWeight: '700',
-      color: theme.grey2,
+      color: theme.grey1,
     },
     textContainer: {
       height: '70%',
@@ -370,23 +371,23 @@ const styles = (theme) =>
       textAlign: 'center',
     },
     textInput: {
-      backgroundColor: theme.white2,
+      backgroundColor: theme.background,
       padding: 10,
       width: '90%',
       fontSize: 20,
       fontWeight: '400',
-      textAlign: 'center',
-      borderRadius: 15,
+      //textAlign: 'center',
+      borderRadius: 8,
       borderColor: theme.grey2,
       borderWidth: 2,
     },
     selectTent: {
       width: '90%',
       height: 45,
-      borderRadius: 15,
-      borderWidth: 1,
+      borderRadius: 8,
+      borderWidth: 2,
       borderColor: theme.grey2,
-      backgroundColor: '#ececec',
+      backgroundColor: theme.background,
       justifyContent: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between',
