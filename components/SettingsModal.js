@@ -144,7 +144,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
         groupCode: groupCode,
-        groupName: currGroupName,
+        groupName: groupName,
       }),
     });
     if (groupRole === 'Creator') {
@@ -306,6 +306,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
         buttonAction={() => {
           leaveGroup();
+          toggleModal();
           navigation.navigate('Home');
         }}
         toggleModal={toggleConfirmation}
