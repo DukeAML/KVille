@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -40,10 +41,24 @@ export default function Home({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCountVisible, setCountVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
+  
 
   const { theme } = useTheme();
   const dispatch = useDispatch();
+
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      if (mounted) {
+        setIsDisabled(false);
+      }
+      return () => {
+        mounted = false;
+      };
+    }, [])
+  );
 
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
@@ -76,6 +91,51 @@ export default function Home({ navigation }) {
         throw error;
       });
     return data;
+  }
+
+  async function updateRedux(groupName, groupCode) {
+    setIsDisabled(true);
+    let groupRole;
+    await firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .get()
+      .then((doc) => {
+        console.log('tent type', doc.data().tentType);
+        dispatch(setTentType(doc.data().tentType));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    await firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupCode)
+      .collection('members')
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((memDoc) => {
+        groupRole = memDoc.data().groupRole;
+        dispatch(setUserName(memDoc.data().name));
+        dispatch(setGroupRole(groupRole));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    dispatch(setGroupCode(groupCode));
+    dispatch(setGroupName(groupName));
+    try {
+      navigation.navigate('GroupInfo', {
+        //pass groupcode and group name parameters
+        groupCode: groupCode,
+        groupName: groupName,
+        groupRole: groupRole,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function toggleModal() {
@@ -114,8 +174,12 @@ export default function Home({ navigation }) {
   };
 
   //const for list Items of Groups List
-  const Group = ({ groupName, groupCode, onPress }) => (
-    <TouchableOpacity onPress={onPress} style={[styles(theme).listItem, styles(theme).shadowProp]}>
+  const Group = ({ groupName, groupCode }) => (
+    <TouchableOpacity
+      onPress={() => updateRedux(groupName, groupCode)}
+      style={[styles(theme).listItem, styles(theme).shadowProp]}
+      disabled={isDisabled}
+    >
       <View style={{ flexDirection: 'row', justifyContent: 'left' }}>
         <Image source={DukeBasketballLogo} style={styles(theme).image} />
         <View style={{ flexDirection: 'column' }}>
@@ -128,58 +192,7 @@ export default function Home({ navigation }) {
 
   //for rendering list items of Groups
   const renderGroup = ({ item }) => {
-    return (
-      <Group
-        groupName={item.groupName}
-        groupCode={item.code}
-        onPress={() => {
-          const updateRedux = async () => {
-            let groupRole;
-            await firebase
-              .firestore()
-              .collection('groups')
-              .doc(item.code)
-              .get()
-              .then((doc) => {
-                console.log('tent type', doc.data().tentType);
-                dispatch(setTentType(doc.data().tentType));
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-            await firebase
-              .firestore()
-              .collection('groups')
-              .doc(item.code)
-              .collection('members')
-              .doc(firebase.auth().currentUser.uid)
-              .get()
-              .then((memDoc) => {
-                groupRole = memDoc.data().groupRole;
-                dispatch(setUserName(memDoc.data().name));
-                dispatch(setGroupRole(groupRole));
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-
-            dispatch(setGroupCode(item.code));
-            dispatch(setGroupName(item.groupName));
-            try {
-              navigation.navigate('GroupInfo', {
-                //pass groupcode and group name parameters
-                groupCode: item.code,
-                groupName: item.groupName,
-                groupRole: groupRole,
-              });
-            } catch (error) {
-              console.error(error);
-            }
-          };
-          updateRedux();
-        }}
-      />
-    );
+    return <Group groupName={item.groupName} groupCode={item.code} />;
   };
 
   async function onLogout() {
@@ -199,7 +212,7 @@ export default function Home({ navigation }) {
   }
   if (isError) {
     console.error(error);
-    return <ErrorPage navigation={navigation}/>;
+    return <ErrorPage navigation={navigation} />;
   }
   return (
     <Provider>
@@ -260,20 +273,27 @@ export default function Home({ navigation }) {
             showsVerticalScrollIndicator={false}
           />
         </SafeAreaView>
-        
-        <View style = {{width: '100%', height: '20%', justifyContent: 'flex-end', alignItems: 'center'/* , borderWidth: 1 */}}>
+
+        <View
+          style={{
+            width: '100%',
+            height: '20%',
+            justifyContent: 'flex-end',
+            alignItems: 'center' /* , borderWidth: 1 */,
+          }}
+        >
           <TouchableOpacity
             style={{
-              width:'85%', 
-              height: '40%', 
-              backgroundColor: theme.primary, 
-              justifyContent:'center', 
+              width: '85%',
+              height: '40%',
+              backgroundColor: theme.primary,
+              justifyContent: 'center',
               alignItems: 'center',
-              borderRadius: 20
+              borderRadius: 20,
             }}
-            onPress = {toggleCount}
+            onPress={toggleCount}
           >
-              <Text style={{fontSize: 26, fontWeight: '700', color: theme.text1 } }>Countdown to UNC</Text>            
+            <Text style={{ fontSize: 26, fontWeight: '700', color: theme.text1 }}>Countdown to UNC</Text>
           </TouchableOpacity>
         </View>
 
@@ -308,8 +328,6 @@ export default function Home({ navigation }) {
             />
           </View>
         </ActionSheetModal>
-       
-
 
         <Modal
           isVisible={isModalVisible}
