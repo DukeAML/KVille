@@ -42,8 +42,8 @@ export default function Home({ navigation }) {
   const [isCountVisible, setCountVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
-  
 
   const { theme } = useTheme();
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ export default function Home({ navigation }) {
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groups', firebase.auth().currentUser.uid],
     fetchGroups,
-    { initialData: [] }
+    { initialData: [], onSuccess: () => setIsReady(true) }
   );
   //console.log('useQuery data:', data);
   useRefreshOnFocus(refetch);
@@ -72,7 +72,7 @@ export default function Home({ navigation }) {
 
   async function fetchGroups() {
     let data;
-    await SplashScreen.preventAutoHideAsync();
+
     await firebase
       .firestore()
       .collection('users')
@@ -155,22 +155,24 @@ export default function Home({ navigation }) {
   }
 
   const EmptyGroup = () => {
-    return (
-      <View
-        style={[
-          styles(theme).listItem,
-          styles(theme).shadowProp,
-          { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
-        ]}
-      >
-        <Image source={DukeBasketballLogo} style={styles(theme).image} />
-
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
-          <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
+    if (data.length == 0) {
+      return (
+        <View
+          style={[
+            styles(theme).listItem,
+            styles(theme).shadowProp,
+            { flexDirection: 'row', justifyContent: 'left', opacity: 0.3 },
+          ]}
+        >
+          <Image source={DukeBasketballLogo} style={styles(theme).image} />
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={[styles(theme).listText, { fontSize: 20 }]}>coachK</Text>
+            <Text style={[styles(theme).listText, { color: theme.grey4 }]}>#tentussy</Text>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
+    return null;
   };
 
   //const for list Items of Groups List
@@ -201,22 +203,23 @@ export default function Home({ navigation }) {
     firebase.auth().signOut();
   }
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return <LoadingIndicator />;
   }
   if (isError) {
     console.error(error);
     return <ErrorPage navigation={navigation} />;
   }
+  // if (data.length == 0) {
+  //   return (
+  //     <View style={{ flex: 1 }}>
+  //       <Text>Test</Text>
+  //     </View>
+  //   );
+  // }
   return (
     <Provider>
-      <View style={styles(theme).startContainer} onLayout={onLayoutRootView}>
+      <View style={styles(theme).startContainer}>
         <View style={styles(theme).topBanner}>
           <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
           <Menu
@@ -267,7 +270,7 @@ export default function Home({ navigation }) {
             data={data}
             renderItem={renderGroup}
             keyExtractor={(item) => item.code}
-            //ListEmptyComponent={<EmptyGroup/>}
+            ListEmptyComponent={<EmptyGroup/>}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
             showsVerticalScrollIndicator={false}

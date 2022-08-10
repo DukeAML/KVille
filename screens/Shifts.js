@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Text, View, StyleSheet, SafeAreaView, SectionList, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as SplashScreen from 'expo-splash-screen';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -42,6 +41,7 @@ export default function Shifts() {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const { theme } = useTheme();
   const shifts = useRef();
@@ -49,13 +49,12 @@ export default function Shifts() {
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['shifts', firebase.auth().currentUser.uid, groupCode],
     () => fetchCurrentUserShifts(groupCode),
-    { initialData: [] }
+    { initialData: [], onSuccess: ()=> setIsReady(true)}
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
   //useRefreshOnFocus(refetch);
 
   async function fetchCurrentUserShifts(groupCode) {
-    await SplashScreen.preventAutoHideAsync();
     //let shifts;
     await firebase
       .firestore()
@@ -110,8 +109,16 @@ export default function Shifts() {
         parsedShifts[startDay].data.push({ start: start, end: end });
       }
     }
-    //console.log(parsedShifts);
     return parsedShifts;
+  }
+
+  function isEmpty (shifts) {
+    for (let i=0; i<shifts.length; i++) {
+      if (shifts[i].data.length != 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   const postShiftUpdate = useShiftUpdate(groupCode);
@@ -200,21 +207,7 @@ export default function Shifts() {
     );
   };
 
-  const EmptyComponent = () => {
-    return (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 30, fontWeight: '700' }}> Create Group Schedule First</Text>
-      </View>
-    );
-  };
-
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return <LoadingIndicator />;
   }
 
@@ -222,9 +215,17 @@ export default function Shifts() {
     console.error(error);
     return <ErrorPage navigation={navigation} />;
   }
+  
+  if (isEmpty(data)) {
+    return (
+      <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>test</Text>
+      </View>
+    )
+  }
 
   return (
-    <View style={styles(theme).screenContainer} onLayout={onLayoutRootView}>
+    <View style={styles(theme).screenContainer}>
       <SectionList
         sections={data}
         keyExtractor={(item, index) => item + index}
@@ -236,7 +237,6 @@ export default function Shifts() {
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
-        //ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );

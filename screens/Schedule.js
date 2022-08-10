@@ -63,6 +63,7 @@ export default function Schedule() {
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
 
+  const [isReady, setIsReady] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -87,7 +88,7 @@ export default function Schedule() {
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
     () => fetchGroupSchedule(groupCode, weekDisplay),
-    { initialData: [] }
+    { initialData: [], onSuccess: () => setIsReady(true) }
   );
   //useRefreshOnFocus(refetch);
 
@@ -95,7 +96,6 @@ export default function Schedule() {
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
-    await SplashScreen.preventAutoHideAsync();
 
     let currSchedule;
     await firebase
@@ -332,7 +332,7 @@ export default function Schedule() {
         : '#fff'; //gets background color from the colorCodes Array
     if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
       return (
-        <View 
+        <View
           /* style={[   //trying to make border radius of table round
             { flex: 1 }, 
             index==0 ? {borderTopLeftRadius:10, borderTopRightRadius:10}: 
@@ -357,7 +357,7 @@ export default function Schedule() {
                 }
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
-                numberOfLines = {1}
+                numberOfLines={1}
               >
                 {person}
               </Text>
@@ -502,13 +502,7 @@ export default function Schedule() {
     );
   };
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return <LoadingIndicator />;
   }
 
@@ -519,13 +513,13 @@ export default function Schedule() {
 
   return (
     <Provider>
-      <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
+      <View style={styles(theme).bigContainer}>
         <ActionSheetModal
           isVisible={isModalVisible}
           onBackdropPress={toggleModal}
           onSwipeComplete={toggleModal}
           toggleModal={toggleModal}
-          userStyle = {'light'}
+          userStyle={'light'}
           cancelButton={true}
           height={win.height * 0.15}
         >
@@ -639,20 +633,30 @@ export default function Schedule() {
             </TouchableOpacity>
           </View>
         </View>
+
         <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
-            ref={scrollRef}
-            contentContainerStyle={{ paddingBottom: 30 }}
-            style={{ width: '100%' }}
-          >
-            <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
-              <TimeColumn />
-              <DailyTable day={renderDay} />
+          {data.length == 0 ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text>test</Text>
             </View>
-          </ScrollView>
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />
+              }
+              ref={scrollRef}
+              contentContainerStyle={{ paddingBottom: 30 }}
+              style={{ width: '100%' }}
+            >
+              <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
+                <TimeColumn />
+                <DailyTable day={renderDay} />
+              </View>
+            </ScrollView>
+          )}
         </View>
+
         {groupRole != 'Member' ? (
           <Portal>
             <FAB.Group
