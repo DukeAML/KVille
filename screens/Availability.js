@@ -506,7 +506,7 @@ export default function Availability() {
           <TouchableOpacity
             style={[
               styles(theme).addBtn,
-              { backgroundColor: theme.primary, width: '40%', height: '60%', borderRadius: 15 },
+              { backgroundColor: theme.primary},
             ]}
             onPress={() => postAvailability.mutate()}
           >
@@ -539,6 +539,7 @@ const styles = (theme) =>
       alignItems: 'center',
       width: '100%',
       height: '80%',
+      marginTop: 10,
       //justifyContent: 'space-evenly',
       //borderWidth:1,
     },
@@ -577,7 +578,10 @@ const styles = (theme) =>
     addBtn: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: '50%'
+      width: '50%',
+      width: '40%',
+      height: '60%',
+      borderRadius: 15,
     },
     btnText: {
       color: theme.text2,
@@ -633,7 +637,7 @@ const styles = (theme) =>
     FAB: {
       height: 50,
       width: 50,
-      backgroundColor: theme.grey3,
+      backgroundColor: '#D2D5DC',
       borderRadius: 12,
       justifyContent: 'center',
       alignItems: 'center',
