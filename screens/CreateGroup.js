@@ -84,7 +84,6 @@ export default function CreateGroup({ navigation }) {
         });
       }
       return () => {
-        setGroup({ ...group, groupName: '' });
         mounted = false;
       };
     }, [])

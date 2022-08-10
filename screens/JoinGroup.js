@@ -58,10 +58,11 @@ export default function JoinGroup({ navigation }) {
       let mounted = true;
 
       if (mounted) {
+        console.log('reset username ' + userName)
         setName(userName);
+        setInputGroupCode('');
       }
       return () => {
-        setInputGroupCode('');
         mounted = false;
       };
     }, [])
