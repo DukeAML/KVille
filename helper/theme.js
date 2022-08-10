@@ -1,5 +1,5 @@
 export const lightTheme = {
-  background: '#f5f7fa', //#C2C6D0',
+  background: '#F2F2F7', //#C2C6D0',
   primary: '#00539B',
   primaryContainer: '#f3f3f3', //'#C2C6D0',
   secondary: '#1E3F66',

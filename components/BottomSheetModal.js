@@ -49,7 +49,7 @@ const BottomSheetModal = ({
     //set up default styles for light and dark themes
     let background, headerColor;
     userStyle == 'light'
-      ? ((background = '#fff'), (headerColor = 'black'))
+      ? ((background = theme.background), (headerColor = 'black'))
       : ((background = '#565656'), (headerColor = '#fff'));
 
     //overwrite dark|light theme background colors if defined

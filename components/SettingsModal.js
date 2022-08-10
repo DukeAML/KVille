@@ -332,7 +332,7 @@ const styles = (theme) =>
     settingsContainer: {
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: theme.background,
       width: '100%',
       height: '100%',
       borderTopRightRadius: 20,
@@ -371,7 +371,7 @@ const styles = (theme) =>
       fontWeight: '500',
     },
     textInput: {
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       paddingVertical: 10,
       paddingHorizontal: 15,
       width: '90%',
@@ -399,7 +399,7 @@ const styles = (theme) =>
       flexDirection: 'row',
       width: '90%',
       height: 45,
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'space-between',
       borderRadius: 15,
