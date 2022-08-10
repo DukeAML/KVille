@@ -232,6 +232,7 @@ export default function Home({ navigation }) {
             }
           >
             <Menu.Item icon={'logout'} onPress={onLogout} title='Log Out' />
+            <Menu.Item icon={'information-outline'} onPress={()=>navigation.navigate('AboutScreen')} title='About' />
           </Menu>
         </View>
 
@@ -270,7 +271,7 @@ export default function Home({ navigation }) {
             data={data}
             renderItem={renderGroup}
             keyExtractor={(item) => item.code}
-            ListEmptyComponent={<EmptyGroup/>}
+            ListEmptyComponent={<EmptyGroup />}
             refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
             style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
             showsVerticalScrollIndicator={false}

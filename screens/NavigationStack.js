@@ -25,6 +25,7 @@ import ScheduleScreen from './Schedule';
 import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import ShiftsScreen from './Shifts';
+import AboutScreen from './About';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -207,6 +208,14 @@ export default function NavigationStack() {
           <Drawer.Screen
             name='CreateGroup'
             component={CreateGroupScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='AboutScreen'
+            component={AboutScreen}
             options={{
               headerShown: false,
               swipeEnabled: false,
