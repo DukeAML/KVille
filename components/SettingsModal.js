@@ -412,7 +412,7 @@ const styles = (theme) =>
       justifyContent: 'flex-end',
     },
     leaveButton: {
-      backgroundColor: '#ececec',
+      backgroundColor: '#fff',
       borderRadius: 15,
       padding: 15,
       position: 'absolute',

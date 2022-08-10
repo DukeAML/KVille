@@ -422,12 +422,14 @@ const styles = (theme) =>
       padding: 0,
     },
     modalBanner: {
-      height: '10%',
+      height: '8%',
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       paddingHorizontal: 20,
+      borderBottomWidth: 0.5,
+      borderColor: theme.popOutBorder,
     },
     modalBody: {
       alignItems: 'center',
