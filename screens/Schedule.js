@@ -544,6 +544,7 @@ export default function Schedule({ navigation }) {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
+              marginTop: 50
             }}
             onPress={() => postSchedule.mutate()}
           >
