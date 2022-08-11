@@ -101,6 +101,11 @@ export default function CreateGroup({ navigation }) {
       dispatch(setSnackMessage('Select tent type'));
       return;
     }
+    if (group.userName =='') {
+      dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Enter a nickname'));
+      return;
+    }
     groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     groupRef.set({

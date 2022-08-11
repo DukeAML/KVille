@@ -58,7 +58,7 @@ export default function JoinGroup({ navigation }) {
       let mounted = true;
 
       if (mounted) {
-        console.log('reset username ' + userName)
+        console.log('reset username ' + userName);
         setName(userName);
         setInputGroupCode('');
       }
@@ -71,8 +71,13 @@ export default function JoinGroup({ navigation }) {
   async function onJoinGroup(navigation) {
     console.log('group code', groupCode);
     if (groupCode == '') {
-      dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Enter group code'));
+      dispatch(toggleSnackBar());
+      return;
+    }
+    if (name == '') {
+      dispatch(setSnackMessage('Enter a nickname'));
+      dispatch(toggleSnackBar());
       return;
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -97,6 +102,20 @@ export default function JoinGroup({ navigation }) {
           });
         console.log(result);
         if (result == 'full') {
+          return;
+        }
+        result = await groupRef
+          .collection('members')
+          .doc(firebase.auth().currentUser.uid)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              dispatch(setSnackMessage('Already joined this group'));
+              dispatch(toggleSnackBar());
+              return 'exists';
+            }
+          });
+        if (result == 'exists') {
           return;
         }
 
@@ -146,10 +165,7 @@ export default function JoinGroup({ navigation }) {
               dispatch(setSnackMessage('Name already taken'));
             }
           });
-          return
-
-        // dispatch(inGroup());
-        // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
+        return;
       } else {
         console.log('No group exists');
         dispatch(toggleSnackBar());
