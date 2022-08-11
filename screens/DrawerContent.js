@@ -143,13 +143,13 @@ export default memo(function DrawerContent(props) {
                 props.navigation.navigate('ScheduleScreen');
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({ color, size }) => <Icon name='alert-outline' color={color} size={size} />}
               label='Line Monitoring'
               onPress={() => {
                 props.navigation.navigate('MonitorScreen');
               }}
-            />
+            /> */}
             <DrawerItem
               icon={({ color, size }) => <Icon name='information-outline' color={color} size={size} />}
               label='Information'
