@@ -60,7 +60,7 @@ let prevSchedule = new Array();
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
-export default function Schedule({navigation}) {
+export default function Schedule({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
@@ -531,15 +531,7 @@ export default function Schedule({navigation}) {
 
   if (data.length == 0 && !isRefetching) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingBottom: '30%',
-          backgroundColor: theme.background,
-        }}
-      >
+      <View style={styles(theme).emptyStateContainer}>
         <Text>Group Schedule has not been created</Text>
         <Image style={{ opacity: 0.5 }} source={tentemoji} />
         {groupRole != 'Member' ? (
@@ -555,7 +547,7 @@ export default function Schedule({navigation}) {
             }}
             onPress={() => postSchedule.mutate()}
           >
-            <Icon name='plus' color={theme.icon1} size={20} style={{marginRight: 10}} />
+            <Icon name='plus' color={theme.icon1} size={20} style={{ marginRight: 10 }} />
             <Text style={{ color: theme.text1, fontSize: 15, fontWeight: '500' }}>Create Schedule</Text>
           </TouchableOpacity>
         ) : (
@@ -738,6 +730,13 @@ const styles = (theme) =>
       flexGrow: 1,
       overflow: 'hidden',
     }, //for the entire page's container
+    emptyStateContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: '30%',
+      backgroundColor: theme.background,
+    },
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times

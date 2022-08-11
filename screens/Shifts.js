@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, SectionList, RefreshControl } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Text, View, StyleSheet, SectionList, RefreshControl, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
+import tentemoji from '../assets/tentemoji.png';
 
 const dayMapping = {
   0: 'Sunday',
@@ -36,7 +37,7 @@ const colorMapping = {
   'Night Shift': '#E5DBFF',
 };
 
-export default function Shifts({navigation}) {
+export default function Shifts({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -49,7 +50,7 @@ export default function Shifts({navigation}) {
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['shifts', firebase.auth().currentUser.uid, groupCode],
     () => fetchCurrentUserShifts(groupCode),
-    { initialData: [], onSuccess: ()=> setIsReady(true)}
+    { initialData: [], onSuccess: () => setIsReady(true) }
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
   //useRefreshOnFocus(refetch);
@@ -112,8 +113,8 @@ export default function Shifts({navigation}) {
     return parsedShifts;
   }
 
-  function isEmpty (shifts) {
-    for (let i=0; i<shifts.length; i++) {
+  function isEmpty(shifts) {
+    for (let i = 0; i < shifts.length; i++) {
       if (shifts[i].data.length != 0) {
         return false;
       }
@@ -214,13 +215,22 @@ export default function Shifts({navigation}) {
   if (isError) {
     return <ErrorPage navigation={navigation} />;
   }
-  
+
   if (isEmpty(data)) {
     return (
-      <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>test</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingBottom: '30%',
+          backgroundColor: theme.background,
+        }}
+      >
+        <Text>No Shifts have been assigned to you</Text>
+        <Image style={{ opacity: 0.5 }} source={tentemoji} />
       </View>
-    )
+    );
   }
 
   return (
@@ -278,7 +288,7 @@ const styles = (theme) =>
       fontSize: 24,
       marginLeft: '6%',
       marginTop: 10,
-      color: theme.grey1
+      color: theme.grey1,
     },
     shadowProp: {
       //shadow for the group cards

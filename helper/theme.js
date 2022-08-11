@@ -11,7 +11,7 @@ export const lightTheme = {
   grey2: '#656565',
   grey3: '#e5e5e5',
   grey4: '#555555',
-  grey5: '#8e8e8e',
+  grey5: '#8E8E93',
   grey6: '#a9a9a9',
   popOutBorder: '#d8d9dc',
   greyModal: '#565656',
