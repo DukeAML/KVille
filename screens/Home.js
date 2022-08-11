@@ -54,6 +54,7 @@ export default function Home({ navigation }) {
       let mounted = true;
       if (mounted) {
         setIsDisabled(false);
+        setIsReady(false);
       }
       return () => {
         mounted = false;
@@ -207,8 +208,8 @@ export default function Home({ navigation }) {
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    await firebase.auth().signOut();
     dispatch(reset());
-    firebase.auth().signOut();
   }
 
   if (isLoading || !isReady) {
@@ -217,13 +218,6 @@ export default function Home({ navigation }) {
   if (isError) {
     return <ErrorPage navigation={navigation} />;
   }
-  // if (data.length == 0) {
-  //   return (
-  //     <View style={{ flex: 1 }}>
-  //       <Text>Test</Text>
-  //     </View>
-  //   );
-  // }
   return (
     <Provider>
       <View style={styles(theme).startContainer}>
@@ -239,7 +233,22 @@ export default function Home({ navigation }) {
             }
           >
             <Menu.Item icon={'logout'} onPress={onLogout} title='Log Out' />
-            <Menu.Item icon={'information-outline'} onPress={() => navigation.navigate('AboutScreen')} title='About' />
+            <Menu.Item
+              icon={'information-outline'}
+              onPress={() => {
+                closeMenu();
+                navigation.navigate('AboutScreen');
+              }}
+              title='About'
+            />
+            <Menu.Item
+              icon={'cog-outline'}
+              onPress={() => {
+                closeMenu();
+                navigation.navigate('AccountSettingsScreen');
+              }}
+              title='Settings'
+            />
           </Menu>
         </View>
 
@@ -275,7 +284,7 @@ export default function Home({ navigation }) {
 
         <SafeAreaView style={{ width: '100%', height: '60%' }}>
           {data.length == 0 ? (
-            <View style={{ flex: 1, justifyContent: 'start', alignItems: 'center', paddingTop: '10%'}}>
+            <View style={{ flex: 1, justifyContent: 'start', alignItems: 'center', paddingTop: '10%' }}>
               <View
                 style={{
                   position: 'absolute',
@@ -283,7 +292,7 @@ export default function Home({ navigation }) {
                   width: 80,
                   transform: [{ rotateX: '180deg' }, { rotate: '90deg' }],
                   right: '10%',
-                  top: '0%'
+                  top: '0%',
                 }}
               >
                 <Arrow />
