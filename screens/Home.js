@@ -207,7 +207,6 @@ export default function Home({ navigation }) {
     return <LoadingIndicator />;
   }
   if (isError) {
-    console.error(error);
     return <ErrorPage navigation={navigation} />;
   }
   // if (data.length == 0) {

@@ -51,7 +51,7 @@ const cellHeight = 35;
 let currIndex;
 let availability;
 
-export default function Availability() {
+export default function Availability({navigation}) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [dimensions, setDimensions] = useState({ window });
@@ -232,7 +232,6 @@ export default function Availability() {
   }
 
   if (isError) {
-    console.error(error);
     return <ErrorPage navigation={navigation}/>;
   }
 

@@ -36,7 +36,7 @@ const colorMapping = {
   'Night Shift': '#E5DBFF',
 };
 
-export default function Shifts() {
+export default function Shifts({navigation}) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -212,7 +212,6 @@ export default function Shifts() {
   }
 
   if (isError) {
-    console.error(error);
     return <ErrorPage navigation={navigation} />;
   }
   

@@ -39,6 +39,10 @@ export default function JoinGroup({ navigation }) {
   const [name, setName] = useState('');
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
+  let groupName = '';
+
+  const dispatch = useDispatch();
+  const userName = useSelector((state) => state.user.currentUser.username);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -46,12 +50,6 @@ export default function JoinGroup({ navigation }) {
     });
     return () => subscription?.remove();
   });
-
-  let groupName = '';
-
-  const dispatch = useDispatch();
-
-  const userName = useSelector((state) => state.user.currentUser.username);
 
   useFocusEffect(
     useCallback(() => {

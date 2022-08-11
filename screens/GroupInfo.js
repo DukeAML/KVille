@@ -306,7 +306,6 @@ export default function GroupInfo({ navigation }) {
     return <LoadingIndicator />;
   }
   if (isError) {
-    console.error(error);
     return <ErrorPage navigation={navigation} />;
   }
   return (

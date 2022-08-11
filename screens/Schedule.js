@@ -13,6 +13,7 @@ import {
   LayoutAnimation,
   UIManager,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -37,6 +38,7 @@ import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
+import tentemoji from '../assets/tentemoji.png';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -58,12 +60,13 @@ let prevSchedule = new Array();
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
-export default function Schedule() {
+export default function Schedule({navigation}) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
 
   const [isReady, setIsReady] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -88,7 +91,13 @@ export default function Schedule() {
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
     () => fetchGroupSchedule(groupCode, weekDisplay),
-    { initialData: [], onSuccess: () => setIsReady(true) }
+    {
+      initialData: [],
+      onSuccess: () => {
+        setIsReady(true);
+        setIsRefetching(false);
+      },
+    }
   );
   //useRefreshOnFocus(refetch);
 
@@ -230,18 +239,25 @@ export default function Schedule() {
 
         //Update previous colorCodes to current and update current schedule to the groupSchedule
         prevColorCodes = colorCodes.current;
+        firebase
+          .firestore()
+          .collection('groups')
+          .doc(groupCode)
+          .update({
+            groupSchedule: newSchedule.current,
+            previousSchedule: prevSchedule,
+            previousMemberArr: colorCodes.current,
+          })
+          .catch((error) => console.error(error));
+        dispatch(setSnackMessage('New Schedule created'));
+        dispatch(toggleSnackBar());
       })
       .catch((error) => {
         console.error(error);
-        dispatch(toggleSnackBar());
         dispatch(setSnackMessage('Not enough members'));
+        dispatch(toggleSnackBar());
       });
     console.log('create new schedule', newSchedule);
-    return firebase.firestore().collection('groups').doc(groupCode).update({
-      groupSchedule: newSchedule.current,
-      previousSchedule: prevSchedule,
-      previousMemberArr: colorCodes.current,
-    });
   }
 
   function toggleModal() {
@@ -274,6 +290,7 @@ export default function Schedule() {
       setWeekDisplay('Current Week');
       isCurrentWeek.value = 1;
     }
+    setIsRefetching(true);
     refetch();
   }
 
@@ -509,8 +526,43 @@ export default function Schedule() {
   }
 
   if (isError) {
-    console.error(error);
     return <ErrorPage navigation={navigation} />;
+  }
+
+  if (data.length == 0 && !isRefetching) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingBottom: '30%',
+          backgroundColor: theme.background,
+        }}
+      >
+        <Text>Group Schedule has not been created</Text>
+        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+        {groupRole != 'Member' ? (
+          <TouchableOpacity
+            style={{
+              width: '50%',
+              height: 50,
+              backgroundColor: theme.primary,
+              borderRadius: 30,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => postSchedule.mutate()}
+          >
+            <Icon name='plus' color={theme.icon1} size={20} style={{marginRight: 10}} />
+            <Text style={{ color: theme.text1, fontSize: 15, fontWeight: '500' }}>Create Schedule</Text>
+          </TouchableOpacity>
+        ) : (
+          <Text>Ask the creator or an admin to create a new schedule</Text>
+        )}
+      </View>
+    );
   }
 
   return (
@@ -603,8 +655,6 @@ export default function Schedule() {
           buttonAction={() => {
             //toggleConfirmation();
             postSchedule.mutate();
-            dispatch(setSnackMessage('New Schedule created'));
-            dispatch(toggleSnackBar());
           }}
           isVisible={isConfirmationVisible}
           userStyle={'light'}
@@ -637,26 +687,19 @@ export default function Schedule() {
         </View>
 
         <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
-          {data.length == 0 ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text>test</Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+            ref={scrollRef}
+            contentContainerStyle={{ paddingBottom: 30 }}
+            style={{ width: '100%' }}
+            removeClippedSubviews={true}
+          >
+            <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
+              <TimeColumn />
+              <DailyTable day={renderDay} />
             </View>
-          ) : (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />
-              }
-              ref={scrollRef}
-              contentContainerStyle={{ paddingBottom: 30 }}
-              style={{ width: '100%' }}
-            >
-              <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
-                <TimeColumn />
-                <DailyTable day={renderDay} />
-              </View>
-            </ScrollView>
-          )}
+          </ScrollView>
         </View>
 
         {groupRole != 'Member' ? (
