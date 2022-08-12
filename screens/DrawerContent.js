@@ -17,10 +17,9 @@ import { reset } from '../redux/reducers/userSlice';
 export default memo(function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  
   const dispatch = useDispatch();
-
   const groupCode = useSelector((state) => state.user.currGroupCode);
-  console.log('group code', groupCode);
 
   const useUpdateTentStatus = (groupCode) => {
     const queryClient = useQueryClient();
@@ -93,8 +92,8 @@ export default memo(function DrawerContent(props) {
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    await firebase.auth().signOut();
     dispatch(reset());
-    firebase.auth().signOut();
   }
 
   return (
