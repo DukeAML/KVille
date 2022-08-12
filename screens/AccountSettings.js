@@ -38,7 +38,6 @@ export default function AccountSettings({ route, navigation }) {
       dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
       dispatch(toggleSnackBar());
     }
-    
   }
 
   function toggleConfirmation() {

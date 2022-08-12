@@ -25,7 +25,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
-import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -77,7 +76,6 @@ export default function GroupInfo({ navigation }) {
     () => fetchGroupMembers(groupCode),
     { initialData: [] }
   );
-  //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
