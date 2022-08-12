@@ -12,7 +12,7 @@ import {
 import { Table, TableWrapper, Row, Col, Cell } from 'react-native-table-component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import * as SplashScreen from 'expo-splash-screen';
+
 import { Snackbar } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -79,7 +79,7 @@ export default function Availability({navigation}) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchAvailability(groupCode) {
-    //await SplashScreen.preventAutoHideAsync();
+
 
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
@@ -220,12 +220,6 @@ export default function Availability({navigation}) {
     });
     return () => subscription?.remove();
   });
-
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (!isLoading) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [isLoading]);
 
   if (isLoading) {
     return <LoadingIndicator />;

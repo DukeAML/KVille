@@ -1,21 +1,36 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import { reset } from '../redux/reducers/userSlice';
+
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function AccountSettings({ navigation }) {
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
-  function deleteUser() {
+  async function deleteUser() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
     firebase
+      .firestore()
+      .collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .delete()
+      .catch((error) => console.error(error));
+    
+    await firebase
       .auth()
       .currentUser.delete()
       .catch((error) => console.error(error));
+    dispatch(reset());
   }
 
   function toggleConfirmation() {

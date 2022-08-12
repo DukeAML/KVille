@@ -83,7 +83,6 @@ export default function Register(props) {
               dispatch(toggleSnackBar());
             });
         } else {
-          console.error(error);
           dispatch(setSnackMessage('Username Taken'));
           dispatch(toggleSnackBar());
         }

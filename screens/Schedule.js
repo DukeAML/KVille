@@ -16,7 +16,6 @@ import {
   Image,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
-import * as SplashScreen from 'expo-splash-screen';
 import { Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';

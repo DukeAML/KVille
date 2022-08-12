@@ -35,6 +35,7 @@ import { ErrorPage } from '../components/ErrorPage';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 
 const window = Dimensions.get('window');
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function Home({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -202,7 +203,7 @@ export default function Home({ navigation }) {
   };
 
   async function onLogout() {
-    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
     await firebase.auth().signOut();
     dispatch(reset());
   }

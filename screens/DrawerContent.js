@@ -14,6 +14,8 @@ import 'firebase/compat/auth';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
 
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
+
 export default memo(function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
@@ -91,7 +93,7 @@ export default memo(function DrawerContent(props) {
   }
 
   async function onLogout() {
-    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
     await firebase.auth().signOut();
     dispatch(reset());
   }

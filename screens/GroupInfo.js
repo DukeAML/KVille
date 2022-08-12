@@ -11,7 +11,6 @@ import {
   SafeAreaView,
   Keyboard,
 } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
@@ -87,7 +86,6 @@ export default function GroupInfo({ navigation }) {
     console.log('passed group code', groupCode);
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
     let data = [{}];
-    //await SplashScreen.preventAutoHideAsync();
     await memberRef
       .where('inTent', '==', true)
       .get()
@@ -311,7 +309,6 @@ export default function GroupInfo({ navigation }) {
   return (
     <SafeAreaView
       style={styles(theme).container}
-      //onLayout={onLayoutRootView}
     >
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>

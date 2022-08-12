@@ -7,7 +7,6 @@ import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 

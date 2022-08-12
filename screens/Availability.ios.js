@@ -77,7 +77,6 @@ export default function Availability({navigation}) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchAvailability(groupCode) {
-    //await SplashScreen.preventAutoHideAsync();
 
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
