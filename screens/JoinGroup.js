@@ -12,6 +12,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -39,6 +40,11 @@ export default function JoinGroup({ navigation }) {
   const [name, setName] = useState('');
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
+  let groupName = '';
+
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const userName = useSelector((state) => state.user.currentUser.username);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -47,21 +53,16 @@ export default function JoinGroup({ navigation }) {
     return () => subscription?.remove();
   });
 
-  let groupName = '';
-
-  const dispatch = useDispatch();
-
-  const userName = useSelector((state) => state.user.currentUser.username);
-
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
 
       if (mounted) {
+        console.log('reset username ' + userName);
         setName(userName);
+        setInputGroupCode('');
       }
       return () => {
-        setInputGroupCode('');
         mounted = false;
       };
     }, [])
@@ -70,8 +71,13 @@ export default function JoinGroup({ navigation }) {
   async function onJoinGroup(navigation) {
     console.log('group code', groupCode);
     if (groupCode == '') {
-      dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Enter group code'));
+      dispatch(toggleSnackBar());
+      return;
+    }
+    if (name == '') {
+      dispatch(setSnackMessage('Enter a nickname'));
+      dispatch(toggleSnackBar());
       return;
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -96,6 +102,20 @@ export default function JoinGroup({ navigation }) {
           });
         console.log(result);
         if (result == 'full') {
+          return;
+        }
+        result = await groupRef
+          .collection('members')
+          .doc(firebase.auth().currentUser.uid)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              dispatch(setSnackMessage('Already joined this group'));
+              dispatch(toggleSnackBar());
+              return 'exists';
+            }
+          });
+        if (result == 'exists') {
           return;
         }
 
@@ -127,28 +147,22 @@ export default function JoinGroup({ navigation }) {
                 scheduledHrs: 0,
                 shifts: [],
               });
-              await userRef
-                .get()
-                .then((snapshot) => {
-                  dispatch(setCurrentUser(snapshot.data()));
-                  return snapshot;
-                })
-                .then((snapshot) => {
-                  navigation.navigate('GroupInfo', {
-                    groupCode: groupCode,
-                    groupName: groupName,
-                    groupRole: 'Member',
-                  });
-                });
+              await userRef.get().then((snapshot) => {
+                dispatch(setCurrentUser(snapshot.data()));
+              });
+
+              queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+              navigation.navigate('GroupInfo', {
+                groupCode: groupCode,
+                groupName: groupName,
+                groupRole: 'Member',
+              });
             } else {
               dispatch(toggleSnackBar());
               dispatch(setSnackMessage('Name already taken'));
             }
           });
-          return
-
-        // dispatch(inGroup());
-        // dispatch(setGroupInfo({ groupCode: groupCode, userName: name }));
+        return;
       } else {
         console.log('No group exists');
         dispatch(toggleSnackBar());
@@ -167,7 +181,7 @@ export default function JoinGroup({ navigation }) {
               <Text style={styles(theme).buttonText} onPress={() => navigation.goBack()}>
                 Cancel
               </Text>
-              <Text style={{ fontWeight: '500', fontSize: 20 }}>Create Group</Text>
+              <Text style={{ fontWeight: '500', fontSize: 20 }}>Join Group</Text>
               <TouchableOpacity
                 onPress={() => {
                   onJoinGroup(navigation);
@@ -188,11 +202,12 @@ export default function JoinGroup({ navigation }) {
             </View>
 
             <TextInput
-              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              style={styles(theme).textInput}
               //autoFocus={true}
               onChangeText={(code) => setInputGroupCode(code.trim())}
               value={groupCode}
               placeholder='Enter Group Code'
+              autoCorrect={false}
             />
 
             <View
@@ -203,13 +218,12 @@ export default function JoinGroup({ navigation }) {
                 marginTop: 55,
               }}
             >
-              <Text style={styles(theme).groupText}>Username</Text>
+              <Text style={styles(theme).groupText}>Nickname</Text>
             </View>
-
             <TextInput
-              style={[styles(theme).textInput, styles(theme).shadowProp]}
+              style={styles(theme).textInput}
               value={name}
-              placeholder={name}
+              placeholder='Enter Nickname'
               maxLength={11} //Maximize username length to 11 characters
               onChangeText={(name) =>
                 setName(
@@ -220,6 +234,8 @@ export default function JoinGroup({ navigation }) {
                     .replace(/[^a-z0-9]/gi, '')
                 )
               }
+              clearTextOnFocus={true}
+              autoCorrect={false}
             />
           </View>
         </KeyboardAvoidingView>
@@ -281,12 +297,12 @@ const styles = (theme) =>
       marginBottom: 20,
     },
     textInput: {
-      backgroundColor: theme.white2,
+      backgroundColor: theme.background,
       padding: 10,
       width: '90%',
       fontSize: 20,
       fontWeight: '500',
-      textAlign: 'center',
+      //textAlign: 'center',
       borderRadius: 8,
       borderColor: theme.grey2,
       borderWidth: 2,
@@ -297,14 +313,7 @@ const styles = (theme) =>
       width: '90%',
       fontSize: 20,
       fontWeight: '700',
-      color: theme.grey2,
-    },
-    button: {
-      backgroundColor: theme.primary,
-      padding: 15,
-      borderRadius: 30,
-      marginTop: 50,
-      width: '50%',
+      color: theme.grey1,
     },
     buttonText: {
       fontSize: 18,

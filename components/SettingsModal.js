@@ -24,6 +24,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const [modalSnackMessage, setModalSnackMessage] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
+  const queryClient = useQueryClient();
 
   const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
   const groupRef = firebase.firestore().collection('groups').doc(groupCode);
@@ -31,7 +32,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const postSave = useOnSave(groupCode);
 
   function useOnSave(groupCode) {
-    const queryClient = useQueryClient();
+    //const queryClient = useQueryClient();
     return useMutation((options) => onSave(options), {
       onError: (error) => {
         console.error(error);
@@ -42,40 +43,37 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     });
   }
 
-  function onSave(options) {
+  async function onSave(options) {
     const { newGroupName, newUserName, newTentType } = options;
     let groupIndex;
     let groupCodeArr;
     let valid = true;
 
     if (newGroupName != groupName || newTentType != tentType) {
+      await userRef.get().then((userDoc) => {
+        groupCodeArr = userDoc.data().groupCode;
+        groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
+        console.log('group index', groupIndex);
+        groupCodeArr[groupIndex] = {
+          groupCode: groupCode,
+          groupName: newGroupName,
+        };
+      });
+
       userRef
-        .get()
-        .then((userDoc) => {
-          groupCodeArr = userDoc.data().groupCode;
-          groupIndex = groupCodeArr.findIndex((element) => element.groupCode == groupCode);
-          console.log('group index', groupIndex);
-          groupCodeArr[groupIndex] = {
-            groupCode: groupCode,
-            groupName: newGroupName,
-          };
-          return userDoc;
+        .update({
+          groupCode: groupCodeArr,
         })
-        .then((doc) => {
-          userRef
-            .update({
-              groupCode: groupCodeArr,
-            })
-            .then(() => {
-              console.log('successfully saved groupName');
-            })
-            .catch((error) => {
-              console.log(error);
-              setModalSnackMessage('Error saving group name');
-              toggleModalSnackBar();
-              return;
-            });
+        .then(() => {
+          console.log('successfully saved groupName');
+        })
+        .catch((error) => {
+          console.log(error);
+          setModalSnackMessage('Error saving group name');
+          toggleModalSnackBar();
+          return;
         });
+
       groupRef
         .update({
           name: newGroupName,
@@ -90,6 +88,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           toggleModalSnackBar();
           return;
         });
+      queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
       dispatch(setTentType(newTentType));
       dispatch(setGroupName(newGroupName));
     }
@@ -118,9 +117,9 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               });
             dispatch(setUserName(newUserName));
           } else {
-            setModalSnackMessage('Username taken');
+            setModalSnackMessage('Nickname taken');
             toggleModalSnackBar();
-            valid = false
+            valid = false;
             return;
           }
         })
@@ -144,7 +143,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     userRef.update({
       groupCode: firebase.firestore.FieldValue.arrayRemove({
         groupCode: groupCode,
-        groupName: currGroupName,
+        groupName: groupName,
       }),
     });
     if (groupRole === 'Creator') {
@@ -168,6 +167,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           console.error('Error removing user: ', error);
         });
     }
+    queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
   }
 
   function toggleConfirmation() {
@@ -203,12 +203,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             </View>
 
             <View style={styles(theme).headerContainer}>
-              <Text style={styles(theme).headerText}>Name</Text>
+              <Text style={styles(theme).headerText}>Nickname</Text>
               <Icon name='account-edit' color={theme.grey2} size={20} style={{ marginRight: 8 }} />
             </View>
             <TextInput
               name='newUserName'
-              placeholder='User Name'
+              placeholder='Nickname'
               style={styles(theme).textInput}
               onChangeText={handleChange('newUserName')}
               onBlur={handleBlur('newUserName')}
@@ -306,6 +306,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         buttonText={groupRole === 'Creator' ? 'Delete This Group' : 'Leave This Group'}
         buttonAction={() => {
           leaveGroup();
+          toggleModal();
           navigation.navigate('Home');
         }}
         toggleModal={toggleConfirmation}
@@ -331,7 +332,7 @@ const styles = (theme) =>
     settingsContainer: {
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: theme.background,
       width: '100%',
       height: '100%',
       borderTopRightRadius: 20,
@@ -370,7 +371,7 @@ const styles = (theme) =>
       fontWeight: '500',
     },
     textInput: {
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       paddingVertical: 10,
       paddingHorizontal: 15,
       width: '90%',
@@ -398,7 +399,7 @@ const styles = (theme) =>
       flexDirection: 'row',
       width: '90%',
       height: 45,
-      backgroundColor: theme.background,
+      backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'space-between',
       borderRadius: 15,
@@ -411,7 +412,7 @@ const styles = (theme) =>
       justifyContent: 'flex-end',
     },
     leaveButton: {
-      backgroundColor: '#ececec',
+      backgroundColor: '#fff',
       borderRadius: 15,
       padding: 15,
       position: 'absolute',

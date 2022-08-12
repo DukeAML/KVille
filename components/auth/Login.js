@@ -44,7 +44,6 @@ export default function Login(props) {
           .signInWithEmailAndPassword(oldEmail, oldPassword)
           .then(() => {
             console.log('login successful');
-            setIsReady(true);
           })
           .catch((error) => {
             console.log(error);

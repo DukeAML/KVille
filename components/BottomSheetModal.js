@@ -49,7 +49,7 @@ const BottomSheetModal = ({
     //set up default styles for light and dark themes
     let background, headerColor;
     userStyle == 'light'
-      ? ((background = '#fff'), (headerColor = 'black'))
+      ? ((background = theme.background), (headerColor = 'black'))
       : ((background = '#565656'), (headerColor = '#fff'));
 
     //overwrite dark|light theme background colors if defined
@@ -59,7 +59,7 @@ const BottomSheetModal = ({
       <ModalContext.Provider value={{ headerColor }}>
         <Modal
           style={styles(theme).BottomModalView}
-          swipeDirection={swipeDown ? ['down'] : null}
+          swipeDirection= {swipeDown ? 'down' : null}
           backdropTransitionOutTiming={0}
           keyboardDismissMode={'on-drag'}
           {...props}

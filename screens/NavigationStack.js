@@ -25,6 +25,8 @@ import ScheduleScreen from './Schedule';
 import MonitorScreen from './Monitor';
 import InfoScreen from './Info';
 import ShiftsScreen from './Shifts';
+import AboutScreen from './About';
+import AccountSettingsScreen from './AccountSettings';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -36,12 +38,13 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 export default function NavigationStack() {
   //uncomment this to reset redux states
   //const dispatch = useDispatch();
-  //dispatch(clearData());
+  //dispatch(reset());
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [isScheduleInfoVisible, setScheduleInfoVisible] = useState(false);
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   function toggleInfo() {
     setInfoVisible(!isInfoVisible);
@@ -52,20 +55,20 @@ export default function NavigationStack() {
   }
 
   const AvailabilityText = () => (
-    <View>
+    <View style={{ flex: 1, paddingBottom: 20 }}>
       <Text style={styles(theme).InfoText}>
         This page is for your availability throughout the week. You will input what times of the week you are not
         available for tenting.
       </Text>
       <Text style={styles(theme).InfoText}>
-        To do so, click the add button on the bottom right to add a new busy time and input the date, start time, and
+        To do so, click the add button on the bottom right to add a new busy time and input the day, start time, and
         end time.
       </Text>
       <Text style={styles(theme).InfoText}>
         Do this for your entire weekly schedule. You can delete blocks to edit your times.
       </Text>
       <Text style={styles(theme).InfoText}>
-        This schedule should remain saved from week to week, but you may edit every week if you have changes to your
+        This schedule remains saved from week to week, but you may edit every week if you have changes to your
         schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
@@ -80,36 +83,26 @@ export default function NavigationStack() {
   );
 
   const ScheduleText = () => (
-    <View>
+    <View style={{flex: 1, paddingBottom: 20}}>
       <Text style={styles(theme).InfoText}>
         This page is for your group schedule for the week (from Sunday to Saturday midnight).
       </Text>
       <Text style={styles(theme).InfoText}>
-        Groups should aim to create a new weekly schedule every week after every member fills out their availability for
-        that week
+        Groups should aim to create a new weekly schedule every week after members fill out their availability for that week.
       </Text>
       <Text style={styles(theme).InfoText}>
-        Once all members of the group have filled out their availability for the week, one member should tap the ‘Create
-        New Schedule’ button to automatically generate a schedule that optimizes for equal distribution of time.
+        Once all members of the group have filled out their availability for the week, an admin should create a new group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        After the schedule is made, edits can be made by clicking on the time slot and changing the member for that
-        time. After making your edits, make sure to tap ‘Push Edits’ so that all other group members see the changes.
-      </Text>
-      <Text style={styles(theme).InfoText}>Note: You can’t make edits to the schedule at the same time.</Text>
-      <Text style={styles(theme).InfoText}>
-        The number of scheduled hours for each member should be displayed on the group information page to make sure
-        hours are distributed evenly.
+        After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that time.
       </Text>
     </View>
   );
 
-  const dispatch = useDispatch();
-
   //Navigation State persistence, saves user's location in app
   useEffect(() => {
     let mounted = true;
-    dispatch(reset());
+
     firebase
       .firestore()
       .collection('users')
@@ -133,11 +126,11 @@ export default function NavigationStack() {
         const initialUrl = await Linking.getInitialURL();
         console.log('initialUrl', initialUrl);
 
-        if (Platform.OS !== 'web' && initialUrl == null) {
+        if (Platform.OS !== 'web' /*&& initialUrl == null*/) {
           // Only restore state if there's no deep link and we're not on web
           const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
           const state = savedStateString ? JSON.parse(savedStateString) : undefined;
-          console.log('state', state);
+          //console.log('state', state);
           if (state !== undefined) {
             setInitialState(state);
           }
@@ -149,18 +142,6 @@ export default function NavigationStack() {
     if (!isReady) {
       restoreState();
     }
-    // async function prepare() {
-    //   try {
-    //     await SplashScreen.preventAutoHideAsync();
-    //   } catch (e) {
-    //     console.warn(e);
-    //   } finally {
-    //     // Tell the application to render
-    //     setIsReady(true);
-    //   }
-    // }
-
-    // prepare();
     return () => (mounted = false);
   }, [isReady]);
 
@@ -191,12 +172,6 @@ export default function NavigationStack() {
   //   return () => (mounted = false);
   // }, []);
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (isReady) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [isReady]);
-
   if (!isReady) {
     return null;
   }
@@ -207,7 +182,6 @@ export default function NavigationStack() {
         initialState={initialState}
         //onReady={onLayoutRootView}
         onStateChange={(state) => {
-          console.log('state', state);
           AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
         }}
       >
@@ -227,6 +201,22 @@ export default function NavigationStack() {
           <Drawer.Screen
             name='CreateGroup'
             component={CreateGroupScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='AboutScreen'
+            component={AboutScreen}
+            options={{
+              headerShown: false,
+              swipeEnabled: false,
+            }}
+          />
+          <Drawer.Screen
+            name='AccountSettingsScreen'
+            component={AccountSettingsScreen}
             options={{
               headerShown: false,
               swipeEnabled: false,
@@ -254,7 +244,7 @@ export default function NavigationStack() {
             options={({ navigation }) => ({
               title: 'Availability',
               headerStyle: {
-                backgroundColor: '#f3f3f3', //theme.primaryContainer;
+                backgroundColor: theme.primaryContainer,
                 borderBottomWidth: 0,
                 shadowColor: 'transparent',
               },
@@ -290,7 +280,11 @@ export default function NavigationStack() {
                       </TouchableOpacity>
                     </View>
 
-                    <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <ScrollView
+                      showsVerticalScrollIndicator={false}
+                      style={styles(theme).textView}
+                      scrollToOverflowEnabled={true}
+                    >
                       <AvailabilityText />
                     </ScrollView>
 
@@ -312,12 +306,13 @@ export default function NavigationStack() {
               headerStyle: {
                 backgroundColor: theme.primaryContainer,
                 borderBottomWidth: 0,
-                //shadowColor: 'transparent',
                 shadowColor: '#171717',
                 shadowOffset: { width: -2, height: 4 },
                 shadowOpacity: 0.2,
                 shadowRadius: 5,
                 elevation: 20,
+                //borderBottomLeftRadius: 10,
+                //borderBottomRightRadius: 10,
               },
               headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             })}
@@ -364,7 +359,11 @@ export default function NavigationStack() {
                       </TouchableOpacity>
                     </View>
 
-                    <ScrollView showsVerticalScrollIndicator={false} style={styles(theme).textView}>
+                    <ScrollView
+                      showsVerticalScrollIndicator={false}
+                      style={styles(theme).textView}
+                      scrollToOverflowEnabled={true}
+                    >
                       <ScheduleText />
                     </ScrollView>
 
@@ -424,10 +423,9 @@ const styles = (theme) =>
       alignItems: 'center',
     },
     textView: {
-      height: '67%',
+      height: '80%',
       width: '94%',
       backgroundColor: '#f3f3f3',
-      //borderWidth: 1,
       borderRadius: 18,
       paddingVertical: 10,
       paddingHorizontal: 15,
@@ -448,7 +446,6 @@ const styles = (theme) =>
       justifyContent: 'center',
       borderRadius: 15,
     },
-
     headerContainer: {
       flexDirection: 'row',
       width: '90%',

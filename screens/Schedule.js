@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, memo } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import {
   LayoutAnimation,
   UIManager,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import * as SplashScreen from 'expo-splash-screen';
@@ -35,7 +36,9 @@ import { ConfirmationModal } from '../components/ConfirmationModal';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
+import tentemoji from '../assets/tentemoji.png';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -57,10 +60,13 @@ let prevSchedule = new Array();
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
-export default function Schedule() {
+export default function Schedule({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
+
+  const [isReady, setIsReady] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
@@ -78,13 +84,20 @@ export default function Schedule() {
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
+  const isCurrentWeek = useSharedValue(1);
   const { open } = fabState;
   const dispatch = useDispatch();
 
   const { isLoading, isError, error, refetch, data } = useQuery(
     ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
     () => fetchGroupSchedule(groupCode, weekDisplay),
-    { initialData: [] }
+    {
+      initialData: [],
+      onSuccess: () => {
+        setIsReady(true);
+        setIsRefetching(false);
+      },
+    }
   );
   //useRefreshOnFocus(refetch);
 
@@ -92,7 +105,6 @@ export default function Schedule() {
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
     console.log('query initiated');
-    await SplashScreen.preventAutoHideAsync();
 
     let currSchedule;
     await firebase
@@ -227,18 +239,25 @@ export default function Schedule() {
 
         //Update previous colorCodes to current and update current schedule to the groupSchedule
         prevColorCodes = colorCodes.current;
+        firebase
+          .firestore()
+          .collection('groups')
+          .doc(groupCode)
+          .update({
+            groupSchedule: newSchedule.current,
+            previousSchedule: prevSchedule,
+            previousMemberArr: colorCodes.current,
+          })
+          .catch((error) => console.error(error));
+        dispatch(setSnackMessage('New Schedule created'));
+        dispatch(toggleSnackBar());
       })
       .catch((error) => {
         console.error(error);
-        dispatch(toggleSnackBar());
         dispatch(setSnackMessage('Not enough members'));
+        dispatch(toggleSnackBar());
       });
     console.log('create new schedule', newSchedule);
-    return firebase.firestore().collection('groups').doc(groupCode).update({
-      groupSchedule: newSchedule.current,
-      previousSchedule: prevSchedule,
-      previousMemberArr: colorCodes.current,
-    });
   }
 
   function toggleModal() {
@@ -265,17 +284,20 @@ export default function Schedule() {
     if (weekDisplay == 'Current Week') {
       console.log('showing previous week', weekDisplay);
       setWeekDisplay('Previous Week');
+      isCurrentWeek.value = 0;
     } else {
       console.log('showing current week');
       setWeekDisplay('Current Week');
+      isCurrentWeek.value = 1;
     }
+    setIsRefetching(true);
     refetch();
   }
 
-  const TimeColumn = () => {
+  const TimeColumn = memo(function () {
     //component for side table of 12am-12am time segments
     return (
-      <Table style={{ width: '7%' }}>
+      <Table style={{ width: '7%', marginTop: -31 }}>
         <Col
           data={times}
           heightArr={[62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62, 62]}
@@ -284,43 +306,34 @@ export default function Schedule() {
         />
       </Table>
     );
-  };
+  });
 
-  //Component for the popup list of members for each member
-  const Member = ({ name }) => {
-    /* function formatAsPercent(num) {
-      return `${parseFloat(num).toFixed(2)}%`;
-    } 
-    let height = formatAsPercent(100 * (1 / colorCodes.length));*/
+  //to render flatList in member list popup
+  const renderMember = ({ item }) => {
     let height = win.height * 0.45 * (1 / colorCodes.current.length) + 8;
     return (
       <View style={{ width: '100%' }}>
         <TouchableOpacity
           onPress={() => {
-            setNewMember(name);
+            setNewMember(item.name);
             toggleMemberModal();
             console.log('height', height);
           }}
           style={{ width: '100%' /* borderBottomWidth:1 */ }}
         >
           <View style={{ height: height, justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 18 }}>{name}</Text>
+            <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }}>{item.name}</Text>
           </View>
         </TouchableOpacity>
       </View>
     );
   };
 
-  //to render flatList in member list popup
-  const renderMember = ({ item }) => {
-    return <Member name={item.name} />;
-  };
-
   // Component for each single cell timeslot
   //    Parameters:
   //      index: index of cell within the entire schedule array
   //      person: string holding the person currently scheduled for the time cell
-  const OneCell = ({ index, person }) => {
+  const OneCell = memo(({ index, person }) => {
     //changes background based on who the member is
     const indexofUser =
       weekDisplay == 'Current Week'
@@ -336,7 +349,14 @@ export default function Schedule() {
         : '#fff'; //gets background color from the colorCodes Array
     if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
       return (
-        <View style={{ flex: 1 }}>
+        <View
+          /* style={[   //trying to make border radius of table round
+            { flex: 1 }, 
+            index==0 ? {borderTopLeftRadius:10, borderTopRightRadius:10}: 
+              index==47 ? 
+              {borderBottomLeftRadius:10, borderBottomRightRadius:10}: null]} */
+          style={{ flex: 1 }}
+        >
           <TouchableOpacity
             onPress={() => {
               editIndex.current = index;
@@ -354,6 +374,7 @@ export default function Schedule() {
                 }
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
+                numberOfLines={1}
               >
                 {person}
               </Text>
@@ -372,7 +393,7 @@ export default function Schedule() {
         </View>
       );
     }
-  };
+  });
 
   /*Component for each row to list the people in that time shift
     # of people on the row is dependent on the tentType and time of day
@@ -402,7 +423,7 @@ export default function Schedule() {
   };
 
   //Component for the table for one day's schedule
-  const DailyTable = ({ day }) => {
+  const DailyTable = memo(function ({ day }) {
     //if (schedule == undefined) return null;
     let indexAdder = 0;
     //depending on day parameter, change index in GLOBAL schedule array
@@ -431,7 +452,7 @@ export default function Schedule() {
     let dayArr = data.slice(indexAdder, indexAdder + 48);
     //console.log(day,"||", dayArr);
     return (
-      <View style={{ marginTop: 31, width: '90%' }}>
+      <View style={{ marginTop: 0, width: '90%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
           {dayArr.map((rowData, index) => (
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
@@ -444,14 +465,26 @@ export default function Schedule() {
         </Table>
       </View>
     );
-  };
+  });
 
   const customSpringStyles = useAnimatedStyle(() => {
     return {
       transform: [
         {
           translateX: withSpring(dayHighlightOffset.value * (win.width / 7), {
-            damping: 20,
+            damping: 50,
+            stiffness: 90,
+          }),
+        },
+      ],
+    };
+  });
+  const toggleWeekSpring = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withSpring(isCurrentWeek.value * (win.width * 0.3), {
+            damping: 50,
             stiffness: 90,
           }),
         },
@@ -467,7 +500,9 @@ export default function Schedule() {
         onPress={() => {
           setRenderDay(day);
           dayHighlightOffset.value = value;
-          scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          if (data.length != 0) {
+            scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          }
         }}
       >
         <Text
@@ -486,29 +521,52 @@ export default function Schedule() {
     );
   };
 
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return <LoadingIndicator />;
   }
 
   if (isError) {
-    console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation} />;
+  }
+
+  if (data.length == 0 && !isRefetching) {
+    return (
+      <View style={styles(theme).emptyStateContainer}>
+        <Text>Group Schedule has not been created</Text>
+        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+        {groupRole != 'Member' ? (
+          <TouchableOpacity
+            style={{
+              width: '50%',
+              height: 50,
+              backgroundColor: theme.primary,
+              borderRadius: 30,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 50
+            }}
+            onPress={() => postSchedule.mutate()}
+          >
+            <Icon name='plus' color={theme.icon1} size={20} style={{ marginRight: 10 }} />
+            <Text style={{ color: theme.text1, fontSize: 15, fontWeight: '500' }}>Create Schedule</Text>
+          </TouchableOpacity>
+        ) : (
+          <Text>Ask the creator or an admin to create a new schedule</Text>
+        )}
+      </View>
+    );
   }
 
   return (
     <Provider>
-      <View style={styles(theme).bigContainer} onLayout={onLayoutRootView}>
+      <View style={styles(theme).bigContainer}>
         <ActionSheetModal
           isVisible={isModalVisible}
           onBackdropPress={toggleModal}
           onSwipeComplete={toggleModal}
           toggleModal={toggleModal}
+          userStyle={'light'}
           cancelButton={true}
           height={win.height * 0.15}
         >
@@ -523,8 +581,8 @@ export default function Schedule() {
                 flexDirection: 'row',
               }}
             >
-              <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>{newMember}</Text>
-              <Icon name='chevron-down' color={theme.icon1} size={30} style={{ marginLeft: 10 }} />
+              <Text style={{ textAlign: 'center', fontSize: 24, color: 'black' }}>{newMember}</Text>
+              <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -547,7 +605,7 @@ export default function Schedule() {
               <Text
                 style={{
                   textAlign: 'center',
-                  color: 'white',
+                  color: 'black',
                   fontSize: 20,
                   fontWeight: '500',
                 }}
@@ -560,6 +618,7 @@ export default function Schedule() {
             isVisible={isMemberModalVisible}
             onBackdropPress={() => setMemberModalVisible(false)}
             onSwipeComplete={toggleMemberModal}
+            userStyle={'light'}
           >
             <View
               style={{
@@ -589,10 +648,9 @@ export default function Schedule() {
           buttonAction={() => {
             //toggleConfirmation();
             postSchedule.mutate();
-            dispatch(setSnackMessage('New Schedule created'));
-            dispatch(toggleSnackBar());
           }}
           isVisible={isConfirmationVisible}
+          userStyle={'light'}
           onBackdropPress={() => setConfirmationVisible(false)}
           onSwipeComplete={toggleConfirmation}
         />
@@ -609,6 +667,18 @@ export default function Schedule() {
             <DayButton day='Saturday' abbrev='Sat' value={6} />
           </View>
         </View>
+        <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={styles(theme).toggleWeekContainer}>
+            <Animated.View style={[styles(theme).toggleWeekHighlight, toggleWeekSpring]} />
+            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
+              <Text>Previous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
+              <Text>Current</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -616,40 +686,38 @@ export default function Schedule() {
             ref={scrollRef}
             contentContainerStyle={{ paddingBottom: 30 }}
             style={{ width: '100%' }}
+            removeClippedSubviews={true}
           >
-            {/* <Text style={styles(theme).dayHeader}>{renderDay}</Text> */}
-            <View style={{ flexDirection: 'row', marginTop: 10, width: '100%' }}>
+            <View style={{ flexDirection: 'row', marginTop: 20, padding: 0, width: '100%' }}>
               <TimeColumn />
               <DailyTable day={renderDay} />
             </View>
           </ScrollView>
         </View>
-        <Portal>
-          <FAB.Group
-            open={open}
-            icon={'plus'}
-            style={{ position: 'absolute' }}
-            fabStyle={{ backgroundColor: '#9FA6B7' }}
-            actions={[
-              {
-                icon: 'toggle-switch-outline',
-                label: weekDisplay,
-                onPress: () => toggleWeek(),
-              },
-              {
-                icon: 'calendar',
-                label: 'Create New Schedule',
-                onPress: () => toggleConfirmation(),
-              },
-            ]}
-            onStateChange={onFabStateChange}
-            onPress={() => {
-              if (open) {
-                // do something if the speed dial is open
-              }
-            }}
-          />
-        </Portal>
+
+        {groupRole != 'Member' ? (
+          <Portal>
+            <FAB.Group
+              open={open}
+              icon={'plus'}
+              style={{ position: 'absolute' }}
+              fabStyle={{ backgroundColor: '#9FA6B7' }}
+              actions={[
+                {
+                  icon: 'calendar',
+                  label: 'Create New Schedule',
+                  onPress: () => toggleConfirmation(),
+                },
+              ]}
+              onStateChange={onFabStateChange}
+              onPress={() => {
+                if (open) {
+                  // do something if the speed dial is open
+                }
+              }}
+            />
+          </Portal>
+        ) : null}
       </View>
     </Provider>
   );
@@ -663,6 +731,13 @@ const styles = (theme) =>
       flexGrow: 1,
       overflow: 'hidden',
     }, //for the entire page's container
+    emptyStateContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: '30%',
+      backgroundColor: theme.background,
+    },
     text: { margin: 3 }, //text within cells
     timesText: {
       //text style for the side text of the list of times
@@ -677,6 +752,37 @@ const styles = (theme) =>
       width: win.width / 7,
       height: 38,
       borderRadius: 100,
+    },
+    toggleWeekContainer: {
+      borderRadius: 10,
+      width: '60%',
+      height: 30,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      borderWidth: 1,
+      marginTop: 20,
+      backgroundColor: '#FAFAFA',
+      padding: 1,
+      borderColor: '#fff',
+    },
+    toggleWeekHighlight: {
+      position: 'absolute',
+      width: '50%',
+      height: '100%',
+      left: 0,
+      borderRadius: 10,
+      backgroundColor: '#FCFCFC',
+      shadowColor: '#171717',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+    },
+    toggleWeekButton: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
     },
     buttonContainer: {
       //container for the top buttons
@@ -725,7 +831,6 @@ const styles = (theme) =>
       //style for one row of the table
       flexDirection: 'row',
       backgroundColor: 'lavender',
-      //width: win.width * 0.9,
       width: '100%',
       height: 31,
       alignItems: 'center',
@@ -734,11 +839,9 @@ const styles = (theme) =>
     },
     timeSlotBtn: {
       //Button for oneCell of the Table
-      //width: 58,
       height: 30,
       backgroundColor: '#78B7BB',
-      //borderRadius: 2,
-      //alignSelf: 'stretch',
+      paddingHorizontal: 1,
       justifyContent: 'center',
     },
     btnText: {

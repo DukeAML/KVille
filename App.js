@@ -4,12 +4,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
+import { Platform } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
 
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -45,30 +49,58 @@ export default function App() {
     isReady: false,
   });
 
+  TaskManager.defineTask('KVILLE', ({ data: { eventType, region }, error }) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (eventType === Location.GeofencingEventType.Enter) {
+      console.log("You've entered region:", region);
+      if (state.loggedIn) {
+        updateTentStatus(true);
+      }
+    } else if (eventType === Location.GeofencingEventType.Exit) {
+      console.log("You've left region:", region);
+      if (state.loggedIn) {
+        updateTentStatus(false);
+      }
+    }
+  });
+
+  async function updateTentStatus(status) {
+    const currentUser = firebase.auth().currentUser.uid;
+    if (currentUser != null) {
+      let groupCodes;
+      await firebase
+        .firestore()
+        .collection('users')
+        .doc(currentUser)
+        .get()
+        .then((doc) => {
+          groupCodes = doc.data().groupCode;
+        })
+        .catch((error) => console.error(error));
+      for (let i = 0; i < groupCodes.length; i++) {
+        firebase
+          .firestore()
+          .collection('groups')
+          .doc(groupCodes[i].groupCode)
+          .collection('members')
+          .doc(currentUser)
+          .update({
+            inTent: status,
+          })
+          .catch((error) => console.error(error));
+      }
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
 
-        // const user = await AsyncStorage.getItem('USER');
-        // const userObj = JSON.parse(user)
-        // if (userObj != null) {
-        //   console.log('user', userObj);
-        //   firebase
-        //     .auth()
-        //     .updateCurrentUser(userObj)
-        //     .then(() => {
-        //       console.log('login successful');
-        //     })
-        //     .catch((error) => {
-        //       console.log(error);
-        //     });
-        //   //return;
-        // }
-        // LogBox.ignoreLogs([
-        //   'Warning: Failed prop type: Invalid prop `style` of type `array` supplied to',
-        // ]);
         firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
             setState({
@@ -76,7 +108,6 @@ export default function App() {
               loggedIn: false,
             });
           } else {
-            //AsyncStorage.setItem('USER', JSON.stringify(user));
             setState({
               isReady: true,
               loggedIn: true,
@@ -86,6 +117,26 @@ export default function App() {
       } catch (e) {
         console.warn(e);
       }
+    }
+    async function location() {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
+      } else {
+        let { status } = await Location.requestBackgroundPermissionsAsync();
+        console.log(status);
+        if (status !== 'granted') {
+          console.log('Background permissions were denied');
+          return;
+        } else {
+          console.log('geofencing started');
+          Location.startGeofencingAsync('KVILLE', [{ latitude: 35.997435, longitude: -78.940823, radius: 150 }]);
+        }
+      }
+    }
+    if (Platform.OS !== 'web') {
+      location();
     }
     if (mounted) {
       prepare();
@@ -99,14 +150,6 @@ export default function App() {
       await SplashScreen.hideAsync();
     }
   }, [state.isReady]);
-
-  //       //set persistence so user stays logged in; currently(5/14) not working
-  //       firebase
-  //         .auth()
-  //         .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  //         .then(() => {
-  //           console.log("persistence set");
-  //         });
 
   if (!state.isReady) {
     return null;

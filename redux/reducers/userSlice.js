@@ -1,14 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState: {
     currentUser: null,
-    currGroupCode: "",
-    currGroupName: "",
-    currUserName: "",
-    currTentType: "",
-    currGroupRole: "",
+    currGroupCode: '',
+    currGroupName: '',
+    currUserName: '',
+    currTentType: '',
+    currGroupRole: '',
   },
   reducers: {
     setCurrentUser: (state, action) => {
@@ -16,8 +16,11 @@ export const userSlice = createSlice({
     },
     reset: (state) => {
       state.currentUser = null;
-      state.currGroupCode = "";
-      state.currGroupName = "";
+      state.currGroupCode = '';
+      state.currGroupName = '';
+      state.currUserName = '';
+      state.currTentType = '';
+      state.currGroupRole = '';
     },
     setGroupCode: (state, action) => {
       state.currGroupCode = action.payload;
@@ -33,10 +36,11 @@ export const userSlice = createSlice({
     },
     setGroupRole: (state, action) => {
       state.currGroupRole = action.payload;
-    }
+    },
   },
 });
 
-export const { setCurrentUser, reset, setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } = userSlice.actions;
+export const { setCurrentUser, reset, setGroupCode, setGroupName, setUserName, setTentType, setGroupRole } =
+  userSlice.actions;
 
 export default userSlice.reducer;

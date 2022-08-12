@@ -1,7 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, SectionList, RefreshControl } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Text, View, StyleSheet, SectionList, RefreshControl, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as SplashScreen from 'expo-splash-screen';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -12,6 +11,8 @@ import 'firebase/compat/firestore';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorPage } from '../components/ErrorPage';
+import tentemoji from '../assets/tentemoji.png';
 
 const dayMapping = {
   0: 'Sunday',
@@ -36,11 +37,12 @@ const colorMapping = {
   'Night Shift': '#E5DBFF',
 };
 
-export default function Shifts() {
+export default function Shifts({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const { theme } = useTheme();
   const shifts = useRef();
@@ -48,13 +50,12 @@ export default function Shifts() {
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['shifts', firebase.auth().currentUser.uid, groupCode],
     () => fetchCurrentUserShifts(groupCode),
-    { initialData: [] }
+    { initialData: [], onSuccess: () => setIsReady(true) }
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
   //useRefreshOnFocus(refetch);
 
   async function fetchCurrentUserShifts(groupCode) {
-    await SplashScreen.preventAutoHideAsync();
     //let shifts;
     await firebase
       .firestore()
@@ -109,8 +110,16 @@ export default function Shifts() {
         parsedShifts[startDay].data.push({ start: start, end: end });
       }
     }
-    console.log(parsedShifts);
     return parsedShifts;
+  }
+
+  function isEmpty(shifts) {
+    for (let i = 0; i < shifts.length; i++) {
+      if (shifts[i].data.length != 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   const postShiftUpdate = useShiftUpdate(groupCode);
@@ -185,45 +194,47 @@ export default function Shifts() {
 
     return (
       <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor: colorMapping[shiftTime] }]}>
-        <View style={{ borderBottomWidth: 1, width: '100%', height: '60%' }}>
-          <Text style={styles(theme).listText}>{shiftTime}</Text>
-        </View>
-        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', marginTop: 10 }}>
-          <Icon name='clock-outline' color={theme.icon2} size={20} />
-          <Text style={{ color: theme.text2, textAlign: 'center', marginLeft: 10 }}>
+        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', height: '60%' }}>
+          <Icon name='clock-outline' color={theme.grey1} size={20} />
+          <Text style={styles(theme).timeText}>
             {startHour} : {minMapping[startMin]} {timeOfDayMapping[startTimeOfDay]} - {endHour} : {minMapping[endMin]}{' '}
             {timeOfDayMapping[endTimeOfDay]}
           </Text>
         </View>
+        <View style={{ borderTopWidth: 1, width: '100%', height: '40%', justifyContent: 'center' }}>
+          <Text style={styles(theme).listText}>{shiftTime}</Text>
+        </View>
       </View>
     );
   };
 
-  const EmptyComponent = () => {
-    return (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 30, fontWeight: '700' }}> Create Group Schedule First</Text>
-      </View>
-    );
-  };
-
-  const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      await SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  if (isLoading) {
+  if (isLoading || !isReady) {
     return <LoadingIndicator />;
   }
 
   if (isError) {
-    console.error(error);
-    return null;
+    return <ErrorPage navigation={navigation} />;
+  }
+
+  if (isEmpty(data)) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingBottom: '30%',
+          backgroundColor: theme.background,
+        }}
+      >
+        <Text>No Shifts have been assigned to you</Text>
+        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+      </View>
+    );
   }
 
   return (
-    <View style={styles(theme).screenContainer} onLayout={onLayoutRootView}>
+    <View style={styles(theme).screenContainer}>
       <SectionList
         sections={data}
         keyExtractor={(item, index) => item + index}
@@ -231,10 +242,10 @@ export default function Shifts() {
         renderSectionHeader={({ section: { title, data } }) =>
           data.length != 0 ? <Text style={styles(theme).sectionHeader}>{title}</Text> : null
         }
+        renderSectionFooter={() => <View style={{ marginBottom: 10 }}></View>}
         refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
-        //ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );
@@ -245,31 +256,38 @@ const styles = (theme) =>
     screenContainer: {
       flex: 1,
       backgroundColor: theme.background, //'#D2D5DC',
-      // flexGrow: 1,
-      // overflow: 'hidden',
+      //paddingVertical: 15,
     }, //for the entire page's container
     listItem: {
       //for the items for each group
       flexDirection: 'column',
       //justifyContent: 'space-between',
       alignItems: 'start',
-      backgroundColor: theme.grey3,
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
       alignSelf: 'center',
       width: '90%',
-      height: 100,
+      height: 90,
     },
     listText: {
       //for the text inside the group cards
       fontSize: 15,
+      fontWeight: '400',
+      color: theme.grey1,
+    },
+    timeText: {
+      color: theme.grey1,
+      textAlign: 'center',
+      marginLeft: 10,
+      fontSize: 15,
       fontWeight: '500',
-      color: theme.text2,
     },
     sectionHeader: {
       fontSize: 24,
-      marginLeft: '10%',
+      marginLeft: '6%',
+      marginTop: 10,
+      color: theme.grey1,
     },
     shadowProp: {
       //shadow for the group cards

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback , memo} from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Title, Drawer, Switch } from 'react-native-paper';
@@ -12,20 +12,15 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import { reset } from '../redux/reducers/userSlice';
 
-// import { reset } from "../redux/reducers/userSlice";
-
-export default function DrawerContent(props) {
+export default memo(function DrawerContent(props) {
   const [status, setStatus] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
-
-  const groupCode = useSelector((state) => state.user.currGroupCode);
-  console.log('group code', groupCode);
-  const groupName = useSelector((state) => state.user.currGroupName);
-  const userName = useSelector((state) => state.user.currUserName);
-  const tentType = useSelector((state) => state.user.currTentType);
-  const groupRole = useSelector((state) => state.user.currGroupRole);
   
+  const dispatch = useDispatch();
+  const groupCode = useSelector((state) => state.user.currGroupCode);
+
   const useUpdateTentStatus = (groupCode) => {
     const queryClient = useQueryClient();
     return useMutation((status) => updateTentStatus(groupCode, status), {
@@ -61,7 +56,7 @@ export default function DrawerContent(props) {
     useCallback(() => {
       let mounted = true;
       console.log('useFocusEffect triggered');
-      if (mounted && groupCode != '') {
+      if (mounted && groupCode != '' && groupCode != null) {
         firebase
           .firestore()
           .collection('groups')
@@ -97,7 +92,8 @@ export default function DrawerContent(props) {
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD']);
-    firebase.auth().signOut();
+    await firebase.auth().signOut();
+    dispatch(reset());
   }
 
   return (
@@ -134,7 +130,7 @@ export default function DrawerContent(props) {
             />
             <DrawerItem
               icon={({ color, size }) => <Icon name='calendar-check-outline' color={color} size={size} />}
-              label='Your Shifts'
+              label='Shifts This Week'
               onPress={() => {
                 props.navigation.navigate('ShiftsScreen');
               }}
@@ -146,13 +142,13 @@ export default function DrawerContent(props) {
                 props.navigation.navigate('ScheduleScreen');
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({ color, size }) => <Icon name='alert-outline' color={color} size={size} />}
               label='Line Monitoring'
               onPress={() => {
                 props.navigation.navigate('MonitorScreen');
               }}
-            />
+            /> */}
             <DrawerItem
               icon={({ color, size }) => <Icon name='information-outline' color={color} size={size} />}
               label='Information'
@@ -163,7 +159,7 @@ export default function DrawerContent(props) {
           </Drawer.Section>
           <Drawer.Section title='Status'>
             <View style={styles.status}>
-              <Text style={{ color: '#000' }}>In Tent</Text>
+              <Text style={{ color: '#555555' }}>In Tent</Text>
               <Switch value={status} onValueChange={onToggleSwitch} color='#3eb489' />
             </View>
           </Drawer.Section>
@@ -191,7 +187,7 @@ export default function DrawerContent(props) {
       />
     </View>
   );
-}
+})
 
 const styles = StyleSheet.create({
   drawerContent: {
