@@ -186,33 +186,12 @@ export default function GroupInfo({ navigation }) {
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
-    let groups;
-    await firebase
-      .firestore()
-      .collection('users')
-      .doc(currMember.current.id)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          groups = doc.data().groupCode;
-          for (let i = 0; i < groups.length; i++) {
-            if (groups[i].groupCode == groupCode) {
-              groups.splice(i, 1);
-              break;
-            }
-          }
-          console.log('groups', groups);
-        }
-      })
-      .catch((error) => {
-        console.error('Error removing member: ', error);
-      });
     firebase
       .firestore()
       .collection('users')
       .doc(currMember.current.id)
       .update({
-        groupCode: groups,
+        groupCode: firebase.firestore.FieldValue.arrayRemove({ groupCode: groupCode, groupName: groupName }),
       })
       .catch((error) => console.error(error));
     toggleModal();
@@ -307,9 +286,7 @@ export default function GroupInfo({ navigation }) {
     return <ErrorPage navigation={navigation} />;
   }
   return (
-    <SafeAreaView
-      style={styles(theme).container}
-    >
+    <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).containerHeader}>
         <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
         <Text style={{ fontSize: 20, fontWeight: '600', color: theme.grey1 }}>Group Overview</Text>
