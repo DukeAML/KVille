@@ -13,8 +13,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import * as SplashScreen from 'expo-splash-screen';
-import { Menu, Provider, IconButton } from 'react-native-paper';
+import { Menu, Provider } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
@@ -31,7 +30,6 @@ import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, res
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
-import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -220,8 +218,7 @@ export default function Home({ navigation }) {
       <View style={styles(theme).startContainer}>
         <View style={styles(theme).topBanner}>
           <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
-          <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={()=>navigation.navigate('AccountSettingsScreen')} />
-          {/* <Menu
+          <Menu
             visible={isMenuVisible}
             onDismiss={closeMenu}
             anchor={
@@ -247,7 +244,7 @@ export default function Home({ navigation }) {
               }}
               title='Settings'
             />
-          </Menu> */}
+          </Menu>
         </View>
 
         <View
