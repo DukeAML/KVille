@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -53,6 +54,7 @@ export default function CreateGroup({ navigation }) {
   const [dimensions, setDimensions] = useState({ window });
   const { theme } = useTheme();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const groupRole = 'Creator';
 
@@ -90,7 +92,7 @@ export default function CreateGroup({ navigation }) {
   );
 
   //Create group function
-  function onCreateGroup() {
+  async function onCreateGroup() {
     if (group.groupName == '') {
       dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Enter group name'));
@@ -101,7 +103,7 @@ export default function CreateGroup({ navigation }) {
       dispatch(setSnackMessage('Select tent type'));
       return;
     }
-    if (group.userName =='') {
+    if (group.userName == '') {
       dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Enter a nickname'));
       return;
@@ -137,23 +139,23 @@ export default function CreateGroup({ navigation }) {
     dispatch(setUserName(group.userName));
     dispatch(setTentType(group.tentType));
     dispatch(setGroupRole('Creator'));
-    userRef
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          dispatch(setCurrentUser(snapshot.data()));
-        } else {
-          console.log('does not exist');
-        }
-        return snapshot;
-      })
-      .then((snapshot) => {
-        navigation.navigate('GroupInfo', {
-          groupCode: group.groupCode,
-          groupName: group.groupName,
-          groupRole: 'Creator',
-        });
-      });
+    await userRef.get().then((snapshot) => {
+      if (snapshot.exists) {
+        dispatch(setCurrentUser(snapshot.data()));
+      } else {
+        console.log('does not exist');
+      }
+      return snapshot;
+    });
+    
+    
+    queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+
+    navigation.navigate('GroupInfo', {
+      groupCode: group.groupCode,
+      groupName: group.groupName,
+      groupRole: 'Creator',
+    });
   }
 
   return (
@@ -209,7 +211,9 @@ export default function CreateGroup({ navigation }) {
 
             <Text style={[styles(theme).headerText, { marginTop: 20 }]}>Tent Type</Text>
             <TouchableOpacity onPress={toggleTentChange} style={styles(theme).selectTent}>
-              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400', color: theme.grey1 }}>{group.tentType}</Text>
+              <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '400', color: theme.grey1 }}>
+                {group.tentType}
+              </Text>
               <Icon name='chevron-down' color={theme.icon2} size={30} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
 

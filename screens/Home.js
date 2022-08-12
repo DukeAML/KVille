@@ -14,7 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import * as SplashScreen from 'expo-splash-screen';
-import { Menu, Provider } from 'react-native-paper';
+import { Menu, Provider, IconButton } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
@@ -54,7 +54,6 @@ export default function Home({ navigation }) {
       let mounted = true;
       if (mounted) {
         setIsDisabled(false);
-        setIsReady(false);
       }
       return () => {
         mounted = false;
@@ -67,8 +66,6 @@ export default function Home({ navigation }) {
     fetchGroups,
     { initialData: [], onSuccess: () => setIsReady(true) }
   );
-  //console.log('useQuery data:', data);
-  useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
@@ -104,7 +101,7 @@ export default function Home({ navigation }) {
       .doc(groupCode)
       .get()
       .then((doc) => {
-        console.log('tent type', doc.data().tentType);
+        //console.log('tent type', doc.data().tentType);
         dispatch(setTentType(doc.data().tentType));
       })
       .catch((e) => {
@@ -223,7 +220,8 @@ export default function Home({ navigation }) {
       <View style={styles(theme).startContainer}>
         <View style={styles(theme).topBanner}>
           <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
-          <Menu
+          <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={()=>navigation.navigate('AccountSettingsScreen')} />
+          {/* <Menu
             visible={isMenuVisible}
             onDismiss={closeMenu}
             anchor={
@@ -249,7 +247,7 @@ export default function Home({ navigation }) {
               }}
               title='Settings'
             />
-          </Menu>
+          </Menu> */}
         </View>
 
         <View

@@ -12,6 +12,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQueryClient } from 'react-query';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -41,6 +42,7 @@ export default function JoinGroup({ navigation }) {
   const { theme } = useTheme();
   let groupName = '';
 
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const userName = useSelector((state) => state.user.currentUser.username);
 
@@ -145,19 +147,16 @@ export default function JoinGroup({ navigation }) {
                 scheduledHrs: 0,
                 shifts: [],
               });
-              await userRef
-                .get()
-                .then((snapshot) => {
-                  dispatch(setCurrentUser(snapshot.data()));
-                  return snapshot;
-                })
-                .then((snapshot) => {
-                  navigation.navigate('GroupInfo', {
-                    groupCode: groupCode,
-                    groupName: groupName,
-                    groupRole: 'Member',
-                  });
-                });
+              await userRef.get().then((snapshot) => {
+                dispatch(setCurrentUser(snapshot.data()));
+              });
+
+              queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+              navigation.navigate('GroupInfo', {
+                groupCode: groupCode,
+                groupName: groupName,
+                groupRole: 'Member',
+              });
             } else {
               dispatch(toggleSnackBar());
               dispatch(setSnackMessage('Name already taken'));
