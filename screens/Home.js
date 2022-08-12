@@ -10,7 +10,7 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
-} from 'react-native';
+} from 'react-native'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { Menu, Provider } from 'react-native-paper';
