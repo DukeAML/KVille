@@ -241,7 +241,7 @@ export default function Home({ navigation }) {
               icon={'cog-outline'}
               onPress={() => {
                 closeMenu();
-                navigation.navigate('AccountSettingsScreen');
+                navigation.navigate('AccountSettingsScreen', {groups: data});
               }}
               title='Settings'
             />

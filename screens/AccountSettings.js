@@ -9,28 +9,36 @@ import 'firebase/compat/auth';
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-export default function AccountSettings({ navigation }) {
+export default function AccountSettings({ route, navigation }) {
+  const { groups } = route.params;
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
   async function deleteUser() {
-    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(firebase.auth().currentUser.uid)
-      .delete()
-      .catch((error) => console.error(error));
+    toggleConfirmation();
+    if (groups.length == 0) {
+      await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .delete()
+        .catch((error) => console.error(error));
+      await firebase
+        .auth()
+        .currentUser.delete()
+        .catch((error) => console.error(error));
+      dispatch(reset());
+    } else {
+      dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
+      dispatch(toggleSnackBar());
+    }
     
-    await firebase
-      .auth()
-      .currentUser.delete()
-      .catch((error) => console.error(error));
-    dispatch(reset());
   }
 
   function toggleConfirmation() {
