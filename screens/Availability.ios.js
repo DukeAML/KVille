@@ -407,8 +407,7 @@ const styles = (theme) =>
     container: {
       flex: 1,
       padding: 0,
-      //backgroundColor: '#D2D5DC',
-      backgroundColor: '#f5f5f5',
+      backgroundColor: theme.background,
     },
     text: {
       textAlign: 'center',
@@ -473,7 +472,7 @@ const styles = (theme) =>
       fontWeight: '600',
     },
     head: {
-      backgroundColor: '#f3f3f3', //theme.background;
+      backgroundColor: theme.background,
       height: 35,
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,

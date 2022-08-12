@@ -263,7 +263,6 @@ const styles = (theme) =>
       flexDirection: 'column',
       //justifyContent: 'space-between',
       alignItems: 'start',
-      backgroundColor: theme.grey3,
       padding: 8,
       marginVertical: 7,
       borderRadius: 10,
