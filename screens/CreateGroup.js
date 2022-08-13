@@ -117,6 +117,8 @@ export default function CreateGroup({ navigation }) {
       memberArr: [],
       previousSchedule: [],
       previousMemberArr: [],
+    }).catch((error)=>{
+      console.error(error);
     });
     //adds current user to collection of members in the group
     groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
@@ -126,6 +128,8 @@ export default function CreateGroup({ navigation }) {
       availability: availability,
       scheduledHrs: 0,
       shifts: [],
+    }).catch((error)=>{
+      console.error(error);
     });
     //updates current user's inGroup and groupCode states
     userRef.update({
@@ -133,6 +137,8 @@ export default function CreateGroup({ navigation }) {
         groupCode: group.groupCode,
         groupName: group.groupName,
       }),
+    }).catch((error)=>{
+      console.error(error);
     });
     dispatch(setGroupCode(group.groupCode));
     dispatch(setGroupName(group.groupName));

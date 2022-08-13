@@ -144,33 +144,6 @@ export default function NavigationStack() {
     return () => (mounted = false);
   }, [isReady]);
 
-  // useEffect(() => {
-  //   // clearData(dispatch);
-  //   // fetchUser(dispatch);
-  //   let mounted = true;
-  //   dispatch(reset());
-  //   firebase
-  //     .firestore()
-  //     .collection('users')
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((snapshot) => {
-  //       if (mounted && snapshot.exists) {
-  //         dispatch(setCurrentUser(snapshot.data()));
-  //       } else {
-  //         console.log('does not exist');
-  //       }
-  //     })
-  //     .then(() => {
-  //       console.log('cleared data and fetched user');
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-
-  //   return () => (mounted = false);
-  // }, []);
-
   if (!isReady) {
     return null;
   }
