@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -13,8 +13,8 @@ import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice
 
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-export default function AccountSettings({ route, navigation }) {
-  const { groups } = route.params;
+export default function AccountSettings({ navigation }) {
+  const groups = useSelector((state)=>state.user.currentUser.groupCode);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
   const dispatch = useDispatch();
