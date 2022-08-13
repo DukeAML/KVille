@@ -22,6 +22,10 @@ export default function AccountSettings({ navigation }) {
   async function deleteUser() {
     toggleConfirmation();
     if (groups.length == 0) {
+      const user = firebase.auth().currentUser;
+      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, '123456');
+      await user.reauthenticateWithCredential(credentials).catch((error) => console.error(error));
+      
       await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
       firebase
         .firestore()
