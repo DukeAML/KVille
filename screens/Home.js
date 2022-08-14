@@ -426,9 +426,10 @@ const styles = (theme) =>
       alignItems: 'center',
       marginTop: 50,
       marginBottom: 35,
-      width: '90%',
+      width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      paddingHorizontal: '5%'
     },
     topText: {
       //"welcome to kville" text
@@ -436,6 +437,8 @@ const styles = (theme) =>
       fontWeight: '800',
       fontSize: 28,
       color: theme.grey1,
+      width: '70%',
+      //marginLeft: '5%',
     },
     groupText: {
       //text for 'Groups' and '+ Add Group'
