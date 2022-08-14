@@ -1,8 +1,8 @@
 {
-  "name": "duke-tenting-app-rev3",
+  "name": "kville",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "homepage": "https://kevinfu1.github.io/duke-tenting-app-rev2/",
+  "homepage": "https://kevinfu1.github.io/KVille/",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
