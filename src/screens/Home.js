@@ -206,7 +206,7 @@ export default function Home({ navigation }) {
           icon='cog-outline'
           color={theme.grey1}
           size={25}
-          onPress={() => navigation.navigate('AccountSettings')}
+          onPress={() => navigation.navigate('StackNavigator')}
           style={{marginRight: 0}}
         />
       </View>

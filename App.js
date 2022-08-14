@@ -32,10 +32,10 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-import RegisterScreen from './src/components/auth/Register';
-import LoginScreen from './src/components/auth/Login';
-import NavigationStack from './src/navigation/NavigationStack';
-import ForgotPasswordScreen from './src/components/auth/ForgotPassword';
+import RegisterScreen from './src/screens/auth/Register';
+import LoginScreen from './src/screens/auth/Login';
+import NavigationStack from './src/navigation/DrawerNavigator';
+import ForgotPasswordScreen from './src/screens/auth/ForgotPassword';
 import { persistor, store } from './src/redux/store/index';
 import ThemeProvider from './src/context/ThemeProvider';
 import Snackbar from './src/components/Snackbar';

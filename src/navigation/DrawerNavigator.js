@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
@@ -15,6 +14,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import StackNavigator from './StackNavigator';
 import HomeScreen from '../screens/Home';
 import CreateGroupScreen from '../screens/CreateGroup';
 import JoinGroupScreen from '../screens/JoinGroup';
@@ -25,25 +25,13 @@ import ScheduleScreen from '../screens/Schedule';
 import MonitorScreen from '../screens/Monitor';
 import InfoScreen from '../screens/Info';
 import ShiftsScreen from '../screens/Shifts';
-import AboutScreen from '../screens/About';
-import AccountSettingsScreen from '../screens/AccountSettings';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import Snackbar from '../components/Snackbar';
 
-const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
-
-function AccountSettings() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name='AccountSettingsScreen' component={AccountSettingsScreen} options={{ headerShown: false }} />
-      <Stack.Screen name='AboutScreen' component={AboutScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
-  );
-}
 
 export default function NavigationStack() {
   //uncomment this to reset redux states
@@ -192,8 +180,8 @@ export default function NavigationStack() {
             }}
           />
           <Drawer.Screen
-            name='AccountSettings'
-            component={AccountSettings}
+            name='StackNavigator'
+            component={StackNavigator}
             options={{
               headerShown: false,
               swipeEnabled: false,
