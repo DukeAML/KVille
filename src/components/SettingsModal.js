@@ -139,14 +139,27 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     }
   }
 
-  function leaveGroup() {
-    userRef.update({
-      groupCode: firebase.firestore.FieldValue.arrayRemove({
-        groupCode: groupCode,
-        groupName: groupName,
-      }),
-    });
+  async function leaveGroup() {
+    
     if (groupRole === 'Creator') {
+      await groupRef
+        .collection('members')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            firebase
+              .firestore()
+              .collection('users')
+              .doc(doc.id)
+              .update({
+                groupCode: firebase.firestore.FieldValue.arrayRemove({
+                  groupCode: groupCode,
+                  groupName: groupName,
+                }),
+              })
+              .catch((error) => console.error(error));
+          });
+        });
       groupRef
         .delete()
         .then(() => {
@@ -156,6 +169,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           console.error('Error removing group: ', error);
         });
     } else {
+      await userRef.update({
+        groupCode: firebase.firestore.FieldValue.arrayRemove({
+          groupCode: groupCode,
+          groupName: groupName,
+        }),
+      });
       groupRef
         .collection('members')
         .doc(firebase.auth().currentUser.uid)

@@ -16,7 +16,6 @@ import {
   Image,
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
-import * as SplashScreen from 'expo-splash-screen';
 import { Divider, Badge } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -29,7 +28,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { ConfirmationModal } from '../components/ConfirmationModal';
@@ -99,7 +97,6 @@ export default function Schedule({ navigation }) {
       },
     }
   );
-  //useRefreshOnFocus(refetch);
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

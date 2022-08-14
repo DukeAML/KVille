@@ -53,7 +53,6 @@ export default function Shifts({ navigation }) {
     { initialData: [], onSuccess: () => setIsReady(true) }
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-  //useRefreshOnFocus(refetch);
 
   async function fetchCurrentUserShifts(groupCode) {
     //let shifts;

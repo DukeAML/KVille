@@ -7,7 +7,6 @@ import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 
@@ -15,18 +14,17 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import HomeScreen from './Home';
-import CreateGroupScreen from './CreateGroup';
-import JoinGroupScreen from './JoinGroup';
-import GroupInfoScreen from './GroupInfo';
-import DrawerContent from './DrawerContent';
-import AvailabilityScreen from './Availability';
-import ScheduleScreen from './Schedule';
-import MonitorScreen from './Monitor';
-import InfoScreen from './Info';
-import ShiftsScreen from './Shifts';
-import AboutScreen from './About';
-import AccountSettingsScreen from './AccountSettings';
+import StackNavigator from './StackNavigator';
+import HomeScreen from '../screens/Home';
+import CreateGroupScreen from '../screens/CreateGroup';
+import JoinGroupScreen from '../screens/JoinGroup';
+import GroupInfoScreen from '../screens/GroupInfo';
+import DrawerContent from '../screens/DrawerContent';
+import AvailabilityScreen from '../screens/Availability';
+import ScheduleScreen from '../screens/Schedule';
+import MonitorScreen from '../screens/Monitor';
+import InfoScreen from '../screens/Info';
+import ShiftsScreen from '../screens/Shifts';
 import { setCurrentUser, reset } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
@@ -61,15 +59,14 @@ export default function NavigationStack() {
         available for tenting.
       </Text>
       <Text style={styles(theme).InfoText}>
-        To do so, click the add button on the bottom right to add a new busy time and input the day, start time, and
-        end time.
+        To do so, click the add button on the bottom right to add a new busy time and input the day, start time, and end
+        time.
       </Text>
       <Text style={styles(theme).InfoText}>
         Do this for your entire weekly schedule. You can delete blocks to edit your times.
       </Text>
       <Text style={styles(theme).InfoText}>
-        This schedule remains saved from week to week, but you may edit every week if you have changes to your
-        schedule.
+        This schedule remains saved from week to week, but you may edit every week if you have changes to your schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
         Make sure to fill out your availability every week before you Create a New Group Schedule or your busy times
@@ -83,18 +80,21 @@ export default function NavigationStack() {
   );
 
   const ScheduleText = () => (
-    <View style={{flex: 1, paddingBottom: 20}}>
+    <View style={{ flex: 1, paddingBottom: 20 }}>
       <Text style={styles(theme).InfoText}>
         This page is for your group schedule for the week (from Sunday to Saturday midnight).
       </Text>
       <Text style={styles(theme).InfoText}>
-        Groups should aim to create a new weekly schedule every week after members fill out their availability for that week.
+        Groups should aim to create a new weekly schedule every week after members fill out their availability for that
+        week.
       </Text>
       <Text style={styles(theme).InfoText}>
-        Once all members of the group have filled out their availability for the week, an admin should create a new group schedule.
+        Once all members of the group have filled out their availability for the week, an admin should create a new
+        group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that time.
+        After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that
+        time.
       </Text>
     </View>
   );
@@ -145,33 +145,6 @@ export default function NavigationStack() {
     return () => (mounted = false);
   }, [isReady]);
 
-  // useEffect(() => {
-  //   // clearData(dispatch);
-  //   // fetchUser(dispatch);
-  //   let mounted = true;
-  //   dispatch(reset());
-  //   firebase
-  //     .firestore()
-  //     .collection('users')
-  //     .doc(firebase.auth().currentUser.uid)
-  //     .get()
-  //     .then((snapshot) => {
-  //       if (mounted && snapshot.exists) {
-  //         dispatch(setCurrentUser(snapshot.data()));
-  //       } else {
-  //         console.log('does not exist');
-  //       }
-  //     })
-  //     .then(() => {
-  //       console.log('cleared data and fetched user');
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-
-  //   return () => (mounted = false);
-  // }, []);
-
   if (!isReady) {
     return null;
   }
@@ -207,16 +180,8 @@ export default function NavigationStack() {
             }}
           />
           <Drawer.Screen
-            name='AboutScreen'
-            component={AboutScreen}
-            options={{
-              headerShown: false,
-              swipeEnabled: false,
-            }}
-          />
-          <Drawer.Screen
-            name='AccountSettingsScreen'
-            component={AccountSettingsScreen}
+            name='StackNavigator'
+            component={StackNavigator}
             options={{
               headerShown: false,
               swipeEnabled: false,

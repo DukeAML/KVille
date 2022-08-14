@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableWithoutFeedback} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 
@@ -13,15 +13,17 @@ const CustomizedSnackbar = () => {
   const { theme } = useTheme();
 
   return (
-    <Snackbar
-      visible={snackbarOpen}
-      onDismiss={() => dispatch(toggleSnackBar())}
-      wrapperStyle={{ top: 0 }}
-      duration={2000}
-      elevation={5}
-    >
-      <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackbarMessage}</Text>
-    </Snackbar>
+    <TouchableWithoutFeedback onPress={() => dispatch(toggleSnackBar())}>
+      <Snackbar
+        visible={snackbarOpen}
+        onDismiss={() => dispatch(toggleSnackBar())}
+        wrapperStyle={{ top: 0 }}
+        duration={2000}
+        elevation={5}
+      >
+        <Text style={{ textAlign: 'center', color: theme.text1 }}>{snackbarMessage}</Text>
+      </Snackbar>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -1,21 +1,53 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { useTheme } from '../context/ThemeProvider';
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import { reset } from '../redux/reducers/userSlice';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
+
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function AccountSettings({ navigation }) {
+  const groups = useSelector((state)=>state.user.currentUser.groupCode);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
-  function deleteUser() {
-    firebase
-      .auth()
-      .currentUser.delete()
-      .catch((error) => console.error(error));
+  async function deleteUser() {
+    toggleConfirmation();
+    if (groups.length == 0) {
+      const user = firebase.auth().currentUser;
+      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, '123456');
+      await user.reauthenticateWithCredential(credentials).catch((error) => console.error(error));
+
+      await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .delete()
+        .catch((error) => console.error(error));
+      await firebase
+        .auth()
+        .currentUser.delete()
+        .catch((error) => console.error(error));
+      dispatch(reset());
+    } else {
+      dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
+      dispatch(toggleSnackBar());
+    }
+  }
+
+  async function onLogout() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+    await firebase.auth().signOut();
+    dispatch(reset());
   }
 
   function toggleConfirmation() {
@@ -36,6 +68,12 @@ export default function AccountSettings({ navigation }) {
           <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
         </TouchableOpacity> */}
       </View>
+      <TouchableOpacity onPress={() => navigation.navigate('AboutScreen')}>
+        <Text>About</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onLogout}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
       </TouchableOpacity>
