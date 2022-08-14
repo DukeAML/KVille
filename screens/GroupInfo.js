@@ -286,7 +286,7 @@ export default function GroupInfo({ navigation }) {
   return (
     <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).containerHeader}>
-        <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>
+        <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()} />
         <Text style={{ fontSize: 20, fontWeight: '600', color: theme.grey1 }}>Group Overview</Text>
         <IconButton icon='cog-outline' color={theme.grey1} size={25} onPress={toggleSettings} />
       </View>

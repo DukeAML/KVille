@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconButton } from 'react-native-paper';
@@ -31,8 +32,18 @@ import { useTheme } from '../context/ThemeProvider';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import Snackbar from '../components/Snackbar';
 
+const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
+
+function AccountSettings() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name='AccountSettingsScreen' component={AccountSettingsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='AboutScreen' component={AboutScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+}
 
 export default function NavigationStack() {
   //uncomment this to reset redux states
@@ -60,15 +71,14 @@ export default function NavigationStack() {
         available for tenting.
       </Text>
       <Text style={styles(theme).InfoText}>
-        To do so, click the add button on the bottom right to add a new busy time and input the day, start time, and
-        end time.
+        To do so, click the add button on the bottom right to add a new busy time and input the day, start time, and end
+        time.
       </Text>
       <Text style={styles(theme).InfoText}>
         Do this for your entire weekly schedule. You can delete blocks to edit your times.
       </Text>
       <Text style={styles(theme).InfoText}>
-        This schedule remains saved from week to week, but you may edit every week if you have changes to your
-        schedule.
+        This schedule remains saved from week to week, but you may edit every week if you have changes to your schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
         Make sure to fill out your availability every week before you Create a New Group Schedule or your busy times
@@ -82,18 +92,21 @@ export default function NavigationStack() {
   );
 
   const ScheduleText = () => (
-    <View style={{flex: 1, paddingBottom: 20}}>
+    <View style={{ flex: 1, paddingBottom: 20 }}>
       <Text style={styles(theme).InfoText}>
         This page is for your group schedule for the week (from Sunday to Saturday midnight).
       </Text>
       <Text style={styles(theme).InfoText}>
-        Groups should aim to create a new weekly schedule every week after members fill out their availability for that week.
+        Groups should aim to create a new weekly schedule every week after members fill out their availability for that
+        week.
       </Text>
       <Text style={styles(theme).InfoText}>
-        Once all members of the group have filled out their availability for the week, an admin should create a new group schedule.
+        Once all members of the group have filled out their availability for the week, an admin should create a new
+        group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that time.
+        After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that
+        time.
       </Text>
     </View>
   );
@@ -179,16 +192,8 @@ export default function NavigationStack() {
             }}
           />
           <Drawer.Screen
-            name='AboutScreen'
-            component={AboutScreen}
-            options={{
-              headerShown: false,
-              swipeEnabled: false,
-            }}
-          />
-          <Drawer.Screen
-            name='AccountSettingsScreen'
-            component={AccountSettingsScreen}
+            name='AccountSettings'
+            component={AccountSettings}
             options={{
               headerShown: false,
               swipeEnabled: false,

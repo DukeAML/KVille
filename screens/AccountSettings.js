@@ -25,7 +25,7 @@ export default function AccountSettings({ navigation }) {
       const user = firebase.auth().currentUser;
       const credentials = firebase.auth.EmailAuthProvider.credential(user.email, '123456');
       await user.reauthenticateWithCredential(credentials).catch((error) => console.error(error));
-      
+
       await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
       firebase
         .firestore()
@@ -62,6 +62,9 @@ export default function AccountSettings({ navigation }) {
           <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
         </TouchableOpacity> */}
       </View>
+      <TouchableOpacity onPress={()=>navigation.navigate('AboutScreen')}>
+        <Text>About</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
       </TouchableOpacity>

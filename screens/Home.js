@@ -10,10 +10,10 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
-} from 'react-native'; 
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import { Menu, Provider } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
@@ -40,7 +40,6 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 export default function Home({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCountVisible, setCountVisible] = useState(false);
-  const [isMenuVisible, setMenuVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const time = useRef(Math.round((new Date(2023, 1, 5).getTime() - Date.now()) / 1000));
@@ -144,14 +143,6 @@ export default function Home({ navigation }) {
     setCountVisible(!isCountVisible);
   }
 
-  function openMenu() {
-    setMenuVisible(true);
-  }
-
-  function closeMenu() {
-    setMenuVisible(false);
-  }
-
   const EmptyGroup = () => {
     return (
       <View
@@ -215,106 +206,82 @@ export default function Home({ navigation }) {
     return <ErrorPage navigation={navigation} />;
   }
   return (
-    <Provider>
-      <View style={styles(theme).startContainer}>
-        <View style={styles(theme).topBanner}>
-          <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
-          <Menu
-            visible={isMenuVisible}
-            onDismiss={closeMenu}
-            anchor={
-              <TouchableOpacity onPress={openMenu}>
-                <Icon name='dots-vertical' color={theme.icon2} size={25} />
-              </TouchableOpacity>
-            }
-          >
-            <Menu.Item icon={'logout'} onPress={onLogout} title='Log Out' />
-            <Menu.Item
-              icon={'information-outline'}
-              onPress={() => {
-                closeMenu();
-                navigation.navigate('AboutScreen');
+    <View style={styles(theme).startContainer}>
+      <View style={styles(theme).topBanner}>
+        <Text style={styles(theme).topText}>Welcome to Krzyzewskiville!</Text>
+        <IconButton
+          icon='cog-outline'
+          color={theme.grey1}
+          size={25}
+          onPress={() => navigation.navigate('AccountSettings')}
+        />
+      </View>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '90%',
+          alignItems: 'center',
+          marginBottom: 5,
+        }}
+      >
+        <Text style={styles(theme).groupText}>Groups</Text>
+        <TouchableOpacity onPress={toggleModal}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Icon name='plus-circle-outline' color={theme.primary} size={20} />
+            <Text
+              style={[
+                styles(theme).groupText,
+                {
+                  fontSize: 16,
+                  fontWeight: '700',
+                  color: theme.primary,
+                  marginLeft: 4,
+                },
+              ]}
+            >
+              Add Group
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <SafeAreaView style={{ width: '100%', height: '60%' }}>
+        {data.length == 0 ? (
+          <View style={{ flex: 1, justifyContent: 'start', alignItems: 'center', paddingTop: '10%' }}>
+            <View
+              style={{
+                position: 'absolute',
+                height: 80,
+                width: 80,
+                transform: [{ rotateX: '180deg' }, { rotate: '90deg' }],
+                right: '10%',
+                top: '0%',
               }}
-              title='About'
-            />
-            <Menu.Item
-              icon={'cog-outline'}
-              onPress={() => {
-                closeMenu();
-                navigation.navigate('AccountSettingsScreen');
-              }}
-              title='Settings'
-            />
-          </Menu>
-        </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '90%',
-            alignItems: 'center',
-            marginBottom: 5,
-          }}
-        >
-          <Text style={styles(theme).groupText}>Groups</Text>
-          <TouchableOpacity onPress={toggleModal}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Icon name='plus-circle-outline' color={theme.primary} size={20} />
-              <Text
-                style={[
-                  styles(theme).groupText,
-                  {
-                    fontSize: 16,
-                    fontWeight: '700',
-                    color: theme.primary,
-                    marginLeft: 4,
-                  },
-                ]}
-              >
-                Add Group
-              </Text>
+            >
+              <Arrow />
             </View>
-          </TouchableOpacity>
-        </View>
+            <EmptyGroup />
+            <EmptyGroup />
+            <EmptyGroup />
+            <Text style={{ color: theme.grey1, fontSize: 20, fontWeight: '700', marginTop: '10%' }}>
+              Create or Join a Group
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data}
+            renderItem={renderGroup}
+            keyExtractor={(item) => item.code}
+            refreshControl={<RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />}
+            style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </SafeAreaView>
 
-        <SafeAreaView style={{ width: '100%', height: '60%' }}>
-          {data.length == 0 ? (
-            <View style={{ flex: 1, justifyContent: 'start', alignItems: 'center', paddingTop: '10%' }}>
-              <View
-                style={{
-                  position: 'absolute',
-                  height: 80,
-                  width: 80,
-                  transform: [{ rotateX: '180deg' }, { rotate: '90deg' }],
-                  right: '10%',
-                  top: '0%',
-                }}
-              >
-                <Arrow />
-              </View>
-              <EmptyGroup />
-              <EmptyGroup />
-              <EmptyGroup />
-              <Text style={{ color: theme.grey1, fontSize: 20, fontWeight: '700', marginTop: '10%' }}>
-                Create or Join a Group
-              </Text>
-            </View>
-          ) : (
-            <FlatList
-              data={data}
-              renderItem={renderGroup}
-              keyExtractor={(item) => item.code}
-              refreshControl={
-                <RefreshControl enabled={true} refreshing={isRefetchingByUser} onRefresh={refetchByUser} />
-              }
-              style={{ width: '100%', flexGrow: 1, height: '100%' /* , borderWidth:1 */ }}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
-        </SafeAreaView>
-
-        {/* <View
+      {/* <View
           style={{
             width: '100%',
             height: '20%',
@@ -337,95 +304,95 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View> */}
 
-        <ActionSheetModal
-          isVisible={isCountVisible}
-          onBackdropPress={toggleCount}
-          swipeDown={false}
-          height={200}
-          userStyle={'light'}
-        >
-          <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
-            <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
-            <CountDown
-              size={30}
-              until={time.current}
-              onFinish={() => alert('Finished')}
-              digitStyle={{
-                backgroundColor: '#FFF',
-                borderWidth: 2,
-                borderColor: theme.primary,
-              }}
-              digitTxtStyle={{ color: theme.primary }}
-              timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
-              separatorStyle={{
-                color: theme.primary,
-                alignSelf: 'center',
-                flex: 1,
-                paddingTop: 15,
-                justifyContent: 'center',
-              }}
-              showSeparator={true}
-            />
-          </View>
-        </ActionSheetModal>
+      <ActionSheetModal
+        isVisible={isCountVisible}
+        onBackdropPress={toggleCount}
+        swipeDown={false}
+        height={200}
+        userStyle={'light'}
+      >
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%' }}>
+          <Text style={{ position: 'absolute', top: 0 }}>Countdown to UNC</Text>
+          <CountDown
+            size={30}
+            until={time.current}
+            onFinish={() => alert('Finished')}
+            digitStyle={{
+              backgroundColor: '#FFF',
+              borderWidth: 2,
+              borderColor: theme.primary,
+            }}
+            digitTxtStyle={{ color: theme.primary }}
+            timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
+            separatorStyle={{
+              color: theme.primary,
+              alignSelf: 'center',
+              flex: 1,
+              paddingTop: 15,
+              justifyContent: 'center',
+            }}
+            showSeparator={true}
+          />
+        </View>
+      </ActionSheetModal>
 
-        <Modal
-          isVisible={isModalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          backdropTransitionOutTiming={0}
-          keyboardDismissMode={'on-drag'}
-          //customBackdrop={<View style={{ flex: 1 }} />}
-        >
-          <SafeAreaView style={styles(theme).popUp}>
-            <Text style={styles(theme).popUpHeader}>Add Group</Text>
-            <TouchableOpacity
-              onPress={() => {
-                toggleModal();
-                navigation.navigate('JoinGroup');
-              }}
-              style={{ width: '100%', alignSelf: 'center' }}
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        backdropTransitionOutTiming={0}
+        keyboardDismissMode={'on-drag'}
+        //customBackdrop={<View style={{ flex: 1 }} />}
+      >
+        <SafeAreaView style={styles(theme).popUp}>
+          <Text style={styles(theme).popUpHeader}>Add Group</Text>
+          <TouchableOpacity
+            onPress={() => {
+              toggleModal();
+              navigation.navigate('JoinGroup');
+            }}
+            style={{ width: '100%', alignSelf: 'center' }}
+          >
+            <View
+              style={[
+                styles(theme).popButton,
+                {
+                  borderBottomLeftRadius: 3,
+                  borderBottomRightRadius: 3,
+                  borderTopLeftRadius: 11,
+                  borderTopRightRadius: 11,
+                },
+              ]}
             >
-              <View
-                style={[
-                  styles(theme).popButton,
-                  {
-                    borderBottomLeftRadius: 3,
-                    borderBottomRightRadius: 3,
-                    borderTopLeftRadius: 11,
-                    borderTopRightRadius: 11,
-                  },
-                ]}
-              >
-                <Icon name='account-plus-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
-                <Text style={styles(theme).buttonText}>Join Group</Text>
-              </View>
-            </TouchableOpacity>
+              <Icon name='account-plus-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
+              <Text style={styles(theme).buttonText}>Join Group</Text>
+            </View>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                toggleModal();
-                navigation.navigate('CreateGroup');
-              }}
-              style={{ width: '100%', alignSelf: 'center' }}
+          <TouchableOpacity
+            onPress={() => {
+              toggleModal();
+              navigation.navigate('CreateGroup');
+            }}
+            style={{ width: '100%', alignSelf: 'center' }}
+          >
+            <View
+              style={[
+                styles(theme).popButton,
+                {
+                  borderBottomLeftRadius: 11,
+                  borderBottomRightRadius: 11,
+                  borderTopLeftRadius: 3,
+                  borderTopRightRadius: 3,
+                },
+              ]}
             >
-              <View
-                style={[
-                  styles(theme).popButton,
-                  {
-                    borderBottomLeftRadius: 11,
-                    borderBottomRightRadius: 11,
-                    borderTopLeftRadius: 3,
-                    borderTopRightRadius: 3,
-                  },
-                ]}
-              >
-                <Icon name='account-circle-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
-                <Text style={styles(theme).buttonText}>Create New Group</Text>
-              </View>
-            </TouchableOpacity>
-          </SafeAreaView>
-        </Modal>
-        {/* <Button
+              <Icon name='account-circle-outline' color={'white'} size={20} style={{ marginLeft: 10 }} />
+              <Text style={styles(theme).buttonText}>Create New Group</Text>
+            </View>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </Modal>
+      {/* <Button
           title='Create Group Schedule'
           onPress={() =>
             createGroupSchedule('sX5bkvgE', 'Black').then((groupSchedule) => {
@@ -442,12 +409,11 @@ export default function Home({ navigation }) {
             })
           }
         /> */}
-        {/* <Button
+      {/* <Button
               title="Add test case"
               onPress={() => createTestCases()}
             /> */}
-      </View>
-    </Provider>
+    </View>
   );
 }
 
