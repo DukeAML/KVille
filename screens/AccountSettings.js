@@ -44,6 +44,12 @@ export default function AccountSettings({ navigation }) {
     }
   }
 
+  async function onLogout() {
+    await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+    await firebase.auth().signOut();
+    dispatch(reset());
+  }
+
   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
   }
@@ -62,8 +68,11 @@ export default function AccountSettings({ navigation }) {
           <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
         </TouchableOpacity> */}
       </View>
-      <TouchableOpacity onPress={()=>navigation.navigate('AboutScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('AboutScreen')}>
         <Text>About</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onLogout}>
+        <Text>Logout</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
