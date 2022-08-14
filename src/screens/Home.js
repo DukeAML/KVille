@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { IconButton } from 'react-native-paper';
 import { useQuery } from 'react-query';
-import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useDispatch } from 'react-redux';
 import CountDown from 'react-native-countdown-component';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,6 +32,7 @@ import { useTheme } from '../context/ThemeProvider';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { ActionSheetModal } from '../components/ActionSheetModal';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const window = Dimensions.get('window');
 
@@ -207,6 +207,7 @@ export default function Home({ navigation }) {
           color={theme.grey1}
           size={25}
           onPress={() => navigation.navigate('AccountSettings')}
+          style={{marginRight: 0}}
         />
       </View>
 
@@ -438,7 +439,6 @@ const styles = (theme) =>
       fontSize: 28,
       color: theme.grey1,
       width: '70%',
-      //marginLeft: '5%',
     },
     groupText: {
       //text for 'Groups' and '+ Add Group'
