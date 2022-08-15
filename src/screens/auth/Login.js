@@ -114,7 +114,7 @@ export default function Login(props) {
         <View style={styles(theme).banner}>
           <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>LOGIN</Text>
           <View style={styles(theme).imageContainer}>
-            <Image
+            {/* <Image
               style={[
                 styles(theme).logo,
                 {
@@ -129,7 +129,7 @@ export default function Login(props) {
               ]}
               resizeMode={'repeat'}
               source={DukeBasketballLogo}
-            />
+            /> */}
             <View style={styles(theme).boldImage}>
               <Image style={styles(theme).logo} source={DukeBasketballLogo} />
             </View>
