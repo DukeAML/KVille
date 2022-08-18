@@ -228,7 +228,7 @@ export default function Schedule({ navigation }) {
     //let newSchedule;
     await createGroupSchedule(groupCode, tentType)
       .then((groupSchedule) => {
-        console.log('Group Schedule', groupSchedule);
+        //console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
 
         //If current schedule is blank, no need to update
@@ -254,7 +254,7 @@ export default function Schedule({ navigation }) {
         dispatch(setSnackMessage('Not enough members'));
         dispatch(toggleSnackBar());
       });
-    console.log('create new schedule', newSchedule);
+    //w schedule', newSchedule);
   }
 
   function toggleModal() {
@@ -535,7 +535,7 @@ export default function Schedule({ navigation }) {
     return <ErrorPage navigation={navigation} />;
   }
 
-  if (data.length == 0 && !isRefetching) {
+  if (data.length == 0 && !isRefetching && weekDisplay != 'Previous Week') {
     return (
       <View style={styles(theme).emptyStateContainer}>
         <Text>Group Schedule has not been created</Text>
