@@ -383,7 +383,16 @@ export default function Schedule({ navigation }) {
       return (
         <View style={{ flex: 1 }}>
           <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
-            <Text style={styles(theme).btnText} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
+            <Text
+              style={
+                person == 'empty'
+                  ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
+                  : styles(theme).btnText
+              }
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+              numberOfLines={1}
+            >
               {person}
             </Text>
           </View>
