@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView,  
+  KeyboardAvoidingView,
   SafeAreaView,
 
 } from 'react-native';
@@ -16,51 +16,63 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { useTheme } from '../../context/ThemeProvider';
+import { ConfirmationModal } from '../../components/ConfirmationModal';
+import { reset } from '../../redux/reducers/userSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
 import coachKLogo from '../../assets/coachKLogo.png';
 import { setSnackMessage, toggleSnackBar } from '../../redux/reducers/snackbarSlice';
 
 
 
-export default function ChangeEmail({navigation}) {
-  const [email, setEmail] = useState('');
+export default function DeleteAccount({navigation}) {
+  const groups = useSelector((state)=>state.user.currentUser.groupCode);
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
+  function toggleConfirmation() {
+    setConfirmationVisible(!isConfirmationVisible);
+  }
 
   const user = firebase.auth().currentUser;
 
-  async function updateEmail() {
-    const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
-    await user.reauthenticateWithCredential(credentials)
-        .then(()=>{
-            firebase
-                .firestore()
-                .collection('users')
-                .doc(firebase.auth().currentUser.uid)
-                .update({
-                    email: email
-                })
-                .then(() => {
-                    dispatch(setSnackMessage('Saved New Email'));
-                    dispatch(toggleSnackBar());
-                    navigation.goBack();
-                })
-                .catch((error) => console.error(error));
-            firebase
-                .auth()
-                .currentUser.updateEmail(email)
-                .catch((error) => console.error(error));
-        })
-        .catch((error) => {
-            dispatch(setSnackMessage('Incorrect Password Entered'));
-            dispatch(toggleSnackBar());
-            console.error(error);
-            return;
-        });  
-  }
+  async function deleteUser() {
+    if (groups.length == 0) {
+        const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
+        await user.reauthenticateWithCredential(credentials)
+            .then(()=>{
+                AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+
+                firebase
+                    .firestore()
+                    .collection('users')
+                    .doc(firebase.auth().currentUser.uid)
+                    .delete()
+                    .then(() => {
+                        dispatch(setSnackMessage('Deleted Account'));
+                        dispatch(toggleSnackBar());
+                    })
+                    .catch((error) => console.error(error));
+                firebase
+                    .auth()
+                    .currentUser.delete()
+                    .catch((error) => console.error(error));
+
+                dispatch(reset());
+            })
+            .catch((error) => {
+                dispatch(setSnackMessage('Incorrect Password Entered'));
+                dispatch(toggleSnackBar());
+                console.error(error);
+                return;
+            });  
+    } else {
+        dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
+        dispatch(toggleSnackBar());
+    }
+}
   
   return (
     <SafeAreaView style={styles(theme).container}>
@@ -71,13 +83,9 @@ export default function ChangeEmail({navigation}) {
                     <Icon name='arrow-back' color={theme.primary} size={30} style = {{marginTop:3}}/>
                 </TouchableOpacity>
                 <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 20 }]}>
-                    Update Email Address
+                    Delete User Account
                 </Text>
             </View>
-    
-            <TouchableOpacity onPress= {updateEmail}>
-                <Text style={{fontSize: 18, fontWeight: '500', color: theme.primary}}>Save</Text>
-            </TouchableOpacity>
         </View>
 
         <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, {width: '100%'}]}>
@@ -93,17 +101,7 @@ export default function ChangeEmail({navigation}) {
             </View>
 
             <View style={{height: '50%', width: '100%', alignItems: 'center'}}>
-                <View style={styles(theme).inputView}>
-                    <TextInput
-                        style={styles(theme).textInput}
-                        placeholder='New email address'
-                        value={email}
-                        onChangeText={(email) => setEmail(email)}
-                        keyboardType='email-address'
-                    />
-                </View>
                 
-
                 <View style={styles(theme).inputView}>
                     <TextInput
                         style={styles(theme).textInput}
@@ -123,25 +121,26 @@ export default function ChangeEmail({navigation}) {
                     </TouchableOpacity>
                 </View>
             </View>
-            
-{/* 
-            <View style={styles(theme).BottomView}>
-                <TouchableOpacity
-                    style = {[styles(theme).bottomBtn, {backgroundColor: theme.grey3}]}
-                    onPress= {()=>navigation.goBack()}
-                >
-                    <Text style={{fontSize: 16, fontWeight: '500', color: theme.grey1}}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style = {[styles(theme).bottomBtn, {backgroundColor: theme.primary}]}
-                    onPress= {updateEmail}
-                >
-                    <Text style={{fontSize: 16, fontWeight: '500', color: theme.text1}}>Save</Text>
-                </TouchableOpacity>
-            </View>  */}
+
+            <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
+                <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
+            </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        
+
+        <ConfirmationModal
+           body={
+               'Are you sure you want to DELETE your account? This will delete any groups you have created and remove you from any groups you have joined.'
+           }
+           buttonText={'Delete account'}
+           buttonAction={() => {deleteUser();}}
+           toggleModal={toggleConfirmation}
+           isVisible={isConfirmationVisible}
+           onBackdropPress={() => setConfirmationVisible(false)}
+           onSwipeComplete={toggleConfirmation}
+           userStyle='light'
+        />
+
     </SafeAreaView>
   );
 }
@@ -198,22 +197,16 @@ const styles = (theme) =>
       borderBottomColor: theme.grey3,
       borderBottomWidth: 1,
     },
-
-/*     BottomView: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      position: 'absolute',
-      bottom: '2%',
-      width: '100%',
-      alignItems: 'center',
-      //borderWidth: 0.5,
-      borderColor: theme.popOutBorder,
-    },
-    bottomBtn:{
-      width: '45%',
-      height: 40,
-      borderRadius: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-    } */
+    leaveButton: {
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 15,
+        position: 'absolute',
+        bottom: '3%',
+        width: '90%',
+        alignItems: 'center',
+        alignSelf: 'center',
+        borderWidth: 0.5,
+        borderColor: theme.popOutBorder,
+      },
 });

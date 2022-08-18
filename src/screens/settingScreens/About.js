@@ -27,9 +27,7 @@ export default function About({navigation}) {
         </Text>
       </View>
 
-      <TouchableOpacity onPress={()=>navigation.goBack()} style={{backgroundColor: '#00f'}}>
-        <Text style={{color:'#fff'}}>Go Back</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }

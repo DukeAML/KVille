@@ -5,6 +5,7 @@ import AboutScreen from '../screens/settingScreens/About';
 import ChangeEmail from '../screens/settingScreens/ChangeEmail';
 import ChangePassword from '../screens/settingScreens/ChangePassword';
 import AccountSettingsScreen from '../screens/AccountSettings';
+import DeleteAccount from '../screens/settingScreens/DeleteAccount';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function StackNavigator() {
       <Stack.Screen name='AboutScreen' component={AboutScreen} options={{ headerShown: false }} />
       <Stack.Screen name='ChangeEmail' component={ChangeEmail} options={{ headerShown: false }} />
       <Stack.Screen name='ChangePassword' component={ChangePassword} options={{ headerShown: false }} />
+      <Stack.Screen name='DeleteAccount' component={DeleteAccount} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

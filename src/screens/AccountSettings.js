@@ -85,7 +85,8 @@ export default function AccountSettings({ navigation }) {
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
-      <TouchableOpacity 
+      
+      {/* <TouchableOpacity 
         style = {styles(theme).settingBtn}
         onPress={onLogout}>
         <View style = {styles(theme).rightOfBtn}>
@@ -93,7 +94,7 @@ export default function AccountSettings({ navigation }) {
           <Text style={styles(theme).listText}>Logout</Text>
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
 
       <Text style = {[styles(theme).headerText, {marginTop: 15}]}>About</Text>
@@ -106,9 +107,21 @@ export default function AccountSettings({ navigation }) {
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
+
+      <Text style = {[styles(theme).headerText, {marginTop: 15}]}>Support</Text>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
+        onPress={() => navigation.navigate('DeleteAccount')}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='trash-outline' color={theme.error} size={22}/>
+          <Text style={[styles(theme).listText, {color:theme.error}]}>Delete Account</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+      </TouchableOpacity>
       
-      <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
-        <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
+      <TouchableOpacity style={styles(theme).leaveButton} onPress={onLogout}>
+        <Icon name='log-out-outline' color={theme.grey2} size={22} style={{marginRight: 15}}/>
+        <Text style={{ color: theme.grey2, fontSize: 20, fontWeight: '500' }}>Logout</Text>
       </TouchableOpacity>
 
       <ConfirmationModal
@@ -199,6 +212,7 @@ const styles = (theme) =>
       backgroundColor: theme.white1,
     },
     leaveButton: {
+      flexDirection: 'row',
       backgroundColor: '#fff',
       borderRadius: 15,
       padding: 15,
@@ -207,6 +221,7 @@ const styles = (theme) =>
       width: '90%',
       alignItems: 'center',
       alignSelf: 'center',
+      justifyContent: 'center',
       borderWidth: 0.5,
       borderColor: theme.popOutBorder,
     },
