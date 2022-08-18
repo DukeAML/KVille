@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -58,22 +59,54 @@ export default function AccountSettings({ navigation }) {
     <SafeAreaView style={styles(theme).settingsContainer}>
       <View style={styles(theme).topBanner}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Back</Text>
+          <Icon name='arrow-back' color={theme.primary} size={30} style = {{marginTop:3}}/>
         </TouchableOpacity>
-        <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
+        <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
           Settings
         </Text>
-
-        {/* <TouchableOpacity onPress={handleSubmit}>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
-        </TouchableOpacity> */}
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('AboutScreen')}>
-        <Text>About</Text>
+
+      <Text style = {styles(theme).headerText}>User Settings</Text>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
+        onPress={() => navigation.navigate('ChangeEmail')}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='mail-outline' color={theme.grey2} size={22}/>
+          <Text style={styles(theme).listText}>Update Email Address</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onLogout}>
-        <Text>Logout</Text>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
+        onPress={() => navigation.navigate('ChangePassword')}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='lock-closed-outline' color={theme.grey2} size={22}/>
+          <Text style={styles(theme).listText}>Change Account Password</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
+        onPress={onLogout}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='log-out-outline' color={theme.grey2} size={22}/>
+          <Text style={styles(theme).listText}>Logout</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+      </TouchableOpacity>
+
+
+      <Text style = {[styles(theme).headerText, {marginTop: 15}]}>About</Text>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
+        onPress={() => navigation.navigate('AboutScreen')}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='apps-outline' color={theme.grey2} size={22}/>
+          <Text style={styles(theme).listText}>About the App</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+      </TouchableOpacity>
+      
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
       </TouchableOpacity>
@@ -100,7 +133,7 @@ const styles = (theme) =>
   StyleSheet.create({
     settingsContainer: {
       flexDirection: 'column',
-      alignItems: 'center',
+      //alignItems: 'center',
       backgroundColor: theme.background,
       width: '100%',
       height: '100%',
@@ -112,7 +145,7 @@ const styles = (theme) =>
       flexDirection: 'row',
       backgroundColor: theme.background,
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
       marginBottom: 30,
       width: '100%',
       paddingVertical: 10,
@@ -122,24 +155,31 @@ const styles = (theme) =>
       borderTopLeftRadius: 20,
       paddingHorizontal: 20,
     },
-    headerContainer: {
-      flexDirection: 'row',
-      width: '90%',
-      justifyContent: 'space-between',
-      marginBottom: 15,
-    },
-    headerText: {
+
+    titleText: {
       //text for different setting headers
       fontSize: 20,
-      fontWeight: '700',
+      fontWeight: '600',
       color: theme.grey2,
+      marginLeft: 25,
     },
-    modalText: {
-      //text for diff modal texts
-      fontSize: 18,
-      fontWeight: '500',
+    headerText: {
+      fontSize: 17,
+      color: theme.grey2,
+      fontWeight: '600',
+      marginLeft: 20,
+      marginBottom: 7,
     },
-    textInput: {
+    rightOfBtn: {
+      flexDirection: 'row',
+      marginLeft: 20,
+    },
+    listText:{
+      fontSize: 16,
+      fontWeight: '400',
+      marginLeft: 20,
+    },
+/*     textInput: {
       backgroundColor: '#fff',
       paddingVertical: 10,
       paddingHorizontal: 15,
@@ -149,45 +189,24 @@ const styles = (theme) =>
       textAlign: 'left',
       borderRadius: 15,
       marginBottom: 23,
-      // borderColor: theme.grey2,
-      // borderWidth: 1,
-    },
-    tentChangeListItem: {
-      //Style of an item in the member tentChange modal (for creator only)
+    }, */
+    settingBtn:{
       flexDirection: 'row',
-      height: '33%',
-      width: '95%',
-      justifyContent: 'center',
-      alignSelf: 'center',
-      alignItems: 'center',
-      borderBottomWidth: 1,
-      borderColor: '#cfcfcf',
-    },
-    tentChangeBtn: {
-      //remove button for removing member if the user is the Creator
-      flexDirection: 'row',
-      width: '90%',
-      height: 45,
-      backgroundColor: '#fff',
-      alignItems: 'center',
+      width: '100%',
+      height: 50,
       justifyContent: 'space-between',
-      borderRadius: 15,
-      // borderColor: theme.grey2,
-      // borderWidth: 1,
-      paddingHorizontal: 15,
-    },
-    BottomModalView: {
-      margin: 0,
-      justifyContent: 'flex-end',
+      alignItems: 'center',
+      backgroundColor: theme.white1,
     },
     leaveButton: {
       backgroundColor: '#fff',
       borderRadius: 15,
       padding: 15,
       position: 'absolute',
-      bottom: '5%',
+      bottom: '3%',
       width: '90%',
       alignItems: 'center',
+      alignSelf: 'center',
       borderWidth: 0.5,
       borderColor: theme.popOutBorder,
     },
