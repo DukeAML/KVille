@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView, Linking } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { useTheme } from '../context/ThemeProvider';
-import { ConfirmationModal } from '../components/ConfirmationModal';
+//import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
@@ -16,11 +16,11 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function AccountSettings({ navigation }) {
   const groups = useSelector((state)=>state.user.currentUser.groupCode);
-  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  //const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  async function deleteUser() {
+  /* async function deleteUser() {
     toggleConfirmation();
     if (groups.length == 0) {
       const user = firebase.auth().currentUser;
@@ -43,7 +43,7 @@ export default function AccountSettings({ navigation }) {
       dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
       dispatch(toggleSnackBar());
     }
-  }
+  } */
 
   async function onLogout() {
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
@@ -51,9 +51,9 @@ export default function AccountSettings({ navigation }) {
     dispatch(reset());
   }
 
-  function toggleConfirmation() {
+  /* function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  }
+  } */
 
   return (
     <SafeAreaView style={styles(theme).settingsContainer}>
@@ -85,7 +85,7 @@ export default function AccountSettings({ navigation }) {
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
-      
+
       {/* <TouchableOpacity 
         style = {styles(theme).settingBtn}
         onPress={onLogout}>
@@ -111,6 +111,17 @@ export default function AccountSettings({ navigation }) {
       <Text style = {[styles(theme).headerText, {marginTop: 15}]}>Support</Text>
       <TouchableOpacity 
         style = {styles(theme).settingBtn}
+        onPress={() => {
+          Linking.openURL('https://kevinfu1.github.io/KVille-Website/');
+        }}>
+        <View style = {styles(theme).rightOfBtn}>
+          <Icon name='clipboard-outline' color={theme.grey2} size={22}/>
+          <Text style={styles(theme).listText}>Privacy Policy</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style = {styles(theme).settingBtn}
         onPress={() => navigation.navigate('DeleteAccount')}>
         <View style = {styles(theme).rightOfBtn}>
           <Icon name='trash-outline' color={theme.error} size={22}/>
@@ -119,12 +130,13 @@ export default function AccountSettings({ navigation }) {
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
       
+      
       <TouchableOpacity style={styles(theme).leaveButton} onPress={onLogout}>
         <Icon name='log-out-outline' color={theme.grey2} size={22} style={{marginRight: 15}}/>
         <Text style={{ color: theme.grey2, fontSize: 20, fontWeight: '500' }}>Logout</Text>
       </TouchableOpacity>
 
-      <ConfirmationModal
+      {/* <ConfirmationModal
         body={
           'Are you sure you want to DELETE your account? This will delete any groups you have created and remove you from any groups you have joined.'
         }
@@ -137,7 +149,7 @@ export default function AccountSettings({ navigation }) {
         onBackdropPress={() => setConfirmationVisible(false)}
         onSwipeComplete={toggleConfirmation}
         userStyle='light'
-      />
+      /> */}
     </SafeAreaView>
   );
 }
