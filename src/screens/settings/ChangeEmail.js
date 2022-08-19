@@ -65,67 +65,60 @@ export default function ChangeEmail({navigation}) {
   
   return (
     <SafeAreaView style={styles(theme).container}>
+      <View style={styles(theme).topBanner}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
+          </TouchableOpacity>
+          <Text style={styles(theme).titleText}>
+            Update email address
+          </Text>
 
-        <View style={styles(theme).topBanner}>
-            <View style={{flexDirection:'row'}}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name='arrow-back' color={theme.primary} size={30} style = {{marginTop:3}}/>
-                </TouchableOpacity>
-                <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 20 }]}>
-                    Update Email Address
-                </Text>
-            </View>
-    
-            <TouchableOpacity onPress= {updateEmail}>
-                <Text style={{fontSize: 18, fontWeight: '500', color: theme.primary}}>Save</Text>
-            </TouchableOpacity>
+        <TouchableOpacity onPress={updateEmail}>
+          <Text style={{ fontSize: 18, fontWeight: '500', color: theme.primary }}>Save</Text>
+        </TouchableOpacity>
+      </View>
+
+      <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, { width: '100%' }]}>
+        <View style={{ flexDirection: 'row', width: '90%', alignItems: 'flex-end', marginBottom: 60, marginTop: 30 }}>
+          <Image source={coachKLogo} style={styles(theme).kIcon} />
+          <View style={{ marginLeft: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>{user.email}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '400' }}>Username: {username}</Text>
+          </View>
         </View>
 
-        <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, {width: '100%'}]}>
+        <View style={{ height: '50%', width: '100%', alignItems: 'center' }}>
+          <View style={styles(theme).inputView}>
+            <TextInput
+              style={styles(theme).textInput}
+              placeholder='New email address'
+              value={email}
+              onChangeText={(email) => setEmail(email)}
+              keyboardType='email-address'
+            />
+          </View>
 
-            <View style={{flexDirection: 'row', width:'90%', alignItems: 'flex-end', marginBottom: 60, marginTop: 30}}>
-                <Image source={coachKLogo} style={styles(theme).kIcon} />
-                <View style={{marginLeft: 10}}>
-                    <Text style={{fontSize:16, fontWeight: '500'}}>{user.email}</Text>
-                    <Text style={{fontSize:16, fontWeight: '400'}}>
-                        Username: {username}
-                    </Text>
-                </View>
-            </View>
+          <View style={styles(theme).inputView}>
+            <TextInput
+              style={styles(theme).textInput}
+              placeholder='Account Password'
+              secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={(password) => setPassword(password)}
+            />
+            <TouchableOpacity
+              style={{ marginLeft: -20 }}
+              onPress={() => {
+                setSecureTextEntry(!secureTextEntry);
+                return false;
+              }}
+            >
+              <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-            <View style={{height: '50%', width: '100%', alignItems: 'center'}}>
-                <View style={styles(theme).inputView}>
-                    <TextInput
-                        style={styles(theme).textInput}
-                        placeholder='New email address'
-                        value={email}
-                        onChangeText={(email) => setEmail(email)}
-                        keyboardType='email-address'
-                    />
-                </View>
-                
-
-                <View style={styles(theme).inputView}>
-                    <TextInput
-                        style={styles(theme).textInput}
-                        placeholder='Account Password'
-                        secureTextEntry={secureTextEntry}
-                        value={password}
-                        onChangeText={(password) => setPassword(password)}
-                    />
-                    <TouchableOpacity
-                        style={{ marginRight: 10 }}
-                        onPress={() => {
-                            setSecureTextEntry(!secureTextEntry);
-                            return false;
-                        }}
-                    >
-                        <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            
-{/* 
+        {/* 
             <View style={styles(theme).BottomView}>
                 <TouchableOpacity
                     style = {[styles(theme).bottomBtn, {backgroundColor: theme.grey3}]}
@@ -140,16 +133,14 @@ export default function ChangeEmail({navigation}) {
                     <Text style={{fontSize: 16, fontWeight: '500', color: theme.text1}}>Save</Text>
                 </TouchableOpacity>
             </View>  */}
-        </KeyboardAvoidingView>
-
-        
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = (theme) =>
   StyleSheet.create({
-    container: {flex: 1, alignItems: 'center', backgroundColor: theme.background},
+    container: { flex: 1, alignItems: 'center', backgroundColor: theme.background },
 
     topBanner: {
       //for the top container holding top 'settings' and save button
@@ -168,10 +159,9 @@ const styles = (theme) =>
 
     titleText: {
       //text for different setting headers
-      fontSize: 16,
+      fontSize: 18,
       fontWeight: '600',
-      color: theme.grey2,
-      marginLeft: 25,
+      color: theme.text2,
     },
     kIcon: {
       //for the duke basketball logos
@@ -182,7 +172,7 @@ const styles = (theme) =>
       marginRight: 20,
     },
 
-    textInput: {    
+    textInput: {
       width: '100%',
       fontSize: 18,
       paddingHorizontal: 5,
@@ -190,7 +180,7 @@ const styles = (theme) =>
       outlineWidth: 0.5,
       //justifyContent: "center",
     },
-    inputView:{
+    inputView: {
       flexDirection: 'row',
       marginVertical: 18,
       justifyContent: 'space-between',
@@ -200,7 +190,7 @@ const styles = (theme) =>
       borderBottomWidth: 1,
     },
 
-/*     BottomView: {
+    /*     BottomView: {
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       position: 'absolute',
@@ -217,4 +207,4 @@ const styles = (theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     } */
-});
+  });

@@ -32,10 +32,10 @@ export default function AccountSettings({ navigation }) {
   return (
     <SafeAreaView style={styles(theme).settingsContainer}>
       <View style={styles(theme).topBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{position: 'absolute', left: 20}}>
           <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
         </TouchableOpacity>
-        <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
+        <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 26, marginLeft:0 }]}>
           Settings
         </Text>
       </View>
@@ -51,7 +51,7 @@ export default function AccountSettings({ navigation }) {
       <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('ChangePassword')}>
         <View style={styles(theme).rightOfBtn}>
           <Icon name='lock-closed-outline' color={theme.grey2} size={22} />
-          <Text style={styles(theme).listText}>Change Account Password</Text>
+          <Text style={styles(theme).listText}>Change Password</Text>
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
@@ -130,7 +130,7 @@ const styles = (theme) =>
       flexDirection: 'row',
       backgroundColor: theme.background,
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
       marginBottom: 30,
       width: '100%',
       paddingVertical: 10,
