@@ -7,9 +7,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
-import { useTheme } from '../context/ThemeProvider';
-import { ConfirmationModal } from '../components/ConfirmationModal';
-import { reset } from '../redux/reducers/userSlice';
+import { useTheme } from '../../context/ThemeProvider';
+import { ConfirmationModal } from '../../components/ConfirmationModal';
+import { reset } from '../../redux/reducers/userSlice';
 
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
@@ -33,76 +33,73 @@ export default function AccountSettings({ navigation }) {
     <SafeAreaView style={styles(theme).settingsContainer}>
       <View style={styles(theme).topBanner}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name='arrow-back' color={theme.primary} size={30} style = {{marginTop:3}}/>
+          <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
         </TouchableOpacity>
         <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
           Settings
         </Text>
       </View>
 
-      <Text style = {styles(theme).headerText}>User Settings</Text>
-      <TouchableOpacity 
-        style = {styles(theme).settingBtn}
-        onPress={() => navigation.navigate('ChangeEmail')}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='mail-outline' color={theme.grey2} size={22}/>
+      <Text style={styles(theme).headerText}>User Settings</Text>
+      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('ChangeEmail')}>
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='mail-outline' color={theme.grey2} size={22} />
           <Text style={styles(theme).listText}>Update Email Address</Text>
         </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
-      <TouchableOpacity 
-        style = {styles(theme).settingBtn}
-        onPress={() => navigation.navigate('ChangePassword')}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='lock-closed-outline' color={theme.grey2} size={22}/>
+      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('ChangePassword')}>
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='lock-closed-outline' color={theme.grey2} size={22} />
           <Text style={styles(theme).listText}>Change Account Password</Text>
         </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
 
-      <Text style = {[styles(theme).headerText, {marginTop: 15}]}>About</Text>
-      <TouchableOpacity 
-        style = {styles(theme).settingBtn}
-        onPress={() => navigation.navigate('AboutScreen')}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='apps-outline' color={theme.grey2} size={22}/>
-          <Text style={styles(theme).listText}>About the App</Text>
+      <Text style={[styles(theme).headerText, { marginTop: 15 }]}>About</Text>
+      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('AboutScreen')}>
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='apps-outline' color={theme.grey2} size={22} />
+          <Text style={styles(theme).listText}>Creators</Text>
         </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
-
-      <Text style = {[styles(theme).headerText, {marginTop: 15}]}>Support</Text>
-      <TouchableOpacity 
-        style = {styles(theme).settingBtn}
+      <TouchableOpacity
+        style={styles(theme).settingBtn}
         onPress={() => {
           Linking.openURL('https://kevinfu1.github.io/KVille-Website/');
-        }}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='clipboard-outline' color={theme.grey2} size={22}/>
+        }}
+      >
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='clipboard-outline' color={theme.grey2} size={22} />
           <Text style={styles(theme).listText}>Privacy Policy</Text>
         </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
-      <TouchableOpacity 
-        style = {styles(theme).settingBtn}
-        onPress={() => navigation.navigate('DeleteAccount')}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='trash-outline' color={theme.error} size={22}/>
-          <Text style={[styles(theme).listText, {color:theme.error}]}>Delete Account</Text>
+
+      <Text style={[styles(theme).headerText, { marginTop: 15 }]}>Support</Text>
+      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('AboutScreen')}>
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='apps-outline' color={theme.grey2} size={22} />
+          <Text style={styles(theme).listText}>Report an Issue</Text>
         </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
       </TouchableOpacity>
-      
-      
+      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('DeleteAccount')}>
+        <View style={styles(theme).rightOfBtn}>
+          <Icon name='trash-outline' color={theme.error} size={22} />
+          <Text style={[styles(theme).listText, { color: theme.error }]}>Delete Account</Text>
+        </View>
+        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
-        <Icon name='log-out-outline' color={theme.grey2} size={22} style={{marginRight: 15}}/>
+        <Icon name='log-out-outline' color={theme.grey2} size={22} style={{ marginRight: 15 }} />
         <Text style={{ color: theme.grey2, fontSize: 20, fontWeight: '500' }}>Log out</Text>
       </TouchableOpacity>
 
       <ConfirmationModal
-        body={
-          'Are you sure you want to log out?'
-        }
+        body={'Are you sure you want to log out?'}
         buttonText={'Log out'}
         buttonAction={() => {
           onLogout();

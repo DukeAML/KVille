@@ -1,11 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import AboutScreen from '../screens/settingScreens/About';
-import ChangeEmail from '../screens/settingScreens/ChangeEmail';
-import ChangePassword from '../screens/settingScreens/ChangePassword';
-import AccountSettingsScreen from '../screens/AccountSettings';
-import DeleteAccount from '../screens/settingScreens/DeleteAccount';
+import AboutScreen from '../screens/settings/About';
+import ChangeEmail from '../screens/settings/ChangeEmail';
+import ChangePassword from '../screens/settings/ChangePassword';
+import AccountSettingsScreen from '../screens/settings/AccountSettings';
+import DeleteAccount from '../screens/settings/DeleteAccount';
 
 const Stack = createNativeStackNavigator();
 
