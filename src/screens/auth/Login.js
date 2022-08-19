@@ -32,12 +32,12 @@ export default function Login(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
     async function prepare() {
       const oldEmail = await AsyncStorage.getItem('USER_EMAIL');
       const oldPassword = await AsyncStorage.getItem('USER_PASSWORD');
       if (oldEmail && oldPassword) {
-        console.log('oldEmail', oldEmail)
+        console.log('oldEmail', oldEmail);
         console.log('oldPassword', oldPassword);
         firebase
           .auth()
@@ -84,24 +84,6 @@ export default function Login(props) {
         dispatch(toggleSnackBar());
         return;
       });
-    //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    // firebase
-    //   .auth()
-    //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    //   .then(() => {
-    //     // Existing and future Auth states are now persisted in the current
-    //     // session only. Closing the window would clear any existing state even
-    //     // if a user forgets to sign out.
-    //     // ...
-    //     // New sign-in will be persisted with session persistence.
-    //     return firebase.auth().signInWithEmailAndPassword(email, password);
-    //   })
-    //   .catch((error) => {
-    //     // Handle Errors here.
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     console.log(errorCode, errorMessage);
-    //   });
   }
 
   if (!isReady) {
@@ -183,6 +165,12 @@ export default function Login(props) {
           <TouchableOpacity style={styles(theme).button} onPress={onSignUp}>
             <Text style={{ color: theme.text1 }}>Sign In</Text>
           </TouchableOpacity>
+
+          <View style={{ width: '100%', justifyContent: 'center', alignContent: 'center', marginTop: 20 }}>
+            <Text style={styles(theme).demoText}>Try our Demo Account:</Text>
+            <Text style={styles(theme).demoText}>Email: kvilletenting@gmail.com</Text>
+            <Text style={styles(theme).demoText}>Password: GTHC2023</Text>
+          </View>
         </View>
       </KeyboardAvoidingView>
       <View style={styles(theme).bottomButton}>
@@ -342,5 +330,9 @@ const styles = (theme) =>
       padding: 10,
       textAlign: 'center',
       marginBottom: 30,
+    },
+    demoText: {
+      color: theme.grey2,
+      textAlign: 'center'
     },
   });
