@@ -78,13 +78,13 @@ export default function AccountSettings({ navigation }) {
       </TouchableOpacity>
 
       <Text style={[styles(theme).headerText, { marginTop: 15 }]}>Support</Text>
-      <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('AboutScreen')}>
+      {/* <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('AboutScreen')}>
         <View style={styles(theme).rightOfBtn}>
           <Icon name='apps-outline' color={theme.grey2} size={22} />
           <Text style={styles(theme).listText}>Report an Issue</Text>
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{ marginRight: 20 }} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity style={styles(theme).settingBtn} onPress={() => navigation.navigate('DeleteAccount')}>
         <View style={styles(theme).rightOfBtn}>
           <Icon name='trash-outline' color={theme.error} size={22} />

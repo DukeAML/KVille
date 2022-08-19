@@ -22,6 +22,7 @@ import { setSnackMessage, toggleSnackBar } from '../../redux/reducers/snackbarSl
 
 
 export default function ChangePassword({navigation}) {
+  const username = useSelector((state) => state.user.currentUser.username);
   const [currPassword, setCurrPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -87,7 +88,7 @@ export default function ChangePassword({navigation}) {
             <View style={{marginLeft: 10}}>
                 <Text style={{fontSize:16, fontWeight: '500'}}>{user.email}</Text>
                 <Text style={{fontSize:16, fontWeight: '400'}}>
-                    User ID: {user.uid}
+                    Username: {username}
                 </Text>
             </View>
         </View>
