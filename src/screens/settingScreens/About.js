@@ -141,9 +141,6 @@ export default function About({navigation}) {
             <Text style={[styles(theme).normalText, {marginBottom: 10}]}>
               We would love to hear any feedback or suggestions you have for us.
             </Text>
-            <Text style={[styles(theme).normalText, {marginBottom: 10}]}>
-              We appreciate you for using the app! It means a lot to us so thank you!
-            </Text>
           </View>
 
 

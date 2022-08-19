@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -8,9 +8,10 @@ import {
   TextInput,
   KeyboardAvoidingView,
   SafeAreaView,
-
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -22,10 +23,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import coachKLogo from '../../assets/coachKLogo.png';
 import { setSnackMessage, toggleSnackBar } from '../../redux/reducers/snackbarSlice';
 
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
-
-export default function DeleteAccount({navigation}) {
-  const groups = useSelector((state)=>state.user.currentUser.groupCode);
+export default function DeleteAccount({ navigation }) {
+  const groups = useSelector((state) => state.user.currentUser.groupCode);
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
@@ -40,114 +41,107 @@ export default function DeleteAccount({navigation}) {
 
   async function deleteUser() {
     if (groups.length == 0) {
-        const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
-        await user.reauthenticateWithCredential(credentials)
-            .then(()=>{
-                AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
+      console.log(password);
+      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
+      await user
+        .reauthenticateWithCredential(credentials)
+        .then(async () => {
+          AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
 
-                firebase
-                    .firestore()
-                    .collection('users')
-                    .doc(firebase.auth().currentUser.uid)
-                    .delete()
-                    .then(() => {
-                        dispatch(setSnackMessage('Deleted Account'));
-                        dispatch(toggleSnackBar());
-                    })
-                    .catch((error) => console.error(error));
-                firebase
-                    .auth()
-                    .currentUser.delete()
-                    .catch((error) => console.error(error));
+          await firebase
+            .firestore()
+            .collection('users')
+            .doc(firebase.auth().currentUser.uid)
+            .delete()
+            .catch((error) => console.error(error));
+          await firebase
+            .auth()
+            .currentUser.delete()
+            .catch((error) => console.error(error));
 
-                dispatch(reset());
-            })
-            .catch((error) => {
-                dispatch(setSnackMessage('Incorrect Password Entered'));
-                dispatch(toggleSnackBar());
-                console.error(error);
-                return;
-            });  
+          dispatch(reset());
+        })
+        .catch((error) => {
+          dispatch(setSnackMessage('Incorrect Password Entered'));
+          dispatch(toggleSnackBar());
+          console.error(error);
+          return;
+        });
     } else {
-        dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
-        dispatch(toggleSnackBar());
+      dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
+      dispatch(toggleSnackBar());
     }
-}
-  
+  }
+
   return (
     <SafeAreaView style={styles(theme).container}>
+      <View style={styles(theme).topBanner}>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
+          </TouchableOpacity>
+          <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 20 }]}>
+            Delete User Account
+          </Text>
+        </View>
+      </View>
 
-        <View style={styles(theme).topBanner}>
-            <View style={{flexDirection:'row'}}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name='arrow-back' color={theme.primary} size={30} style = {{marginTop:3}}/>
-                </TouchableOpacity>
-                <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 20 }]}>
-                    Delete User Account
-                </Text>
-            </View>
+      <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, { width: '100%' }]}>
+        <View style={{ flexDirection: 'row', width: '90%', alignItems: 'flex-end', marginBottom: 60, marginTop: 30 }}>
+          <Image source={coachKLogo} style={styles(theme).kIcon} />
+          <View style={{ marginLeft: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>{user.email}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '400' }}>User ID: {user.uid}</Text>
+          </View>
         </View>
 
-        <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, {width: '100%'}]}>
-
-            <View style={{flexDirection: 'row', width:'90%', alignItems: 'flex-end', marginBottom: 60, marginTop: 30}}>
-                <Image source={coachKLogo} style={styles(theme).kIcon} />
-                <View style={{marginLeft: 10}}>
-                    <Text style={{fontSize:16, fontWeight: '500'}}>{user.email}</Text>
-                    <Text style={{fontSize:16, fontWeight: '400'}}>
-                        User ID: {user.uid}
-                    </Text>
-                </View>
-            </View>
-
-            <View style={{height: '50%', width: '100%', alignItems: 'center'}}>
-                
-                <View style={styles(theme).inputView}>
-                    <TextInput
-                        style={styles(theme).textInput}
-                        placeholder='Account Password'
-                        secureTextEntry={secureTextEntry}
-                        value={password}
-                        onChangeText={(password) => setPassword(password)}
-                    />
-                    <TouchableOpacity
-                        style={{ marginRight: 10 }}
-                        onPress={() => {
-                            setSecureTextEntry(!secureTextEntry);
-                            return false;
-                        }}
-                    >
-                        <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
-                <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
+        <View style={{ height: '50%', width: '100%', alignItems: 'center' }}>
+          <View style={styles(theme).inputView}>
+            <TextInput
+              style={styles(theme).textInput}
+              placeholder='Account Password'
+              secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={(password) => setPassword(password)}
+            />
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => {
+                setSecureTextEntry(!secureTextEntry);
+                return false;
+              }}
+            >
+              <Icon name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'} color={theme.icon2} size={20} />
             </TouchableOpacity>
-        </KeyboardAvoidingView>
+          </View>
+        </View>
 
+        <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
+          <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Account</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
 
-        <ConfirmationModal
-           body={
-               'Are you sure you want to DELETE your account? This will delete any groups you have created and remove you from any groups you have joined.'
-           }
-           buttonText={'Delete account'}
-           buttonAction={() => {deleteUser();}}
-           toggleModal={toggleConfirmation}
-           isVisible={isConfirmationVisible}
-           onBackdropPress={() => setConfirmationVisible(false)}
-           onSwipeComplete={toggleConfirmation}
-           userStyle='light'
-        />
-
+      <ConfirmationModal
+        body={
+          'Are you sure you want to DELETE your account? This will delete any groups you have created and remove you from any groups you have joined.'
+        }
+        buttonText={'Delete account'}
+        buttonAction={() => {
+          deleteUser();
+        }}
+        toggleModal={toggleConfirmation}
+        isVisible={isConfirmationVisible}
+        onBackdropPress={() => setConfirmationVisible(false)}
+        onSwipeComplete={toggleConfirmation}
+        userStyle='light'
+      />
     </SafeAreaView>
   );
 }
 
 const styles = (theme) =>
   StyleSheet.create({
-    container: {flex: 1, alignItems: 'center', backgroundColor: theme.background},
+    container: { flex: 1, alignItems: 'center', backgroundColor: theme.background },
 
     topBanner: {
       //for the top container holding top 'settings' and save button
@@ -180,7 +174,7 @@ const styles = (theme) =>
       marginRight: 20,
     },
 
-    textInput: {    
+    textInput: {
       width: '100%',
       fontSize: 18,
       paddingHorizontal: 5,
@@ -188,7 +182,7 @@ const styles = (theme) =>
       outlineWidth: 0.5,
       //justifyContent: "center",
     },
-    inputView:{
+    inputView: {
       flexDirection: 'row',
       marginVertical: 18,
       justifyContent: 'space-between',
@@ -198,15 +192,15 @@ const styles = (theme) =>
       borderBottomWidth: 1,
     },
     leaveButton: {
-        backgroundColor: '#fff',
-        borderRadius: 15,
-        padding: 15,
-        position: 'absolute',
-        bottom: '3%',
-        width: '90%',
-        alignItems: 'center',
-        alignSelf: 'center',
-        borderWidth: 0.5,
-        borderColor: theme.popOutBorder,
-      },
-});
+      backgroundColor: '#fff',
+      borderRadius: 15,
+      padding: 15,
+      position: 'absolute',
+      bottom: '3%',
+      width: '90%',
+      alignItems: 'center',
+      alignSelf: 'center',
+      borderWidth: 0.5,
+      borderColor: theme.popOutBorder,
+    },
+  });

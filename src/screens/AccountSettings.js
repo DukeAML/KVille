@@ -8,52 +8,26 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 import { useTheme } from '../context/ThemeProvider';
-//import { ConfirmationModal } from '../components/ConfirmationModal';
+import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
-import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function AccountSettings({ navigation }) {
-  const groups = useSelector((state)=>state.user.currentUser.groupCode);
-  //const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  /* async function deleteUser() {
-    toggleConfirmation();
-    if (groups.length == 0) {
-      const user = firebase.auth().currentUser;
-      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, '123456');
-      await user.reauthenticateWithCredential(credentials).catch((error) => console.error(error));
-
-      await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(firebase.auth().currentUser.uid)
-        .delete()
-        .catch((error) => console.error(error));
-      await firebase
-        .auth()
-        .currentUser.delete()
-        .catch((error) => console.error(error));
-      dispatch(reset());
-    } else {
-      dispatch(setSnackMessage('Delete or leave all current groups before deleting account'));
-      dispatch(toggleSnackBar());
-    }
-  } */
-
   async function onLogout() {
+    toggleConfirmation();
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
     await firebase.auth().signOut();
     dispatch(reset());
   }
 
-  /* function toggleConfirmation() {
+  function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  } */
+  } 
 
   return (
     <SafeAreaView style={styles(theme).settingsContainer}>
@@ -85,17 +59,6 @@ export default function AccountSettings({ navigation }) {
         </View>
         <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
       </TouchableOpacity>
-
-      {/* <TouchableOpacity 
-        style = {styles(theme).settingBtn}
-        onPress={onLogout}>
-        <View style = {styles(theme).rightOfBtn}>
-          <Icon name='log-out-outline' color={theme.grey2} size={22}/>
-          <Text style={styles(theme).listText}>Logout</Text>
-        </View>
-        <Icon name='arrow-forward' color={theme.grey2} size={25} style={{marginRight: 20}} />
-      </TouchableOpacity> */}
-
 
       <Text style = {[styles(theme).headerText, {marginTop: 15}]}>About</Text>
       <TouchableOpacity 
@@ -131,25 +94,25 @@ export default function AccountSettings({ navigation }) {
       </TouchableOpacity>
       
       
-      <TouchableOpacity style={styles(theme).leaveButton} onPress={onLogout}>
+      <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
         <Icon name='log-out-outline' color={theme.grey2} size={22} style={{marginRight: 15}}/>
-        <Text style={{ color: theme.grey2, fontSize: 20, fontWeight: '500' }}>Logout</Text>
+        <Text style={{ color: theme.grey2, fontSize: 20, fontWeight: '500' }}>Log out</Text>
       </TouchableOpacity>
 
-      {/* <ConfirmationModal
+      <ConfirmationModal
         body={
-          'Are you sure you want to DELETE your account? This will delete any groups you have created and remove you from any groups you have joined.'
+          'Are you sure you want to log out?'
         }
-        buttonText={'Delete account'}
+        buttonText={'Log out'}
         buttonAction={() => {
-          deleteUser();
+          onLogout();
         }}
         toggleModal={toggleConfirmation}
         isVisible={isConfirmationVisible}
         onBackdropPress={() => setConfirmationVisible(false)}
         onSwipeComplete={toggleConfirmation}
         userStyle='light'
-      /> */}
+      />
     </SafeAreaView>
   );
 }
@@ -204,17 +167,6 @@ const styles = (theme) =>
       fontWeight: '400',
       marginLeft: 20,
     },
-/*     textInput: {
-      backgroundColor: '#fff',
-      paddingVertical: 10,
-      paddingHorizontal: 15,
-      width: '90%',
-      fontSize: 18,
-      fontWeight: '500',
-      textAlign: 'left',
-      borderRadius: 15,
-      marginBottom: 23,
-    }, */
     settingBtn:{
       flexDirection: 'row',
       width: '100%',
