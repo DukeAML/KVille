@@ -76,7 +76,7 @@ export default function DeleteAccount({ navigation }) {
   return (
     <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).topBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20, alignContent: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 10, alignContent: 'center', justifyContent: 'center' }}>
           <Icon name='arrow-back' color={theme.primary} size={30} />
         </TouchableOpacity>
         <Text style={styles(theme).titleText}>Delete User Account</Text>
