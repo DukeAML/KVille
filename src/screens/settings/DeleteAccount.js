@@ -12,7 +12,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
@@ -27,6 +26,7 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function DeleteAccount({ navigation }) {
   const groups = useSelector((state) => state.user.currentUser.groupCode);
+  const username = useSelector((state) => state.user.currentUser.username);
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
@@ -76,14 +76,10 @@ export default function DeleteAccount({ navigation }) {
   return (
     <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).topBanner}>
-        <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
-          </TouchableOpacity>
-          <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 20 }]}>
-            Delete User Account
-          </Text>
-        </View>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20, alignContent: 'center', justifyContent: 'center' }}>
+          <Icon name='arrow-back' color={theme.primary} size={30} />
+        </TouchableOpacity>
+        <Text style={styles(theme).titleText}>Delete User Account</Text>
       </View>
 
       <KeyboardAvoidingView behavior='padding' style={[styles(theme).container, { width: '100%' }]}>
@@ -91,7 +87,7 @@ export default function DeleteAccount({ navigation }) {
           <Image source={coachKLogo} style={styles(theme).kIcon} />
           <View style={{ marginLeft: 10 }}>
             <Text style={{ fontSize: 16, fontWeight: '500' }}>{user.email}</Text>
-            <Text style={{ fontSize: 16, fontWeight: '400' }}>User ID: {user.uid}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '400' }}>Username: {username}</Text>
           </View>
         </View>
 
@@ -105,7 +101,7 @@ export default function DeleteAccount({ navigation }) {
               onChangeText={(password) => setPassword(password)}
             />
             <TouchableOpacity
-              style={{ marginRight: 10 }}
+              style={{ marginLeft: -20 }}
               onPress={() => {
                 setSecureTextEntry(!secureTextEntry);
                 return false;
@@ -148,7 +144,7 @@ const styles = (theme) =>
       flexDirection: 'row',
       backgroundColor: theme.background,
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       marginBottom: 30,
       width: '100%',
       height: 70,
@@ -157,13 +153,11 @@ const styles = (theme) =>
       borderColor: theme.popOutBorder,
       paddingHorizontal: 20,
     },
-
     titleText: {
       //text for different setting headers
-      fontSize: 16,
+      fontSize: 20,
       fontWeight: '600',
-      color: theme.grey2,
-      marginLeft: 25,
+      color: theme.text2,
     },
     kIcon: {
       //for the duke basketball logos
