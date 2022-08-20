@@ -99,9 +99,16 @@ export default function Availability({navigation}) {
         let j = i;
         while (j < availability.length && !availability[j]) {
           availabilityUI[j] = [true, 0];
+          if (i != j && j % 48 == 0) {
+            break;
+          }
           j++;
         }
-        availabilityUI[j - 1] = [false, j - i];
+        if (j > 47 && !availabilityUI[j - 1 - (j % 48)][0]) {
+          availabilityUI[j - 1] = [false, j - i + 1];
+        } else {
+          availabilityUI[j - 1] = [false, j - i];
+        }
         i = j;
       } else {
         availabilityUI[i] = [true, 0];

@@ -50,7 +50,7 @@ const cellHeight = 35;
 let currIndex;
 let availability;
 
-export default function Availability({navigation}) {
+export default function Availability({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [dimensions, setDimensions] = useState({ window });
@@ -60,7 +60,7 @@ export default function Availability({navigation}) {
   const [startTime, setStartTime] = useState(new Date(Date.now()));
   const [endTime, setEndTime] = useState(new Date(Date.now() + 3600000));
   const [isDisabled, setIsDisabled] = useState(false);
-  
+
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -77,7 +77,6 @@ export default function Availability({navigation}) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchAvailability(groupCode) {
-
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
     await firebase
@@ -96,9 +95,16 @@ export default function Availability({navigation}) {
         let j = i;
         while (j < availability.length && !availability[j]) {
           availabilityUI[j] = [true, 0];
+          if (i != j && j % 48 == 0) {
+            break;
+          }
           j++;
         }
-        availabilityUI[j - 1] = [false, j - i];
+        if (j> 47 && !availabilityUI[j - 1 - (j % 48)][0]) {
+          availabilityUI[j - 1] = [false, j - i + 1];
+        } else {
+          availabilityUI[j - 1] = [false, j - i];
+        }
         i = j;
       } else {
         availabilityUI[i] = [true, 0];
@@ -128,11 +134,9 @@ export default function Availability({navigation}) {
       .doc(groupCode)
       .collection('members')
       .doc(firebase.auth().currentUser.uid);
-    let startIdx =
-      parseInt(selectedDay) * 48 + Math.floor(startTime.getMinutes()/30) + startTime.getHours() * 2;
-    let endIdx =
-      parseInt(selectedDay) * 48 + Math.floor(endTime.getMinutes()/30) + endTime.getHours() * 2;
-    console.log(startIdx)
+    let startIdx = parseInt(selectedDay) * 48 + Math.floor(startTime.getMinutes() / 30) + startTime.getHours() * 2;
+    let endIdx = parseInt(selectedDay) * 48 + Math.floor(endTime.getMinutes() / 30) + endTime.getHours() * 2;
+    console.log(startIdx);
     if (endIdx == parseInt(selectedDay) * 48) {
       endIdx += 48;
     }
@@ -143,9 +147,11 @@ export default function Availability({navigation}) {
       availability[i] = false;
     }
     toggleModal();
-    memberRef.update({
-      availability: availability,
-    }).catch((error)=>console.error(error));
+    memberRef
+      .update({
+        availability: availability,
+      })
+      .catch((error) => console.error(error));
   };
 
   //const queryClient = useQueryClient();
@@ -202,7 +208,8 @@ export default function Availability({navigation}) {
 
   function onStartChange(event, selectedDate) {
     //setShow(false);
-    if (selectedDate.getTime() >= endTime.getTime()) {
+    console.log(selectedDate.getTime());
+    if (selectedDate.getTime() >= endTime.getTime() && endTime.getHours() != 0) {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
@@ -210,7 +217,9 @@ export default function Availability({navigation}) {
     setStartTime(selectedDate);
   }
   function onEndChange(event, selectedDate) {
-    if (selectedDate.getTime() <= startTime.getTime()) {
+    console.log(selectedDate.getTime());
+    console.log(selectedDate.getHours());
+    if (selectedDate.getTime() <= startTime.getTime() && selectedDate.getHours() != 0) {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
@@ -342,7 +351,7 @@ export default function Availability({navigation}) {
             onPress={() => postAvailability.mutate()}
             disabled={isDisabled}
           >
-            <Text style={[styles(theme).btnText, {color: isDisabled ? '#00000050': theme.primary}]}>Add</Text>
+            <Text style={[styles(theme).btnText, { color: isDisabled ? '#00000050' : theme.primary }]}>Add</Text>
           </TouchableOpacity>
         </View>
 
