@@ -12,7 +12,7 @@ export default function About({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1, alignItems: 'center', backgroundColor: theme.background }}>
       <View style={styles(theme).topBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 20 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 10 }}>
           <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
         </TouchableOpacity>
         <Text style={styles(theme).titleText}>Meet the Creators</Text>

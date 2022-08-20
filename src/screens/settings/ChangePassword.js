@@ -162,7 +162,7 @@ const styles = (theme) =>
       paddingVertical: 10,
       borderBottomWidth: 0.5,
       borderColor: theme.popOutBorder,
-      paddingHorizontal: 20,
+      paddingHorizontal: 10,
     },
 
     titleText: {

@@ -32,7 +32,7 @@ export default function AccountSettings({ navigation }) {
   return (
     <SafeAreaView style={styles(theme).settingsContainer}>
       <View style={styles(theme).topBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{position: 'absolute', left: 20}}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{position: 'absolute', left: 15}}>
           <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
         </TouchableOpacity>
         <Text style={[styles(theme).titleText, { color: theme.text2, alignSelf: 'center', fontSize: 26, marginLeft:0 }]}>
