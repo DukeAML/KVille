@@ -9,6 +9,7 @@ import {
   Image,
   KeyboardAvoidingView,
   SafeAreaView,
+  StatusBar
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
@@ -92,6 +93,7 @@ export default function Login(props) {
 
   return (
     <View style={styles(theme).container}>
+      <StatusBar barStyle='light-content' backgroundColor='#6a51ae' />
       <KeyboardAvoidingView behavior='padding' style={styles(theme).container}>
         <View style={styles(theme).banner}>
           <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>LOGIN</Text>
@@ -193,7 +195,9 @@ export default function Login(props) {
         <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
           <Text
             style={{ margin: 10, color: theme.quaternary, textAlign: 'center' }}
-            onPress={() => props.navigation.navigate('ForgotPassword')}
+            onPress={() => {
+              props.navigation.navigate('ForgotPassword');
+            }}
           >
             Forgot Password?
           </Text>
@@ -333,6 +337,6 @@ const styles = (theme) =>
     },
     demoText: {
       color: theme.grey2,
-      textAlign: 'center'
+      textAlign: 'center',
     },
   });
