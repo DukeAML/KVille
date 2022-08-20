@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 
 import { useTheme } from '../../context/ThemeProvider';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,14 +31,14 @@ export default function About({ navigation }) {
           <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly', marginVertical: 15 }}>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://github.com/kevinfu1');
+                WebBrowser.openBrowserAsync('https://github.com/kevinfu1');
               }}
             >
               <Icon name='logo-github' color={theme.primary} size={22} style={{ marginTop: 3 }} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://www.linkedin.com/in/kevin-fu1/');
+                WebBrowser.openBrowserAsync('https://www.linkedin.com/in/kevin-fu1/');
               }}
             >
               <Icon name='logo-linkedin' color={theme.primary} size={22} style={{ marginTop: 3 }} />
@@ -51,7 +52,7 @@ export default function About({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://www.instagram.com/kevinfu_1/');
+                WebBrowser.openBrowserAsync('https://www.instagram.com/kevinfu_1/');
               }}
             >
               <Icon name='logo-instagram' color={theme.primary} size={22} style={{ marginTop: 3 }} />
@@ -70,14 +71,14 @@ export default function About({ navigation }) {
           <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly', marginVertical: 15 }}>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://github.com/alvin-hong');
+                WebBrowser.openBrowserAsync('https://github.com/alvin-hong');
               }}
             >
               <Icon name='logo-github' color={theme.primary} size={22} style={{ marginTop: 3 }} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://www.linkedin.com/in/alvin-hong-2a0763225/');
+                WebBrowser.openBrowserAsync('https://www.linkedin.com/in/alvin-hong-2a0763225/');
               }}
             >
               <Icon name='logo-linkedin' color={theme.primary} size={22} style={{ marginTop: 3 }} />
@@ -91,7 +92,7 @@ export default function About({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://www.instagram.com/alvin.hong_/');
+                WebBrowser.openBrowserAsync('https://www.instagram.com/alvin.hong_/');
               }}
             >
               <Icon name='logo-instagram' color={theme.primary} size={22} style={{ marginTop: 3 }} />

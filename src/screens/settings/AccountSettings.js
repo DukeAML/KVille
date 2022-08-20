@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView, Linking } from 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as WebBrowser from 'expo-web-browser';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -67,7 +68,7 @@ export default function AccountSettings({ navigation }) {
       <TouchableOpacity
         style={styles(theme).settingBtn}
         onPress={() => {
-          Linking.openURL('https://kevinfu1.github.io/KVille-Website/');
+          WebBrowser.openBrowserAsync('https://kevinfu1.github.io/KVille-Website/');
         }}
       >
         <View style={styles(theme).rightOfBtn}>
