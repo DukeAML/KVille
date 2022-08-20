@@ -539,7 +539,7 @@ export default function Schedule({ navigation }) {
     return (
       <View style={styles(theme).emptyStateContainer}>
         <Text>Group Schedule has not been created</Text>
-        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+        <Image style={{ opacity: 0.5, height: '30%', width: '50%' }} resizeMode='contain' source={tentemoji} />
         {groupRole != 'Member' ? (
           <TouchableOpacity
             style={{
