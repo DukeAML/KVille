@@ -35,6 +35,11 @@ export default function ChangePassword({ navigation }) {
   const user = firebase.auth().currentUser;
 
   async function updatePassword() {
+     if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+       dispatch(setSnackMessage('This is a demo account'));
+       dispatch(toggleSnackBar());
+       return;
+     }
     if (newPassword == confirmPassword) {
       const credentials = firebase.auth.EmailAuthProvider.credential(user.email, currPassword);
       await user
