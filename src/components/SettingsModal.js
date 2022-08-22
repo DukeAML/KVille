@@ -144,13 +144,12 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
 
   async function leaveGroup() {
+    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+      dispatch(setSnackMessage('This is a demo account'));
+      dispatch(toggleSnackBar());
+      return;
+    }
     if (deleteGroupName == groupName) {
-
-      if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
-        dispatch(setSnackMessage('This is a demo account'));
-        dispatch(toggleSnackBar());
-        return;
-      }
       if (groupRole === 'Creator') {
         await groupRef
           .collection('members')
@@ -337,7 +336,10 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         )}
       </Formik>
 
-      <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleDeleteGroup} /* onPress={toggleConfirmation} */>
+      <TouchableOpacity
+        style={styles(theme).leaveButton}
+        onPress={toggleDeleteGroup} /* onPress={toggleConfirmation} */
+      >
         {groupRole === 'Creator' ? (
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
         ) : (
@@ -352,7 +354,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         keyboardDismissMode={'on-drag'}
       >
         <SafeAreaView
-          style ={{
+          style={{
             width: '78%',
             height: 230,
             backgroundColor: theme.white2,
@@ -372,26 +374,35 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             }}
           >
             {groupRole === 'Creator' ? (
-                <Text style={[styles(theme).deleteText, {paddingTop: 10}]}>
-                  Are you sure you want to DELETE this group? This action CANNOT be undone.
-                </Text>
-              ) : (
-                <Text style={[styles(theme).deleteText, {paddingTop: 10}]}>
-                  Are you sure you want to LEAVE this group? This will action CANNOT be undone.
-                </Text>
-              ) 
-            }
-            <Text style={[styles(theme).deleteText, {fontSize: 14, fontWeight: '400'}]}>
-              Type in your group name to confirm
+              <Text style={[styles(theme).deleteText, { paddingTop: 10 }]}>
+                Are you sure you want to DELETE this group? This action CANNOT be undone.
+              </Text>
+            ) : (
+              <Text style={[styles(theme).deleteText, { paddingTop: 10 }]}>
+                Are you sure you want to LEAVE this group? This will action CANNOT be undone.
+              </Text>
+            )}
+            <Text style={[styles(theme).deleteText, { fontSize: 14, fontWeight: '400' }]}>
+              Please type <Text style={{fontWeight: '600'}}>{groupName}</Text> to confirm
             </Text>
 
             <TextInput
-              style={[styles(theme).textInput, {backgroundColor: theme.white1, fontSize: 16,
-                fontWeight: '400', marginBottom: 10, borderWidth: 0.5, borderColor: theme.popOutBorder}]}
+              style={[
+                styles(theme).textInput,
+                {
+                  backgroundColor: theme.white1,
+                  fontSize: 16,
+                  fontWeight: '400',
+                  marginBottom: 10,
+                  borderWidth: 0.5,
+                  borderColor: theme.popOutBorder,
+                },
+              ]}
               placeholder='Enter Group Name'
               value={deleteGroupName}
               onChangeText={(deleteGroupName) => setDeleteGroupName(deleteGroupName)}
               autoCorrect={false}
+              autoCapitalize='none'
             />
           </View>
 
@@ -405,26 +416,31 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             }}
           >
             <TouchableOpacity
-              style={{width: '50%', height: '98%', justifyContent: 'center', borderRightColor: '#cfcfcf', borderRightWidth: 1}}
-              onPress = {toggleDeleteGroup}
+              style={{
+                width: '50%',
+                height: '98%',
+                justifyContent: 'center',
+                borderRightColor: '#cfcfcf',
+                borderRightWidth: 1,
+              }}
+              onPress={toggleDeleteGroup}
             >
-              <Text style={{textAlign: 'center', color: theme.primary, fontSize: 17, fontWeight: '500'}}>Cancel</Text>
+              <Text style={{ textAlign: 'center', color: theme.primary, fontSize: 17, fontWeight: '500' }}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{width: '50%', height: '98%', justifyContent: 'center'}}
-              onPress = {() => {
-                leaveGroup();
+              style={{ width: '50%', height: '98%', justifyContent: 'center' }}
+              onPress={() => {
                 toggleModal();
+                leaveGroup();
               }}
             >
-              <Text style={{textAlign: 'center', color: theme.error, fontSize: 17, fontWeight: '500'}}>Delete</Text>
+              <Text style={{ textAlign: 'center', color: theme.error, fontSize: 17, fontWeight: '500' }}>Delete</Text>
             </TouchableOpacity>
-
-          </View>          
+          </View>
         </SafeAreaView>
       </Modal>
 
-{/*       <ConfirmationModal
+      {/*       <ConfirmationModal
         body={
           groupRole === 'Creator'
             ? 'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
