@@ -40,6 +40,11 @@ export default function DeleteAccount({ navigation }) {
   const user = firebase.auth().currentUser;
 
   async function deleteUser() {
+     if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+       dispatch(setSnackMessage('This is a demo account'));
+       dispatch(toggleSnackBar());
+       return;
+     }
     if (groups.length == 0) {
       console.log(password);
       const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);

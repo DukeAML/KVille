@@ -34,6 +34,11 @@ export default function ChangeEmail({navigation}) {
   const user = firebase.auth().currentUser;
 
   async function updateEmail() {
+    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+      dispatch(setSnackMessage('This is a demo account'));
+      dispatch(toggleSnackBar());
+      return;
+    }
     const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
     await user.reauthenticateWithCredential(credentials)
         .then(()=>{
