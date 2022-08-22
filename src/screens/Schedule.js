@@ -228,7 +228,7 @@ export default function Schedule({ navigation }) {
     //let newSchedule;
     await createGroupSchedule(groupCode, tentType)
       .then((groupSchedule) => {
-        console.log('Group Schedule', groupSchedule);
+        //console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
 
         //If current schedule is blank, no need to update
@@ -254,7 +254,7 @@ export default function Schedule({ navigation }) {
         dispatch(setSnackMessage('Not enough members'));
         dispatch(toggleSnackBar());
       });
-    console.log('create new schedule', newSchedule);
+    //w schedule', newSchedule);
   }
 
   function toggleModal() {
@@ -383,7 +383,16 @@ export default function Schedule({ navigation }) {
       return (
         <View style={{ flex: 1 }}>
           <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
-            <Text style={styles(theme).btnText} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
+            <Text
+              style={
+                person == 'empty'
+                  ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
+                  : styles(theme).btnText
+              }
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+              numberOfLines={1}
+            >
               {person}
             </Text>
           </View>
@@ -526,11 +535,11 @@ export default function Schedule({ navigation }) {
     return <ErrorPage navigation={navigation} />;
   }
 
-  if (data.length == 0 && !isRefetching) {
+  if (data.length == 0 && !isRefetching && weekDisplay != 'Previous Week') {
     return (
       <View style={styles(theme).emptyStateContainer}>
         <Text>Group Schedule has not been created</Text>
-        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+        <Image style={{ opacity: 0.5, height: '30%', width: '50%' }} resizeMode='contain' source={tentemoji} />
         {groupRole != 'Member' ? (
           <TouchableOpacity
             style={{
@@ -541,9 +550,11 @@ export default function Schedule({ navigation }) {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 50
+              marginTop: 50,
             }}
-            onPress={() => postSchedule.mutate()}
+            onPress={() => {
+              postSchedule.mutate();
+            }}
           >
             <Icon name='plus' color={theme.icon1} size={20} style={{ marginRight: 10 }} />
             <Text style={{ color: theme.text1, fontSize: 15, fontWeight: '500' }}>Create Schedule</Text>
@@ -586,6 +597,10 @@ export default function Schedule({ navigation }) {
             onPress={() => {
               if (newMember == 'Select a Member') {
                 toggleModal();
+              } else if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+                toggleModal();
+                dispatch(setSnackMessage('This is a demo account'));
+                dispatch(toggleSnackBar());
               } else {
                 toggleModal();
                 postEditCell.mutate({
@@ -643,8 +658,12 @@ export default function Schedule({ navigation }) {
           body='Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
           buttonText='Create New Schedule'
           buttonAction={() => {
-            //toggleConfirmation();
-            postSchedule.mutate();
+            if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+              dispatch(setSnackMessage('This is a demo account'));
+              dispatch(toggleSnackBar());
+            } else {
+              postSchedule.mutate();
+            }
           }}
           isVisible={isConfirmationVisible}
           userStyle={'light'}

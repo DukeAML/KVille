@@ -25,7 +25,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
-import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset } from '../redux/reducers/userSlice';
+import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset, resetCurrGroup } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
@@ -50,6 +50,7 @@ export default function Home({ navigation }) {
     useCallback(() => {
       let mounted = true;
       if (mounted) {
+        //dispatch(resetCurrGroup());
         setIsDisabled(false);
       }
       return () => {
@@ -207,7 +208,7 @@ export default function Home({ navigation }) {
           color={theme.grey1}
           size={25}
           onPress={() => navigation.navigate('StackNavigator')}
-          style={{marginRight: 0}}
+          style={{ marginRight: 0 }}
         />
       </View>
 
@@ -274,6 +275,8 @@ export default function Home({ navigation }) {
           />
         )}
       </SafeAreaView>
+
+      {firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? <Text style={{textAlign: 'center'}}>**This is a demo account and is only meant for viewing</Text> : null}
 
       {/* <View
           style={{
@@ -430,7 +433,7 @@ const styles = (theme) =>
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingHorizontal: '5%'
+      paddingHorizontal: '5%',
     },
     topText: {
       //"welcome to kville" text

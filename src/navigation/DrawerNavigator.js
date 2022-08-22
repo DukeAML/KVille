@@ -73,7 +73,7 @@ export default function NavigationStack() {
         will not be accounted for in the group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole noght shift
+        NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole night shift
         from 1am to 7am
       </Text>
     </View>

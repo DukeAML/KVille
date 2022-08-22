@@ -227,7 +227,7 @@ export default function Shifts({ navigation }) {
         }}
       >
         <Text>No Shifts have been assigned to you</Text>
-        <Image style={{ opacity: 0.5 }} source={tentemoji} />
+        <Image style={{ opacity: 0.5, height: '30%', width: '50%' }} resizeMode='contain' source={tentemoji} />
       </View>
     );
   }

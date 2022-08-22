@@ -93,6 +93,7 @@ export default memo(function DrawerContent(props) {
   }
 
   async function onLogout() {
+    toggleConfirmation();
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
     await firebase.auth().signOut();
     dispatch(reset());

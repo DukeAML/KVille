@@ -22,6 +22,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
   const [isModalSnackVisible, setModalSnackVisible] = useState(false);
   const [modalSnackMessage, setModalSnackMessage] = useState('');
+  const [isDisabled, setIsDisabled] = useState(firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true: false);
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const queryClient = useQueryClient();
@@ -140,7 +141,11 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
 
   async function leaveGroup() {
-    
+    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+      dispatch(setSnackMessage('This is a demo account'));
+      dispatch(toggleSnackBar());
+      return;
+    }
     if (groupRole === 'Creator') {
       await groupRef
         .collection('members')
@@ -160,6 +165,15 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               .catch((error) => console.error(error));
           });
         });
+      groupRef
+        .collection('members')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            doc.ref.delete().catch((error) => console.error(error));
+          });
+        })
+        .catch((error) => console.error(error));
       groupRef
         .delete()
         .then(() => {
@@ -187,6 +201,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         });
     }
     queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+    navigation.navigate('Home');
   }
 
   function toggleConfirmation() {
@@ -216,8 +231,10 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
                 Settings
               </Text>
 
-              <TouchableOpacity onPress={handleSubmit}>
-                <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Save</Text>
+              <TouchableOpacity onPress={handleSubmit} disabled={isDisabled}>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: isDisabled ? '#00000050' : theme.primary }}>
+                  Save
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -326,7 +343,6 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         buttonAction={() => {
           leaveGroup();
           toggleModal();
-          navigation.navigate('Home');
         }}
         toggleModal={toggleConfirmation}
         isVisible={isConfirmationVisible}

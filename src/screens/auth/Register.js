@@ -61,11 +61,6 @@ export default function Register(props) {
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
-              // firebase
-              //   .auth()
-              //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-              //   .then(() => console.log('persistence set'))
-              //   .catch((error) => console.error(error));
               firebase
                 .firestore()
                 .collection('users')
@@ -100,7 +95,7 @@ export default function Register(props) {
         <View style={styles(theme).banner}>
           <Text style={{ color: theme.white2, fontSize: 35, marginTop: 50 }}>REGISTER</Text>
           <View style={styles(theme).imageContainer}>
-            <Image
+            {/* <Image
               style={[
                 styles(theme).logo,
                 {
@@ -114,7 +109,7 @@ export default function Register(props) {
                 },
               ]}
               source={DukeBasketballLogo}
-            />
+            /> */}
             <View style={styles(theme).boldImage}>
               <Image style={styles(theme).logo} source={DukeBasketballLogo} />
             </View>
