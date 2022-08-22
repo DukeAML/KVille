@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Snackbar } from 'react-native-paper';
+import Modal from 'react-native-modal';
 import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -12,17 +13,19 @@ import 'firebase/compat/firestore';
 
 import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
-import { ConfirmationModal } from '../components/ConfirmationModal';
+//import { ConfirmationModal } from '../components/ConfirmationModal';
 import { ActionSheetModal } from './ActionSheetModal';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 export default function SettingsModal({ params, navigation, toggleModal }) {
   const { groupCode, groupName, userName, tentType, groupRole } = params;
-  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  //const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [isTentChangeVisible, setTentChangeVisible] = useState(false);
+  const [isDeleteGroupVisible, setDeleteGroupVisible] = useState(false);
   const [isModalSnackVisible, setModalSnackVisible] = useState(false);
   const [modalSnackMessage, setModalSnackMessage] = useState('');
   const [isDisabled, setIsDisabled] = useState(firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true: false);
+  const [deleteGroupName, setDeleteGroupName] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const queryClient = useQueryClient();
@@ -146,69 +149,77 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
       dispatch(toggleSnackBar());
       return;
     }
-    if (groupRole === 'Creator') {
-      await groupRef
-        .collection('members')
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            firebase
-              .firestore()
-              .collection('users')
-              .doc(doc.id)
-              .update({
-                groupCode: firebase.firestore.FieldValue.arrayRemove({
-                  groupCode: groupCode,
-                  groupName: groupName,
-                }),
-              })
-              .catch((error) => console.error(error));
+    if (deleteGroupName == groupName) {
+      if (groupRole === 'Creator') {
+        await groupRef
+          .collection('members')
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              firebase
+                .firestore()
+                .collection('users')
+                .doc(doc.id)
+                .update({
+                  groupCode: firebase.firestore.FieldValue.arrayRemove({
+                    groupCode: groupCode,
+                    groupName: groupName,
+                  }),
+                })
+                .catch((error) => console.error(error));
+            });
           });
-        });
-      groupRef
-        .collection('members')
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            doc.ref.delete().catch((error) => console.error(error));
+        groupRef
+          .collection('members')
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              doc.ref.delete().catch((error) => console.error(error));
+            });
+          })
+          .catch((error) => console.error(error));
+        groupRef
+          .delete()
+          .then(() => {
+            console.log('Group successfully deleted!');
+          })
+          .catch((error) => {
+            console.error('Error removing group: ', error);
           });
-        })
-        .catch((error) => console.error(error));
-      groupRef
-        .delete()
-        .then(() => {
-          console.log('Group successfully deleted!');
-        })
-        .catch((error) => {
-          console.error('Error removing group: ', error);
+      } else {
+        await userRef.update({
+          groupCode: firebase.firestore.FieldValue.arrayRemove({
+            groupCode: groupCode,
+            groupName: groupName,
+          }),
         });
+        groupRef
+          .collection('members')
+          .doc(firebase.auth().currentUser.uid)
+          .delete()
+          .then(() => {
+            console.log('Current user successfully removed from group!');
+          })
+          .catch((error) => {
+            console.error('Error removing user: ', error);
+          });
+      }
+      queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+      navigation.navigate('Home');
     } else {
-      await userRef.update({
-        groupCode: firebase.firestore.FieldValue.arrayRemove({
-          groupCode: groupCode,
-          groupName: groupName,
-        }),
-      });
-      groupRef
-        .collection('members')
-        .doc(firebase.auth().currentUser.uid)
-        .delete()
-        .then(() => {
-          console.log('Current user successfully removed from group!');
-        })
-        .catch((error) => {
-          console.error('Error removing user: ', error);
-        });
+      dispatch(setSnackMessage('Group Name is incorrect'));
+      dispatch(toggleSnackBar());
     }
-    queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
-    navigation.navigate('Home');
   }
 
-  function toggleConfirmation() {
+/*   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
-  }
+  } */
   function toggleTentChange() {
     setTentChangeVisible(!isTentChangeVisible);
+  }
+  function toggleDeleteGroup() {
+    setDeleteGroupVisible(!isDeleteGroupVisible);
   }
   function toggleModalSnackBar() {
     setModalSnackVisible(!isModalSnackVisible);
@@ -325,7 +336,10 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         )}
       </Formik>
 
-      <TouchableOpacity style={styles(theme).leaveButton} onPress={toggleConfirmation}>
+      <TouchableOpacity
+        style={styles(theme).leaveButton}
+        onPress={toggleDeleteGroup} /* onPress={toggleConfirmation} */
+      >
         {groupRole === 'Creator' ? (
           <Text style={{ color: theme.error, fontSize: 20, fontWeight: '500' }}>Delete Group</Text>
         ) : (
@@ -333,7 +347,100 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         )}
       </TouchableOpacity>
 
-      <ConfirmationModal
+      <Modal
+        isVisible={isDeleteGroupVisible}
+        onBackdropPress={() => setDeleteGroupVisible(false)}
+        backdropTransitionOutTiming={0}
+        keyboardDismissMode={'on-drag'}
+      >
+        <SafeAreaView
+          style={{
+            width: '78%',
+            height: 230,
+            backgroundColor: theme.white2,
+            alignSelf: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+          }}
+        >
+          <View
+            style={{
+              width: '100%',
+              height: '80%',
+              borderBottomWidth: 1,
+              borderBottomColor: '#cfcfcf',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            {groupRole === 'Creator' ? (
+              <Text style={[styles(theme).deleteText, { paddingTop: 10 }]}>
+                Are you sure you want to DELETE this group? This action CANNOT be undone.
+              </Text>
+            ) : (
+              <Text style={[styles(theme).deleteText, { paddingTop: 10 }]}>
+                Are you sure you want to LEAVE this group? This will action CANNOT be undone.
+              </Text>
+            )}
+            <Text style={[styles(theme).deleteText, { fontSize: 14, fontWeight: '400' }]}>
+              Please type <Text style={{fontWeight: '600'}}>{groupName}</Text> to confirm
+            </Text>
+
+            <TextInput
+              style={[
+                styles(theme).textInput,
+                {
+                  backgroundColor: theme.white1,
+                  fontSize: 16,
+                  fontWeight: '400',
+                  marginBottom: 10,
+                  borderWidth: 0.5,
+                  borderColor: theme.popOutBorder,
+                },
+              ]}
+              placeholder='Enter Group Name'
+              value={deleteGroupName}
+              onChangeText={(deleteGroupName) => setDeleteGroupName(deleteGroupName)}
+              autoCorrect={false}
+              autoCapitalize='none'
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              height: '20%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                width: '50%',
+                height: '98%',
+                justifyContent: 'center',
+                borderRightColor: '#cfcfcf',
+                borderRightWidth: 1,
+              }}
+              onPress={toggleDeleteGroup}
+            >
+              <Text style={{ textAlign: 'center', color: theme.primary, fontSize: 17, fontWeight: '500' }}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ width: '50%', height: '98%', justifyContent: 'center' }}
+              onPress={() => {
+                toggleModal();
+                leaveGroup();
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: theme.error, fontSize: 17, fontWeight: '500' }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
+
+      {/*       <ConfirmationModal
         body={
           groupRole === 'Creator'
             ? 'Are you sure you want to DELETE this group? This will delete it for everyone in this group and CANNOT be undone.'
@@ -349,7 +456,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         onBackdropPress={() => setConfirmationVisible(false)}
         onSwipeComplete={toggleConfirmation}
         userStyle='light'
-      />
+      /> */}
       <Snackbar
         visible={isModalSnackVisible}
         onDismiss={() => setModalSnackVisible(false)}
@@ -456,5 +563,11 @@ const styles = (theme) =>
       alignItems: 'center',
       borderWidth: 0.5,
       borderColor: theme.popOutBorder,
+    },
+    deleteText: {
+      width: '90%',
+      textAlign: 'center',
+      fontWeight: '600',
+      fontSize: 16
     },
   });
