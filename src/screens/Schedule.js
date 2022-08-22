@@ -214,7 +214,6 @@ export default function Schedule({ navigation }) {
         console.error(error);
       },
       onSuccess: () => {
-        //console.log('newSchedule', newSchedule);
         queryClient.setQueryData(
           ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
           newSchedule.current

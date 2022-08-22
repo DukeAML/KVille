@@ -66,15 +66,15 @@ export default function NavigationStack() {
         Do this for your entire weekly schedule. You can delete blocks to edit your times.
       </Text>
       <Text style={styles(theme).InfoText}>
-        This schedule remains saved from week to week, but you may edit every week if you have changes to your schedule.
+        This schedule remains the same from week to week, but you may edit every week if you have changes to your schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
         Make sure to fill out your availability every week before you Create a New Group Schedule or your busy times
         will not be accounted for in the group schedule.
       </Text>
       <Text style={styles(theme).InfoText}>
-        NOTE: If you mark yourself as available at 1am on a day, you will be marked availabile for the whole night shift
-        from 1am to 7am
+        NOTE*: If you mark yourself as available at 1am on a day, you will be marked available for the whole night shift
+        from 1am to 7am. So make sure to mark 1am as busy to account for the night shift.
       </Text>
     </View>
   );
@@ -95,6 +95,14 @@ export default function NavigationStack() {
       <Text style={styles(theme).InfoText}>
         After the schedule is made, admins can make edits by clicking on the time slot and changing the member for that
         time.
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        Colors for the time shifts correspond with each member. Blocks labeled "empty" means no one is available at 
+        that time and need to be addressed (this can be done by having an admin edit the schedule to fill in those 
+        empty spots).
+      </Text>
+      <Text style={styles(theme).InfoText}>
+        The page also displays the previous schedule (labeled "previous") for the group's reference.
       </Text>
     </View>
   );
@@ -276,8 +284,6 @@ export default function NavigationStack() {
                 shadowOpacity: 0.2,
                 shadowRadius: 5,
                 elevation: 20,
-                //borderBottomLeftRadius: 10,
-                //borderBottomRightRadius: 10,
               },
               headerLeft: () => <IconButton icon='menu' size={25} onPress={() => navigation.openDrawer()}></IconButton>,
             })}
