@@ -25,7 +25,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
-import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset } from '../redux/reducers/userSlice';
+import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset, resetCurrGroup } from '../redux/reducers/userSlice';
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
 import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
@@ -50,6 +50,7 @@ export default function Home({ navigation }) {
     useCallback(() => {
       let mounted = true;
       if (mounted) {
+        //dispatch(resetCurrGroup());
         setIsDisabled(false);
       }
       return () => {

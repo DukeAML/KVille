@@ -69,6 +69,11 @@ export default function JoinGroup({ navigation }) {
   );
 
   async function onJoinGroup(navigation) {
+    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+      dispatch(setSnackMessage('This is a demo account'));
+      dispatch(toggleSnackBar());
+      return;
+    }
     console.log('group code', groupCode);
     if (groupCode == '') {
       dispatch(setSnackMessage('Enter group code'));

@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 import { Snackbar, Divider } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import firebase from 'firebase/compat/app';
@@ -27,6 +27,7 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 const window = Dimensions.get('window');
 
@@ -62,6 +63,7 @@ export default function Availability({ navigation }) {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -100,7 +102,7 @@ export default function Availability({ navigation }) {
           }
           j++;
         }
-        if (j> 47 && !availabilityUI[j - 1 - (j % 48)][0]) {
+        if (j > 47 && !availabilityUI[j - 1 - (j % 48)][0]) {
           availabilityUI[j - 1] = [false, j - i + 1];
         } else {
           availabilityUI[j - 1] = [false, j - i];
@@ -314,7 +316,15 @@ export default function Availability({ navigation }) {
         userStyle='light'
       >
         <TouchableOpacity
-          onPress={() => deleteAvailability.mutate()}
+          onPress={() => {
+            if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+              toggleDeleteModal();
+              dispatch(setSnackMessage('This is a demo account'));
+              dispatch(toggleSnackBar());
+            } else {
+              deleteAvailability.mutate();
+            }
+          }}
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
@@ -348,7 +358,15 @@ export default function Availability({ navigation }) {
           </BottomSheetModal.Header>
           <TouchableOpacity
             style={[styles(theme).addBtn, { alignItems: 'flex-end' }]}
-            onPress={() => postAvailability.mutate()}
+            onPress={() => {
+              if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+                toggleModal();
+                dispatch(setSnackMessage('This is a demo account'));
+                dispatch(toggleSnackBar());
+              } else {
+                postAvailability.mutate();
+              }
+            }}
             disabled={isDisabled}
           >
             <Text style={[styles(theme).btnText, { color: isDisabled ? '#00000050' : theme.primary }]}>Add</Text>

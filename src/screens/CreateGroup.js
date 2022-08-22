@@ -93,6 +93,11 @@ export default function CreateGroup({ navigation }) {
 
   //Create group function
   async function onCreateGroup() {
+    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+      dispatch(setSnackMessage('This is a demo account'));
+      dispatch(toggleSnackBar());
+      return;
+    }
     if (group.groupName == '') {
       dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Enter group name'));

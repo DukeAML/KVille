@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 
 import { Snackbar } from 'react-native-paper';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -27,7 +27,7 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
-
+import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
 const window = Dimensions.get('window');
 
@@ -51,14 +51,14 @@ const cellHeight = 35;
 let currIndex;
 let availability;
 
-export default function Availability({navigation}) {
+export default function Availability({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
 
   const [dimensions, setDimensions] = useState({ window });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isSnackVisible, setSnackVisible] = useState(false);
-  const [snackMessage, setSnackMessage] = useState('');
+  const [snackMessage, setModalSnackMessage] = useState('');
   const [selectedDay, setSelectedDay] = useState(0);
   const [startTime, setStartTime] = useState({
     hour: 0,
@@ -71,6 +71,7 @@ export default function Availability({navigation}) {
     day: 0,
   });
   const { theme } = useTheme();
+  const dispatch = useDispatch();
 
   const { isLoading, isError, error, data, refetch } = useQuery(
     ['availability', firebase.auth().currentUser.uid, groupCode],
@@ -79,8 +80,6 @@ export default function Availability({navigation}) {
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchAvailability(groupCode) {
-
-
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
     await firebase
@@ -139,8 +138,8 @@ export default function Availability({navigation}) {
       .collection('members')
       .doc(firebase.auth().currentUser.uid);
     if (selectedDay == 7) {
-      toggleSnackBar();
-      setSnackMessage('Please select a day');
+      toggleModalSnackBar();
+      setModalSnackMessage('Please select a day');
       return;
     }
     let startIdx =
@@ -151,8 +150,8 @@ export default function Availability({navigation}) {
       endIdx += 48;
     }
     if (startIdx >= endIdx) {
-      toggleSnackBar();
-      setSnackMessage('Invalid time slot');
+      toggleModalSnackBar();
+      setModalSnackMessage('Invalid time slot');
       return;
     }
     for (let i = startIdx; i < endIdx; i++) {
@@ -206,7 +205,7 @@ export default function Availability({navigation}) {
   function toggleDeleteModal() {
     setDeleteModalVisible(!isDeleteModalVisible);
   }
-  function toggleSnackBar() {
+  function toggleModalSnackBar() {
     setSnackVisible(!isSnackVisible);
   }
 
@@ -233,7 +232,7 @@ export default function Availability({navigation}) {
   }
 
   if (isError) {
-    return <ErrorPage navigation={navigation}/>;
+    return <ErrorPage navigation={navigation} />;
   }
 
   return (
@@ -277,17 +276,14 @@ export default function Availability({navigation}) {
                 fontSize: 10,
                 width: '70%',
                 color: '#717573',
-                marginLeft: 2
+                marginLeft: 2,
               }}
             />
           </TableWrapper>
 
           <TableWrapper style={{ flex: 1 }}>
             {tableData.map((rowData, index) => (
-              <TableWrapper
-                key={index}
-                style={StyleSheet.flatten(styles(theme).row)}
-              >
+              <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
                 {rowData.map((cellData, cellIndex) => (
                   <Cell
                     key={cellIndex}
@@ -318,7 +314,15 @@ export default function Availability({navigation}) {
         userStyle='light'
       >
         <TouchableOpacity
-          onPress={() => deleteAvailability.mutate()}
+          onPress={() => {
+            if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+              toggleDeleteModal();
+              dispatch(setSnackMessage('This is a demo account'));
+              dispatch(toggleSnackBar());
+            } else {
+              deleteAvailability.mutate();
+            }
+          }}
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
@@ -504,11 +508,16 @@ export default function Availability({navigation}) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles(theme).addBtn,
-              { backgroundColor: theme.primary},
-            ]}
-            onPress={() => postAvailability.mutate()}
+            style={[styles(theme).addBtn, { backgroundColor: theme.primary }]}
+            onPress={() => {
+              if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+                toggleModal();
+                dispatch(setSnackMessage('This is a demo account'));
+                dispatch(toggleSnackBar());
+              } else {
+                postAvailability.mutate();
+              }
+            }}
           >
             <Text style={[styles(theme).btnText, { color: theme.text1 }]}>Add</Text>
           </TouchableOpacity>
