@@ -24,7 +24,10 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const [isDeleteGroupVisible, setDeleteGroupVisible] = useState(false);
   const [isModalSnackVisible, setModalSnackVisible] = useState(false);
   const [modalSnackMessage, setModalSnackMessage] = useState('');
-  const [isDisabled, setIsDisabled] = useState(firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true: false);
+  const [isDisabled, setIsDisabled] = useState(
+    firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true : false
+  );
+  const [isCancelDisabled, setIsCancelDisabled] = useState(false);
   const [deleteGroupName, setDeleteGroupName] = useState('');
   const dispatch = useDispatch();
   const { theme } = useTheme();
@@ -212,7 +215,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
     }
   }
 
-/*   function toggleConfirmation() {
+  /*   function toggleConfirmation() {
     setConfirmationVisible(!isConfirmationVisible);
   } */
   function toggleTentChange() {
@@ -235,7 +238,13 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
         {({ handleChange, handleBlur, handleSubmit, setFieldValue, setFieldTouched, values }) => (
           <>
             <View style={styles(theme).topBanner}>
-              <TouchableOpacity onPress={toggleModal}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsCancelDisabled(true);
+                  toggleModal();
+                }}
+                disabled={isCancelDisabled}
+              >
                 <Text style={{ fontSize: 18, fontWeight: '700', color: theme.primary }}>Cancel</Text>
               </TouchableOpacity>
               <Text style={[styles(theme).headerText, { color: theme.text2, alignSelf: 'center', fontSize: 26 }]}>
@@ -383,7 +392,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
               </Text>
             )}
             <Text style={[styles(theme).deleteText, { fontSize: 14, fontWeight: '400' }]}>
-              Please type <Text style={{fontWeight: '600'}}>{groupName}</Text> to confirm
+              Please type <Text style={{ fontWeight: '600' }}>{groupName}</Text> to confirm
             </Text>
 
             <TextInput
@@ -568,6 +577,6 @@ const styles = (theme) =>
       width: '90%',
       textAlign: 'center',
       fontWeight: '600',
-      fontSize: 16
+      fontSize: 16,
     },
   });
