@@ -68,7 +68,7 @@ export default function AccountSettings({ navigation }) {
       <TouchableOpacity
         style={styles(theme).settingBtn}
         onPress={() => {
-          WebBrowser.openBrowserAsync('https://kevinfu1.github.io/KVille-Website/');
+          WebBrowser.openBrowserAsync('https://kevinfu1.github.io/KVille-Website/privacy.html');
         }}
       >
         <View style={styles(theme).rightOfBtn}>

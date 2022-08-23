@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "KVille",
-    "slug": "kville",
+    "name": "KVilleTenting",
+    "slug": "kvilletenting",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
@@ -14,15 +14,20 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["location"],
+        "UIBackgroundModes": [
+          "location"
+        ],
         "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service by implementing geofencing",
         "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service"
-      }
+      },
+      "bundleIdentifier": "com.kevinfu1.kville"
     },
     "android": {
       "adaptiveIcon": {

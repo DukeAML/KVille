@@ -9,7 +9,7 @@ import {
   Image,
   KeyboardAvoidingView,
   SafeAreaView,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
@@ -220,6 +220,8 @@ const styles = (theme) =>
       height: '50%',
       //justifyContent: 'center',
       alignItems: 'center',
+      // borderBottomColor: theme.white2,
+      // borderBottomWidth: 45
     },
     imageContainer: {
       position: 'absolute',
@@ -257,7 +259,7 @@ const styles = (theme) =>
     },
     slant: {
       position: 'absolute',
-      bottom: 0,
+      bottom: -0.5,
       zIndex: 1,
       marginLeft: 0,
       //backgroundColor: '#fff',
@@ -266,7 +268,7 @@ const styles = (theme) =>
       borderStyle: 'solid',
       borderTopWidth: 150,
       borderRightColor: theme.white2,
-      borderBottomColor: theme.whit2,
+      borderBottomColor: theme.white2,
       borderTopColor: 'transparent',
       //borderLeftColor: 'transparent',
     },
@@ -332,7 +334,6 @@ const styles = (theme) =>
       borderTopColor: 'gray',
       borderTopWidth: 1,
       padding: 10,
-      textAlign: 'center',
       marginBottom: 30,
     },
     demoText: {
