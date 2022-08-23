@@ -20,12 +20,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location"
-        ],
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service by implementing geofencing",
-        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service"
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Turning on location services allow us to show others when you are in Krzyzewskiville through geofencing methods. This will keep group members up to date as to which members are currently in the tent.",
+        "NSLocationAlwaysUsageDescription": "Turning on location services allow us to show others when you are in Krzyzewskiville through geofencing methods. This will keep group members up to date as to which members are currently in the tent.",
+        "NSLocationWhenInUseUsageDescription": "Turning on location services allow us to show others when you are in Krzyzewskiville through geofencing methods. This will keep group members up to date as to which members are currently in the tent."
       },
       "bundleIdentifier": "com.kevinfu1.kville"
     },
