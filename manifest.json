@@ -2,10 +2,17 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "lang": "en",
-  "name": "KVille",
-  "short_name": "KVille",
+  "name": "KVilleTenting",
+  "short_name": "KVilleTenting",
   "start_url": "/?utm_source=web_app_manifest",
   "orientation": "portrait",
+  "related_applications": [
+    {
+      "platform": "itunes",
+      "id": "com.kevinfu1.kville"
+    }
+  ],
+  "prefer_related_applications": true,
   "icons": [
     {
       "src": "/KVille/pwa/chrome-icon/chrome-icon-144.png",
