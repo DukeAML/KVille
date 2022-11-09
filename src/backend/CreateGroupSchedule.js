@@ -1,18 +1,22 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import data from '../data/gracePeriods.json';
 
 let GRACE;
 const MAXBLOCK = 8; //max half hours minus one (not including current time block) person can be scheduled for
 
 //Colors of each member, first is for 'empty'
 // prettier-ignore
-const colors = ['#ececec', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
+const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
   '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
 
-export async function createGroupSchedule(groupCode, tentType) {
+export async function createGroupSchedule(groupCode, tentType, week) {
   let numDay;
   let numNight;
+  GRACE = data[week];
+  let graceTrue = false;
+  let currGraceVal;
 
   //based on the current tentType, adjust # of people needed in tent for day and night hours
   //correspondingly
@@ -38,7 +42,8 @@ export async function createGroupSchedule(groupCode, tentType) {
   let prevMember2 = null;
 
   //initialize member IDs array for updating hrs and colors
-  let memberIDs = [{ id: '12345', name: 'empty', color: '#ececec', changedHrs: 0 }];
+  let memberIDs = [{ id: '12345', name: 'empty', color: '#ececec', changedHrs: 0 },
+                   {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}];
 
   //****input grace periods in groupScheduleArr, "GRACE" at each index****
 
@@ -97,6 +102,25 @@ export async function createGroupSchedule(groupCode, tentType) {
   //total of 336 half hours in a week (48*7)
   for (let time = 0; time < 336; time++) {
     //iterate each half hour index of group schedule
+
+    //Check if the given index is a grace shift
+    if (time.toString() in GRACE){
+      graceTrue = true;
+      groupScheduleArr[time] = 'Grace';
+      currGraceVal = GRACE[time.toString()];
+      console.log('current grace value', currGraceVal);
+      continue;
+    } 
+    else if (currGraceVal == time) {
+      graceTrue = false;
+    }
+    else if (graceTrue){
+      groupScheduleArr[time] = 'Grace';
+      console.log('current grace value', currGraceVal);
+      continue;
+    }
+    
+    
 
     //**FOR NIGHT TIME SHIFTS ONLY
     //night time (starts at 1am-7am), so index 2 to 13

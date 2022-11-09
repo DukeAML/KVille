@@ -49,10 +49,6 @@ const times = [ //Times for right column of the list of times of the day
   '10pm', '11pm',
 ];
 
-//Colors of each member, first is for 'empty'
-//prettier-ignore
-const colors = ['#D0342C','#dd7e6b','#ea9999','#f9cb9c','#ffe599','#b6d7a8','#a2c4c9','#a4c2f4','#fed9c9','#b4a7d6','#d5a6bd','#e69138','#6aa84f',];
-
 let prevColorCodes;
 let prevSchedule = new Array();
 
@@ -78,7 +74,8 @@ export default function Schedule({ navigation }) {
   const newSchedule = useRef([]);
   const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
-  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0 }]);
+  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0},
+                              {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}]);
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
@@ -225,7 +222,7 @@ export default function Schedule({ navigation }) {
 
   async function createNewGroupSchedule(groupCode, tentType) {
     //let newSchedule;
-    await createGroupSchedule(groupCode, tentType)
+    await createGroupSchedule(groupCode, tentType, 'week2')
       .then((groupSchedule) => {
         //console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
@@ -325,10 +322,12 @@ export default function Schedule({ navigation }) {
     );
   };
 
-  // Component for each single cell timeslot
-  //    Parameters:
-  //      index: index of cell within the entire schedule array
-  //      person: string holding the person currently scheduled for the time cell
+  /**
+   * Component for each single cell timeslot
+   * 
+   * @param index : index of cell within the entire schedule array
+   * @param person : string holding the person currently scheduled for the time cell
+   */
   const OneCell = memo(({ index, person }) => {
     //changes background based on who the member is
     const indexofUser =
@@ -343,16 +342,9 @@ export default function Schedule({ navigation }) {
           ? colorCodes.current[indexofUser].color
           : prevColorCodes[indexofUser].color
         : '#fff'; //gets background color from the colorCodes Array
-    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin')) {
+    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') && person != 'Grace') {
       return (
-        <View
-          /* style={[   //trying to make border radius of table round
-            { flex: 1 }, 
-            index==0 ? {borderTopLeftRadius:10, borderTopRightRadius:10}: 
-              index==47 ? 
-              {borderBottomLeftRadius:10, borderBottomRightRadius:10}: null]} */
-          style={{ flex: 1 }}
-        >
+        <View style={{ flex: 1 }}>
           <TouchableOpacity
             onPress={() => {
               editIndex.current = index;
@@ -386,7 +378,9 @@ export default function Schedule({ navigation }) {
               style={
                 person == 'empty'
                   ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
-                  : styles(theme).btnText
+                  : person == 'Grace' ? 
+                  [styles(theme).btnText, { color: theme.text1, fontWeight: '700' }]:
+                  styles(theme).btnText
               }
               adjustsFontSizeToFit
               minimumFontScale={0.5}
