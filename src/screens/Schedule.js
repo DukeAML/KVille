@@ -394,13 +394,14 @@ export default function Schedule({ navigation }) {
     }
   });
 
-  /*Component for each row to list the people in that time shift
-    # of people on the row is dependent on the tentType and time of day
-      Parameters: 
-        index: index of cell within the day (range from 0-47) 
-        arrayIndex: index of cell in the entire schedule array (range from 0-337)
-        members: string of one time shift (ex. "member1 member2 member3 member4 ") */
-
+  /**
+   * Component for each row to list the people in that time shift
+   * # of people on the row is dependent on the tentType and time of day
+   * @param {*} index index of cell within the day (range from 0-47) 
+   * @param {*} arrayIndex index of cell in the entire schedule array (range from 0-337)
+   * @param {*} members string of one time shift (ex. "member1 member2 member3 member4 ")
+   * 
+   */
   const RenderCell = (index, arrayIndex, members) => {
     const people = members.trim().split(' '); //stores the string as an array of single members
     //console.log('people: ', people);
