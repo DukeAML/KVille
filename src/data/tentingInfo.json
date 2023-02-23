@@ -17,19 +17,18 @@
         "paragraph1" : "Checking in entails each present group member presenting their Duke Card to a Line Monitor. If the tent fails to complete this, the check will be counted as a missed check for that tent.", 
         "paragraph2" : "Each tent is allowed one missed check per tenting period. Missing a second check will result in the tent being bumped to the end of the line, behind all registered tents.", 
         "paragraph3" : "An email from headlinemonitor@gmail.com to your tent captain within 24 hours will inform you of your miss. If you feel a miss has been assigned in error, please contact the Head Line Monitors at headlinemonitor@gmail.com to discuss your circumstances.", 
-        "paragraph4" : "If K-Ville is at a maximum capacity, the tent will be dropped to the end of the resultant wait list.", 
-        "paragraph5" : ""
+        "paragraph4" : "If K-Ville is at a maximum capacity, the tent will be dropped to the end of the resultant wait list."
     },
     "blackTent":{
-        "dates" : "Jan 14, 2023 - Jan 19, 2023", 
+        "dates" : "Jan 14, 2023 (8pm) - Jan 20, 2023 (7am)", 
         "info" : ""
     },
     "blueTent" : {
-        "dates" : "Jan 20, 2023 - Jan 26, 2023", 
+        "dates" : "Jan 20, 2023 (7am) - Jan 27, 2023 (12pm)", 
         "info" : ""
     },
     "whiteTent" : {
-        "dates" : "Jan 27, 2023 - Feb 1, 2023", 
+        "dates" : "Jan 27, 2023 (12pm) - Feb 1, 2023 (12pm)", 
         "info" : ""
     },
     "flexTent" : {

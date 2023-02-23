@@ -37,17 +37,19 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
 import tentemoji from '../assets/tentemoji.png';
+import scheduleDates from '../data/scheduleDates.json';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 //prettier-ignore
-const times = [ //Times for right column of the list of times of the day
-  '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
-  '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
-  '10pm', '11pm',
-];
+// const times = [ //Times for right column of the list of times of the day
+//   '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
+//   '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
+//   '10pm', '11pm',
+// ];
+const times = scheduleDates["times"];
 
 let prevColorCodes;
 let prevSchedule = new Array();
