@@ -96,7 +96,7 @@ export default function Schedule({ navigation }) {
       },
     }
   );
-
+  
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
@@ -224,7 +224,7 @@ export default function Schedule({ navigation }) {
 
   async function createNewGroupSchedule(groupCode, tentType) {
     //let newSchedule;
-    await createGroupSchedule(groupCode, tentType, 'week2')
+    await createGroupSchedule(groupCode, tentType, 2)
       .then((groupSchedule) => {
         //console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;

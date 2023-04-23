@@ -2,6 +2,9 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import data from '../data/gracePeriods.json';
+import Person from './Scheduling/person';
+const Helpers = require("./Scheduling/helpers");
+const Algorithm = require("./Scheduling/algorithm");
 
 let GRACE;
 const MAXBLOCK = 8; //max half hours minus one (not including current time block) person can be scheduled for
@@ -11,10 +14,113 @@ const MAXBLOCK = 8; //max half hours minus one (not including current time block
 const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
   '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
 
-export async function createGroupSchedule(groupCode, tentType, week) {
+
+/**
+ * Keith's new scheduling method with the Olson algo
+ * @param {*} groupCode 
+ * @param {*} tentType a string like "Blue", "Black", or "White". I set it to "White" if it is not "Black" or "Blue"
+ * @param {*} weekNum (int) represents which weekNum it is, e.g. 1, 2, 3, or 4
+ * @returns groupScheduleArr, an array of 336 strings (1 for each 30 minute shift in a weekNum), 
+ *    where each string is like "Alvin, Keith, Nick", representing the people in the tent at that time. 
+ */
+export async function createGroupSchedule(groupCode, tentType, weekNum){
+  var memberIDs = [{ id: '12345', name: 'empty', color: '#ececec', changedHrs: 0 },
+  {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}];
+  if ((tentType != "Blue") && (tentType != "Black")){
+    tentType = "White"; 
+  }
+
+  var people = new Array();
+  var scheduleGrid = new Array();
+  var idToName = {};
+  idToName['empty'] = 'empty';
+  idToName['Grace'] = 'Grace';
+  await firebase
+    .firestore()
+    .collection('groups') 
+    .doc(groupCode)
+    .collection('members')
+    .get()
+    .then((collSnap) => {
+      collSnap.forEach((doc) => {
+        var name = doc.data().name;
+        var id = doc.id;
+        idToName[id] = name;
+        var availability = doc.data().availability; //array of boolean values indicating availability
+        //Keith: make slot objects out of all of these availabilities
+        var user_slots = Helpers.availabilitiesToSlots(id, availability, tentType, people.length)
+        scheduleGrid.push(user_slots); 
+
+        //Kevin/Alvin: member name and id object (used to update hrs in schedule page)
+        var member = {
+          id,
+          name,
+          color: '',
+          changedHrs: 0,
+        };
+        memberIDs.push(member);
+
+        var [numFreeDaySlots, numFreeNightSlots] = Helpers.dayNightFree(availability);
+        //Keith: For now, can just say dayScheduled and nightScheduled = 0
+        var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 0, 0);
+        people.push(person);
+      });
+    });
+
+  var slot_info = Algorithm.schedule(people, scheduleGrid, weekNum);
+ 
+
+
+  //Kevin/Alvin: to update the number of scheduled hours and shifts for each member.
+  
+  for (var i = 0; i < people.length; i++) {
+    firebase
+      .firestore()
+      .collection('groups') 
+      .doc(groupCode)
+      .collection('members')
+      .doc(people[i].id)
+      .update({
+        scheduledHrs: (people[i].dayScheduled + people[i].nightScheduled )/ 2, 
+        shifts: people[i].dayScheduled + people[i].nightScheduled
+      });
+  }
+
+  //Kevin/Alvin: To update memberArr in group with their unique id and name that corresponds with the schedule
+  for (var index = 1; index < memberIDs.length; index++) {
+    memberIDs[index].color = colors[index];
+  }
+
+  firebase.firestore().collection('groups').doc(groupCode).update({
+    memberArr: memberIDs,
+  });
+  
+  //Keith: now need to return the array of strings
+  var groupScheduleArr = [];
+  for (var i = 0; i < slot_info.length; i++){
+    var ids = slot_info[i].ids;
+    var names = "";
+    for (var j = 0; j < ids.length; j++){
+      names = names + idToName[ids[j]] + " ";
+    }
+    if (names.endsWith(" ")){
+      names = names.substring(0, names.length -1);
+    }
+    groupScheduleArr.push(names);
+  }
+
+  return groupScheduleArr;
+
+
+
+}
+
+
+
+export async function createGroupScheduleOriginal(groupCode, tentType, weekNum) {
   let numDay;
   let numNight;
-  GRACE = data[week];
+  GRACE = data[weekNum];
   let graceTrue = false;
   let currGraceVal;
 
@@ -99,7 +205,7 @@ export async function createGroupSchedule(groupCode, tentType, week) {
   //console.log("tent type", tentType, numDay, numNight);
 
   //** FOR LOOP TO CREATE GROUP SCHEDULE
-  //total of 336 half hours in a week (48*7)
+  //total of 336 half hours in a weekNum (48*7)
   for (let time = 0; time < 336; time++) {
     //iterate each half hour index of group schedule
 
@@ -298,7 +404,7 @@ export async function createGroupSchedule(groupCode, tentType, week) {
   }
   //console.log(equalHours);
   //});
-
+  
   //to update the number of scheduled hours and shifts for each member
   for (let i = 0; i < memberArr.length; i++) {
     firebase
@@ -322,6 +428,7 @@ export async function createGroupSchedule(groupCode, tentType, week) {
   firebase.firestore().collection('groups').doc(groupCode).update({
     memberArr: memberIDs,
   });
+  
   // firebase
   //   .firestore()
   //   .collection('groups') //UPDATE THIS TO 'groups' in real cases ******!!!
@@ -358,7 +465,7 @@ export async function createGroupSchedule(groupCode, tentType, week) {
 
   //   ['member1 member2', 'member1 member2',  'member1 member2 member3 member4 member5 member6 member7 ...'] for black tent
   //   ['member1 ', 'member1 ',  'member1 member2 member3 member4 member5 member6 '] for blue tent, etc
-  // index of array indicates the half hour block of the week
+  // index of array indicates the half hour block of the weekNum
   /* (ex.) Index 0 is sunday 12:00 - 12:30am
               Index 165 is Wednesday 10:30-11:am
                   Must do 165%48 = 3, so 4th day and 165%48 = 21 so 21st half hour (10:30am) */
