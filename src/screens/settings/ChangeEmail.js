@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -6,9 +6,8 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView,  
+  KeyboardAvoidingView,
   SafeAreaView,
-
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -20,16 +19,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import coachKLogo from '../../assets/coachKLogo.png';
 import { setSnackMessage, toggleSnackBar } from '../../redux/reducers/snackbarSlice';
 
-
-
-export default function ChangeEmail({navigation}) {
-  const username = useSelector((state)=>state.user.currentUser.username);
+export default function ChangeEmail({ navigation }) {
+  const username = useSelector((state) => state.user.currentUser.username);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const { theme } = useTheme();
   const dispatch = useDispatch();
-
 
   const user = firebase.auth().currentUser;
 
@@ -40,43 +36,48 @@ export default function ChangeEmail({navigation}) {
       return;
     }
     const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
-    await user.reauthenticateWithCredential(credentials)
-        .then(()=>{
+    await user
+      .reauthenticateWithCredential(credentials)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.updateEmail(email)
+          .then(()=>{
             firebase
-                .firestore()
-                .collection('users')
-                .doc(firebase.auth().currentUser.uid)
-                .update({
-                    email: email
-                })
-                .then(() => {
-                    dispatch(setSnackMessage('Saved New Email'));
-                    dispatch(toggleSnackBar());
-                    navigation.goBack();
-                })
-                .catch((error) => console.error(error));
-            firebase
-                .auth()
-                .currentUser.updateEmail(email)
-                .catch((error) => console.error(error));
-        })
-        .catch((error) => {
-            dispatch(setSnackMessage('Incorrect Password Entered'));
+              .firestore()
+              .collection('users')
+              .doc(firebase.auth().currentUser.uid)
+              .update({
+                email: email,
+              })
+              .then(() => {
+                dispatch(setSnackMessage('Saved New Email'));
+                dispatch(toggleSnackBar());
+                navigation.goBack();
+              })
+              .catch((error) => console.error(error));
+          })
+          .catch((error) => {
+            dispatch(setSnackMessage('Email Already in Use'));
             dispatch(toggleSnackBar());
             console.error(error);
-            return;
-        });  
+          });
+      })
+      .catch((error) => {
+        dispatch(setSnackMessage('Incorrect Password Entered'));
+        dispatch(toggleSnackBar());
+        console.error(error);
+        return;
+      });
   }
-  
+
   return (
     <SafeAreaView style={styles(theme).container}>
       <View style={styles(theme).topBanner}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
-          </TouchableOpacity>
-          <Text style={styles(theme).titleText}>
-            Update email address
-          </Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name='arrow-back' color={theme.primary} size={30} style={{ marginTop: 3 }} />
+        </TouchableOpacity>
+        <Text style={styles(theme).titleText}>Update email address</Text>
 
         <TouchableOpacity onPress={updateEmail}>
           <Text style={{ fontSize: 18, fontWeight: '500', color: theme.primary }}>Save</Text>
@@ -122,22 +123,6 @@ export default function ChangeEmail({navigation}) {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* 
-            <View style={styles(theme).BottomView}>
-                <TouchableOpacity
-                    style = {[styles(theme).bottomBtn, {backgroundColor: theme.grey3}]}
-                    onPress= {()=>navigation.goBack()}
-                >
-                    <Text style={{fontSize: 16, fontWeight: '500', color: theme.grey1}}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style = {[styles(theme).bottomBtn, {backgroundColor: theme.primary}]}
-                    onPress= {updateEmail}
-                >
-                    <Text style={{fontSize: 16, fontWeight: '500', color: theme.text1}}>Save</Text>
-                </TouchableOpacity>
-            </View>  */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -182,7 +167,7 @@ const styles = (theme) =>
       fontSize: 18,
       paddingHorizontal: 5,
       paddingVertical: 5,
-      outlineWidth: 0.5,
+      //outlineWidth: 0.5,
       //justifyContent: "center",
     },
     inputView: {
@@ -194,22 +179,4 @@ const styles = (theme) =>
       borderBottomColor: theme.grey3,
       borderBottomWidth: 1,
     },
-
-    /*     BottomView: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      position: 'absolute',
-      bottom: '2%',
-      width: '100%',
-      alignItems: 'center',
-      //borderWidth: 0.5,
-      borderColor: theme.popOutBorder,
-    },
-    bottomBtn:{
-      width: '45%',
-      height: 40,
-      borderRadius: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-    } */
   });

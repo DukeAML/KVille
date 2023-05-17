@@ -1,0 +1,23 @@
+{
+    "Black" : {
+        "dates" : ["14th","15th", "16th", "17th","18th", "19th", "20th"],
+        "startTime" : 7,
+        "day1Index" : 8,
+        "lastIndex" : 262
+    },
+    "Blue" : {
+        "dates" : ["20th","21st", "22nd", "23rd","24th", "25th", "26th", "27th"],
+        "startTime" : 20,
+        "day1Index" : 34,
+        "lastIndex" : 346
+    },
+    "White" : {
+        "dates" : ["27th","28th", "29th", "30th","31st", "1st"],
+        "startTime" : 12,
+        "day1Index" : 24,
+        "lastIndex" : 240
+    },
+    "times" : ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", 
+    "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm",
+    "10pm", "11pm"]
+}

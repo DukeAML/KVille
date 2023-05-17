@@ -37,17 +37,19 @@ import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
 import tentemoji from '../assets/tentemoji.png';
+import scheduleDates from '../data/scheduleDates.json';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 //prettier-ignore
-const times = [ //Times for right column of the list of times of the day
-  '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
-  '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
-  '10pm', '11pm',
-];
+// const times = [ //Times for right column of the list of times of the day
+//   '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
+//   '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
+//   '10pm', '11pm',
+// ];
+const times = scheduleDates["times"];
 
 let prevColorCodes;
 let prevSchedule = new Array();
@@ -94,7 +96,7 @@ export default function Schedule({ navigation }) {
       },
     }
   );
-
+  
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
   async function fetchGroupSchedule(groupCode, weekDisplay) {
@@ -222,7 +224,7 @@ export default function Schedule({ navigation }) {
 
   async function createNewGroupSchedule(groupCode, tentType) {
     //let newSchedule;
-    await createGroupSchedule(groupCode, tentType, 'week2')
+    await createGroupSchedule(groupCode, tentType, 2)
       .then((groupSchedule) => {
         //console.log('Group Schedule', groupSchedule);
         newSchedule.current = groupSchedule;
@@ -394,13 +396,14 @@ export default function Schedule({ navigation }) {
     }
   });
 
-  /*Component for each row to list the people in that time shift
-    # of people on the row is dependent on the tentType and time of day
-      Parameters: 
-        index: index of cell within the day (range from 0-47) 
-        arrayIndex: index of cell in the entire schedule array (range from 0-337)
-        members: string of one time shift (ex. "member1 member2 member3 member4 ") */
-
+  /**
+   * Component for each row to list the people in that time shift
+   * # of people on the row is dependent on the tentType and time of day
+   * @param {*} index index of cell within the day (range from 0-47) 
+   * @param {*} arrayIndex index of cell in the entire schedule array (range from 0-337)
+   * @param {*} members string of one time shift (ex. "member1 member2 member3 member4 ")
+   * 
+   */
   const RenderCell = (index, arrayIndex, members) => {
     const people = members.trim().split(' '); //stores the string as an array of single members
     //console.log('people: ', people);

@@ -20,6 +20,8 @@ import { useTheme } from '../context/ThemeProvider';
 
 import kvilleBoundary from '../assets/kvilleBoundary.jpg';
 import kvillesign from '../assets/kvillesign.jpg';
+import text from '../data/tentingInfo.json';
+
 
 //DATA for The TABLES
 const NIGHTHOURS = {
@@ -30,7 +32,7 @@ const NIGHTHOURS = {
 
 const BLACKTENT = {
   tableData: [
-    ['Starting Dates', 'Jan *, 2023 - Feb *, 2023'],
+    ['Starting Dates', text["blackTent"]["dates"]],
     [
       'Occupancy Requirements',
       ' \u25CF TWO members of the tent must be on duty during the day.\n\u25CF TEN members during night hours',
@@ -39,7 +41,7 @@ const BLACKTENT = {
 };
 const BLUETENT = {
   tableData: [
-    ['Starting Dates', 'Jan *, 2023 - Feb *, 2023'],
+    ['Starting Dates', text["blueTent"]["dates"]],
     [
       'Occupancy Requirements',
       ' \u25CF ONE member of the tent must be on duty during the day.\n\u25CF SIX members during night hours',
@@ -48,7 +50,7 @@ const BLUETENT = {
 };
 const WHITETENT = {
   tableData: [
-    ['Starting Dates', 'Feb *, 2023 - Feb *, 2023'],
+    ['Starting Dates', text["whiteTent"]["dates"]],
     [
       'Occupancy Requirements',
       ' \u25CF ONE member of the tent must be on duty during the day.\n\u25CF TWO members during night hours',
@@ -150,9 +152,7 @@ export default function Info() {
         </View>
 
         <Text style={styles(theme).contentText}>
-          A tent is comprised of a maximum of 12 people. Occupancy requirements
-          for each tenting period remain the same regardless of the number of
-          people in the tent.
+          {text["tentingOverview"]}
         </Text>
 
         <Text
@@ -162,17 +162,14 @@ export default function Info() {
             hourPos = layout.y;
           }}
         >
-          Daytime Hours and Curfew
+          {text["hours"]["header"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          Tenters on duty must be within the K-Ville city limits at all times.
-          The number of tenters required at a given time varies based on the
-          current tenting period and the time of day.
+          {text["hours"]["paragraph1"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
-          Each day is divided into day and night hours. A different number of
-          tenters on duty is necessary from day to night.
+          {text["hours"]["paragraph2"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
@@ -219,27 +216,19 @@ export default function Info() {
           Tent Checks
         </Text>
         <Text style={styles(theme).contentText}>
-          The Line Monitors may announce a tent check at their discretion. A
-          check will be signaled by the sounding of a bullhorn siren.
+          {text["tentChecks"]["paragraph1"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
-          To check in, gather all members of your tent in the area between the
-          Card parking lot and the Schwartz-Butters plaza. Wait until the
-          required number of tenters are present to check in — we cannot check
-          in your tent until all required members are present.
+          {text["tentChecks"]["paragraph2"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
-          Tents who have yet to be checked but appear to be missing will — at a
-          minimum — be given three warning calls over the bullhorn before being
-          marked as absent. After the final warning call, an additional 2
-          minutes will be given to allow for tenters to check in. After this
-          time elapses, the check is officially over.
+          {text["tentChecks"]["paragraph3"]}
         </Text>
 
         <Text style={[styles(theme).contentText, { fontWeight: '700' }]}>
-          Tenters must stay within K-Ville boundaries to be counted.
+          {text["tentChecks"]["paragraph4"]}
         </Text>
 
         <View
@@ -261,9 +250,7 @@ export default function Info() {
         </View>
 
         <Text style={styles(theme).contentText}>
-          Line Monitors cannot be held responsible for checks missed due to
-          tenters using the bathroom, failing to hear the siren, being asleep in
-          the tent, or similar related circumstances.
+          {text["tentChecks"]["paragraph5"]}
         </Text>
         <View style={{ marginVertical: 12 }}></View>
 
@@ -278,26 +265,18 @@ export default function Info() {
         </Text>
 
         <Text style={styles(theme).contentText}>
-          Checking in entails each present group member presenting their Duke
-          Card to a Line Monitor. If the tent fails to complete this, the check
-          will be counted as a missed check for that tent.
+          {text["missedChecks"]["paragraph1"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
-          Each tent is allowed one missed check per tenting period. Missing a
-          second check will result in the tent being bumped to the end of the
-          line, behind all registered tents.
+          {text["missedChecks"]["paragraph2"]}
         </Text>
 
         <Text style={styles(theme).contentText}>
-          An email from headlinemonitor@gmail.com to your tent captain within 24
-          hours will inform you of your miss. If you feel a miss has been
-          assigned in error, please contact the Head Line Monitors at
-          headlinemonitor@gmail.com to discuss your circumstances.
+          {text["missedChecks"]["paragraph3"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          If K-Ville is at a maximum capacity, the tent will be dropped to the
-          end of the resultant wait list.
+          {text["missedChecks"]["paragraph4"]}
         </Text>
         <View style={{ marginVertical: 12 }}></View>
 
@@ -430,18 +409,13 @@ export default function Info() {
           Flex Tent
         </Text>
         <Text style={styles(theme).contentText}>
-          Flex Tenting abides by the same rules and regulations as White
-          Tenting, but Flex tents are NOT GUARANTEED a spot in the Carolina
-          game.
+          {text["flexTent"]["paragraph1"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          These tenting spots will be filled through the Race to the Secret
-          Spots. The 31st to 60th groups to complete the Race to the Secret
-          Spots will receive Flex Tenting spots.
+          {text["flexTent"]["paragraph2"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          All groups after the 60th group to complete the Race to the Secret
-          Spots will be added to the Flex Tenting wait list.
+          {text["flexTent"]["paragraph3"]}
         </Text>
 
         <Text
@@ -454,21 +428,16 @@ export default function Info() {
           Personal Checks
         </Text>
         <Text style={styles(theme).contentText}>
-          P-Checks are conducted on an individual basis. Therefore, an entire
-          tent will not be penalized should a member of their tent miss too many
-          Personal Checks.
+          {text["pChecks"]["paragraph1"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          Five Personal Checks will be called at any time on **insert date**
+          {text["pChecks"]["paragraph2"]}
         </Text>
         <Text style={[styles(theme).contentText, { fontWeight: '700' }]}>
-          To obtain a wristband for the Carolina game, a tenter must check in at
-          THREE of the FIVE checks.
+          {text["pChecks"]["paragraph3"]}
         </Text>
         <Text style={styles(theme).contentText}>
-          Individuals who fail to report to three of the five Personal Checks
-          will be ineligible to receive a wristband for the Carolina game. Those
-          students will not, however, penalize the other members in their tent
+          {text["pChecks"]["paragraph4"]}
         </Text>
       </ScrollView>
     </SafeAreaView>
