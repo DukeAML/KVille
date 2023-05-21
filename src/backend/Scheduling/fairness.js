@@ -1,14 +1,17 @@
 const params = require("../../data/olsonParams.json");
 const FinalTouches = require("./finalTouches");
+const TenterSlot = require("./tenterSlot");
+const ScheduledSlot = require("./scheduledSlot");
+const Person = require("./person");
 
 class Fairness{
 
     /**
      * This method attempts to ensure fairness by making the difference in hours between the 
      * tenter with the most hours and tenter with the least hours is below the threshold specified in data/olsonParams.json
-     * @param {*} combinedGrid is a 1d array of objects that each have an array of ids corresponding to the tenters for that shift
-     * @param {*} people (array of Person objects)
-     * @param {*} scheduleGrid (array of arrays of Slot objects)
+     * @param {Array<ScheduledSlot>} combinedGrid is a 1d array of objects that each have an array of ids corresponding to the tenters for that shift
+     * @param {Array<Person>} people (array of Person objects)
+     * @param {Array<Array<TenterSlot>>} scheduleGrid (array of arrays of Slot objects)
      * returns nothing, modifies everything place. 
      */
     static ensureFairness(combinedGrid, people, scheduleGrid){
@@ -36,11 +39,11 @@ class Fairness{
 
     /**
      * 
-     * @param {*} donor (int)
-     * @param {*} recipient (int)
-     * @param {*} scheduleGrid 
-     * @param {*} combinedGrid 
-     * @param {*} people
+     * @param {int} donor (int)
+     * @param {int} recipient (int)
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 
+     * @param {Array<ScheduledSlot>} combinedGrid 
+     * @param {Array<Person>} people
      */
     static findAndDonateShift(donor, recipients, scheduleGrid, combinedGrid, people){
         //find a day shift of 1.5hours or more that can be given from donor to recipient
@@ -70,7 +73,15 @@ class Fairness{
         return false;
     }
 
-    //helper method
+
+    /**
+     * Helper method
+     * @param {int} recipient 
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 
+     * @param {int} beginning 
+     * @param {int} end 
+     * @returns {boolean}
+     */
     static canScheduleSlot(recipient, scheduleGrid, beginning, end){
         //basically check if recipient is free from beginning to end
         var canSchedule = true;
@@ -95,7 +106,12 @@ class Fairness{
         return true;
     }
 
-    //helper method
+
+    /**
+     * Finding the ratio of most scheduled hours to least hours across all people
+     * @param {Array<Person>} people 
+     * @returns {float}
+     */
     static maxHourRatio(people){
         var maxHours = 0;
         var minHours = 999999;
@@ -111,12 +127,22 @@ class Fairness{
         return (1 + (maxHours - minHours)/maxHours);
     }
 
-    //helper method
+    /**
+     * Helper method, returns the difference in scheduled hours between two people
+     * @param {Person} p1 
+     * @param {Person} p2 
+     * @returns {float}
+     */
     static hoursRank(p1, p2){
         return (p1.dayScheduled + p1.nightScheduled - p2.dayScheduled - p2.nightScheduled);
     }
 
-    //helper method
+    /**
+     * Find which row in the scheduleGrid corresponds to this person
+     * @param {Person} person 
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 
+     * @returns 
+     */
     static findNumID(person, scheduleGrid){
         for (var i = 0; i < scheduleGrid.length; i++){
             if (scheduleGrid[i][0].personID == person.id){

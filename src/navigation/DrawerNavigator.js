@@ -20,7 +20,7 @@ import CreateGroupScreen from '../screens/CreateGroup';
 import JoinGroupScreen from '../screens/JoinGroup';
 import GroupInfoScreen from '../screens/GroupInfo';
 import DrawerContent from '../screens/DrawerContent';
-import AvailabilityScreen from '../screens/Availability';
+import AvailabilityScreen from '../screens/Availability/Availability';
 import ScheduleScreen from '../screens/Schedule';
 import MonitorScreen from '../screens/Monitor';
 import InfoScreen from '../screens/Info';

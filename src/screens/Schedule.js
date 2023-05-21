@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, memo } from 'react';
+import React, { useState, useCallback, useRef, memo, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -14,6 +14,7 @@ import {
   UIManager,
   SafeAreaView,
   Image,
+  Picker
 } from 'react-native';
 import { Table, TableWrapper, Col, Cell } from 'react-native-table-component';
 import { Divider, Badge } from 'react-native-paper';
@@ -24,6 +25,7 @@ import { FAB, Portal, Provider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createGroupSchedule } from '../backend/CreateGroupSchedule';
+import { fetchGroupSchedule } from '../services/db_services';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -38,25 +40,36 @@ import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
 import tentemoji from '../assets/tentemoji.png';
 import scheduleDates from '../data/scheduleDates.json';
+import { DateRangeChanger } from '../components/DateRangeChanger/DateRangeChanger';
+import { getNumSlotsBetweenDates, getNumDaysBetweenDates, getDatePlusNumShifts, getCurrentDate, getDayAbbreviation} from '../services/dates_services';
+import { DropdownHeaderBar } from '../components/DropdownHeaderBar/DropdownHeaderBar'
+import { original } from '@reduxjs/toolkit';
+const Helpers = require ('../backend/Scheduling/helpers');
+
+
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-//prettier-ignore
-// const times = [ //Times for right column of the list of times of the day
-//   '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', 
-//   '11am', '12am', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm',
-//   '10pm', '11pm',
-// ];
-const times = scheduleDates["times"];
 
-let prevColorCodes;
-let prevSchedule = new Array();
+const times = scheduleDates["times"];
 
 const win = Dimensions.get('window'); //Global Var for screen size
 
+const getIndexAddElementIfNeeded = (objectArr, targetValue, searchField, newElement) => {
+  for (let i = 0; i < objectArr.length; i += 1){
+    if (objectArr[i][searchField] == targetValue){
+      return i;
+    }
+  }
+  objectArr.push(newElement);
+  return objectArr.length -1 ;
+  
+}
+
 export default function Schedule({ navigation }) {
+  console.log("rendering Schedule screen");
   const groupCode = useSelector((state) => state.user.currGroupCode);
   const groupRole = useSelector((state) => state.user.currGroupRole);
   const tentType = useSelector((state) => state.user.currTentType);
@@ -65,10 +78,13 @@ export default function Schedule({ navigation }) {
   const [isRefetching, setIsRefetching] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false); //for the popup for editing a time cell
   const [isMemberModalVisible, setMemberModalVisible] = useState(false); //for the popup for choosing a member from list
-  const [isConfirmationVisible, setConfirmationVisible] = useState(false); //for confirmation Popup
   const [fabState, setFabState] = useState({ open: false });
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
-  const [renderDay, setRenderDay] = useState('Sunday'); //stores the current day that is being rendered
+  console.log("my current tent type is " + tentType);
+  console.log("default start date is " + Helpers.getTentingStartDate(tentType));
+  const [displayStartDate, setDisplayStartDate] = useState(Helpers.getTentingStartDate(tentType));
+  const [displayEndDate, setDisplayEndDate] = useState(getDatePlusNumShifts(Helpers.getTentingStartDate(tentType), 48));
+  const [renderDay, setRenderDay] = useState(0); //stores the current day that is being rendered
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
 
   const oldMember = useRef('');
@@ -76,8 +92,16 @@ export default function Schedule({ navigation }) {
   const newSchedule = useRef([]);
   const editSuccessful = useRef(false); //tentative for when editing schedule and member already exists, then it shouldn't change, otherwise it will
   const scrollRef = useRef([]);
+  const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
+  '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
   const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0},
                               {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}]);
+
+  const getIndexInColorCodes = (name) => {
+    return getIndexAddElementIfNeeded(colorCodes.current, name, "name", 
+      {id: "id??", name: name, color: colors[colorCodes.current.length % colors.length], changedHrs: 0})
+
+  }
 
   const { theme } = useTheme();
   const dayHighlightOffset = useSharedValue(0);
@@ -85,46 +109,24 @@ export default function Schedule({ navigation }) {
   const { open } = fabState;
   const dispatch = useDispatch();
 
-  const { isLoading, isError, error, refetch, data } = useQuery(
-    ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
-    () => fetchGroupSchedule(groupCode, weekDisplay),
+
+
+  const { isLoading, isError, error, refetch, data: {groupSchedule, groupScheduleStartDate} } = useQuery(
+    ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+    () => fetchGroupSchedule(groupCode),
     {
-      initialData: [],
-      onSuccess: () => {
+        initialData: {groupSchedule: [], groupScheduleStartDate: Helpers.getTentingStartDate(tentType)},
+        onSuccess: () => {
         setIsReady(true);
         setIsRefetching(false);
+        setDisplayStartDate(getDefaultDisplayDateRangeStartDate());
+        setDisplayEndDate(getDefaultDisplayDateRangeEndDate());
       },
     }
   );
   
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-  async function fetchGroupSchedule(groupCode, weekDisplay) {
-    console.log('query initiated');
-
-    let currSchedule;
-    await firebase
-      .firestore()
-      .collection('groups')
-      .doc(groupCode)
-      .get()
-      .then((doc) => {
-        currSchedule = doc.data().groupSchedule;
-        prevSchedule = doc.data().previousSchedule;
-        colorCodes.current = doc.data().memberArr;
-        prevColorCodes = doc.data().previousMemberArr;
-      })
-      .catch((error) => {
-        console.error(error);
-        throw error;
-      });
-    if (weekDisplay == 'Current Week') {
-      //console.log('current week returned', currSchedule);
-      return currSchedule;
-    }
-    //console.log('previous week returned', prevSchedule);
-    return prevSchedule;
-  }
 
   const postEditCell = useEditCell(groupCode, weekDisplay);
 
@@ -137,63 +139,41 @@ export default function Schedule({ navigation }) {
       onSuccess: () => {
         if (editSuccessful.current) {
           queryClient.setQueryData(
-            ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
-            newSchedule.current
+            ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+            {groupSchedule: newSchedule.current, groupScheduleStartDate}
           );
+          queryClient.invalidateQueries(['group', groupCode]);
+
         } else return;
       },
     });
   }
 
+  const getSlotStringWithReplacedMember = (originalSlot, oldMember, newMember) => {
+    let originalMembers = originalSlot.split(" ");
+    let newMembers = [];
+    for (let i =0; i < originalMembers.length; i+= 1){
+      if (originalMembers[i] == oldMember){
+        newMembers.push(newMember);
+      } else {
+        newMembers.push(originalMembers[i]);
+      }
+    }
+    return newMembers.join(" ");
+  }
   //function for editing the schedule based on old member and new member to replace
   async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
 
-    let currSchedule = data;
+    let currSchedule = groupSchedule;
     //Must check if the member already exists in the array
-    if (newMember !== 'empty' && data[index].trim().split(' ').includes(newMember)) {
+    if (newMember !== 'empty' && groupSchedule[index].trim().split(' ').includes(newMember)) {
       dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Member already in chosen timeslot'));
       editSuccessful.current = false;
     } else {
-      currSchedule[index] = currSchedule[index].replace(oldMember, newMember);
-      const indexofOld = colorCodes.current.findIndex((object) => object.name === oldMember);
-      const indexofNew = colorCodes.current.findIndex((object) => object.name === newMember);
-
-      let oldHours;
-      let newHours;
-      let oldShifts;
-      let newShifts;
-      await groupRef
-        .collection('members')
-        .doc(colorCodes.current[indexofOld].id)
-        .get()
-        .then((doc) => {
-          oldHours = doc.data().scheduledHrs - 0.5;
-          oldShifts = doc.data().shifts;
-          oldShifts[index] = false;
-        });
-      await groupRef
-        .collection('members')
-        .doc(colorCodes.current[indexofNew].id)
-        .get()
-        .then((doc) => {
-          newHours = doc.data().scheduledHrs + 0.5;
-          newShifts = doc.data().shifts;
-          newShifts[index] = true;
-        });
-      groupRef.collection('members').doc(colorCodes.current[indexofOld].id).update({
-        scheduledHrs: oldHours,
-        shifts: oldShifts,
-      });
-      groupRef.collection('members').doc(colorCodes.current[indexofNew].id).update({
-        scheduledHrs: newHours,
-        shifts: newShifts,
-      });
-
-      //colorCodes.current[indexofOld].changedHrs -= 0.5;
-      //colorCodes.current[indexofNew].changedHrs += 0.5;
+      currSchedule[index] = getSlotStringWithReplacedMember(currSchedule[index], oldMember, newMember);
 
       groupRef.update({
         groupSchedule: currSchedule,
@@ -202,46 +182,53 @@ export default function Schedule({ navigation }) {
       newSchedule.current = currSchedule;
       editSuccessful.current = true;
     }
+    setNewMember('Select a Member')
   }
 
-  const postSchedule = useUpdateSchedule(groupCode, tentType, weekDisplay);
+  const postSchedule = useUpdateSchedule(groupCode, tentType);
 
-  function useUpdateSchedule(groupCode, tentType, weekDisplay) {
+  function useUpdateSchedule(groupCode, tentType) {
     const queryClient = useQueryClient();
-    return useMutation(() => createNewGroupSchedule(groupCode, tentType), {
+    return useMutation(async ({dateRangeStart, dateRangeEnd}) => {
+      await assignTentersAndUpdateDB(groupCode, tentType, dateRangeStart, dateRangeEnd);
+    }, {
       onError: (error) => {
         console.error(error);
       },
       onSuccess: () => {
         queryClient.setQueryData(
-          ['groupSchedule', firebase.auth().currentUser.uid, groupCode, weekDisplay],
-          newSchedule.current
+          ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+          {groupSchedule: newSchedule.current, groupScheduleStartDate}
         );
-        queryClient.invalidateQueries(['shifts', firebase.auth().currentUser.uid, groupCode]);
+        queryClient.invalidateQueries(['groupSchedule', firebase.auth().currentUser.uid, groupCode]);
+        queryClient.invalidateQueries(['group', groupCode]);
       },
     });
   }
 
-  async function createNewGroupSchedule(groupCode, tentType) {
-    //let newSchedule;
-    await createGroupSchedule(groupCode, tentType, 2)
-      .then((groupSchedule) => {
-        //console.log('Group Schedule', groupSchedule);
-        newSchedule.current = groupSchedule;
+  /**
+   * 
+   * @param {String} groupCode 
+   * @param {String} tentType 
+   * @param {Date} dateRangeStart 
+   * @param {Date} dateRangeEnd 
+   */
+  async function assignTentersAndUpdateDB(groupCode, tentType, dateRangeStart, dateRangeEnd) {
+    await createGroupSchedule(groupCode, tentType, dateRangeStart, dateRangeEnd)
+      .then((newScheduleInRange) => {
+        let startIndex = getNumSlotsBetweenDates(groupScheduleStartDate, dateRangeStart);
 
-        //If current schedule is blank, no need to update
-        if (data[0] !== undefined) prevSchedule = data;
-
-        //Update previous colorCodes to current and update current schedule to the groupSchedule
-        prevColorCodes = colorCodes.current;
+        let newFullSchedule = [...groupSchedule];
+        for (let i = 0; i < newScheduleInRange.length; i+= 1){
+          newFullSchedule[i + startIndex] = newScheduleInRange[i];
+        }
+        newSchedule.current = newFullSchedule; //sussy code from the original
         firebase
           .firestore()
           .collection('groups')
           .doc(groupCode)
           .update({
-            groupSchedule: newSchedule.current,
-            previousSchedule: prevSchedule,
-            previousMemberArr: colorCodes.current,
+            groupSchedule: newFullSchedule,
           })
           .catch((error) => console.error(error));
         dispatch(setSnackMessage('New Schedule created'));
@@ -252,7 +239,6 @@ export default function Schedule({ navigation }) {
         dispatch(setSnackMessage('Not enough members'));
         dispatch(toggleSnackBar());
       });
-    //w schedule', newSchedule);
   }
 
   function toggleModal() {
@@ -266,27 +252,101 @@ export default function Schedule({ navigation }) {
     setMemberModalVisible(!isMemberModalVisible);
   }
 
-  function toggleConfirmation() {
-    //to toggle the popup for the edit confirmation
-    setConfirmationVisible(!isConfirmationVisible);
-  }
 
   function onFabStateChange({ open }) {
     setFabState({ open });
   }
 
-  function toggleWeek() {
-    if (weekDisplay == 'Current Week') {
-      console.log('showing previous week', weekDisplay);
-      setWeekDisplay('Previous Week');
-      isCurrentWeek.value = 0;
+  const getDefaultDisplayDateRangeStartDate = () => {
+    let currentDate = getCurrentDate();
+    if (currentDate < groupScheduleStartDate){
+      return groupScheduleStartDate;
+    } else if (currentDate >= getDatePlusNumShifts(groupScheduleStartDate, groupSchedule.length)){
+      return groupScheduleStartDate;
     } else {
-      console.log('showing current week');
-      setWeekDisplay('Current Week');
-      isCurrentWeek.value = 1;
+      return currentDate;
     }
-    setIsRefetching(true);
-    refetch();
+  }
+
+  const getDefaultDisplayDateRangeEndDate = () => {
+    let correspondingStartDate = getDefaultDisplayDateRangeStartDate();
+    let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
+    let endOfTenting = Helpers.getTentingEndDate();
+    
+  
+    if (startDatePlusWeek <= endOfTenting) {
+      return startDatePlusWeek;
+    } else {
+      return endOfTenting;
+    }
+  }
+
+  const getDefaultAssignDateRangeStartDate = () => {
+    for (let i = 0; i < groupSchedule.length; i += 1){
+      let names = groupSchedule[i].split(' ');
+      for (let j = 0; j < names.length; j+= 1){
+        if (names[j] == "empty")
+          return getDatePlusNumShifts(groupScheduleStartDate, i);
+      }
+    }
+
+    let currentDate = getCurrentDate();
+    if (currentDate < groupScheduleStartDate){
+      return groupScheduleStartDate;
+    } else if (currentDate >= getDatePlusNumShifts(groupScheduleStartDate, groupSchedule.length)){
+      return groupScheduleStartDate;
+    } else {
+      return currentDate;
+    }
+
+  }
+
+  const getDefaultAssignDateRangeEndDate = () => {
+    let correspondingStartDate = getDefaultAssignDateRangeStartDate();
+    let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
+    let endOfTenting = Helpers.getTentingEndDate();
+    
+  
+    if (startDatePlusWeek <= endOfTenting) {
+      return startDatePlusWeek;
+    } else {
+      return endOfTenting;
+    }
+  }
+
+  const validateAssignTentersDateRange = (newStartDate, newEndDate) => {
+    if (newStartDate < groupScheduleStartDate){
+      return {successful: false, message: "Start date of " + newStartDate.getTime() + " must be at least " + groupScheduleStartDate.getTime()};
+    } else if (newEndDate > Helpers.getTentingEndDate()){
+      return {succesful: false, message: "End date cannot occur after the end of tenting"};
+    } else if (newEndDate <= newStartDate){
+      return {succesful: false, message: "End date must be later than the start date"};
+    } else {
+      return {successful: true, message: "Date Range is valid"}
+    }
+  }
+
+
+  const ScheduleDropdownHeaderBar = () => {
+    return (
+      <DropdownHeaderBar labels={["Dates Visible", "Assign Tenters"]} components={[
+        <DateRangeChanger startDate={displayStartDate} endDate={displayEndDate} key={"DateRangeChanger1"} includeHours={false}
+          onSuccess={(dateRangeStart, dateRangeEnd) => {
+            setDisplayStartDate(dateRangeStart);
+            setDisplayEndDate(dateRangeEnd);
+          }}/>,
+        <DateRangeChanger 
+
+          startDate={getDefaultAssignDateRangeStartDate()} endDate={getDefaultAssignDateRangeEndDate()} 
+          title={"Assign Tenters for the following Time Span:"}
+          validateDateRange={validateAssignTentersDateRange}
+          onSuccess={(dateRangeStart, dateRangeEnd) => {
+            console.log("calling the mutate with " + dateRangeStart + " to " + dateRangeEnd);
+            postSchedule.mutate({dateRangeStart, dateRangeEnd});
+          }}
+          key={"DateRangeChanger2"}/>
+      ]}/>
+    );
   }
 
   const TimeColumn = memo(function () {
@@ -325,25 +385,16 @@ export default function Schedule({ navigation }) {
   };
 
   /**
-   * Component for each single cell timeslot
+   * Component for each single cell timeslot - this cell displays the name of a person in it
    * 
    * @param index : index of cell within the entire schedule array
    * @param person : string holding the person currently scheduled for the time cell
    */
   const OneCell = memo(({ index, person }) => {
     //changes background based on who the member is
-    const indexofUser =
-      weekDisplay == 'Current Week'
-        ? colorCodes.current.findIndex((object) => object.name == person)
-        : prevColorCodes.findIndex((object) => object.name == person);
-    //console.log(colorCodes.current);
-    //console.log('indexOfUser', indexofUser);
-    const backgroundColor =
-      indexofUser != -1
-        ? weekDisplay == 'Current Week'
-          ? colorCodes.current[indexofUser].color
-          : prevColorCodes[indexofUser].color
-        : '#fff'; //gets background color from the colorCodes Array
+    const indexofUser =  getIndexInColorCodes(person); 
+    const backgroundColor = colorCodes.current[indexofUser].color;
+
     if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') && person != 'Grace') {
       return (
         <View style={{ flex: 1 }}>
@@ -400,109 +451,93 @@ export default function Schedule({ navigation }) {
    * Component for each row to list the people in that time shift
    * # of people on the row is dependent on the tentType and time of day
    * @param {*} index index of cell within the day (range from 0-47) 
-   * @param {*} arrayIndex index of cell in the entire schedule array (range from 0-337)
+   * @param {*} arrayIndex index of cell in the entire groupSchedule
    * @param {*} members string of one time shift (ex. "member1 member2 member3 member4 ")
-   * 
+   * @param {boolean} inBounds should be set to false only when this row is not within the bounds of the schedule
    */
-  const RenderCell = (index, arrayIndex, members) => {
+  const RenderCell = (index, arrayIndex, members, inBounds=true) => {
+    if (!inBounds){
+      return (
+        <View style={{ flex: 1 }}>
+          <View style={[styles(theme).timeSlotBtn, { backgroundColor: 'gray' }]}>
+            <Text
+              style={[styles(theme).btnText, { color: 'black', fontWeight: '700' }]}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+              numberOfLines={1}
+            >
+              {"Not Included in Schedule"}
+            </Text>
+          </View>
+        </View>
+      );
+    }
     const people = members.trim().split(' '); //stores the string as an array of single members
-    //console.log('people: ', people);
-
     return (
       <View style={styles(theme).row}>
-        <OneCell index={arrayIndex} person={people[0]} />
-        {people.length > 1 ? <OneCell index={arrayIndex} person={people[1]} /> : null}
-        {people.length > 2 ? <OneCell index={arrayIndex} person={people[2]} /> : null}
-        {people.length > 2 ? <OneCell index={arrayIndex} person={people[3]} /> : null}
-        {people.length > 2 ? <OneCell index={arrayIndex} person={people[4]} /> : null}
-        {people.length > 2 ? <OneCell index={arrayIndex} person={people[5]} /> : null}
-        {people.length > 6 ? <OneCell index={arrayIndex} person={people[6]} /> : null}
-        {people.length > 6 ? <OneCell index={arrayIndex} person={people[7]} /> : null}
-        {people.length > 6 ? <OneCell index={arrayIndex} person={people[8]} /> : null}
-        {people.length > 6 ? <OneCell index={arrayIndex} person={people[9]} /> : null}
+        {people.map((person, personIndex) => {
+          return (
+            <OneCell index={arrayIndex} person={person} key={"OneCellRowIndex"+arrayIndex.toString()+"personIndex"+personIndex.toString()}/>
+          );
+        })}
       </View>
     );
   };
 
-  //Component for the table for one day's schedule
+  
+  /**
+   * Component for the table for one day's schedule
+   * @param {int} day should be an int: 0 for the first calendar day in the schedule, 1 for the second day, etc...
+   */
   const DailyTable = memo(function ({ day }) {
     //if (schedule == undefined) return null;
-    let indexAdder = 0;
-    //depending on day parameter, change index in GLOBAL schedule array
-    switch (day) {
-      case 'Monday':
-        indexAdder = 48;
-        break;
-      case 'Tuesday':
-        indexAdder = 96;
-        break;
-      case 'Wednesday':
-        indexAdder = 144;
-        break;
-      case 'Thursday':
-        indexAdder = 192;
-        break;
-      case 'Friday':
-        indexAdder = 240;
-        break;
-      case 'Saturday':
-        indexAdder = 288;
-        break;
-      default:
-        indexAdder = 0;
+    let indexAdder = getNumSlotsBetweenDates(groupScheduleStartDate, displayStartDate) + (day * 48);
+    console.log("indexAdder is " + indexAdder);
+  
+
+    let OUT_OF_BOUNDS_STR = "!@#$!#$asc9a7"; //random string no user could possibly put as their name
+    let dayArr = [];
+    for (let i = 0; i < 48; i+= 1){
+      let dataIndex = indexAdder + i;
+      if ((dataIndex >= groupSchedule.length) || (dataIndex < 0)){
+        dayArr.push(OUT_OF_BOUNDS_STR);
+      } else {
+        dayArr.push(groupSchedule[indexAdder + i]);
+      }
     }
-    let dayArr = data.slice(indexAdder, indexAdder + 48);
-    //console.log(day,"||", dayArr);
+
     return (
       <View style={{ marginTop: 0, width: '90%' }}>
         <Table borderStyle={{ borderColor: 'transparent' }}>
-          {dayArr.map((rowData, index) => (
+          {dayArr.map((rowData, index) => {
+            return(
             <TableWrapper key={index} style={StyleSheet.flatten(styles(theme).row)}>
               <Cell
-                data={RenderCell(index, index + indexAdder, dayArr[index])}
+                data={RenderCell(index, index + indexAdder, dayArr[index], dayArr[index] == OUT_OF_BOUNDS_STR ? false : true)}
                 textStyle={StyleSheet.flatten(styles(theme).text)}
               />
             </TableWrapper>
-          ))}
+          );})}
         </Table>
       </View>
     );
   });
 
-  const customSpringStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: withSpring(dayHighlightOffset.value * (win.width / 7), {
-            damping: 50,
-            stiffness: 90,
-          }),
-        },
-      ],
-    };
-  });
-  const toggleWeekSpring = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: withSpring(isCurrentWeek.value * (win.width * 0.3), {
-            damping: 50,
-            stiffness: 90,
-          }),
-        },
-      ],
-    };
-  });
 
-  //Component for the top day buttons
-  const DayButton = ({ day, abbrev, value }) => {
+  /**
+   * //Component for the top day buttons
+   * @param {*} day should be an int
+   * @returns 
+   */
+  const DayButton = ({ day }) => {
+    let abbrev = getDayAbbreviation(new Date(displayStartDate.getTime() + day * 24 * 60 * 60000));
     return (
       <TouchableOpacity
-        style={[styles(theme).button, { backgroundColor: 'transparent', zIndex: 2 }]}
+        style={[styles(theme).button, { backgroundColor: (day == renderDay ? theme.primary: 'transparent'), zIndex: 2, width: (100 / (getNumDaysBetweenDates(displayStartDate, displayEndDate)).toString()+"%") }]}
         onPress={() => {
           setRenderDay(day);
-          dayHighlightOffset.value = value;
-          if (data.length != 0) {
+          dayHighlightOffset.value = day;
+          if (groupSchedule.length != 0) {
             scrollRef.current.scrollTo({ x: 0, y: 0, animated: true });
           }
         }}
@@ -531,36 +566,6 @@ export default function Schedule({ navigation }) {
     return <ErrorPage navigation={navigation} />;
   }
 
-  if (data.length == 0 && !isRefetching && weekDisplay != 'Previous Week') {
-    return (
-      <View style={styles(theme).emptyStateContainer}>
-        <Text>Group Schedule has not been created</Text>
-        <Image style={{ opacity: 0.5, height: '30%', width: '50%' }} resizeMode='contain' source={tentemoji} />
-        {groupRole != 'Member' ? (
-          <TouchableOpacity
-            style={{
-              width: '50%',
-              height: 50,
-              backgroundColor: theme.primary,
-              borderRadius: 30,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 50,
-            }}
-            onPress={() => {
-              postSchedule.mutate();
-            }}
-          >
-            <Icon name='plus' color={theme.icon1} size={20} style={{ marginRight: 10 }} />
-            <Text style={{ color: theme.text1, fontSize: 15, fontWeight: '500' }}>Create Schedule</Text>
-          </TouchableOpacity>
-        ) : (
-          <Text>Ask the creator or an admin to create a new schedule</Text>
-        )}
-      </View>
-    );
-  }
 
   return (
     <Provider>
@@ -649,47 +654,24 @@ export default function Schedule({ navigation }) {
           </BottomSheetModal>
         </ActionSheetModal>
 
-        <ConfirmationModal
-          toggleModal={toggleConfirmation}
-          body='Are you sure you want to create a new schedule? This will change the current schedule for all members and cannot be undone.'
-          buttonText='Create New Schedule'
-          buttonAction={() => {
-            if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
-              dispatch(setSnackMessage('This is a demo account'));
-              dispatch(toggleSnackBar());
-            } else {
-              postSchedule.mutate();
-            }
-          }}
-          isVisible={isConfirmationVisible}
-          userStyle={'light'}
-          onBackdropPress={() => setConfirmationVisible(false)}
-          onSwipeComplete={toggleConfirmation}
-        />
+        
 
+        <ScheduleDropdownHeaderBar/>
+        
         <View style={{ zIndex: 1 }}>
           <View style={[styles(theme).buttonContainer, styles(theme).shadowProp]}>
-            <Animated.View style={[styles(theme).dayHighlight, customSpringStyles]} />
-            <DayButton day='Sunday' abbrev='Sun' value={0} />
-            <DayButton day='Monday' abbrev='Mon' value={1} />
-            <DayButton day='Tuesday' abbrev='Tue' value={2} />
-            <DayButton day='Wednesday' abbrev='Wed' value={3} />
-            <DayButton day='Thursday' abbrev='Thur' value={4} />
-            <DayButton day='Friday' abbrev='Fri' value={5} />
-            <DayButton day='Saturday' abbrev='Sat' value={6} />
+            
+            {new Array(getNumDaysBetweenDates(displayStartDate, displayEndDate)).fill(0).map((_, dayIndex) => {
+              return (
+                <DayButton day={dayIndex} key={dayIndex.toString()}/>
+              );
+              
+            })}
+     
+          
           </View>
         </View>
-        <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          <View style={styles(theme).toggleWeekContainer}>
-            <Animated.View style={[styles(theme).toggleWeekHighlight, toggleWeekSpring]} />
-            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
-              <Text>Previous</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles(theme).toggleWeekButton} onPress={toggleWeek}>
-              <Text>Current</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+
 
         <View style={{ backgroundColor: '#D2D5DC', marginTop: 0, flex: 1, zIndex: 0 }}>
           <ScrollView
@@ -707,29 +689,6 @@ export default function Schedule({ navigation }) {
           </ScrollView>
         </View>
 
-        {groupRole != 'Member' ? (
-          <Portal>
-            <FAB.Group
-              open={open}
-              icon={'plus'}
-              style={{ position: 'absolute' }}
-              fabStyle={{ backgroundColor: '#9FA6B7' }}
-              actions={[
-                {
-                  icon: 'calendar',
-                  label: 'Create New Schedule',
-                  onPress: () => toggleConfirmation(),
-                },
-              ]}
-              onStateChange={onFabStateChange}
-              onPress={() => {
-                if (open) {
-                  // do something if the speed dial is open
-                }
-              }}
-            />
-          </Portal>
-        ) : null}
       </View>
     </Provider>
   );
@@ -807,7 +766,6 @@ const styles = (theme) =>
     button: {
       //for the day buttons at top of screen
       backgroundColor: theme.grey3,
-      width: win.width / 7,
       height: 38,
       alignItems: 'center',
       justifyContent: 'center',

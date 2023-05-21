@@ -1,32 +1,20 @@
+const nightData = require("../../data/nightData.json");
+const graceData = require("../../data/gracePeriods.json");
 class Slot{
 
 
+
     /**
-     * startDate and endDate are used as integers from 0-47 (for the 48 30-minute shifts in a day)
+     * Generic slot object
+     * @param {Date} startDate a JS Date Object
+     * @param {String} phase (string) "Black", "Blue", or "White"
      */
-    /**
-     * 
-     * @param {*} personID (integer or String)
-     * @param {*} startDate (integer) like 0 for 12:00am on Sunday, 96 for 12:00am on Tuesday, 
-     * @param {*} endDate (integer) 
-     * @param {*} phase (string) "Black", "Blue", or "White"
-     * @param {*} isNight (boolean)
-     * @param {*} status (string) "Available" for available, any other string for not available
-     * @param {*} row corresponds to startDate
-     * @param {*} col corresponds to personID
-     * @param {*} weight 
-     */
-    constructor(personID, startDate, endDate, phase, isNight, status, row, col, weight=1){
-      this.personID = personID;
+    constructor(startDate, phase){
       this.startDate = startDate;
-      this.endDate = endDate;
+      this.endDate = new Date(startDate.getTime() + 30*60000);
       this.phase = phase;
-      this.isNight = isNight;
-      this.status = status;
-      this.row = row;
-      this.col = col;
-      this.weight = 1;
-      this.ids = [];
+      this.isNight = Slot.checkNight(startDate);
+      this.isGrace = Slot.checkGrace(startDate);
     }
   
     to_hash() {
@@ -35,6 +23,45 @@ class Slot{
         hash[instance_variable] = this[instance_variable];
       }
       return hash;
+    }
+
+    /**
+     * Check if this corresponds to a night slot
+     * @param {Date} slotDate is the start date of the slot, as a JS Date object
+     * @returns {boolean} true iff this is a night slot, false otherwise
+     */
+    static checkNight(slotDate){
+      var startHour = slotDate.getHours();
+      var minutes = slotDate.getMinutes();
+      startHour += minutes / 60;
+
+      if ((startHour >= nightData.nightStartHour) && (startHour < nightData.nightEndHour)){
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    /**
+     * Determine if this slot is in a grace period
+     * @param {Date} startDate the starting date for this time slot
+     * @returns {boolean} true iff this slot is during a grace period
+     */
+    static checkGrace(startDate){
+      var gracePeriods = graceData.gracePeriods;
+      for (var i = 0; i < gracePeriods.length; i += 1){
+        var gracePeriod = gracePeriods[i];
+        var start = gracePeriod.startDate;
+        var end = gracePeriod.endDate;
+ 
+        var graceStartDate = new Date(start.year, start.monthIndex, start.day, start.hours, start.minutes);
+        var graceEndDate = new Date(end.year, end.monthIndex, end.day, end.hours, end.minutes);
+        
+        if ((startDate >= graceStartDate) && (startDate < graceEndDate)){
+          return true;
+        } 
+      }
+      return false;
     }
   
 }

@@ -1,10 +1,14 @@
 const Helpers = require("./helpers");
 const olsonParams = require("../../data/olsonParams.json");
+const TenterSlot = require("./tenterSlot");
 
 class Weight{
-  //include Helpers this was uncommented in the original -Keith
 
-    // Weight Reset - set all weights to 1.
+    /**
+     * 
+     * @param {Array<TenterSlot>} slots 
+     * @returns {Array<TenterSlot>} same as the input, but with all weights set to 1
+     */
     static weightReset(slots){
         for (var i = 0; i < slots.length; i++){
             var currentSlot = slots[i];
@@ -13,10 +17,17 @@ class Weight{
         return slots;
     }
 
-    // Weight Balance - prioritize people with fewer scheduled shifts
+
+    /**
+     * Weight Balance - prioritize people with fewer scheduled shifts
+     * @param {Array<People>} people 
+     * @param {Array<TenterSlot>} slots has 1 entry for each time slot for each person
+     * @returns [people, slots]
+     */
     static weightBalance(people, slots){
         for (var i = 0; i < slots.length; i++){
             var currentSlot = slots[i];
+
             // Establish variables.
             var currentPersonID = currentSlot.col
             var dayScheduled = people[currentPersonID].dayScheduled
@@ -49,7 +60,13 @@ class Weight{
         return [((row - 1) < 0), ((row + 1) > (rowLength - 1))];
     }
 
-    // Weight Contiguous - prioritize people to stay in the tent more time at once.
+    
+    /**
+     * Weight Contiguous - prioritize people to stay in the tent more time at once.
+     * @param {Array<TenterSlot>} slots 
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 
+     * @returns [slot, ScheduleGrid]
+     */
     static weightContiguous(slots, scheduleGrid){
         //length of ideal day shift is 4 slots (i.e. 2 hours)
         const IDEAL_DAY_SHIFT_LENGTH = olsonParams["IDEAL_DAY_SHIFT_LENGTH"];
@@ -160,8 +177,7 @@ class Weight{
             
             //Keith: prioritize ideal shift continuity length
             var newDayLength = numScheduledAbove + numScheduledBelow + 1;
-            if (newDayLength > IDEAL_DAY_SHIFT_LENGTH){
-                
+            if (newDayLength > IDEAL_DAY_SHIFT_LENGTH){ 
                 for (var m = 0; m < (newDayLength - IDEAL_DAY_SHIFT_LENGTH); m++){
                     multi /= 8;
                 }
@@ -174,13 +190,10 @@ class Weight{
 
 
             //Keith: prioritize continuity at night
-            if (aboveTent && aboveIsNight )
+            if ((aboveTent && aboveIsNight ) || (belowTent && belowIsNight && currentIsNight))
                 multi = 1000;
             
             
-            //Keith: prioritize continuity at night
-            if (belowTent && belowIsNight && currentIsNight)
-                multi = 1000;
 
             // Occurance of Somewhat Available
             if (slots[i].status == "Somewhat")
@@ -195,7 +208,13 @@ class Weight{
         return [slots, scheduleGrid];
     }
 
-    // Weight Tough Time - prioritize time slots with few people available. */
+    
+    /**
+     *  Weight Tough Time - prioritize time slots with few people available. 
+     * @param {Array<TenterSlot>} slots 
+     * @param {int} scheduleLength 
+     * @returns {Array<TenterSlot>}
+     */
     static weightToughTime(slots, scheduleLength){
 
         // Set up counterArray (Rows that are filled).
@@ -216,10 +235,10 @@ class Weight{
             var currentPhase = currentSlot.phase;
             var nightBoolean = currentSlot.isNight;
         
-            var peopleNeeded = Helpers.calculatePeopleNeeded(nightBoolean, currentPhase, currentSlot.row);
+            var peopleNeeded = Helpers.calculatePeopleNeeded(currentSlot);
             
             var numFreePeople = counterArray[currentRow];
-            var newWeight = currentSlot.weight*(12/numFreePeople)*peopleNeeded;
+            var newWeight = currentSlot.weight*(12/(numFreePeople + 0.01))*peopleNeeded;
             
             currentSlot.weight = newWeight;
         }
@@ -227,7 +246,15 @@ class Weight{
         return slots;
     }
 
-    // Update people, spreadsheet, and remove slots.
+   
+    /**
+     * Update people, spreadsheet, and remove slots.
+     * @param {Array<Person>} people 
+     * @param {Array<TenterSlot>} slots 
+     * @param {Array<int>} graveyard 
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 
+     * @returns 4 things
+     */
     static weightPick(people, slots, graveyard, scheduleGrid){
         // Remove winner from list.
         var winner = slots.shift(); //remove first element and remove it
@@ -262,7 +289,7 @@ class Weight{
         }
 
         // Determine how many people are needed.
-        var peopleNeeded = Helpers.calculatePeopleNeeded(currentTime, winner.phase, winner.row);
+        var peopleNeeded = Helpers.calculatePeopleNeeded(winner);
 
         // Update Slots and Graveyard
         if (tentCounter >= peopleNeeded){

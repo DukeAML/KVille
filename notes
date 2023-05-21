@@ -32,3 +32,18 @@ Looking ahead:
     -CI/CD - automate integration with testing (circleCI)
     -third party logging service (sentry) 
     -react error boundary, more error catching
+
+TODOS (Keith): 
+
+    -update packages
+    -check functionality on ios and android
+    -availability page bugginess (try scroll to top when the dropdown header bar expands)
+    -default assign tenters end date when there is an empty slot is weird - hours are half of what they should be
+    -styling
+    -refactoring (groupScheduleAndStartDateObj, calendar methods like default start/end dates, who can edit schedule)
+    -store schedule by id instead of name
+    -preferred time slots advanced option
+    -stand alone cells at the top of the availabilty page to explain green is available, gray is out of schedule, red is unavailable, ...
+    -make scheduling algo faster
+    -make DateChanger days options align with the month - i.e. only 28 days for Feb, 
+    
