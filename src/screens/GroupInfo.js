@@ -32,6 +32,7 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
 import { ErrorPage } from '../components/ErrorPage';
+import { fetchHoursPerPerson } from '../services/db_services';
 
 export default function GroupInfo({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);
@@ -82,6 +83,22 @@ export default function GroupInfo({ navigation }) {
   //Function for gathering member information from database
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
+    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    let {dayHoursPerPerson, nightHoursPerPerson} = await fetchHoursPerPerson(groupCode);
+
+    const getDataFromDoc = (doc) => {
+      let name =doc.data().name;
+      return {
+        id: doc.id,
+        name: name,
+        inTent: doc.data().inTent,
+        hours: doc.data().scheduledHrs,
+        dayHours: dayHoursPerPerson[name],
+        nightHours: nightHoursPerPerson[name],
+        role: doc.data().groupRole
+      }
+    }
+
     const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
     let data = [{}];
     await memberRef
@@ -89,27 +106,10 @@ export default function GroupInfo({ navigation }) {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          let currName = doc.data().name; //gets current name in list
-          let tentCondition = doc.data().inTent; //gets tent status as well
-          let scheduledHours = doc.data().scheduledHrs;
-          let groupRole = doc.data().groupRole;
-          let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            data[0] = {
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-              role: groupRole,
-            };
+            data[0] = getDataFromDoc(doc);
           } else {
-            data.push({
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-              role: groupRole,
-            });
+            data.push(getDataFromDoc(doc));
           }
         });
       })
@@ -122,27 +122,10 @@ export default function GroupInfo({ navigation }) {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          let currName = doc.data().name; //gets current name in list
-          let tentCondition = doc.data().inTent; //gets tent status as well
-          let scheduledHours = doc.data().scheduledHrs;
-          let groupRole = doc.data().groupRole;
-          let memID = doc.id;
           if (doc.id == firebase.auth().currentUser.uid) {
-            data[0] = {
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-              role: groupRole,
-            };
+            data[0] = getDataFromDoc(doc);
           } else {
-            data.push({
-              id: memID,
-              name: currName,
-              inTent: tentCondition,
-              hours: scheduledHours,
-              role: groupRole,
-            });
+            data.push(getDataFromDoc(doc));
           }
         });
       })
@@ -232,7 +215,7 @@ export default function GroupInfo({ navigation }) {
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          currMember.current = { name: item.name, id: item.id, hours: item.hours, role: item.role };
+          currMember.current = { name: item.name, id: item.id, hours: item.hours, dayHours: item.dayHours, nightHours: item.nightHours, role: item.role };
         }}
       >
         <View style={[styles(theme).listItem, styles(theme).shadowProp, { backgroundColor, marginVertical: 15 }]}>
@@ -250,13 +233,13 @@ export default function GroupInfo({ navigation }) {
   };
 
   //Render Item for Each List Item of group members
-  const Member = ({ name, id, hours, role, inTent }) => {
+  const Member = ({ name, id, hours, dayHours, nightHours, role, inTent }) => {
     const backgroundColor = inTent ? { backgroundColor: '#3eb489' } : { backgroundColor: '#1f509a' };
     return (
       <TouchableOpacity
         onPress={() => {
           toggleModal();
-          currMember.current = { name: name, id: id, hours: hours, role: role };
+          currMember.current = { name: name, id: id, hours: hours, dayHours: dayHours, nightHours: nightHours, role: role };
         }}
       >
         <View style={[styles(theme).listItem, backgroundColor, styles(theme).shadowProp]}>
@@ -274,7 +257,7 @@ export default function GroupInfo({ navigation }) {
 
   //variable for each name box, change color to green if status is inTent
   const renderMember = ({ item }) => {
-    return <Member name={item.name} id={item.id} hours={item.hours} role={item.role} inTent={item.inTent} />;
+    return <Member name={item.name} id={item.id} hours={item.hours} dayHours={item.dayHours} nightHours={item.nightHours} role={item.role} inTent={item.inTent} />;
   };
 
   if (isLoading || !fontsLoaded) {
@@ -343,7 +326,10 @@ export default function GroupInfo({ navigation }) {
           >
             <View style={styles(theme).popUpHalfBody}>
               <Icon name='timer-sand-empty' color={theme.grey2} size={25} style={{ marginRight: 15 }} />
-              <Text style={styles(theme).modalText}>Scheduled Hours: {currMember.current.hours} hrs</Text>
+              <Text style={styles(theme).modalText}>Scheduled Daytime Hours: {currMember.current.dayHours} hrs</Text>
+              <Text style={styles(theme).modalText}>Scheduled Nighttime Hours: {currMember.current.nightHours} hrs</Text>
+              
+              
             </View>
             <Divider />
 

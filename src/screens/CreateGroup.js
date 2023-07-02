@@ -16,6 +16,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 
+import { getDefaultGroupMemberData } from '../services/db_services';
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -33,12 +35,10 @@ import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
+const Helpers = require("../backend/Scheduling/helpers");
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;
-
-let availability = new Array(336);
-availability.fill(true);
 
 const window = Dimensions.get('window');
 
@@ -115,24 +115,23 @@ export default function CreateGroup({ navigation }) {
     }
     groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
+    let defaultSchedLength = 
     groupRef.set({
       name: group.groupName,
       tentType: group.tentType,
-      groupSchedule: [],
-      memberArr: [],
-      previousSchedule: [],
-      previousMemberArr: [],
+      groupSchedule: Helpers.getDefaultSchedule(group.tentType),
+      groupScheduleStartDate: Helpers.getTentingStartDate(group.tentType),
     }).catch((error)=>{
       console.error(error);
     });
     //adds current user to collection of members in the group
+    let {availability, availabilityStartDate} = getDefaultGroupMemberData(group.userName, group.tentType, groupRole);
     groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
       groupRole: groupRole,
       name: group.userName,
       inTent: false,
       availability: availability,
-      scheduledHrs: 0,
-      shifts: [],
+      availabilityStartDate: availabilityStartDate
     }).catch((error)=>{
       console.error(error);
     });

@@ -20,6 +20,20 @@ export const lightTheme = {
   icon1: '#fff',
   icon2: '#000',
   error: '#E01805',
+  available: '#22AA11',
+  unavailable: '#AA1111',
+  header1: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center'
+  },
+  header2: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center'
+  }
 };
 
 export const generalTheme = {
