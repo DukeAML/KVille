@@ -14,6 +14,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 
+import { getDefaultGroupMemberData } from '../services/db_services';
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -30,8 +32,7 @@ import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
 
-let availability = new Array(336);
-availability.fill(true);
+
 
 const window = Dimensions.get('window');
 
@@ -87,11 +88,12 @@ export default function JoinGroup({ navigation }) {
     }
     const groupRef = firebase.firestore().collection('groups').doc(groupCode);
     const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
-
+    let tentType = "Black"; //set later
     //checks to make sure entered group code exists
     await groupRef.get().then(async (docSnapshot) => {
       console.log('Group exists: ', docSnapshot.exists);
       if (docSnapshot.exists) {
+        tentType = docSnapshot.data().tentType;
         //Max 12 people in a group
         let result = await groupRef
           .collection('members')
@@ -144,14 +146,7 @@ export default function JoinGroup({ navigation }) {
                 }),
               });
               //adds current user to member list
-              await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
-                groupRole: 'Member',
-                name: name,
-                inTent: false,
-                availability: availability,
-                scheduledHrs: 0,
-                shifts: [],
-              });
+              await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set(getDefaultGroupMemberData(name, tentType, 'Member'));
               await userRef.get().then((snapshot) => {
                 dispatch(setCurrentUser(snapshot.data()));
               });

@@ -1,16 +1,19 @@
 const Helpers = require( "./helpers");
 const Weight = require("./weight");
+const Person = require("./person");
+const ScheduledSlot = require("./scheduledSlot");
+const TenterSlot = require("./tenterSlot");
 
 class FinalTouches{
     
 /**
  * Adds in 'Grace' to combinedGrid where appropriate
- * @param {*} combinedGrid 
+ * @param {Array<ScheduledSlot>} combinedGrid 
  * returns nothing, modifies the grid in place
  */
   static fillGrace(combinedGrid){
     for (var i = 0; i < combinedGrid.length; i++){
-      var peopleNeeded = Helpers.calculatePeopleNeeded(Helpers.isSlotNight(i), combinedGrid[i].phase, i);
+      var peopleNeeded = Helpers.calculatePeopleNeeded(combinedGrid[i]);
       if (peopleNeeded == 0){
         combinedGrid[i].ids.push('Grace');
       }
@@ -21,12 +24,12 @@ class FinalTouches{
  
   /**
    * add 'empty to id arrays to ensure the array length equals the number of people needed
-   * @param {*} combinedGrid 
+   * @param {Array<ScheduledSlot>} combinedGrid 
    * returns nothing, modifies the grid in place
    */
   static fillEmptySpots(combinedGrid){
     for (var i = 0; i < combinedGrid.length; i++){
-      var peopleNeeded = Helpers.calculatePeopleNeeded(Helpers.isSlotNight(i), combinedGrid[i].phase, i);
+      var peopleNeeded = Helpers.calculatePeopleNeeded(combinedGrid[i]);
       while (combinedGrid[i].ids.length < peopleNeeded){
         combinedGrid[i].ids.push('empty');
       }
@@ -37,10 +40,11 @@ class FinalTouches{
 /**
  * There will be some poorly scheduled shifts where a tenter is there for just 30 minutes. 
  * This method tries to remove those by extending the next tenter or prior tenter's shift
- * @param {*} combinedGrid is a 1d array of objects that each have an array of ids corresponding to the tenters for that shift
- * @param {*} people is same as defined in the method schedule()
- * @param {*} scheduleGrid is same as defined in the method schedule()
- * returns a modified copy of combinedGrid (DOES NOT MODIFY combinedGrid IN PLACE, but does modify everything else in place)
+ * @param {Array<ScheduledSlot>} combinedGrid 
+ * @param {Array<Person>} people is same as defined in the method Algorithm.schedule()
+ * @param {Array<Array<TenterSlot>>} scheduleGrid is same as defined in the method Algorithm.schedule()
+ * @returns {Array<ScheduledSlot>} modified copy of combinedGrid (DOES NOT MODIFY combinedGrid IN PLACE, 
+ *  but does modify everything else in place)
  */
 static cleanStraySlots(combinedGrid, people, scheduleGrid){
   var newGrid = [];
@@ -104,9 +108,7 @@ static cleanStraySlots(combinedGrid, people, scheduleGrid){
             break;
           }
         }
-        
-
-        
+       
 
       }
 
@@ -118,12 +120,12 @@ return newGrid;
 
 /**
  * replaces the tenter identified by IndexToRemove with the tenter identified by newTenterIndex at a given time
- * @param {*} people (array of Person objects)
- * @param {*} scheduleGrid (array of arrays of Slot objects)
- * @param {*} newGrid is a 1d array of objects that each have an array of ids corresponding to the tenters for that shift
- * @param {*} IndexToRemove (int) is the person's index in scheduleGrid, i.e. scheduleGrid[IndexToRemove] is their slots
- * @param {*} newTenterIndex (int) same kind of thing as IndexToRemove
- * @param {*} timeslot (int)
+ * @param {Array<Person>} people 
+ * @param {Array<Array<TenterSlot>>} scheduleGrid 
+ * @param {Array<ScheduledSlot>} newGrid 
+ * @param {int} IndexToRemove is the person's index in scheduleGrid, i.e. scheduleGrid[IndexToRemove] is their slots
+ * @param {int} newTenterIndex same kind of thing as IndexToRemove
+ * @param {int} timeslot 
  */
 static shiftReplacement(people, scheduleGrid, newGrid, IndexToRemove, newTenterIndex, timeslot){
   var personToRemove = people[IndexToRemove];
@@ -147,8 +149,8 @@ static shiftReplacement(people, scheduleGrid, newGrid, IndexToRemove, newTenterI
 /**
  * Helper method for cleanStraySlots()
  * pick someone scheduled in the slot above timeslot who is not scheduled for this timeslot
- * @param {*} scheduleGrid 
- * @param {*} timeslot 
+ * @param {Array<Array<TenterSlot>>} scheduleGrid 
+ * @param {int} timeslot 
  * @returns [index, ID], or null if there is no such person
  */
 static findTenterAboveToEdit(scheduleGrid, timeslot){
@@ -167,8 +169,8 @@ static findTenterAboveToEdit(scheduleGrid, timeslot){
 /**
  * Helper method for cleanStraySlots()
  * pick someone scheduled in the slot below timeslot who is not scheduled for this timeslot
- * @param {*} scheduleGrid 
- * @param {*} timeslot 
+ * @param {Array<Array<TenterSlot>>} scheduleGrid 
+ * @param {int} timeslot 
  * @returns [index, ID], or null if there is no such person
  */
 static findTenterBelowToEdit(scheduleGrid, timeslot){
@@ -187,7 +189,7 @@ static findTenterBelowToEdit(scheduleGrid, timeslot){
 /**
  * Helper method at the end of schedule(). This is purely for visualization purposes. 
  * It makes the person's name aligned on the final grid
- * @param {} grid 
+ * @param {Array<ScheduledSlot>} grid 
  */
 static reorganizeGrid(grid){
   for (var i = 1; i < grid.length; i++){

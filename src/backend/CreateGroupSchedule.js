@@ -3,6 +3,9 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import data from '../data/gracePeriods.json';
 import Person from './Scheduling/person';
+import ScheduleAndStartDate from './Scheduling/scheduleAndStartDate';
+import { getNumSlotsBetweenDates } from '../services/dates_services';
+import { fetchHoursPerPersonInDateRange } from '../services/db_services';
 const Helpers = require("./Scheduling/helpers");
 const Algorithm = require("./Scheduling/algorithm");
 
@@ -17,15 +20,15 @@ const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599'
 
 /**
  * Keith's new scheduling method with the Olson algo
- * @param {*} groupCode 
- * @param {*} tentType a string like "Blue", "Black", or "White". I set it to "White" if it is not "Black" or "Blue"
- * @param {*} weekNum (int) represents which weekNum it is, e.g. 1, 2, 3, or 4
- * @returns groupScheduleArr, an array of 336 strings (1 for each 30 minute shift in a weekNum), 
- *    where each string is like "Alvin, Keith, Nick", representing the people in the tent at that time. 
+ * @param {String} groupCode 
+ * @param {String} tentType a string like "Blue", "Black", or "White". I set it to "White" if it is not "Black" or "Blue"
+ * @param {Date} startDate 30 minute granularity
+ * @param {Date} endDate this method will assign tenters from the startDate to the endDate - both should have 30 minute granularity
+ * @returns groupScheduleArr, an array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
  */
-export async function createGroupSchedule(groupCode, tentType, weekNum){
-  var memberIDs = [{ id: '12345', name: 'empty', color: '#ececec', changedHrs: 0 },
-  {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}];
+export async function createGroupSchedule(groupCode, tentType, startDate, endDate){
+  console.log("creating group schedule from " + startDate.getTime() + " to " + endDate.getTime());
+
   if ((tentType != "Blue") && (tentType != "Black")){
     tentType = "White"; 
   }
@@ -35,6 +38,13 @@ export async function createGroupSchedule(groupCode, tentType, weekNum){
   var idToName = {};
   idToName['empty'] = 'empty';
   idToName['Grace'] = 'Grace';
+
+
+
+  let {dayHoursPerPersonInRange, nightHoursPerPersonInRange, dayHoursPerPersonEntire, nightHoursPerPersonEntire} = await fetchHoursPerPersonInDateRange(groupCode, startDate, endDate);
+
+  console.log("got past reading from fb");
+
   await firebase
     .firestore()
     .collection('groups') 
@@ -46,59 +56,37 @@ export async function createGroupSchedule(groupCode, tentType, weekNum){
         var name = doc.data().name;
         var id = doc.id;
         idToName[id] = name;
-        var availability = doc.data().availability; //array of boolean values indicating availability
-        //Keith: make slot objects out of all of these availabilities
-        var user_slots = Helpers.availabilitiesToSlots(id, availability, tentType, people.length)
+        var fullAvailability = doc.data().availability; //array of boolean values indicating availability
+        var fullAvailabilityStartDate = doc.data().availabilityStartDate.toDate();
+        var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
+        var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
+        var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
+        var availabilityInRangeStartDate = startDate;
+
+
+        var user_slots = Helpers.availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
         scheduleGrid.push(user_slots); 
 
-        //Kevin/Alvin: member name and id object (used to update hrs in schedule page)
-        var member = {
-          id,
-          name,
-          color: '',
-          changedHrs: 0,
-        };
-        memberIDs.push(member);
 
-        var [numFreeDaySlots, numFreeNightSlots] = Helpers.dayNightFree(availability);
+        var [numFreeDaySlots, numFreeNightSlots] = Helpers.dayNightFree(availabilityInRange, availabilityInRangeStartDate);
         //Keith: For now, can just say dayScheduled and nightScheduled = 0
-        var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 0, 0);
+        var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
+          dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
         people.push(person);
       });
     });
+  console.log(people);
+  console.log("read members");
 
-  var slot_info = Algorithm.schedule(people, scheduleGrid, weekNum);
- 
+  var newScheduleInRange = Algorithm.schedule(people, scheduleGrid);
+  console.log("created the schedule");
 
-
-  //Kevin/Alvin: to update the number of scheduled hours and shifts for each member.
-  
-  for (var i = 0; i < people.length; i++) {
-    firebase
-      .firestore()
-      .collection('groups') 
-      .doc(groupCode)
-      .collection('members')
-      .doc(people[i].id)
-      .update({
-        scheduledHrs: (people[i].dayScheduled + people[i].nightScheduled )/ 2, 
-        shifts: people[i].dayScheduled + people[i].nightScheduled
-      });
-  }
-
-  //Kevin/Alvin: To update memberArr in group with their unique id and name that corresponds with the schedule
-  for (var index = 1; index < memberIDs.length; index++) {
-    memberIDs[index].color = colors[index];
-  }
-
-  firebase.firestore().collection('groups').doc(groupCode).update({
-    memberArr: memberIDs,
-  });
+  //TODO 6/22: figure out how to return the right thing and what not
   
   //Keith: now need to return the array of strings
   var groupScheduleArr = [];
-  for (var i = 0; i < slot_info.length; i++){
-    var ids = slot_info[i].ids;
+  for (var i = 0; i < newScheduleInRange.length; i++){
+    var ids = newScheduleInRange[i].ids;
     var names = "";
     for (var j = 0; j < ids.length; j++){
       names = names + idToName[ids[j]] + " ";
@@ -109,9 +97,8 @@ export async function createGroupSchedule(groupCode, tentType, weekNum){
     groupScheduleArr.push(names);
   }
 
+
   return groupScheduleArr;
-
-
 
 }
 
