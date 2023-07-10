@@ -2,7 +2,7 @@
 const firebase = require('firebase/compat/app');
 require('firebase/compat/auth');
 require('firebase/compat/firestore');
-const scheduleDates = require("../data/scheduleDates.json");
+const scheduleDates = require("./data/scheduleDates.json");
 const GROUP_CODE = 'xgVV5gyv';
 const  Helpers = require("./Scheduling/helpers");
 

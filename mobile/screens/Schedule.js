@@ -24,27 +24,26 @@ import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-na
 import { FAB, Portal, Provider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createGroupSchedule } from '../backend/CreateGroupSchedule';
-import { fetchGroupSchedule } from '../services/db_services';
+import { createGroupSchedule } from '../../common/CreateGroupSchedule';
+import { fetchGroupSchedule } from '../../common/services/db_services';
+
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
-import { ConfirmationModal } from '../components/ConfirmationModal';
 import { BottomSheetModal } from '../components/BottomSheetModal';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
-import tentemoji from '../assets/tentemoji.png';
-import scheduleDates from '../data/scheduleDates.json';
+import scheduleDates from '../../common/data/scheduleDates.json';
 import { DateRangeChanger } from '../components/DateRangeChanger/DateRangeChanger';
-import { getNumSlotsBetweenDates, getNumDaysBetweenDates, getDatePlusNumShifts, getCurrentDate, getDayAbbreviation} from '../services/dates_services';
+import { getNumSlotsBetweenDates, getNumDaysBetweenDates, getDatePlusNumShifts, getCurrentDate, getDayAbbreviation} from '../../common/services/dates_services';
 import { DropdownHeaderBar } from '../components/DropdownHeaderBar/DropdownHeaderBar'
-import { original } from '@reduxjs/toolkit';
-const Helpers = require ('../backend/Scheduling/helpers');
+
+const Helpers = require ('../../common/Scheduling/helpers');
 
 
 
@@ -531,6 +530,7 @@ export default function Schedule({ navigation }) {
    */
   const DayButton = ({ day }) => {
     let abbrev = getDayAbbreviation(new Date(displayStartDate.getTime() + day * 24 * 60 * 60000));
+    
     return (
       <TouchableOpacity
         style={[styles(theme).button, { backgroundColor: (day == renderDay ? theme.primary: 'transparent'), zIndex: 2, width: (100 / (getNumDaysBetweenDates(displayStartDate, displayEndDate)).toString()+"%") }]}

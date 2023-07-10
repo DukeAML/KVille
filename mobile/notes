@@ -46,4 +46,5 @@ TODOS (Keith):
     -stand alone cells at the top of the availabilty page to explain green is available, gray is out of schedule, red is unavailable, ...
     -make scheduling algo faster
     -make DateChanger days options align with the month - i.e. only 28 days for Feb, 
+    -make sure that firebase imports are done uniformly
     

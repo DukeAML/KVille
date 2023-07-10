@@ -1,5 +1,5 @@
 const Helpers = require("./helpers");
-const olsonParams = require("../../data/olsonParams.json");
+const olsonParams = require("../data/olsonParams.json");
 const TenterSlot = require("./tenterSlot");
 
 class Weight{

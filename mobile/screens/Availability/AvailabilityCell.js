@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle} from 'react';
-import { View, Text, StyleSheet, PanResponder, Dimensions, TouchableOpacity, Touchable } from 'react-native';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { View, StyleSheet} from 'react-native';
+
 
 
 //One cell in the Availabilty Table

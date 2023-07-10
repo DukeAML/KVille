@@ -1,14 +1,12 @@
-const nightData = require("../../data/nightData.json");
-const graceData = require("../../data/gracePeriods.json");
 const Slot = require("./slot");
-const { getDatePlusNumShifts, getNumSlotsBetweenDates } = require("../../services/dates_services");
+const { getDatePlusNumShifts, getNumSlotsBetweenDates } = require("../services/dates_services");
 class ScheduleAndStartDate{
 
 
 
     /**
      * Generic slot object
-     * @param {Date} schedule should be an array of names
+     * @param {Array<String>} schedule should be an array of names
      * @param {Date} startDate a JS Date Object, denoting the start time of this schedule. 
      */
     constructor(schedule, startDate){
@@ -48,6 +46,7 @@ class ScheduleAndStartDate{
             let currDate = getDatePlusNumShifts(this.startDate, i);
             peopleInSlot.forEach((person) => {
                 if (Slot.checkNight(currDate)){
+                    
                     this.incrementVal(nightHoursPerPerson, person);
                 } else {
                     this.incrementVal(dayHoursPerPerson, person);

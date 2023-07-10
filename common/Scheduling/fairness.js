@@ -1,4 +1,4 @@
-const params = require("../../data/olsonParams.json");
+const params = require("../data/olsonParams.json");
 const FinalTouches = require("./finalTouches");
 const TenterSlot = require("./tenterSlot");
 const ScheduledSlot = require("./scheduledSlot");

@@ -1,11 +1,12 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import data from '../data/gracePeriods.json';
+import data from './data/gracePeriods.json';
 import Person from './Scheduling/person';
 import ScheduleAndStartDate from './Scheduling/scheduleAndStartDate';
-import { getNumSlotsBetweenDates } from '../services/dates_services';
-import { fetchHoursPerPersonInDateRange } from '../services/db_services';
+
+import { getNumSlotsBetweenDates } from './services/dates_services';
+import { fetchHoursPerPersonInDateRange } from './services/db_services';
 const Helpers = require("./Scheduling/helpers");
 const Algorithm = require("./Scheduling/algorithm");
 

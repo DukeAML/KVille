@@ -8,6 +8,7 @@ import { Platform } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 
@@ -15,8 +16,11 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
+import { firestore, auth } from '../common/services/db/firebase_config';
+
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/*
 const firebaseConfig = {
   apiKey: 'AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0',
   authDomain: 'duke-tenting-app-cc15b.firebaseapp.com',
@@ -30,22 +34,25 @@ const firebaseConfig = {
 
 
 if (firebase.apps.length === 0) {
+  console.log("trying to initialize fb");
   firebase.initializeApp(firebaseConfig);
-}
+  console.log(firebase.auth().app);
+}*/
 
-import RegisterScreen from './src/screens/auth/Register';
-import LoginScreen from './src/screens/auth/Login';
-import NavigationStack from './src/navigation/DrawerNavigator';
-import ForgotPasswordScreen from './src/screens/auth/ForgotPassword';
-import { persistor, store } from './src/redux/store/index';
-import ThemeProvider from './src/context/ThemeProvider';
-import Snackbar from './src/components/Snackbar';
+import RegisterScreen from './screens/auth/Register';
+import LoginScreen from './screens/auth/Login';
+import NavigationStack from './navigation/DrawerNavigator';
+import ForgotPasswordScreen from './screens/auth/ForgotPassword';
+import { persistor, store } from './redux/store/index';
+import ThemeProvider from './context/ThemeProvider';
+import Snackbar from './components/Snackbar';
 
 const Stack = createNativeStackNavigator();
 
 const queryClient = new QueryClient();
 
 export default function App() {
+
   const [state, setState] = useState({
     isReady: false,
   });
@@ -69,11 +76,10 @@ export default function App() {
   });
 
   async function updateTentStatus(status) {
-    const currentUser = firebase.auth().currentUser.uid;
+    const currentUser = auth.currentUser.uid;
     if (currentUser != null) {
       let groupCodes;
-      await firebase
-        .firestore()
+      await firestore
         .collection('users')
         .doc(currentUser)
         .get()
@@ -82,8 +88,7 @@ export default function App() {
         })
         .catch((error) => console.error(error));
       for (let i = 0; i < groupCodes.length; i++) {
-        firebase
-          .firestore()
+        firestore
           .collection('groups')
           .doc(groupCodes[i].groupCode)
           .collection('members')
@@ -102,7 +107,7 @@ export default function App() {
       try {
         await SplashScreen.preventAutoHideAsync();
 
-        firebase.auth().onAuthStateChanged((user) => {
+        auth.onAuthStateChanged((user) => {
           if (!user) {
             setState({
               isReady: true,

@@ -1,16 +1,14 @@
 import React, { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
 import { View, Text, StyleSheet, PanResponder, Dimensions} from 'react-native';
-import {useQuery} from 'react-query';
-import { useSelector } from 'react-redux';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 import { AvailabilityCell, cellStyles } from './AvailabilityCell';
 import { TimeColumn } from '../../components/TimeColumn';
-import { setDBAvailability, fetchAvailability } from '../../services/db_services';
-import { getNumDaysBetweenDates, getNumSlotsBetweenDates, getDayAbbreviation } from '../../services/dates_services';
-import { LoadingIndicator } from '../../components/LoadingIndicator';
+import { setDBAvailability } from '../../../common/services/db_services';
+import { getNumDaysBetweenDates, getNumSlotsBetweenDates, getDayAbbreviation } from '../../../common/services/dates_services';
+
 
 
 

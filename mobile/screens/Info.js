@@ -20,7 +20,7 @@ import { useTheme } from '../context/ThemeProvider';
 
 import kvilleBoundary from '../assets/kvilleBoundary.jpg';
 import kvillesign from '../assets/kvillesign.jpg';
-import text from '../data/tentingInfo.json';
+import text from '../../common/data/tentingInfo.json';
 
 
 //DATA for The TABLES

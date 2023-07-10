@@ -1,5 +1,5 @@
-const nightData = require("../../data/nightData.json");
-const graceData = require("../../data/gracePeriods.json");
+const nightData = require("../data/nightData.json");
+const graceData = require("../data/gracePeriods.json");
 class Slot{
 
 

@@ -32,7 +32,7 @@ import { BottomSheetModal } from '../components/BottomSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import SettingsModal from '../components/SettingsModal';
 import { ErrorPage } from '../components/ErrorPage';
-import { fetchHoursPerPerson } from '../services/db_services';
+import { fetchHoursPerPerson } from '../../common/services/db_services';
 
 export default function GroupInfo({ navigation }) {
   const groupCode = useSelector((state) => state.user.currGroupCode);

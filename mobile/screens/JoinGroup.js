@@ -14,7 +14,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 
-import { getDefaultGroupMemberData } from '../services/db_services';
+import { getDefaultGroupMemberData } from '../../common/services/db_services';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';

@@ -26,8 +26,6 @@ import 'firebase/compat/firestore';
 
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset, resetCurrGroup } from '../redux/reducers/userSlice';
-import { createGroupSchedule } from '../backend/CreateGroupSchedule';
-import { createTestCases } from '../backend/firebaseAdd';
 import { useTheme } from '../context/ThemeProvider';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
@@ -389,27 +387,6 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </SafeAreaView>
       </Modal>
-      {/* <Button
-          title='Create Group Schedule'
-          onPress={() =>
-            createGroupSchedule('sX5bkvgE', 'Black').then((groupSchedule) => {
-              firebase
-                .firestore()
-                .collection('groups')
-                .doc('sX5bkvgE')
-                .update({
-                  groupSchedule: groupSchedule,
-                })
-                .then(() => console.log('update successfull'))
-                .catch((error) => console.log(error));
-              console.log(groupSchedule);
-            })
-          }
-        /> */}
-      {/* <Button
-              title="Add test case"
-              onPress={() => createTestCases()}
-            /> */}
     </View>
   );
 }

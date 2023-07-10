@@ -8,10 +8,11 @@ import { useSelector} from 'react-redux';
 import { DateRangeChanger } from '../../components/DateRangeChanger/DateRangeChanger';
 import { LoadingIndicator } from '../../components/LoadingIndicator';
 import { AvailabilityTable } from './AvailabilityTable';
-import { useGetAvailability, fetchAvailability } from '../../services/db_services';
+import { fetchAvailability } from '../../../common/services/db_services';
+
 import { DropdownHeaderBar } from '../../components/DropdownHeaderBar/DropdownHeaderBar';
 import { useTheme } from '../../context/ThemeProvider';
-const Helpers = require("../../backend/Scheduling/helpers");
+const Helpers = require("../../../common/Scheduling/helpers");
 
 const getInitialStartDate = (tentType) => {
     //TODO: use context to get tentType and specify the start date more closely

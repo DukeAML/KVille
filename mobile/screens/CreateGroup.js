@@ -16,13 +16,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 
-import { getDefaultGroupMemberData } from '../services/db_services';
+import { getDefaultGroupMemberData } from '../../common/services/db_services';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-import { generateGroupCode } from '../backend/GroupCode';
+import { generateGroupCode } from '../../common/GroupCode';
 import {
   setCurrentUser,
   setGroupCode,
@@ -35,7 +35,7 @@ import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
-const Helpers = require("../backend/Scheduling/helpers");
+const Helpers = require("../../common/Scheduling/helpers");
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;

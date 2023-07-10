@@ -1,12 +1,10 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import { firestore } from "./db/firebase_config";
 
-import ScheduleAndStartDate from "../backend/Scheduling/scheduleAndStartDate";
+import ScheduleAndStartDate from "../Scheduling/scheduleAndStartDate";
 
 import { useQuery } from 'react-query';
 import { getDateRoundedTo30MinSlot, getNumSlotsBetweenDates } from "./dates_services";
-const Helpers = require("../backend/Scheduling/helpers");
+const Helpers = require("../Scheduling/helpers");
 
 
 
@@ -57,7 +55,7 @@ export class DBAvailabilitySlot {
  */
 export async function fetchAvailability(groupCode, userId) {
     console.log("fetching availability");
-    const db = firebase.firestore();
+    const db = firestore;
     const userRef = db.collection('groups').doc(groupCode).collection('members').doc(userId);
     const user = await userRef.get();
 
@@ -94,7 +92,7 @@ export const useGetAvailability = (groupCode, userId) => {
  */
 export const setDBAvailability = (groupCode, userId, newAvailability) => {
     console.log("setting availability in db");
-    const db = firebase.firestore();
+    const db = firestore;
     let availabilityDB = [];
     for (let i = 0; i < newAvailability.length; i += 1){
         availabilityDB.push(newAvailability[i].available);
@@ -118,7 +116,7 @@ export const setDBAvailability = (groupCode, userId, newAvailability) => {
  */
 export async function fetchGroupSchedule(groupCode) {
     console.log("fetching schedule");
-    const db = firebase.firestore();
+    const db = firestore;
     const groupRef = db.collection('groups').doc(groupCode);
     const group = await groupRef.get();
 
@@ -132,7 +130,7 @@ export async function fetchGroupSchedule(groupCode) {
 }
 
 async function getNameOfAllTentersInGroup(groupCode){
-    let membersRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
+    let membersRef = firestore.collection('groups').doc(groupCode).collection('members');
     let allMembers = [];
     await membersRef.get().then((members) => {
         members.forEach((member) => {
@@ -152,7 +150,7 @@ async function getNameOfAllTentersInGroup(groupCode){
  */
 export async function fetchHoursPerPersonInDateRange(groupCode, dateRangeStart, dateRangeEnd) {
     let allMembers = await getNameOfAllTentersInGroup(groupCode);
-    let groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    let groupRef = firestore.collection('groups').doc(groupCode);
     let dayHoursPerPersonInRange = {};
     let nightHoursPerPersonInRange = {};
     let dayHoursPerPersonEntire = {};
@@ -182,7 +180,7 @@ export async function fetchHoursPerPersonInDateRange(groupCode, dateRangeStart, 
  */
 export async function fetchHoursPerPerson(groupCode){
     let allMembers = await getNameOfAllTentersInGroup(groupCode);
-    let groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    let groupRef = firestore.collection('groups').doc(groupCode);
     let dayHoursPerPerson = {};
     let nightHoursPerPerson = {};
     await groupRef.get().then((group) => {
