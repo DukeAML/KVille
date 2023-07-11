@@ -24,3 +24,5 @@ const firebaseConfig = {
 
   export const firestore = firebase.firestore();
   export const auth = firebase.auth();
+  export const firebase_FieldValue = firebase.firestore.FieldValue;
+  export const EmailAuthProvider = firebase.auth.EmailAuthProvider;
