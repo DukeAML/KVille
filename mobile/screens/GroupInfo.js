@@ -20,9 +20,7 @@ import { useFonts, Merriweather_400Regular, Merriweather_700Bold } from '@expo-g
 import { Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import { OpenSans_400Regular } from '@expo-google-fonts/open-sans';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth, firebase_FieldValue } from '../../common/services/db/firebase_config';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
@@ -83,7 +81,7 @@ export default function GroupInfo({ navigation }) {
   //Function for gathering member information from database
   async function fetchGroupMembers(groupCode) {
     console.log('passed group code', groupCode);
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    const groupRef = firestore.collection('groups').doc(groupCode);
     let {dayHoursPerPerson, nightHoursPerPerson} = await fetchHoursPerPerson(groupCode);
 
     const getDataFromDoc = (doc) => {
@@ -99,14 +97,14 @@ export default function GroupInfo({ navigation }) {
       }
     }
 
-    const memberRef = firebase.firestore().collection('groups').doc(groupCode).collection('members');
+    const memberRef = firestore.collection('groups').doc(groupCode).collection('members');
     let data = [{}];
     await memberRef
       .where('inTent', '==', true)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (doc.id == firebase.auth().currentUser.uid) {
+          if (doc.id == auth.currentUser.uid) {
             data[0] = getDataFromDoc(doc);
           } else {
             data.push(getDataFromDoc(doc));
@@ -122,7 +120,7 @@ export default function GroupInfo({ navigation }) {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (doc.id == firebase.auth().currentUser.uid) {
+          if (doc.id == auth.currentUser.uid) {
             data[0] = getDataFromDoc(doc);
           } else {
             data.push(getDataFromDoc(doc));
@@ -154,8 +152,7 @@ export default function GroupInfo({ navigation }) {
   //Function for removing a member from group in firebase
   async function removeMember(groupCode) {
     console.log('current member being deleted', currMember.current.id);
-    await firebase
-      .firestore()
+    await firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
@@ -167,12 +164,11 @@ export default function GroupInfo({ navigation }) {
       .catch((error) => {
         console.error('Error removing member: ', error);
       });
-    firebase
-      .firestore()
+    firestore
       .collection('users')
       .doc(currMember.current.id)
       .update({
-        groupCode: firebase.firestore.FieldValue.arrayRemove({ groupCode: groupCode, groupName: groupName }),
+        groupCode: firebase_FieldValue.arrayRemove({ groupCode: groupCode, groupName: groupName }),
       })
       .catch((error) => console.error(error));
     toggleModal();
@@ -194,8 +190,7 @@ export default function GroupInfo({ navigation }) {
 
   function setGroupRole(options) {
     const { groupRole, groupCode } = options;
-    firebase
-      .firestore()
+    firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
@@ -303,7 +298,7 @@ export default function GroupInfo({ navigation }) {
         isVisible={isModalVisible}
         onBackdropPress={() => setModalVisible(false)}
         onSwipeComplete={toggleModal}
-        height={groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? 250 : 190}
+        height={groupRole == 'Creator' && currMember.current.id != auth.currentUser.uid ? 250 : 190}
         userStyle={'light'}
       >
         <View style={styles(theme).popUpHeaderView}>
@@ -319,7 +314,7 @@ export default function GroupInfo({ navigation }) {
         <View style={{ height: '70%', width: '94%', justifyContent: 'space-between' }}>
           <View
             style={
-              groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid
+              groupRole == 'Creator' && currMember.current.id != auth.currentUser.uid
                 ? { height: '65%' }
                 : { height: '100%' }
             }
@@ -333,7 +328,7 @@ export default function GroupInfo({ navigation }) {
             </View>
             <Divider />
 
-            {groupRole == 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+            {groupRole == 'Creator' && currMember.current.id != auth.currentUser.uid ? (
               <TouchableOpacity
                 style={[styles(theme).popUpHalfBody, { justifyContent: 'space-between' }]}
                 onPress={() => {
@@ -354,7 +349,7 @@ export default function GroupInfo({ navigation }) {
             )}
           </View>
 
-          {groupRole === 'Creator' && currMember.current.id != firebase.auth().currentUser.uid ? (
+          {groupRole === 'Creator' && currMember.current.id != auth.currentUser.uid ? (
             <View style={{ width: '100%', height: '35%', justifyContent: 'center' }}>
               <TouchableOpacity onPress={toggleConfirmation} style={styles(theme).removeBtn}>
                 <Icon name='trash-can' color={theme.error} size={30} style={{ marginRight: 15 }} />

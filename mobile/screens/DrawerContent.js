@@ -8,8 +8,8 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth } from '../../common/services/db/firebase_config';
+
 
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { reset } from '../redux/reducers/userSlice';
@@ -35,12 +35,11 @@ export default memo(function DrawerContent(props) {
     });
   };
   function updateTentStatus(groupCode, status) {
-    return firebase
-      .firestore()
+    return firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .update({
         inTent: status,
       });
@@ -59,12 +58,11 @@ export default memo(function DrawerContent(props) {
       let mounted = true;
       console.log('useFocusEffect triggered');
       if (mounted && groupCode != '' && groupCode != null) {
-        firebase
-          .firestore()
+        firestore
           .collection('groups')
           .doc(groupCode)
           .collection('members')
-          .doc(firebase.auth().currentUser.uid)
+          .doc(auth.currentUser.uid)
           .get()
           .then((doc) => {
             if (mounted && doc.exists) {
@@ -95,7 +93,7 @@ export default memo(function DrawerContent(props) {
   async function onLogout() {
     toggleConfirmation();
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
-    await firebase.auth().signOut();
+    await auth.signOut();
     dispatch(reset());
   }
 

@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as WebBrowser from 'expo-web-browser';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth } from '../../../common/services/db/firebase_config';
 
 import { useTheme } from '../../context/ThemeProvider';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
@@ -22,7 +21,7 @@ export default function AccountSettings({ navigation }) {
   async function onLogout() {
     toggleConfirmation();
     await AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
-    await firebase.auth().signOut();
+    await auth.signOut();
     dispatch(reset());
   }
 

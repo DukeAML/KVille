@@ -12,9 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore } from '../../../common/services/db/firebase_config';
 
 import { useTheme } from '../../context/ThemeProvider';
 import { toggleSnackBar, setSnackMessage } from '../../redux/reducers/snackbarSlice';
@@ -50,21 +48,18 @@ export default function Register(props) {
       dispatch(toggleSnackBar());
       return;
     }
-    firebase
-      .firestore()
+    firestore
       .collection('users')
       .where('username', '==', username)
       .get()
       .then((snapshot) => {
         if (snapshot.empty) {
-          firebase
-            .auth()
+          auth
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
-              firebase
-                .firestore()
+              firestore
                 .collection('users')
-                .doc(firebase.auth().currentUser.uid)
+                .doc(auth.currentUser.uid)
                 .set({
                   email,
                   username,

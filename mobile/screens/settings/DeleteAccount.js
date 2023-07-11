@@ -12,8 +12,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth, EmailAuthProvider } from '../../../common/services/db/firebase_config';
 
 import { useTheme } from '../../context/ThemeProvider';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
@@ -37,30 +36,28 @@ export default function DeleteAccount({ navigation }) {
     setConfirmationVisible(!isConfirmationVisible);
   }
 
-  const user = firebase.auth().currentUser;
+  const user = auth.currentUser;
 
   async function deleteUser() {
-     if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+     if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
        dispatch(setSnackMessage('This is a demo account'));
        dispatch(toggleSnackBar());
        return;
      }
     if (groups.length == 0) {
       console.log(password);
-      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
+      const credentials = EmailAuthProvider.credential(user.email, password);
       await user
         .reauthenticateWithCredential(credentials)
         .then(async () => {
           AsyncStorage.multiRemove(['USER_EMAIL', 'USER_PASSWORD', PERSISTENCE_KEY]);
 
-          await firebase
-            .firestore()
+          await firestore
             .collection('users')
-            .doc(firebase.auth().currentUser.uid)
+            .doc(auth.currentUser.uid)
             .delete()
             .catch((error) => console.error(error));
-          await firebase
-            .auth()
+          await auth
             .currentUser.delete()
             .catch((error) => console.error(error));
 

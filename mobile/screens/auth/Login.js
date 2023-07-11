@@ -15,8 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth } from '../../../common/services/db/firebase_config';
 
 import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 import { useTheme } from '../../context/ThemeProvider';
@@ -40,8 +39,7 @@ export default function Login(props) {
       if (oldEmail && oldPassword) {
         console.log('oldEmail', oldEmail);
         console.log('oldPassword', oldPassword);
-        firebase
-          .auth()
+        auth
           .signInWithEmailAndPassword(oldEmail, oldPassword)
           .then(() => {
             console.log('login successful');
@@ -61,8 +59,7 @@ export default function Login(props) {
   });
 
   function onSignUp() {
-    firebase
-      .auth()
+    auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         console.log('login successful');

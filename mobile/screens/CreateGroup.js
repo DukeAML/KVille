@@ -18,9 +18,7 @@ import { useQueryClient } from 'react-query';
 
 import { getDefaultGroupMemberData } from '../../common/services/db_services';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import {firestore, auth} from "../../common/services/db/firebase_config";
 
 import { generateGroupCode } from '../../common/GroupCode';
 import {
@@ -58,7 +56,7 @@ export default function CreateGroup({ navigation }) {
 
   const groupRole = 'Creator';
 
-  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
+  const userRef = firestore.collection('users').doc(auth.currentUser.uid);
   let groupRef;
 
   const userName = useSelector((state) => state.user.currentUser.username);
@@ -93,7 +91,7 @@ export default function CreateGroup({ navigation }) {
 
   //Create group function
   async function onCreateGroup() {
-    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+    if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
       dispatch(setSnackMessage('This is a demo account'));
       dispatch(toggleSnackBar());
       return;
@@ -113,7 +111,7 @@ export default function CreateGroup({ navigation }) {
       dispatch(setSnackMessage('Enter a nickname'));
       return;
     }
-    groupRef = firebase.firestore().collection('groups').doc(group.groupCode);
+    groupRef = firestore.collection('groups').doc(group.groupCode);
     //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
     let defaultSchedLength = 
     groupRef.set({
@@ -126,7 +124,7 @@ export default function CreateGroup({ navigation }) {
     });
     //adds current user to collection of members in the group
     let {availability, availabilityStartDate} = getDefaultGroupMemberData(group.userName, group.tentType, groupRole);
-    groupRef.collection('members').doc(firebase.auth().currentUser.uid).set({
+    groupRef.collection('members').doc(auth.currentUser.uid).set({
       groupRole: groupRole,
       name: group.userName,
       inTent: false,
@@ -159,7 +157,7 @@ export default function CreateGroup({ navigation }) {
     });
     
     
-    queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+    queryClient.invalidateQueries(['groups', auth.currentUser.uid]);
 
     navigation.navigate('GroupInfo', {
       groupCode: group.groupCode,

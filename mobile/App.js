@@ -12,9 +12,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
 
 import { firestore, auth } from '../common/services/db/firebase_config';
 

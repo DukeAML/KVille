@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth, EmailAuthProvider } from '../../../common/services/db/firebase_config';
 
 import { useTheme } from '../../context/ThemeProvider';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,21 +31,20 @@ export default function ChangePassword({ navigation }) {
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  const user = firebase.auth().currentUser;
+  const user = auth.currentUser;
 
   async function updatePassword() {
-     if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+     if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
        dispatch(setSnackMessage('This is a demo account'));
        dispatch(toggleSnackBar());
        return;
      }
     if (newPassword == confirmPassword) {
-      const credentials = firebase.auth.EmailAuthProvider.credential(user.email, currPassword);
+      const credentials = EmailAuthProvider.credential(user.email, currPassword);
       await user
         .reauthenticateWithCredential(credentials)
         .then(() => {
-          firebase
-            .auth()
+          auth
             .currentUser.updatePassword(newPassword)
             .then(() => {
               dispatch(setSnackMessage('Saved New Password'));

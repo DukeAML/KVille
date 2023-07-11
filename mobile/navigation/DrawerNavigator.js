@@ -10,9 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth } from '../../common/services/db/firebase_config';
 
 import StackNavigator from './StackNavigator';
 import HomeScreen from '../screens/Home';
@@ -111,10 +109,9 @@ export default function NavigationStack() {
   useEffect(() => {
     let mounted = true;
 
-    firebase
-      .firestore()
+    firestore
       .collection('users')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .get()
       .then((snapshot) => {
         if (mounted && snapshot.exists) {

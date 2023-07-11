@@ -20,9 +20,7 @@ import CountDown from 'react-native-countdown-component';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Path } from 'react-native-svg';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth } from '../../common/services/db/firebase_config';
 
 import DukeBasketballLogo from '../assets/DukeBasketballLogo.png';
 import { setGroupCode, setGroupName, setUserName, setTentType, setGroupRole, reset, resetCurrGroup } from '../redux/reducers/userSlice';
@@ -58,7 +56,7 @@ export default function Home({ navigation }) {
   );
 
   const { isLoading, isError, error, refetch, data } = useQuery(
-    ['groups', firebase.auth().currentUser.uid],
+    ['groups', auth.currentUser.uid],
     fetchGroups,
     { initialData: [], onSuccess: () => setIsReady(true) }
   );
@@ -68,10 +66,9 @@ export default function Home({ navigation }) {
   async function fetchGroups() {
     let data;
 
-    await firebase
-      .firestore()
+    await firestore
       .collection('users')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .get()
       .then((doc) => {
         let currGroup = doc.data().groupCode;
@@ -91,8 +88,7 @@ export default function Home({ navigation }) {
   async function updateRedux(groupName, groupCode) {
     setIsDisabled(true);
     let groupRole;
-    await firebase
-      .firestore()
+    await firestore
       .collection('groups')
       .doc(groupCode)
       .get()
@@ -103,12 +99,11 @@ export default function Home({ navigation }) {
       .catch((e) => {
         console.error(e);
       });
-    await firebase
-      .firestore()
+    await firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .get()
       .then((memDoc) => {
         groupRole = memDoc.data().groupRole;
@@ -274,7 +269,7 @@ export default function Home({ navigation }) {
         )}
       </SafeAreaView>
 
-      {firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? <Text style={{textAlign: 'center'}}>**This is a demo account and is only meant for viewing</Text> : null}
+      {auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? <Text style={{textAlign: 'center'}}>**This is a demo account and is only meant for viewing</Text> : null}
 
       {/* <View
           style={{

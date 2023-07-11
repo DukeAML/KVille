@@ -16,9 +16,7 @@ import { useQueryClient } from 'react-query';
 
 import { getDefaultGroupMemberData } from '../../common/services/db_services';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import {firestore, auth, firebase_FieldValue} from '../../common/services/db/firebase_config';
 
 import {
   setCurrentUser,
@@ -70,7 +68,7 @@ export default function JoinGroup({ navigation }) {
   );
 
   async function onJoinGroup(navigation) {
-    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+    if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
       dispatch(setSnackMessage('This is a demo account'));
       dispatch(toggleSnackBar());
       return;
@@ -86,8 +84,8 @@ export default function JoinGroup({ navigation }) {
       dispatch(toggleSnackBar());
       return;
     }
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
-    const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
+    const groupRef = firestore.collection('groups').doc(groupCode);
+    const userRef = firestore.collection('users').doc(auth.currentUser.uid);
     let tentType = "Black"; //set later
     //checks to make sure entered group code exists
     await groupRef.get().then(async (docSnapshot) => {
@@ -113,7 +111,7 @@ export default function JoinGroup({ navigation }) {
         }
         result = await groupRef
           .collection('members')
-          .doc(firebase.auth().currentUser.uid)
+          .doc(auth.currentUser.uid)
           .get()
           .then((doc) => {
             if (doc.exists) {
@@ -140,18 +138,18 @@ export default function JoinGroup({ navigation }) {
               dispatch(setGroupRole('Member'));
               //updates current user's info
               await userRef.update({
-                groupCode: firebase.firestore.FieldValue.arrayUnion({
+                groupCode: firebase_FieldValue.arrayUnion({
                   groupCode: groupCode,
                   groupName: docSnapshot.data().name,
                 }),
               });
               //adds current user to member list
-              await groupRef.collection('members').doc(firebase.auth().currentUser.uid).set(getDefaultGroupMemberData(name, tentType, 'Member'));
+              await groupRef.collection('members').doc(auth.currentUser.uid).set(getDefaultGroupMemberData(name, tentType, 'Member'));
               await userRef.get().then((snapshot) => {
                 dispatch(setCurrentUser(snapshot.data()));
               });
 
-              queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+              queryClient.invalidateQueries(['groups', auth.currentUser.uid]);
               navigation.navigate('GroupInfo', {
                 groupCode: groupCode,
                 groupName: groupName,

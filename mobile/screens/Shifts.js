@@ -4,9 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth } from '../../common/services/db/firebase_config';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
@@ -48,7 +46,7 @@ export default function Shifts({ navigation }) {
   const shifts = useRef();
 
   const { isLoading, isError, error, data, refetch } = useQuery(
-    ['shifts', firebase.auth().currentUser.uid, groupCode],
+    ['shifts', auth.currentUser.uid, groupCode],
     () => fetchCurrentUserShifts(groupCode),
     { initialData: [], onSuccess: () => setIsReady(true) }
   );
@@ -56,12 +54,11 @@ export default function Shifts({ navigation }) {
 
   async function fetchCurrentUserShifts(groupCode) {
     //let shifts;
-    await firebase
-      .firestore()
+    await firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .get()
       .then((doc) => {
         shifts.current = doc.data().shifts;
@@ -131,7 +128,7 @@ export default function Shifts({ navigation }) {
       },
       onSuccess: (data) => {
         //console.log('new shift', newParsedShifts.current);
-        queryClient.setQueryData(['shifts', firebase.auth().currentUser.uid, groupCode], data);
+        queryClient.setQueryData(['shifts', auth.currentUser.uid, groupCode], data);
       },
     });
   }
@@ -143,12 +140,11 @@ export default function Shifts({ navigation }) {
     for (let i = item.start; i <= item.end; i++) {
       newShifts[i] = false;
     }
-    firebase
-      .firestore()
+    firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .update({
         shifts: newShifts,
       });

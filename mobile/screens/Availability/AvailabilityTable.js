@@ -1,8 +1,6 @@
 import React, { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
 import { View, Text, StyleSheet, PanResponder, Dimensions} from 'react-native';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { auth } from '../../../common/services/db/firebase_config';
 
 import { AvailabilityCell, cellStyles } from './AvailabilityCell';
 import { TimeColumn } from '../../components/TimeColumn';
@@ -184,7 +182,7 @@ const AvailabilityTable = forwardRef((props, ref) => {
       onPanResponderRelease: (evt, gestureState) => {
         startRowIndexRef.current = null;
         previousRowIndexRef.current = null;
-        setDBAvailability(props.groupCode, firebase.auth().currentUser.uid, availabilityRef.current);
+        setDBAvailability(props.groupCode, auth.currentUser.uid, availabilityRef.current);
       }
     })
   ).current;

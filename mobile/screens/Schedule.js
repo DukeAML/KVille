@@ -27,9 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createGroupSchedule } from '../../common/CreateGroupSchedule';
 import { fetchGroupSchedule } from '../../common/services/db_services';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth } from '../../common/services/db/firebase_config';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
@@ -111,7 +109,7 @@ export default function Schedule({ navigation }) {
 
 
   const { isLoading, isError, error, refetch, data: {groupSchedule, groupScheduleStartDate} } = useQuery(
-    ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+    ['groupSchedule', auth.currentUser.uid, groupCode],
     () => fetchGroupSchedule(groupCode),
     {
         initialData: {groupSchedule: [], groupScheduleStartDate: Helpers.getTentingStartDate(tentType)},
@@ -138,7 +136,7 @@ export default function Schedule({ navigation }) {
       onSuccess: () => {
         if (editSuccessful.current) {
           queryClient.setQueryData(
-            ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+            ['groupSchedule', auth.currentUser.uid, groupCode],
             {groupSchedule: newSchedule.current, groupScheduleStartDate}
           );
           queryClient.invalidateQueries(['group', groupCode]);
@@ -163,7 +161,7 @@ export default function Schedule({ navigation }) {
   //function for editing the schedule based on old member and new member to replace
   async function editCell(options) {
     const { index, oldMember, newMember, groupCode } = options;
-    const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+    const groupRef = firestore.collection('groups').doc(groupCode);
 
     let currSchedule = groupSchedule;
     //Must check if the member already exists in the array
@@ -196,10 +194,10 @@ export default function Schedule({ navigation }) {
       },
       onSuccess: () => {
         queryClient.setQueryData(
-          ['groupSchedule', firebase.auth().currentUser.uid, groupCode],
+          ['groupSchedule', auth.currentUser.uid, groupCode],
           {groupSchedule: newSchedule.current, groupScheduleStartDate}
         );
-        queryClient.invalidateQueries(['groupSchedule', firebase.auth().currentUser.uid, groupCode]);
+        queryClient.invalidateQueries(['groupSchedule', auth.currentUser.uid, groupCode]);
         queryClient.invalidateQueries(['group', groupCode]);
       },
     });
@@ -222,8 +220,7 @@ export default function Schedule({ navigation }) {
           newFullSchedule[i + startIndex] = newScheduleInRange[i];
         }
         newSchedule.current = newFullSchedule; //sussy code from the original
-        firebase
-          .firestore()
+        firestore
           .collection('groups')
           .doc(groupCode)
           .update({
@@ -598,7 +595,7 @@ export default function Schedule({ navigation }) {
             onPress={() => {
               if (newMember == 'Select a Member') {
                 toggleModal();
-              } else if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+              } else if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
                 toggleModal();
                 dispatch(setSnackMessage('This is a demo account'));
                 dispatch(toggleSnackBar());

@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useQuery } from 'react-query';
 import { View, Text, StyleSheet, PanResponder, Dimensions, TouchableOpacity, Touchable } from 'react-native';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+
+import { auth } from '../../../common/services/db/firebase_config';
 import { useSelector} from 'react-redux';
 import { DateRangeChanger } from '../../components/DateRangeChanger/DateRangeChanger';
 import { LoadingIndicator } from '../../components/LoadingIndicator';
@@ -51,7 +50,7 @@ const AvailabilityScreen = () => {
     let [startDate, setStartDate] = useState(getInitialStartDate(tentType));
     let [endDate, setEndDate] = useState(getInitialEndDate(tentType));
     const tableRef = useRef(null);
-    let userId = firebase.auth().currentUser.uid;
+    let userId = auth.currentUser.uid;
     const { isLoading, data: availability, refetch: refetchAvailability } = useQuery(['getAvailability', groupCode, userId], () => fetchAvailability(groupCode, userId));
 
     if (isLoading){

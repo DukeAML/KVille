@@ -2,8 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { firestore, auth } from '../../../common/services/db/firebase_config';
 
 import { useTheme } from '../../context/ThemeProvider';
 
@@ -12,8 +11,7 @@ export default function ForgotPassword({ navigation }) {
   const { theme } = useTheme();
 
   const passwordReset = async () => {
-    await firebase
-      .auth()
+    await auth
       .sendPasswordResetEmail(email)
       .then(() => {
         console.log('Password reset email sent');

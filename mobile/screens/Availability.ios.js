@@ -17,9 +17,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import { firestore, auth } from '../../common/services/db/firebase_config';
 
 import { useTheme } from '../context/ThemeProvider';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
@@ -73,7 +71,7 @@ export default function Availability({ navigation }) {
   });
 
   const { isLoading, isError, error, data, refetch } = useQuery(
-    ['availability', firebase.auth().currentUser.uid, groupCode],
+    ['availability', auth.currentUser.uid, groupCode],
     () => fetchAvailability(groupCode)
   );
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
@@ -81,12 +79,11 @@ export default function Availability({ navigation }) {
   async function fetchAvailability(groupCode) {
     let availabilityUI = new Array(336);
     availabilityUI.fill([true, 0]);
-    await firebase
-      .firestore()
+    await firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid)
+      .doc(auth.currentUser.uid)
       .get()
       .then((doc) => {
         availability = doc.data().availability;
@@ -122,7 +119,7 @@ export default function Availability({ navigation }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(['availability', firebase.auth().currentUser.uid, groupCode]);
+        queryClient.invalidateQueries(['availability', auth.currentUser.uid, groupCode]);
       },
     });
   };
@@ -130,12 +127,11 @@ export default function Availability({ navigation }) {
   const postAvailability = useUpdateAvailability(groupCode);
 
   const updateAvailability = (groupCode) => {
-    const memberRef = firebase
-      .firestore()
+    const memberRef = firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid);
+      .doc(auth.currentUser.uid);
     let startIdx = parseInt(selectedDay) * 48 + Math.floor(startTime.getMinutes() / 30) + startTime.getHours() * 2;
     let endIdx = parseInt(selectedDay) * 48 + Math.floor(endTime.getMinutes() / 30) + endTime.getHours() * 2;
     console.log(startIdx);
@@ -164,7 +160,7 @@ export default function Availability({ navigation }) {
         console.error(error);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(['availability', firebase.auth().currentUser.uid, groupCode]);
+        queryClient.invalidateQueries(['availability', auth.currentUser.uid, groupCode]);
       },
     });
   };
@@ -172,12 +168,11 @@ export default function Availability({ navigation }) {
   const deleteAvailability = useDeleteAvailability(groupCode);
 
   const deleteCell = (groupCode) => {
-    const memberRef = firebase
-      .firestore()
+    const memberRef = firestore
       .collection('groups')
       .doc(groupCode)
       .collection('members')
-      .doc(firebase.auth().currentUser.uid);
+      .doc(auth.currentUser.uid);
     console.log('currIndex', currIndex);
     let startIdx = currIndex - data[currIndex][1];
     console.log('startIdx', startIdx);
@@ -317,7 +312,7 @@ export default function Availability({ navigation }) {
       >
         <TouchableOpacity
           onPress={() => {
-            if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+            if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
               toggleDeleteModal();
               dispatch(setSnackMessage('This is a demo account'));
               dispatch(toggleSnackBar());
@@ -359,7 +354,7 @@ export default function Availability({ navigation }) {
           <TouchableOpacity
             style={[styles(theme).addBtn, { alignItems: 'flex-end' }]}
             onPress={() => {
-              if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+              if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
                 toggleModal();
                 dispatch(setSnackMessage('This is a demo account'));
                 dispatch(toggleSnackBar());

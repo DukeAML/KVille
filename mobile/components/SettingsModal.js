@@ -7,9 +7,8 @@ import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+
+import { firestore, auth, firebase_FieldValue } from '../../common/services/db/firebase_config';
 
 import { setGroupName, setUserName, setTentType } from '../redux/reducers/userSlice';
 import { useTheme } from '../context/ThemeProvider';
@@ -25,7 +24,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const [isModalSnackVisible, setModalSnackVisible] = useState(false);
   const [modalSnackMessage, setModalSnackMessage] = useState('');
   const [isDisabled, setIsDisabled] = useState(
-    firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true : false
+    auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1' ? true : false
   );
   const [isCancelDisabled, setIsCancelDisabled] = useState(false);
   const [deleteGroupName, setDeleteGroupName] = useState('');
@@ -33,8 +32,8 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   const { theme } = useTheme();
   const queryClient = useQueryClient();
 
-  const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
-  const groupRef = firebase.firestore().collection('groups').doc(groupCode);
+  const userRef = firestore.collection('users').doc(auth.currentUser.uid);
+  const groupRef = firestore.collection('groups').doc(groupCode);
 
   const postSave = useOnSave(groupCode);
 
@@ -95,7 +94,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           toggleModalSnackBar();
           return;
         });
-      queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+      queryClient.invalidateQueries(['groups', auth.currentUser.uid]);
       dispatch(setTentType(newTentType));
       dispatch(setGroupName(newGroupName));
     }
@@ -109,7 +108,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           if (snapshot.empty) {
             groupRef
               .collection('members')
-              .doc(firebase.auth().currentUser.uid)
+              .doc(auth.currentUser.uid)
               .update({
                 name: newUserName,
               })
@@ -147,7 +146,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
   }
 
   async function leaveGroup() {
-    if (firebase.auth().currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
+    if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
       dispatch(setSnackMessage('This is a demo account'));
       dispatch(toggleSnackBar());
       return;
@@ -159,12 +158,11 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           .get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-              firebase
-                .firestore()
+              firestore
                 .collection('users')
                 .doc(doc.id)
                 .update({
-                  groupCode: firebase.firestore.FieldValue.arrayRemove({
+                  groupCode: firebase_FieldValue.arrayRemove({
                     groupCode: groupCode,
                     groupName: groupName,
                   }),
@@ -191,14 +189,14 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
           });
       } else {
         await userRef.update({
-          groupCode: firebase.firestore.FieldValue.arrayRemove({
+          groupCode: firebase_FieldValue.arrayRemove({
             groupCode: groupCode,
             groupName: groupName,
           }),
         });
         groupRef
           .collection('members')
-          .doc(firebase.auth().currentUser.uid)
+          .doc(auth.currentUser.uid)
           .delete()
           .then(() => {
             console.log('Current user successfully removed from group!');
@@ -207,7 +205,7 @@ export default function SettingsModal({ params, navigation, toggleModal }) {
             console.error('Error removing user: ', error);
           });
       }
-      queryClient.invalidateQueries(['groups', firebase.auth().currentUser.uid]);
+      queryClient.invalidateQueries(['groups', auth.currentUser.uid]);
       navigation.navigate('Home');
     } else {
       dispatch(setSnackMessage('Group Name is incorrect'));
