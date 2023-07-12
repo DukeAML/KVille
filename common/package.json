@@ -1,0 +1,11 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "code shared between web and mobile",
+  "main": "index.js",
+  "author": "Keith Cressman",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^10.0.0"
+  }
+}

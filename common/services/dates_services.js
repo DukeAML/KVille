@@ -20,7 +20,7 @@ const getNumSlotsBetweenDates = (startDate, endDate) => {
 /**
  * 
  * @param {Date} origDate 
- * @param {Date} shiftsAdder 
+ * @param {int} shiftsAdder 
  * @returns {Date} a Date corresponding to origDate + 30 minutes * shiftsAdder
  */
 const getDatePlusNumShifts = (origDate, shiftsAdder) => {
