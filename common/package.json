@@ -6,6 +6,7 @@
   "author": "Keith Cressman",
   "license": "MIT",
   "dependencies": {
+    "encoding": "^0.1.13",
     "firebase": "^10.0.0"
   }
 }

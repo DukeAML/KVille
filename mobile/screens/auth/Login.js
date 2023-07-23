@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { firestore, auth } from '../../../common/services/db/firebase_config';
+import { auth } from '../../../common/services/db/firebase_config';
 
 import DukeBasketballLogo from '../../assets/DukeBasketballLogoSpace.png';
 import { useTheme } from '../../context/ThemeProvider';
@@ -58,6 +58,7 @@ export default function Login(props) {
     return () => (mounted = false);
   });
 
+  //TODO: this has been factored out to common folder
   function onSignUp() {
     auth
       .signInWithEmailAndPassword(email, password)

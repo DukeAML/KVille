@@ -95,6 +95,7 @@ const AvailabilityTable = forwardRef((props, ref) => {
     return rowColToIndex(row, col);
   }
 
+  //refactor this out to common folder
   let rowColToIndex = (row, col) => {
 
     let indexOffset = getNumSlotsBetweenDates(availabilityRef.current[0].startDate, displayStartDateRef.current);

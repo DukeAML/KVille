@@ -20,6 +20,7 @@ const firebaseConfig = {
   if (firebase.apps.length === 0) {
     console.log("trying to initialize fb");
     firebase.initializeApp(firebaseConfig);
+    //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
   }
 
   export const firestore = firebase.firestore();

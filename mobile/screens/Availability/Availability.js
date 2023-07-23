@@ -13,6 +13,7 @@ import { DropdownHeaderBar } from '../../components/DropdownHeaderBar/DropdownHe
 import { useTheme } from '../../context/ThemeProvider';
 const Helpers = require("../../../common/Scheduling/helpers");
 
+//TODO: this has been refactored out to common folder
 const getInitialStartDate = (tentType) => {
     //TODO: use context to get tentType and specify the start date more closely
     //use current day, if in tenting range. Else, use first day of tenting
@@ -29,6 +30,7 @@ const getInitialStartDate = (tentType) => {
 
 }
 
+//TODO: this has been refactored out to common folder
 const getInitialEndDate = (tentType) => {
     let startDate = getInitialStartDate(tentType);
     let tentingEndDate = Helpers.getTentingEndDate();

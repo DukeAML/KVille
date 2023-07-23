@@ -1,9 +1,9 @@
-import { firestore } from "./db/firebase_config";
+import { firestore } from "./firebase_config";
 
 import ScheduleAndStartDate from "../Scheduling/scheduleAndStartDate";
 
 import { useQuery } from 'react-query';
-import { getDateRoundedTo30MinSlot, getNumSlotsBetweenDates } from "./dates_services";
+import { getDateRoundedTo30MinSlot, getNumSlotsBetweenDates } from "../services/dates_services";
 const Helpers = require("../Scheduling/helpers");
 
 
