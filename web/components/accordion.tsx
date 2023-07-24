@@ -1,31 +1,32 @@
-import * as React from 'react';
+import React, {ReactNode} from 'react';
+
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 
+interface AccordionSummaryAndDetail{
+  summary : ReactNode;
+  detail : ReactNode;
+}
 
-export const KvilleAccordion: React.FC = () => {
+interface AccordionProps {
+  elements : AccordionSummaryAndDetail[];
+}
+
+
+export const KvilleAccordion: React.FC<AccordionProps> = (props:AccordionProps) => {
   return (
     <div>
-      <Accordion>
-        <AccordionSummary >
-          <Typography>Dropdown 1</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Content for Dropdown 1
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary>
-          <Typography>Dropdown 2</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Content for Dropdown 2
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+      {props.elements.map((element, index) => {
+        return (
+          <Accordion>
+            <AccordionSummary>
+              {element.summary}
+            </AccordionSummary>
+            <AccordionDetails>
+              {element.detail}
+            </AccordionDetails>
+          </Accordion>
+        )
+      })}
     </div>
   );
 }

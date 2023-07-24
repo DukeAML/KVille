@@ -28,14 +28,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-interface FormInputInterface {
+interface FormInputProps {
     title: String;
     submitText: String
     inputs: ReactNode[];
     handleSubmit:(event:React.FormEvent<HTMLFormElement>)=>void;
 }
 
-const KvilleForm: React.FC<FormInputInterface> = (props:FormInputInterface) => {
+const KvilleForm: React.FC<FormInputProps> = (props:FormInputProps) => {
   const classes = useStyles();
 
   return (

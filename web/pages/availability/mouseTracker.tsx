@@ -79,6 +79,8 @@ export class MouseTracker {
     this.startCol = col;
     this.previousRow = row;
     this.previousCol = col;
+    this.currentRow = row;
+    this.currentCol = col;
     this.mouseIsDown = true;
     this.valueChangedToOnDragStart = valueChangedToOnDragStart;
     this.changeAvailabilityAtRowCol(row, col, valueChangedToOnDragStart);
