@@ -1,4 +1,5 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useContext } from 'react';
+import { UserContext } from '@/context/userContext';
 import {
   Container,
   Typography,
@@ -7,7 +8,9 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-import { KvilleNavBar } from './navBar';
+
+import { LoggedInKvilleNavBar } from './navBars/loggedInNavBar';
+import { LoggedOutKvilleNavBar } from './navBars/loggedOutNavBar';
 
 const DEFAULT_TITLE = '';
 interface BasePageContainerProps {
@@ -15,7 +18,7 @@ interface BasePageContainerProps {
 };
 
 
-export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
+const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
   return (
     <Container component="main" maxWidth={false} >
       {props.children? props.children : <></>}
@@ -26,31 +29,21 @@ export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePa
 
 
 
-export const BasePageContainerWithNavBar: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
-    return (
-        <BasePageContainer>
-            <>
-                <KvilleNavBar/>
-                {props.children}
-            </>
-        </BasePageContainer>
-    );
-}
-
 interface BasePageContainerWithNavBarAndTitleProps {
   children: ReactNode;
   title: string;
 }
 
 export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWithNavBarAndTitleProps> = (props:BasePageContainerWithNavBarAndTitleProps) => {
+  const {isLoggedIn} = useContext(UserContext);
   return (
       <BasePageContainer>
-          <>
-              <KvilleNavBar/>
-              <Typography variant="h4" align="center">{props.title}</Typography>
-              {props.children}
+        
+            {isLoggedIn ? <LoggedInKvilleNavBar/> : <LoggedOutKvilleNavBar/>}
+            <Typography style={{marginBottom : 8, marginTop : 4}} variant="h4" align="center">{props.title}</Typography>
+            {props.children}
 
-          </>
+          
       </BasePageContainer>
   );
 }

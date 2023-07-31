@@ -1,14 +1,15 @@
 import { auth } from "./firebase_config";
+import * as Yup from 'yup';
 
 
 /**
  * @param {String} password
  * @param {String} email
  * @param {(id:String)=>void} onSuccess 
- * @param {(error:any)=>void} onFailure
+ * @param {(errorMessage:String)=>void} handleFailureMessageIfAny
  * @returns 
  */
-export function tryToLogin(email, password, onSuccess, onFailure=defaultLoginFailureHandler){
+export function tryToLogin(email, password, onSuccess, handleFailureMessageIfAny=defaultLoginFailureHandler){
     auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
@@ -16,24 +17,30 @@ export function tryToLogin(email, password, onSuccess, onFailure=defaultLoginFai
 
       })
       .catch((error) => {
-        onFailure(error);
+        handleFailureIfAny(error.message);
       });
 
 }
 
-const defaultLoginFailureHandler = (error) => {
-    console.log(error);
+const defaultLoginFailureHandler = (errorMessage) => {
+    console.log(errorMessage);
     let message = 'Login unsuccessful';
-    if (error.message.includes('The email address is badly formatted')) {
+    if (errorMessage.includes('The email address is badly formatted')) {
       message = 'Not a valid email';
     }
-    if (error.message.includes('There is no user record')) {
+    if (errorMessage.includes('There is no user record')) {
       message = 'Account does not exist';
     }
-    if (error.message.includes('The password is invalid')) {
+    if (errorMessage.includes('The password is invalid')) {
       message = 'Incorrect password';
     }
     
+    console.log(message);
     return;
   
 }
+
+export const loginValidationSchema = Yup.object({
+  email: Yup.string().email('Invalid email address').required('Required'),
+  password: Yup.string().required('Required'),
+});

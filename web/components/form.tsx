@@ -1,64 +1,74 @@
-import React, { useState, ReactNode, ComponentType } from 'react';
+// LoginForm.tsx
 
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  makeStyles,
-  Input,
-} from '@material-ui/core';
-
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { TextField, Typography } from '@mui/material';
+import {Button} from '@material-ui/core';
+import { Container } from '@material-ui/core';
 
 
 
-interface FormInputProps {
-    title: String;
-    submitText: String
-    inputs: ReactNode[];
-    handleSubmit:(event:React.FormEvent<HTMLFormElement>)=>void;
+
+
+interface KvilleFormProps<FormValuesInterface> {
+    handleSubmit : (values : FormValuesInterface ) => void;
+    initialValues : FormValuesInterface;
+    validationSchema : any;
+    textFields : TextFieldProps[];
+    errorMessage : string;
+    
+
 }
 
-const KvilleForm: React.FC<FormInputProps> = (props:FormInputProps) => {
-  const classes = useStyles();
+interface TextFieldProps {
+    name : string;
+    type : string;
+}
 
-  return (
+export const NO_ERROR_MESSAGE = "";
+
+
+
+export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps<any>) => {
+
+    return (
     
-      <div className={classes.container}>
-        <Typography component="h1" variant="h5">
-          {props.title}
-        </Typography>
-        <form className={classes.form} onSubmit={props.handleSubmit}>
-          {props.inputs}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            {props.submitText}
-          </Button>
-        </form>
-      </div>
-  
-  );
+        <Container maxWidth="sm">
+            <Formik
+            initialValues={props.initialValues}
+            validationSchema={props.validationSchema}
+            onSubmit={props.handleSubmit}
+            
+            >
+            {() => (
+                <Form>
+                    {props.textFields.map((fieldProps, index) => {
+                        return (
+                            <div key={index}>
+                                <Field
+                                as={TextField}
+                                type={fieldProps.type}
+                                label={fieldProps.name}
+                                name={fieldProps.name}
+                                variant="outlined"
+                                fullWidth
+                                required
+                                />
+                                <ErrorMessage name={fieldProps.name} component="div" className="error" />
+                            </div>
+                        );
+                    })}
+                    {props.errorMessage.length > 0 ? <div>{props.errorMessage}</div> : null}
+
+                    <Button type="submit" color="primary" variant='contained' >
+                        Submit
+                    </Button>
+                    
+                </Form>
+            )}
+            </Formik>
+        </Container>
+    
+    );
 };
 
-export default KvilleForm;

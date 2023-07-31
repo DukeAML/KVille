@@ -3,7 +3,7 @@ const phaseData = require("../data/phaseData.json");
 const Slot = require("./slot");
 const TenterSlot = require("./tenterSlot");
 const scheduleDates = require("../data/scheduleDates.json");
-const {getNumSlotsBetweenDates} = require("../services/dates_services");
+const {getNumSlotsBetweenDates} = require("../calendarAndDates/dates_services");
 class Helpers {
 
 

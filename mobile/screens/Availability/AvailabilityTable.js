@@ -5,7 +5,7 @@ import { auth } from '../../../common/services/db/firebase_config';
 import { AvailabilityCell, cellStyles } from './AvailabilityCell';
 import { TimeColumn } from '../../components/TimeColumn';
 import { setDBAvailability } from '../../../common/services/db_services';
-import { getNumDaysBetweenDates, getNumSlotsBetweenDates, getDayAbbreviation } from '../../../common/services/dates_services';
+import { getNumDaysBetweenDates, getNumSlotsBetweenDates, getDayAbbreviation } from '../../../common/calendarAndDates/dates_services';
 
 
 

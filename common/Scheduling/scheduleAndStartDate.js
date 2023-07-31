@@ -1,5 +1,5 @@
 const Slot = require("./slot");
-const { getDatePlusNumShifts, getNumSlotsBetweenDates } = require("../services/dates_services");
+const { getDatePlusNumShifts, getNumSlotsBetweenDates } = require("../calendarAndDates/dates_services");
 class ScheduleAndStartDate{
 
 

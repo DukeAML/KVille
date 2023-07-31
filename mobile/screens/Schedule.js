@@ -253,6 +253,7 @@ export default function Schedule({ navigation }) {
     setFabState({ open });
   }
 
+  //TODO: refactor out to common folder
   const getDefaultDisplayDateRangeStartDate = () => {
     let currentDate = getCurrentDate();
     if (currentDate < groupScheduleStartDate){
@@ -264,6 +265,7 @@ export default function Schedule({ navigation }) {
     }
   }
 
+  //TODO: refactor out to common folder
   const getDefaultDisplayDateRangeEndDate = () => {
     let correspondingStartDate = getDefaultDisplayDateRangeStartDate();
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);

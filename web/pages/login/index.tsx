@@ -1,36 +1,40 @@
-import React, { useState, useContext } from 'react';
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  makeStyles,
-} from '@material-ui/core';
+// LoginForm.tsx
 
-
-import {tryToLogin} from "../../../common/db/login";
-import {useRouter} from 'next/router';
-import KvilleForm from "../../components/form";
-import { auth } from '@/../common/db/firebase_config';
-import {BasePageContainer} from '@/components/basePageContainer';
+import React, {useState} from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { loginValidationSchema } from '../../../common/db/login';
+import { TextField, Typography } from '@mui/material';
+import {Button} from '@material-ui/core';
+import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
+import { Container } from '@material-ui/core';
+import { KvilleButton } from '@/components/button';
+import { useContext } from 'react';
 import { UserContext } from '@/context/userContext';
+import {useRouter} from 'next/router';
+import { tryToLogin } from '../../../common/db/login';
+import { KvilleForm } from '@/components/form';
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+const initialValues: LoginFormValues = {
+  email: '',
+  password: '',
+};
 
 
-const LoginPage: React.FC = () => {
+
+
+const LoginForm: React.FC = () => {
+
   const {setIsLoggedIn, setUserID}= useContext(UserContext)
-  console.log(auth.currentUser?.email);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const router = useRouter();
-  
-
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  };
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+  const handleSubmit = (values: LoginFormValues) => {
+    // Handle login logic here (e.g., API call to authenticate the user)
+    tryToLogin(values.email, values.password, onSuccessfulLogin, (message : string) => {setErrorMessage(message)});
   };
 
   const onSuccessfulLogin = (id: string) => {
@@ -39,49 +43,19 @@ const LoginPage: React.FC = () => {
     setUserID(id);
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("trying to log in");
-    tryToLogin(email, password, onSuccessfulLogin);
-  };
-
-  const formInputs = [
-    <TextField
-      variant="outlined"
-      margin="normal"
-      required
-      fullWidth
-      id="email"
-      label="Email Address"
-      name="email"
-      autoComplete="email"
-      value={email}
-      onChange={handleEmailChange}
-      key={"loginTextField1"}
-    />, 
-    <TextField
-      variant="outlined"
-      margin="normal"
-      required
-      fullWidth
-      name="password"
-      label="Password"
-      type="password"
-      id="password"
-      autoComplete="current-password"
-      value={password}
-      onChange={handlePasswordChange}
-      key={"loginTextField2"}
-    />
-  ];
-
   return (
-    <BasePageContainer>
-      <Container maxWidth="sm">
-        <KvilleForm title="Login" submitText={"Sign in"} inputs={formInputs} handleSubmit={handleSubmit}></KvilleForm>
-      </Container>
-    </BasePageContainer>
+    <BasePageContainerWithNavBarAndTitle title='Login'>
+        <KvilleForm 
+            handleSubmit={handleSubmit} 
+            initialValues={initialValues} 
+            validationSchema={loginValidationSchema} 
+            textFields={[{name : "email", type : "email"}, {name : "password", type : "password"}]}
+            errorMessage={errorMessage}
+            />
+
+        
+    </BasePageContainerWithNavBarAndTitle>
   );
 };
 
-export default LoginPage;
+export default LoginForm;

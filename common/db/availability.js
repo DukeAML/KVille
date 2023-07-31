@@ -1,6 +1,6 @@
 import { firestore } from "./firebase_config";
 
-import { getDateRoundedTo30MinSlot} from "../services/dates_services";
+import { getDateRoundedTo30MinSlot} from "../calendarAndDates/dates_services";
 
 
 export class AvailabilitySlot {

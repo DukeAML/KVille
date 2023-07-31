@@ -48,6 +48,7 @@ export default function Register(props) {
       dispatch(toggleSnackBar());
       return;
     }
+    //next 30 lines have been extracted out to common folder
     firestore
       .collection('users')
       .where('username', '==', username)
