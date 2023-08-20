@@ -1,4 +1,4 @@
-import {KvilleAccordion} from "@/components/accordion";
+import {KvilleAccordion} from "@/components/utils/accordion";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
 import { UserContext } from "@/context/userContext";
 import { Container, Typography } from "@material-ui/core";
@@ -7,11 +7,12 @@ import { useQuery } from "react-query";
 import {fetchGroups, GroupDescription} from "../../../common/db/groupMembership";
 import { GroupDisplay } from "./groupDisplay";
 
-
 export default function GroupPage() {
+   
 
-    const {userID, groupCode, setGroupCode, isLoggedIn} = useContext(UserContext);
-    const {data: groups, isLoading, isError} = useQuery<GroupDescription[], Error>('groups', fetchGroups);
+    const {userID, isLoggedIn} = useContext(UserContext);
+    console.log("rendering groups home page and my userID is " );
+    const {data: groups, isLoading, isError} = useQuery<GroupDescription[], Error>(['fetchAllGroups'], () => fetchGroups(userID));
     
 
     return (

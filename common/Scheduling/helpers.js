@@ -1,10 +1,13 @@
-const nightData = require("../data/nightData.json")
-const phaseData = require("../data/phaseData.json");
-const Slot = require("./slot");
-const TenterSlot = require("./tenterSlot");
-const scheduleDates = require("../data/scheduleDates.json");
-const {getNumSlotsBetweenDates} = require("../calendarAndDates/dates_services");
-class Helpers {
+
+import nightData from "../data/nightData.json" assert {type : "json"};
+import phaseData from "../data/phaseData.json" assert {type : "json"};
+import scheduleDates from "../data/scheduleDates.json" assert {type : "json"};
+import {getNumSlotsBetweenDates} from "../calendarAndDates/dates_services.js";
+import { Slot } from "./slot.js";
+import { TenterSlot } from "./tenterSlot.js";
+
+
+export class Helpers {
 
 
 
@@ -190,5 +193,5 @@ class Helpers {
   
   }
 
-module.exports = Helpers;
+//module.exports = Helpers;
   

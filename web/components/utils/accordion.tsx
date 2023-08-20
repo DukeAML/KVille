@@ -17,7 +17,7 @@ export const KvilleAccordion: React.FC<AccordionProps> = (props:AccordionProps) 
     <div>
       {props.elements.map((element, index) => {
         return (
-          <Accordion>
+          <Accordion key={index}>
             <AccordionSummary>
               {element.summary}
             </AccordionSummary>

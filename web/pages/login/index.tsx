@@ -7,12 +7,12 @@ import { TextField, Typography } from '@mui/material';
 import {Button} from '@material-ui/core';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
 import { Container } from '@material-ui/core';
-import { KvilleButton } from '@/components/button';
+import { KvilleButton } from '@/components/utils/button';
 import { useContext } from 'react';
 import { UserContext } from '@/context/userContext';
 import {useRouter} from 'next/router';
 import { tryToLogin } from '../../../common/db/login';
-import { KvilleForm } from '@/components/form';
+import { KvilleForm } from '@/components/utils/form';
 
 interface LoginFormValues {
   email: string;
@@ -27,20 +27,28 @@ const initialValues: LoginFormValues = {
 
 
 
-const LoginForm: React.FC = () => {
+const LoginPage: React.FC = () => {
 
   const {setIsLoggedIn, setUserID}= useContext(UserContext)
   const [errorMessage, setErrorMessage] = useState<string>("");
   const router = useRouter();
   const handleSubmit = (values: LoginFormValues) => {
     // Handle login logic here (e.g., API call to authenticate the user)
-    tryToLogin(values.email, values.password, onSuccessfulLogin, (message : string) => {setErrorMessage(message)});
+    tryToLogin(values.email, values.password, onSuccessfulLogin, onFailedLogin)
   };
 
   const onSuccessfulLogin = (id: string) => {
-    setIsLoggedIn(true);
-    router.push("/groups");
+   
+    localStorage.setItem("userID", id);
+    localStorage.setItem("isLoggedIn", "true");
     setUserID(id);
+    setIsLoggedIn(true);
+    router.push("/groups/");
+  }
+
+  const onFailedLogin = (message : string ) => {
+    console.log("in the error handler");
+    setErrorMessage(message);
   }
 
   return (
@@ -58,4 +66,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default LoginPage;

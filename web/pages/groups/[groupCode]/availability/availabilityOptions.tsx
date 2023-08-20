@@ -1,13 +1,13 @@
-import React, {useContext, useState} from "react";
-import { KvilleAccordion } from "@/components/accordion";
+import React, {useContext} from "react";
+import { KvilleAccordion } from "@/components/utils/accordion";
 import { Typography } from "@material-ui/core";
 import { DateRangeChanger } from "@/components/dateRangeChanger/dateRangeChanger";
 import {Container} from "@material-ui/core";
-import { ScheduleCalendarDatesContext } from "./scheduleCalendarDatesContext";
+import { AvailabilityCalendarDatesContext } from "./availabilityCalendarDatesContext";
 
 
-export const ScheduleOptions : React.FC = () => {
-    const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate} = useContext(ScheduleCalendarDatesContext);
+export const AvailabilityOptions : React.FC = () => {
+    const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate} = useContext(AvailabilityCalendarDatesContext);
 
     let changeTimesOption = {
         summary : <Typography>Change Dates Visible</Typography>,
@@ -15,8 +15,11 @@ export const ScheduleOptions : React.FC = () => {
             <DateRangeChanger includeHours={false}
                 externalStartDate={calendarStartDate}
                 externalEndDate={calendarEndDate}
-                setExternalStartDate={setCalendarStartDate}
-                setExternalEndDate={setCalendarEndDate}
+                submitNewDateRange={(startDate : Date, endDate : Date) => {
+                    setCalendarStartDate(startDate);
+                    setCalendarEndDate(endDate);
+                }}
+   
             />
     }
     

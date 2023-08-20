@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
-import { firestore, auth } from "./firebase_config";
+import { firestore, auth } from "./firebase_config.js";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 
 /**
@@ -22,7 +23,7 @@ export async function tryToRegister(email, username, password, onSuccess, handle
             if (!usernameQuerySnapshotIsEmpty) {
                 throw new Error('Username is taken');
             }
-            const {user : newUser} = await auth.createUserWithEmailAndPassword(email, password).catch((error) => {
+            const {user : newUser} = await createUserWithEmailAndPassword(auth, email, password).catch((error) => {
                 throw new Error(error.message)
             });
             newUserID = newUser.uid;

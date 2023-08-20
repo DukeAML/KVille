@@ -1,10 +1,8 @@
 import { KvilleNavBarGivenButtonDescriptions, ButtonDescription } from "./navBar";
 
-export const LoggedInKvilleNavBar : React.FC = () => {
+export const KvilleLoggedInNavBar : React.FC = () => {
     let buttonDescriptions : ButtonDescription[] = [
-        {text : "Home", route : "/groups"},
-        {text : "Availability", route : "/availability"},
-        {text : "Group Schedule", route : "/schedule"}
+        {text : "My Groups", route : "/groups"},
     ]
     return <KvilleNavBarGivenButtonDescriptions buttonDescriptions={buttonDescriptions}/>;
 }

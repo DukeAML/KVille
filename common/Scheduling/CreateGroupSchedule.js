@@ -1,20 +1,13 @@
-import { firestore } from './services/db/firebase_config';
-import data from './data/gracePeriods.json';
-import Person from './Scheduling/person';
-import ScheduleAndStartDate from './Scheduling/scheduleAndStartDate';
+import { firestore } from '../db/firebase_config.js';
+import {Person} from './person.js';
 
-import { getNumSlotsBetweenDates } from './services/dates_services';
-import { fetchHoursPerPersonInDateRange } from './services/db_services';
-const Helpers = require("./Scheduling/helpers");
-const Algorithm = require("./Scheduling/algorithm");
 
-let GRACE;
-const MAXBLOCK = 8; //max half hours minus one (not including current time block) person can be scheduled for
+import { getNumDaysBetweenDates, getNumSlotsBetweenDates } from '../calendarAndDates/dates_services.js';
+import { fetchHoursPerPersonInDateRange } from "../db/hours.js";
+import { ScheduleAndStartDate } from './scheduleAndStartDate.js';
 
-//Colors of each member, first is for 'empty'
-// prettier-ignore
-const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
-  '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
+import {Helpers} from './helpers.js';
+import {Algorithm} from './algorithm.js';
 
 
 /**
@@ -23,7 +16,7 @@ const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599'
  * @param {String} tentType a string like "Blue", "Black", or "White". I set it to "White" if it is not "Black" or "Blue"
  * @param {Date} startDate 30 minute granularity
  * @param {Date} endDate this method will assign tenters from the startDate to the endDate - both should have 30 minute granularity
- * @returns groupScheduleArr, an array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
+ * @returns {String[]} groupScheduleArr, an array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
  */
 export async function createGroupSchedule(groupCode, tentType, startDate, endDate){
   console.log("creating group schedule from " + startDate.getTime() + " to " + endDate.getTime());
@@ -100,6 +93,27 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 
 }
 
+
+/**
+ * 
+ * @param {string} groupCode 
+ * @param {string} tentType 
+ * @param {Date} dateRangeStart 
+ * @param {Date} dateRangeEnd 
+ * @param {ScheduleAndStartDate} oldSchedule
+ */
+export async function assignTentersAndGetNewFullSchedule(groupCode, tentType, dateRangeStart , dateRangeEnd, oldSchedule ){
+  let newScheduleInRange = await createGroupSchedule(groupCode, tentType, dateRangeStart, dateRangeEnd);
+  console.log("new schedule in range is " );
+  console.log(newScheduleInRange);
+  let startIndex = getNumSlotsBetweenDates(oldSchedule.startDate, dateRangeStart);
+  console.log("start index is " + startIndex);
+  let newFullSchedule = [...oldSchedule.schedule];
+  for (let i = 0; i < newScheduleInRange.length; i+= 1){
+    newFullSchedule[i + startIndex] = newScheduleInRange[i];
+  }
+  return newFullSchedule;
+}
 
 
 

@@ -1,6 +1,6 @@
-import { firestore } from "./firebase_config";
+import { firestore } from "./firebase_config.js";
 
-import { getDateRoundedTo30MinSlot} from "../calendarAndDates/dates_services";
+import { getDateRoundedTo30MinSlot} from "../calendarAndDates/dates_services.js";
 
 
 export class AvailabilitySlot {
@@ -47,12 +47,15 @@ export async function fetchAvailability(groupCode, userId) {
  * @param {Array<AvailabilitySlot>} newAvailability must be same length as the array in the db
  */
 export const setDBAvailability = (groupCode, userId, newAvailability) => {
-    console.log("setting availability in db");
+    console.log("setting availability in db for " + userId + ", " + groupCode);
     const db = firestore;
     let availabilityDB = [];
     for (let i = 0; i < newAvailability.length; i += 1){
         availabilityDB.push(newAvailability[i].available);
     }
+
+    console.log(availabilityDB);
+
 
     const userRef = db.collection('groups').doc(groupCode).collection('members').doc(userId);
     userRef.update({

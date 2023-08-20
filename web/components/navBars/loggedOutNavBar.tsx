@@ -1,6 +1,6 @@
 import { ButtonDescription, KvilleNavBarGivenButtonDescriptions } from "./navBar";
 
-export const LoggedOutKvilleNavBar : React.FC = () => {
+export const KvilleLoggedOutNavBar : React.FC = () => {
     let buttonDescriptions : ButtonDescription[] = [
         {text : "Home", route : "/"},
         {text : "Register", route : "/register"},

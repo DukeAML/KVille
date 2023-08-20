@@ -3,14 +3,13 @@ import { Container, Typography } from "@material-ui/core";
 import { DatePicker } from "@mui/x-date-pickers";
 import {Grid} from "@material-ui/core";
 import { DateChanger } from "./dateChanger";
-import { AvailabilityCalendarDatesContext } from "@/pages/availability/availabilityCalendarDatesContext";
-import { KvilleButton } from "../button";
+import { AvailabilityCalendarDatesContext } from "@/pages/groups/[groupCode]/availability/availabilityCalendarDatesContext";
+import { KvilleButton } from "../utils/button";
 interface DateRangeChangerProps {
     includeHours : boolean;
     externalStartDate : Date;
     externalEndDate : Date;
-    setExternalStartDate : (d : Date) => void;
-    setExternalEndDate : (d : Date) => void;
+    submitNewDateRange : (startDate : Date, endDate : Date) => void;
 }
 
 export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateRangeChangerProps) => {
@@ -28,11 +27,12 @@ export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateR
                 </Grid>
             </Grid>
             <KvilleButton onClick={() => {
-                props.setExternalStartDate(newStartDate);
-                props.setExternalEndDate(newEndDate);
+                props.submitNewDateRange(newStartDate, newEndDate);
             }}>
                 <Typography>Submit</Typography>
             </KvilleButton>
         </Container>
     )
 }
+
+

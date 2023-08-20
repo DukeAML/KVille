@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-
+import {getAuth} from 'firebase/auth';
 
 //Hide this with environmental variables before publishing
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -23,7 +23,9 @@ const firebaseConfig = {
     //firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
   }
 
+
   export const firestore = firebase.firestore();
-  export const auth = firebase.auth();
+  export const auth = getAuth();
   export const firebase_FieldValue = firebase.firestore.FieldValue;
   export const EmailAuthProvider = firebase.auth.EmailAuthProvider;
+  

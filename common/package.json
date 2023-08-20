@@ -1,6 +1,7 @@
 {
   "name": "common",
   "version": "1.0.0",
+  "type" : "module",
   "description": "code shared between web and mobile",
   "main": "index.js",
   "author": "Keith Cressman",

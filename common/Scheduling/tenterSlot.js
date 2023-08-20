@@ -1,5 +1,7 @@
-const Slot = require("./slot");
-class TenterSlot extends Slot{
+import {Slot} from "./slot.js";
+
+
+export class TenterSlot extends Slot{
 
     /**
      * Construct a slot that refers to just one tenter and their availability
@@ -20,5 +22,3 @@ class TenterSlot extends Slot{
         this.weight = weight;
       }
 }
-
-module.exports = TenterSlot;

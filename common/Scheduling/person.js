@@ -1,4 +1,4 @@
-class Person {
+export class Person {
 
     /**
      * 
@@ -21,5 +21,5 @@ class Person {
 
 
 }
-module.exports = Person;
+
 

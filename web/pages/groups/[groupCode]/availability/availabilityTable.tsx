@@ -1,13 +1,19 @@
-import { AvailabilitySlot } from '@/../common/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../common/calendarAndDates/calendar_services';
+import { AvailabilitySlot, setDBAvailability } from '@/../common/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../common/calendarAndDates/calendar_services';
 import { getNumSlotsBetweenDates } from '@/../common/calendarAndDates/dates_services';
 import { Grid, Paper, Container, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
 import { MouseTracker } from './mouseTracker';
 import { useEffect, useState, useContext } from 'react';
 import { AvailabilityCalendarDatesContext } from './availabilityCalendarDatesContext';
-import { AvailabilitySlotWrapper } from './availabilitySlotWrapper';
+import { GroupContext } from '@/context/groupContext';
+import { UserContext } from '@/context/userContext';
+import { useQueryClient } from 'react-query';
 
+interface RowAndCol {
+    row : number;
+    col : number;
+}
 
 interface AvailabilityTableProps{
     originalAvailabilityArr : AvailabilitySlot[];
@@ -17,29 +23,45 @@ interface AvailabilityTableProps{
 
 export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:AvailabilityTableProps) => {
   console.log("rendering availability table");
-  const [availabilitySlotWrappers, setAvailabilitySlotWrappers] = useState<AvailabilitySlotWrapper[]>([new AvailabilitySlotWrapper(new AvailabilitySlot(new Date(Date.now()), false), false, 0, 0)]);
+  //const [availabilitySlotWrappers, setAvailabilitySlotWrappers] = useState<AvailabilitySlotWrapper[]>([new AvailabilitySlotWrapper(new AvailabilitySlot(new Date(Date.now()), false), false, 0, 0)]);
+  const [availability, setAvailability] = useState<AvailabilitySlot[]>(props.originalAvailabilityArr);
+  
   const [mouseTracker, setMouseTracker] = useState<MouseTracker>(new MouseTracker());
   const {calendarStartDate, calendarEndDate} = useContext(AvailabilityCalendarDatesContext);
+  const queryClient = useQueryClient();
   useEffect(() => {
-    console.log("running the useEffect in availabilityTable");
-    const newWrappers = props.originalAvailabilityArr.map((slot, index) => {
-      let {row, col} = indexToRowCol(index);
-      return new AvailabilitySlotWrapper(slot, true, row, col);
-    });
-    setAvailabilitySlotWrappers((oldWrappers) => newWrappers);
-    mouseTracker.setChangeAvailabilityAtRowCol(
-      (row : number, col : number, available : boolean) => {
-        try{
-          let index = rowColToIndex(row, col);
-          availabilitySlotWrappers[index].setAvailability(available);
-        } catch {
-          //index out of bounds, most likely
-        }
-      }
-    );
-
+    setAvailability(props.originalAvailabilityArr);
   }, [props.originalAvailabilityArr, calendarStartDate, calendarEndDate]);
+  const {groupDescription} = useContext(GroupContext);
+  const {userID} = useContext(UserContext);
 
+  const updateAvailabilityInDB = () => {
+    let newAvailabilitySlots = availability.map((slot, index) => {
+      return new AvailabilitySlot(slot.startDate, slot.available);
+    });
+    console.log("new availability slots is ");
+    console.log(newAvailabilitySlots);
+    queryClient.setQueryData("getAvailability", newAvailabilitySlots);
+    setDBAvailability(groupDescription.groupCode, userID, newAvailabilitySlots);
+  }
+
+
+
+  const changeAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+    let newAvailability = [...availability];
+    for (let i = 0; i < rowsAndCols.length; i += 1){
+        let row = rowsAndCols[i].row;
+        let col = rowsAndCols[i].col;
+        let index = rowColToIndex(row, col);
+        if (index >= 0 && index < newAvailability.length){
+            newAvailability[index].available = newValue;
+        }
+        
+    }
+    setAvailability(newAvailability);
+  }
+
+  mouseTracker.setChangeAvailabilityAtRowsAndCols(changeAvailabilityAtRowsAndCols);
 
 
   const columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate);
@@ -52,16 +74,10 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     return Math.round(index);
   }
 
-  const indexToRowCol = (index : number) : {row : number, col : number} => {
-    let indexOffset = getNumSlotsBetweenDates(props.originalAvailabilityArr[0].startDate, calendarStartDate);
-    let tableIndex = index - indexOffset;
-    let row = tableIndex % 48;
-    let col = Math.floor(tableIndex / 48);
-    return {row, col};
-  }
+ 
 
   const cellIsInBounds = (index : number) : boolean => {
-    if ((index < 0) ||(index >= availabilitySlotWrappers.length) ) {
+    if ((index < 0) ||(index >= availability.length) ) {
       return false;
     } else {
       return true;
@@ -102,9 +118,9 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             {columnLabels.map((column, columnIndex) => {
               const correspondingIndex = rowColToIndex(rowIndex, columnIndex);
               const isInBounds = cellIsInBounds(correspondingIndex);
-              const correspondingWrapper = isInBounds ? availabilitySlotWrappers[correspondingIndex] : new AvailabilitySlotWrapper(new AvailabilitySlot(new Date(Date.now()), false), false, rowIndex, columnIndex);
+              const correspondingSlot = isInBounds ? availability[correspondingIndex] : new AvailabilitySlot(new Date(Date.now()), false);
               return (
-              <AvailabilityCell mouseTracker={mouseTracker} slotWrapper={correspondingWrapper} key={columnIndex}/>
+              <AvailabilityCell mouseTracker={mouseTracker} slot={correspondingSlot} row={rowIndex} col={columnIndex} inBounds={isInBounds} updateAvailabilityInDB={updateAvailabilityInDB} key={columnIndex}/>
               );
             })}
           </Grid>

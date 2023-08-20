@@ -1,25 +1,31 @@
 import React, {ReactNode} from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 
 
 interface KvilleNavBarGivenOptionsProps {
     optionButtons : ReactNode[];
-
+    colorIsPrimary? : boolean;
 }
 
 const KvilleNavBarGivenOptions : React.FC<KvilleNavBarGivenOptionsProps> = (props : KvilleNavBarGivenOptionsProps) => {
     return (
-        <AppBar position="static">
+        <AppBar position="sticky" color={props.colorIsPrimary ? "primary" : "transparent"} >
             <Toolbar>
-                <Typography variant="h6" style={{ flexGrow: 1 }}>
-                My App
+                <Typography variant="h5" style={{ flexGrow: 1 }}>
+                    KVille
                 </Typography>
                 {props.optionButtons}
             </Toolbar>
         </AppBar>
     )
+}
+
+KvilleNavBarGivenOptions.defaultProps = {
+    optionButtons : undefined,
+    colorIsPrimary : true
+
 }
 
 export interface ButtonDescription {
@@ -29,6 +35,7 @@ export interface ButtonDescription {
 
 interface KvilleNavBarGivenButtonDescriptionsProps {
     buttonDescriptions : ButtonDescription[];
+    colorIsPrimary? : boolean;
 }
 
 export const KvilleNavBarGivenButtonDescriptions : React.FC<KvilleNavBarGivenButtonDescriptionsProps> = (props : KvilleNavBarGivenButtonDescriptionsProps) => {
@@ -38,7 +45,12 @@ export const KvilleNavBarGivenButtonDescriptions : React.FC<KvilleNavBarGivenBut
             <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
         )
     });
-    return <KvilleNavBarGivenOptions optionButtons={buttons}/>
+    return <KvilleNavBarGivenOptions optionButtons={buttons} colorIsPrimary={props.colorIsPrimary}/>
+}
+
+KvilleNavBarGivenButtonDescriptions.defaultProps = {
+    buttonDescriptions : [],
+    colorIsPrimary : true
 }
 
 

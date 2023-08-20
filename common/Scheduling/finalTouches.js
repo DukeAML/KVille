@@ -1,10 +1,11 @@
-const Helpers = require( "./helpers");
-const Weight = require("./weight");
-const Person = require("./person");
-const ScheduledSlot = require("./scheduledSlot");
-const TenterSlot = require("./tenterSlot");
 
-class FinalTouches{
+
+import { Helpers } from "./helpers.js";
+import { Person } from "./person.js";
+import { ScheduledSlot } from "./scheduledSlot.js";
+import { TenterSlot } from "./tenterSlot.js";
+
+export class FinalTouches{
     
 /**
  * Adds in 'Grace' to combinedGrid where appropriate
@@ -241,4 +242,3 @@ static reorganizeGrid(grid){
 
 }
 
-module.exports = FinalTouches;

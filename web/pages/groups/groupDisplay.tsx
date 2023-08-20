@@ -11,7 +11,9 @@ import {
   Input,
 } from '@material-ui/core';
 import { UserContext } from '@/context/userContext';
-import { KvilleButton } from '@/components/button';
+import { GroupContext } from '@/context/groupContext';
+import { KvilleButton } from '@/components/utils/button';
+import { useRouter } from 'next/router';
 
 
 
@@ -22,12 +24,15 @@ interface GroupDisplayInputInterface {
 }
 
 export const GroupDisplay: React.FC<GroupDisplayInputInterface> = (props:GroupDisplayInputInterface) => {
-    const {groupCode, setGroupCode} = useContext(UserContext);
+    const {groupDescription, setGroupDescription} = useContext(GroupContext);
     const userContext = useContext(UserContext);
+    const router = useRouter();
+
 
     const handleClick = () => {
-        console.log("trying to set groupCode");
-        setGroupCode(props.group.groupCode);
+        console.log("trying to set group description");
+        setGroupDescription(props.group);
+        router.push("groups/" + props.group.groupCode);
 
     }
 

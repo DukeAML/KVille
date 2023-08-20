@@ -1,4 +1,4 @@
-
+/*
 const firebase = require('firebase/compat/app');
 require('firebase/compat/auth');
 require('firebase/compat/firestore');
@@ -22,10 +22,7 @@ const app = firebase.initializeApp(firebaseConfig);
 
 
 
-/**
- * Formats the date into a string like "2023-01-15-12-00"
- * @param {Date} date 
- */
+
 const dateToId = (date) => {
     let year = date.getFullYear().toString().padStart(2, '0');
     let month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -96,3 +93,4 @@ async function addShiftsToTest(groupCode){
 
 
 addShiftsToTest(GROUP_CODE);
+*/

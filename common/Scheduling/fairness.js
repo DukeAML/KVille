@@ -1,10 +1,12 @@
-const params = require("../data/olsonParams.json");
-const FinalTouches = require("./finalTouches");
-const TenterSlot = require("./tenterSlot");
-const ScheduledSlot = require("./scheduledSlot");
-const Person = require("./person");
 
-class Fairness{
+
+import params from "../data/olsonParams.json" assert { type : "json"};
+import {FinalTouches} from "./finalTouches.js";
+import {TenterSlot} from "./tenterSlot.js";
+import {ScheduledSlot} from "./scheduledSlot.js";
+import {Person} from "./person.js";
+
+export class Fairness{
 
     /**
      * This method attempts to ensure fairness by making the difference in hours between the 
@@ -153,5 +155,3 @@ class Fairness{
 
 
 }
-
-module.exports = Fairness;

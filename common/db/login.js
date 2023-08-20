@@ -1,4 +1,5 @@
-import { auth } from "./firebase_config";
+import { auth } from "./firebase_config.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import * as Yup from 'yup';
 
 
@@ -9,16 +10,15 @@ import * as Yup from 'yup';
  * @param {(errorMessage:String)=>void} handleFailureMessageIfAny
  * @returns 
  */
-export function tryToLogin(email, password, onSuccess, handleFailureMessageIfAny=defaultLoginFailureHandler){
-    auth
-      .signInWithEmailAndPassword(email, password)
+export async function tryToLogin(email, password, onSuccess, handleFailureMessageIfAny=defaultLoginFailureHandler){
+    signInWithEmailAndPassword(auth, email, password)
       .then(() => {
         onSuccess(auth.currentUser.uid);
 
       })
       .catch((error) => {
-        handleFailureIfAny(error.message);
-      });
+        handleFailureMessageIfAny(error.message);
+      })
 
 }
 

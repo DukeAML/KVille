@@ -1,5 +1,5 @@
-const Slot = require("./slot");
-class ScheduledSlot extends Slot{
+import { Slot } from "./slot.js";
+export class ScheduledSlot extends Slot{
     
     /**
      * Construct a slot that refers to the start date, phase, and has ids of all tenters scheduled for this time slot
@@ -12,5 +12,3 @@ class ScheduledSlot extends Slot{
 
     }
 }
-
-module.exports = ScheduledSlot;

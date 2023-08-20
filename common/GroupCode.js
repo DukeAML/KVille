@@ -1,8 +1,12 @@
 
+import { checkIfGroupExistsByGroupCode } from "./db/joinGroup";
+export async function generateGroupCode(digits) {
+  let groupCode = generateUUID(digits);
 
-export function generateGroupCode(digits) {
-  let uuid = generateUUID(digits);
-  return uuid;
+  while (await checkIfGroupExistsByGroupCode(groupCode)){
+      groupCode = generateGroupCode(GROUP_CODE_LENGTH);
+  }
+  return groupCode;
 }
 
 const generateUUID = (digits) => {

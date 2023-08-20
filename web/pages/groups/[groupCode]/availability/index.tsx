@@ -2,17 +2,19 @@ import { UserContext } from "@/context/userContext";
 import { AvailabilityCalendarDatesContext } from "./availabilityCalendarDatesContext";
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
-import {fetchAvailability, AvailabilitySlot} from "../../../common/db/availability";
-import { BasePageContainerWithNavBar, BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
+import {fetchAvailability, AvailabilitySlot} from "../../../../../common/db/availability";
+import {  BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
 
 import { Container } from "@material-ui/core";
 import { AvailabilityTable } from "./availabilityTable";
-import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/calendarAndDates/calendar_services";
+import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/features/availability/availabilityDates";
 import { AvailabilityOptions } from "./availabilityOptions";
+import { GroupContext } from "@/context/groupContext";
 
 
 export default function Availability(){
-    const {groupCode, userID} = useContext(UserContext); //TODO: refactor out group context
+    const { userID} = useContext(UserContext); 
+    const {groupDescription : {groupCode}} = useContext(GroupContext);
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>(['getAvailability', groupCode, userID], 
         ()=> fetchAvailability(groupCode, userID),
@@ -24,7 +26,7 @@ export default function Availability(){
     let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate("black"));
     let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate("black"));
     return (
-        <BasePageContainerWithNavBarAndTitle title="Availability">
+        <BasePageContainerForGroupsPage title="Availability">
             {isLoading ? 
                 null : 
                 <Container>
@@ -37,7 +39,7 @@ export default function Availability(){
                 </Container>
             }
     
-        </BasePageContainerWithNavBarAndTitle>
+        </BasePageContainerForGroupsPage>
     )
 }
 

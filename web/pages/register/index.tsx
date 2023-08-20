@@ -7,12 +7,12 @@ import { TextField, Typography } from '@mui/material';
 import {Button} from '@material-ui/core';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
 import { Container } from '@material-ui/core';
-import { KvilleButton } from '@/components/button';
+import { KvilleButton } from '@/components/utils/button';
 import { useContext } from 'react';
 import { UserContext } from '@/context/userContext';
 import {useRouter} from 'next/router';
 import { tryToRegister } from '../../../common/db/register';
-import { KvilleForm } from '@/components/form';
+import { KvilleForm } from '@/components/utils/form';
 import { auth } from '../../../common/db/firebase_config';
 
 interface RegisterFormValues {
