@@ -9,6 +9,9 @@ import { AvailabilityCalendarDatesContext } from './availabilityCalendarDatesCon
 import { GroupContext } from '@/context/groupContext';
 import { UserContext } from '@/context/userContext';
 import { useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
+import { INVALID_GROUP_CODE } from '@/pages/_app';
+import { getQueryKeyNameForFetchAvailability } from './hooks/availabilityHooks';
 
 interface RowAndCol {
     row : number;
@@ -32,7 +35,9 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
   useEffect(() => {
     setAvailability(props.originalAvailabilityArr);
   }, [props.originalAvailabilityArr, calendarStartDate, calendarEndDate]);
-  const {groupDescription} = useContext(GroupContext);
+
+  const router = useRouter();
+  const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
   const {userID} = useContext(UserContext);
 
   const updateAvailabilityInDB = () => {
@@ -41,8 +46,11 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     });
     console.log("new availability slots is ");
     console.log(newAvailabilitySlots);
-    queryClient.setQueryData("getAvailability", newAvailabilitySlots);
-    setDBAvailability(groupDescription.groupCode, userID, newAvailabilitySlots);
+    console.log("group code is " + groupCode);
+    console.log("router.query is ");
+    console.log(router.query);
+    queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
+    setDBAvailability(groupCode, userID, newAvailabilitySlots);
   }
 
 

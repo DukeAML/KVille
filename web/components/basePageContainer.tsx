@@ -14,6 +14,7 @@ import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
 import { GroupContext } from '@/context/groupContext';
 import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
 import { LOGGED_OUT_ID } from '@/pages/_app';
+import { auth } from '../../common/db/firebase_config';
 
 
 const DEFAULT_TITLE = '';
@@ -26,22 +27,21 @@ const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageConta
   const {userID, setUserID, isLoggedIn, setIsLoggedIn} = useContext(UserContext);
   const [numRenders, setNumRenders] = useState(0);
 
-
-
-
-  useEffect(() => {
-    const storedID = localStorage.getItem("userID");
-    const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
-    if (storedIsLoggedIn === "true" && storedID !== userID){
-      console.log("setting userID to " + storedID);
-      //setUserID(storedID ? storedID : LOGGED_OUT_ID );
-      //setIsLoggedIn(true);
-    } else {
-      //setUserID(LOGGED_OUT_ID);
-      //setIsLoggedIn(false);
+  setTimeout(() => {
+    if (!isLoggedIn){
+   
+      if (auth.currentUser){
+        const id = auth.currentUser?.uid;
+        setUserID(id);
+        setIsLoggedIn(true);
+        console.log("I logged them in with " + id);
+      }
+  
     }
-    
-  }, [])
+  }, 1000);
+  
+
+
   return (
     <Container component="main" maxWidth={false} >
       {props.children? props.children : <></>}

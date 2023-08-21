@@ -9,6 +9,25 @@ import { QueryClient } from 'react-query';
 import { QueryClientProvider } from 'react-query';
 import { GroupDescription } from '../../common/db/groupMembership';
 
+import { initializeApp } from 'firebase/app';
+ 
+import {
+  initializeAuth,
+  indexedDBLocalPersistence,
+  connectAuthEmulator,
+  inMemoryPersistence,
+  setPersistence,
+  getAuth
+} from 'firebase/auth';
+ 
+import {
+  FirebaseAppProvider,
+  AuthProvider
+} from 'reactfire';
+ 
+import { firebase_app, auth } from '../../common/db/firebase_config';
+import { isBrowser } from "../lib/generic/isBrowser";
+
 export const LOGGED_OUT_ID = "";
 export const INVALID_GROUP_CODE = "";
 export default function App({ Component, pageProps }: AppProps) {
@@ -16,6 +35,17 @@ export default function App({ Component, pageProps }: AppProps) {
   const [groupDescription, setGroupDescription] = useState<GroupDescription>(new GroupDescription(INVALID_GROUP_CODE, "", ""));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const queryClient = new QueryClient();
+
+  // make sure we're not using IndexedDB when SSR
+  // as it is only supported on browser environments
+  const persistence = isBrowser()
+    ? indexedDBLocalPersistence
+    : inMemoryPersistence;
+ 
+  //const auth = initializeAuth(firebase_app, { persistence });
+  auth.setPersistence(persistence);
+
+
   return (
     <QueryClientProvider client={queryClient}>
       <UserContext.Provider value={{userID, isLoggedIn, setUserID, setIsLoggedIn}}>

@@ -11,7 +11,7 @@ export default function GroupPage() {
    
 
     const {userID, isLoggedIn} = useContext(UserContext);
-    console.log("rendering groups home page and my userID is " );
+    console.log("rendering groups home page and my userID is " + userID);
     const {data: groups, isLoading, isError} = useQuery<GroupDescription[], Error>(['fetchAllGroups'], () => fetchGroups(userID));
     
 
