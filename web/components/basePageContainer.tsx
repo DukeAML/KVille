@@ -15,6 +15,7 @@ import { GroupContext } from '@/context/groupContext';
 import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
 import { LOGGED_OUT_ID } from '@/pages/_app';
 
+
 const DEFAULT_TITLE = '';
 interface BasePageContainerProps {
     children: ReactNode;
@@ -24,6 +25,8 @@ interface BasePageContainerProps {
 const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
   const {userID, setUserID, isLoggedIn, setIsLoggedIn} = useContext(UserContext);
   const [numRenders, setNumRenders] = useState(0);
+
+
 
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateR
             <KvilleButton onClick={() => {
                 props.submitNewDateRange(newStartDate, newEndDate);
             }}>
-                <Typography>Submit</Typography>
+                <Typography variant="h6" >Submit</Typography>
             </KvilleButton>
         </Container>
     )
