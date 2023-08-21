@@ -1,12 +1,14 @@
-const Helpers = require( "./helpers");
-const Weight = require("./weight");
-const FinalTouches = require("./finalTouches");
-const Fairness = require("./fairness");
-const Slot = require("./slot");
-const TenterSlot = require("./tenterSlot");
-const ScheduledSlot = require("./scheduledSlot");
-const Person = require("./person");
-class Algorithm{
+
+import {Helpers} from "./helpers.js";
+
+import {Weight} from "./weight.js";
+import {FinalTouches} from "./finalTouches.js";
+import {Fairness} from "./fairness.js";
+import {TenterSlot} from "./tenterSlot.js";
+import {ScheduledSlot} from "./scheduledSlot.js";
+import {Person} from "./person.js";
+
+export class Algorithm{
 
     //helper method
     static sign (num){
@@ -162,4 +164,3 @@ class Algorithm{
 
 }
 
-module.exports = Algorithm;

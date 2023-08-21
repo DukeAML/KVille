@@ -1,37 +1,13 @@
-import { firestore } from "./db/firebase_config";
+import { firestore } from "./firebase_config.js";
 
-import ScheduleAndStartDate from "../Scheduling/scheduleAndStartDate";
+import {ScheduleAndStartDate} from "../Scheduling/scheduleAndStartDate.js";
 
-import { useQuery } from 'react-query';
-import { getDateRoundedTo30MinSlot, getNumSlotsBetweenDates } from "./dates_services";
-const Helpers = require("../Scheduling/helpers");
-
-
-
-/**
- * Formats the date into a string like "2023-01-15-12-00"
- * @param {Date} date 
- */
-const dateToId = (date) => {
-    let year = date.getFullYear().toString().padStart(2, '0');
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let hour = date.getHours().toString().padStart(2, '0');
-    let minute = date.getMinutes().toString().padStart(2, '0');
-    let id = year + "-" + month + "-" + day + "-" + hour + "-" + minute;
-    return id;
-}
-
-
-function useSetSchedule(groupCode){
+import { getDateRoundedTo30MinSlot, getNumSlotsBetweenDates } from "../services/dates_services.js";
+import {Helpers} from "../Scheduling/helpers.js";
 
 
 
-}
 
-function useSetScheduleSlot(groupCode, date, newScheduleSlot){
-
-}
 
 
 export class DBAvailabilitySlot {
@@ -129,7 +105,7 @@ export async function fetchGroupSchedule(groupCode) {
     return {groupSchedule: group.data().groupSchedule, groupScheduleStartDate: roundedDate};
 }
 
-async function getNameOfAllTentersInGroup(groupCode){
+export async function getNameOfAllTentersInGroup(groupCode){
     let membersRef = firestore.collection('groups').doc(groupCode).collection('members');
     let allMembers = [];
     await membersRef.get().then((members) => {

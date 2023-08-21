@@ -213,6 +213,7 @@ export default function Schedule({ navigation }) {
   async function assignTentersAndUpdateDB(groupCode, tentType, dateRangeStart, dateRangeEnd) {
     await createGroupSchedule(groupCode, tentType, dateRangeStart, dateRangeEnd)
       .then((newScheduleInRange) => {
+        //next several lines have been extracted to common folder
         let startIndex = getNumSlotsBetweenDates(groupScheduleStartDate, dateRangeStart);
 
         let newFullSchedule = [...groupSchedule];
@@ -253,6 +254,7 @@ export default function Schedule({ navigation }) {
     setFabState({ open });
   }
 
+  //TODO: refactor out to common folder
   const getDefaultDisplayDateRangeStartDate = () => {
     let currentDate = getCurrentDate();
     if (currentDate < groupScheduleStartDate){
@@ -264,6 +266,7 @@ export default function Schedule({ navigation }) {
     }
   }
 
+  //TODO: refactor out to common folder
   const getDefaultDisplayDateRangeEndDate = () => {
     let correspondingStartDate = getDefaultDisplayDateRangeStartDate();
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
@@ -277,6 +280,7 @@ export default function Schedule({ navigation }) {
     }
   }
 
+  //extracted out to common folder
   const getDefaultAssignDateRangeStartDate = () => {
     for (let i = 0; i < groupSchedule.length; i += 1){
       let names = groupSchedule[i].split(' ');
@@ -297,6 +301,7 @@ export default function Schedule({ navigation }) {
 
   }
 
+  //extracted out to common folder
   const getDefaultAssignDateRangeEndDate = () => {
     let correspondingStartDate = getDefaultAssignDateRangeStartDate();
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
@@ -310,6 +315,7 @@ export default function Schedule({ navigation }) {
     }
   }
 
+  //extracted out to common folder
   const validateAssignTentersDateRange = (newStartDate, newEndDate) => {
     if (newStartDate < groupScheduleStartDate){
       return {successful: false, message: "Start date of " + newStartDate.getTime() + " must be at least " + groupScheduleStartDate.getTime()};

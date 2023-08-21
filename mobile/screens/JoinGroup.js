@@ -67,6 +67,7 @@ export default function JoinGroup({ navigation }) {
     }, [])
   );
 
+  //extracted out to common folder
   async function onJoinGroup(navigation) {
     if (auth.currentUser.uid == 'LyenTwoXvUSGJvT14cpQUegAZXp1') {
       dispatch(setSnackMessage('This is a demo account'));

@@ -1,8 +1,8 @@
-const nightData = require("../data/nightData.json");
-const graceData = require("../data/gracePeriods.json");
-class Slot{
+import nightData from "../data/nightData.json" assert {type : "json"};
+import graceData from "../data/gracePeriods.json" assert {type : "json"};
 
 
+export class Slot{
 
     /**
      * Generic slot object
@@ -66,4 +66,3 @@ class Slot{
   
 }
 
-module.exports = Slot;

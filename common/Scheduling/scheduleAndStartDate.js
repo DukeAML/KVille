@@ -1,6 +1,9 @@
-const Slot = require("./slot");
-const { getDatePlusNumShifts, getNumSlotsBetweenDates } = require("../services/dates_services");
-class ScheduleAndStartDate{
+
+import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../calendarAndDates/dates_services.js";
+import {Slot} from "./slot.js";
+
+
+export class ScheduleAndStartDate{
 
 
 
@@ -25,12 +28,14 @@ class ScheduleAndStartDate{
 
     }
 
+
+
     /**
      * 
      * @param {Date} dateRangeStart 
      * @param {Date} dateRangeEnd 
      * @param {Array<String>} allMembers an array of the identifiers (i.e. name) for each person relevant
-     * @returns an object containing day_hours_per_person, and night_hours_per_person, where each is an object that maps a person's identifier to their number of hours
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}}an object containing day_hours_per_person, and night_hours_per_person, where each is an object that maps a person's identifier to their number of hours
      */
     getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd, allMembers){
         let dayHoursPerPerson = {};
@@ -71,5 +76,3 @@ class ScheduleAndStartDate{
     
   
 }
-
-module.exports = ScheduleAndStartDate;

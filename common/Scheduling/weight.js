@@ -1,8 +1,11 @@
-const Helpers = require("./helpers");
-const olsonParams = require("../data/olsonParams.json");
-const TenterSlot = require("./tenterSlot");
 
-class Weight{
+
+import { Helpers } from "./helpers.js";
+import olsonParams from "../data/olsonParams.json" assert {type : "json"};
+import { TenterSlot } from "./tenterSlot.js";
+
+
+export class Weight{
 
     /**
      * 
@@ -309,5 +312,3 @@ class Weight{
     
     }
 }
-
-module.exports = Weight;
