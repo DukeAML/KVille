@@ -8,12 +8,12 @@ import { KvilleForm } from "@/components/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { createGroupValidationSchema, tryToCreateGroup } from "../../../../common/db/createGroup";
+import { createGroupValidationSchema, tryToCreateGroup } from "../../../../common/src/db/groupExistenceAndMembership/createGroup";
 
 
 import { NO_ERROR_MESSAGE } from "@/components/utils/form";
 import { GroupContext } from "@/context/groupContext";
-import { GroupDescription } from "../../../../common/db/groupMembership";
+import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 
 interface CreateGroupFormValues {
     groupName : string;

@@ -1,14 +1,14 @@
 import { useMutation,  UseMutationResult, UseQueryResult } from "react-query";
 import { QueryClient } from "react-query";
-import { setGroupScheduleInDB } from "../../../../../../common/db/schedule";
+import { setGroupScheduleInDB } from "../../../../../../common/src/db/schedule";
 import { group } from "console";
-import { generateGroupCode } from "../../../../../../common/GroupCode";
+import { generateGroupCode } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { useQueryClient, useQuery } from "react-query";
 import { useContext } from "react";
 
 
-import {fetchGroupSchedule} from "@/../common/db/schedule";
-import {ScheduleAndStartDate} from '@/../common/Scheduling/scheduleAndStartDate';
+import {fetchGroupSchedule} from "../../../../../../common/src/db/schedule";
+import {ScheduleAndStartDate} from '../../../../../../common/src/Scheduling/scheduleAndStartDate';
 
 
 

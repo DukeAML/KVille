@@ -1,7 +1,7 @@
 import React from "react";
 import { Container } from "@material-ui/core";
 import { OneDayScheduleRow } from "./oneDayScheduleRow";
-import { getDatePlusNumShifts } from "../../../../../../common/calendarAndDates/dates_services";
+import { getDatePlusNumShifts } from "../../../../../../common/src/calendarAndDates/datesUtils";
 import { useContext } from "react";
 import { DateBeingShownContext } from "../context/dateBeingShownContext";
 

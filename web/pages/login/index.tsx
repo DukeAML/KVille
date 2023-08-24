@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { loginValidationSchema } from '../../../common/db/login';
+import { loginValidationSchema } from '../../../common/src/db/auth/login';
 import { TextField, Typography } from '@mui/material';
 import {Button} from '@material-ui/core';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
@@ -11,7 +11,7 @@ import { KvilleButton } from '@/components/utils/button';
 import { useContext } from 'react';
 import { UserContext } from '@/context/userContext';
 import {useRouter} from 'next/router';
-import { tryToLogin } from '../../../common/db/login';
+import { tryToLogin } from '../../../common/src/db/auth/login';
 import { KvilleForm } from '@/components/utils/form';
 
 interface LoginFormValues {
@@ -34,22 +34,20 @@ const LoginPage: React.FC = () => {
   const router = useRouter();
   const handleSubmit = (values: LoginFormValues) => {
     // Handle login logic here (e.g., API call to authenticate the user)
-    tryToLogin(values.email, values.password, onSuccessfulLogin, onFailedLogin)
+    tryToLogin(values.email, values.password)
+      .then((id) => {
+        localStorage.setItem("userID", id);
+        localStorage.setItem("isLoggedIn", "true");
+        setUserID(id);
+        setIsLoggedIn(true);
+        router.push("/groups/");
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      })
   };
 
-  const onSuccessfulLogin = (id: string) => {
-   
-    localStorage.setItem("userID", id);
-    localStorage.setItem("isLoggedIn", "true");
-    setUserID(id);
-    setIsLoggedIn(true);
-    router.push("/groups/");
-  }
 
-  const onFailedLogin = (message : string ) => {
-    console.log("in the error handler");
-    setErrorMessage(message);
-  }
 
   return (
     <BasePageContainerWithNavBarAndTitle title='Login'>

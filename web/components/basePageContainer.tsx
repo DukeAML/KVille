@@ -14,7 +14,7 @@ import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
 import { GroupContext } from '@/context/groupContext';
 import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
 import { LOGGED_OUT_ID } from '@/pages/_app';
-import { auth } from '../../common/db/firebase_config';
+import { auth } from '../../common/src/db/firebase_config';
 
 
 const DEFAULT_TITLE = '';
@@ -63,7 +63,7 @@ export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWith
       <BasePageContainer>
         
           {isLoggedIn ? <KvilleLoggedInNavBar/> : <KvilleLoggedOutNavBar/>}
-          <Typography style={{marginBottom : 12, marginTop : 6}} variant="h4" align="center">{props.title}</Typography>
+          <Typography style={{marginBottom : 24, marginTop : 24}} variant="h4" align="center">{props.title}</Typography>
           {props.children}
   
       </BasePageContainer>
@@ -83,7 +83,7 @@ export const BasePageContainerForGroupsPage: React.FC<BasePageContainerForGroups
             
             <KvilleLoggedInNavBar/>
             <KvilleGroupsNavBar/>
-            <Typography style={{marginBottom : 8, marginTop : 4}} variant="h4" align="center">{props.title}</Typography>
+            <Typography style={{marginBottom : 24, marginTop : 24}} variant="h4" align="center">{props.title}</Typography>
             {props.children}
 
           

@@ -4,12 +4,12 @@ import { Typography } from "@material-ui/core";
 import {Container} from "@material-ui/core";
 import { DatesRow } from "./datesRow";
 import { DateRangeChanger } from "@/components/dateRangeChanger/dateRangeChanger";
-import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../common/features/schedule/assignTenters";
+import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../common/src/frontendLogic/schedule/assignTenters";
 import { useQueryClient } from "react-query";
 import { UserContext } from "@/context/userContext";
-import { ScheduleAndStartDate } from "../../../../../common/Scheduling/scheduleAndStartDate";
+import { ScheduleAndStartDate } from "../../../../../common/src/Scheduling/scheduleAndStartDate";
 import { getQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule } from "./hooks/scheduleHooks";
-import { assignTentersAndGetNewFullSchedule } from "../../../../../common/Scheduling/CreateGroupSchedule";
+import { assignTentersAndGetNewFullSchedule } from "../../../../../common/src/Scheduling/CreateGroupSchedule";
 import { GroupContext } from "@/context/groupContext";
 
 

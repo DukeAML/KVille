@@ -2,21 +2,24 @@ import React from "react";
 import { useContext } from "react";
 import { UserContext } from "@/context/userContext";
 import { useQuery, useQueryClient } from "react-query";
-import { ScheduleAndStartDate } from "../../../../../../common/Scheduling/scheduleAndStartDate";
-import { getNumSlotsBetweenDates } from "../../../../../../common/calendarAndDates/dates_services";
+import { ScheduleAndStartDate } from "../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { getNumSlotsBetweenDates } from "../../../../../../common/src/calendarAndDates/datesUtils";
 import { Grid } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
-import { fetchGroupSchedule } from "../../../../../../common/db/schedule";
+import { fetchGroupSchedule } from "../../../../../../common/src/db/schedule";
 import { getQueryKeyNameForGroupCode, getQueryDataForSchedule } from "../hooks/scheduleHooks";
 import { GroupContext } from "@/context/groupContext";
-
+import { useRouter } from "next/dist/client/router";
+import { INVALID_GROUP_CODE } from "@/pages/_app";
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
 
 export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : OneDayScheduleRowProps) => {
     const { userID} = useContext(UserContext); //TODO: refactor out group context
-    const {groupDescription : {groupCode}} = useContext(GroupContext);
+
+    const router = useRouter();
+    const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
     //const {isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(getQueryKeyNameForGroupCode(groupCode), ()=>fetchGroupSchedule(groupCode));
     const queryClient = useQueryClient();
     const scheduleAndStartDate : ScheduleAndStartDate | undefined = getQueryDataForSchedule(groupCode);

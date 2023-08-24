@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import { DateBeingShownContext } from "./context/dateBeingShownContext";
-import { getDatePlusNumShifts, getDayAbbreviation } from "../../../../../common/calendarAndDates/dates_services";
+import { getDatePlusNumShifts, getDayAbbreviation } from "../../../../../common/src/calendarAndDates/datesUtils";
 import { Typography } from "@mui/material";
 import { KvilleButton } from "@/components/utils/button";
 import { DateChanger } from "@/components/dateRangeChanger/dateChanger";

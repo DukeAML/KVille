@@ -3,7 +3,7 @@ import { KvilleAccordion } from "@/components/utils/accordion";
 import { Typography } from "@material-ui/core";
 import { DateRangeChanger } from "@/components/dateRangeChanger/dateRangeChanger";
 import {Container} from "@material-ui/core";
-import { AvailabilityCalendarDatesContext } from "./availabilityCalendarDatesContext";
+import { AvailabilityCalendarDatesContext } from "./hooks/availabilityCalendarDatesContext";
 
 
 export const AvailabilityOptions : React.FC = () => {

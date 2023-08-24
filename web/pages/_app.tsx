@@ -7,9 +7,8 @@ import { UserContext } from '@/context/userContext';
 import { GroupContext } from '@/context/groupContext';
 import { QueryClient } from 'react-query';
 import { QueryClientProvider } from 'react-query';
-import { GroupDescription } from '../../common/db/groupMembership';
+import { GroupDescription } from '../../common/src/db/groupExistenceAndMembership/groupMembership';
 
-import { initializeApp } from 'firebase/app';
  
 import {
   initializeAuth,
@@ -20,12 +19,8 @@ import {
   getAuth
 } from 'firebase/auth';
  
-import {
-  FirebaseAppProvider,
-  AuthProvider
-} from 'reactfire';
  
-import { firebase_app, auth } from '../../common/db/firebase_config';
+import { firebase_app, auth } from '../../common/src/db/firebase_config';
 import { isBrowser } from "../lib/generic/isBrowser";
 
 export const LOGGED_OUT_ID = "";

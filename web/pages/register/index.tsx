@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { loginValidationSchema } from '../../../common/db/login';
+import { loginValidationSchema } from '../../../common/src/db/auth/login';
 import { TextField, Typography } from '@mui/material';
 import {Button} from '@material-ui/core';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
@@ -11,9 +11,9 @@ import { KvilleButton } from '@/components/utils/button';
 import { useContext } from 'react';
 import { UserContext } from '@/context/userContext';
 import {useRouter} from 'next/router';
-import { tryToRegister } from '../../../common/db/register';
+import { tryToRegister } from '../../../common/src/db/auth/register';
 import { KvilleForm } from '@/components/utils/form';
-import { auth } from '../../../common/db/firebase_config';
+import { auth } from '../../../common/src/db/firebase_config';
 
 interface RegisterFormValues {
   email: string;
@@ -39,18 +39,17 @@ const RegisterForm: React.FC = () => {
   const router = useRouter();
   const handleSubmit = (values: RegisterFormValues) => {
     // Handle login logic here (e.g., API call to authenticate the user)
-    tryToRegister(values.email, values.username, values.password, onSuccessfulRegister, (message : string) => {
-        console.log("error " + message);
-        setErrorMessage(message)
-    });
+    tryToRegister(values.email, values.username, values.password)
+      .then((id) => {
+        setIsLoggedIn(true);
+        router.push("/groups");
+        setUserID(id);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      })
   };
 
-  const onSuccessfulRegister = (id: string) => {
-    console.log("successfully registered");
-    setIsLoggedIn(true);
-    router.push("/groups");
-    setUserID(id);
-  }
 
   return (
     <BasePageContainerWithNavBarAndTitle title="Register" >

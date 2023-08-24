@@ -8,7 +8,7 @@ import { KvilleForm } from "@/components/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { joinGroupValidationSchema, tryToJoinGroup } from '../../../../common/db/joinGroup';
+import { joinGroupValidationSchema, tryToJoinGroup } from '../../../../common/src/db/groupExistenceAndMembership/joinGroup';
 import { join } from "path";
 
 import { NO_ERROR_MESSAGE } from "@/components/utils/form";

@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, ComponentType } from 'react';
 
-import {GroupDescription} from "../../../common/db/groupMembership";
+import {GroupDescription} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
 import { useContext } from 'react';
 import {
   Container,

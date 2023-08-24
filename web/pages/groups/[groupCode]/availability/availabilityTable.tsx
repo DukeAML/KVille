@@ -1,11 +1,11 @@
-import { AvailabilitySlot, setDBAvailability } from '@/../common/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../common/calendarAndDates/calendar_services';
-import { getNumSlotsBetweenDates } from '@/../common/calendarAndDates/dates_services';
+import { AvailabilitySlot, setDBAvailability } from '../../../../../common/src/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../common/src/calendarAndDates/calendarUtils';
+import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
 import { Grid, Paper, Container, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
 import { MouseTracker } from './mouseTracker';
 import { useEffect, useState, useContext } from 'react';
-import { AvailabilityCalendarDatesContext } from './availabilityCalendarDatesContext';
+import { AvailabilityCalendarDatesContext } from './hooks/availabilityCalendarDatesContext';
 import { GroupContext } from '@/context/groupContext';
 import { UserContext } from '@/context/userContext';
 import { useQueryClient } from 'react-query';
@@ -44,11 +44,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     let newAvailabilitySlots = availability.map((slot, index) => {
       return new AvailabilitySlot(slot.startDate, slot.available);
     });
-    console.log("new availability slots is ");
-    console.log(newAvailabilitySlots);
-    console.log("group code is " + groupCode);
-    console.log("router.query is ");
-    console.log(router.query);
     queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
     setDBAvailability(groupCode, userID, newAvailabilitySlots);
   }

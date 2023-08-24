@@ -1,0 +1,144 @@
+import * as Yup from "yup";
+import { firestore, auth } from "../firebase_config.js";
+import { Helpers } from "../../Scheduling/helpers.js";
+import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
+import { GroupDescription } from "./groupMembership.js";
+import { getGroupMembersByGroupCode } from "./groupMembership.js";
+
+export const JOIN_GROUP_ERROR_CODES = {
+    GROUP_DOES_NOT_EXIST : "Group does not exist",
+    GROUP_IS_FULL : "Group is full already",
+    ALREADY_IN : "You've already joined this group"
+}
+
+export const joinGroupValidationSchema = Yup.object({
+    groupCode: Yup.string().required('Required')
+});
+
+
+
+/**
+ * 
+ * @param {String} name 
+ * @param {String} tentType 
+ * @param {String} groupRole 
+ * @returns {{availability : boolean[], availabilityStartDate : Date, name : string, groupRole : string, inTent: boolean}}
+ */
+export function getDefaultGroupMemberData(name, tentType, groupRole) {
+    let availabilityStartDate = Helpers.getTentingStartDate(tentType);
+    
+    let endDate = Helpers.getTentingEndDate();
+    let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
+    let availability = new Array(numSlots).fill(false);
+    let inTent = false;
+    return {availability, availabilityStartDate, name, groupRole, inTent};
+}
+
+
+
+/**
+ * 
+ * @param {String} groupCode
+ * @returns {Promise<boolean>} exists 
+ */
+export async function checkIfGroupExistsByGroupCode(groupCode) {
+    const groupRef = firestore.collection('groups').doc(groupCode);
+    let groupExists = await groupRef.get().then((groupSnapshot) => {
+        if (groupSnapshot.exists) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    return groupExists;
+}
+
+/**
+ * 
+ * @param {String} groupCode 
+ * @param {*} groupRef 
+ * @param {*} userRef 
+ * @param {String} userID
+ * @returns {Promise<{canJoinGroup : Boolean, errorMessage : String}>}
+ */
+async function checkIfItIsPossibleToJoinGroup(groupCode, groupRef, userRef, userID){
+    let groupExists = await checkIfGroupExistsByGroupCode(groupCode);
+    if (!groupExists) {
+        return {canJoinGroup : false, errorMessage : JOIN_GROUP_ERROR_CODES.GROUP_DOES_NOT_EXIST};
+    }
+    let existingGroupMembers = await getGroupMembersByGroupCode(groupCode);
+    existingGroupMembers = existingGroupMembers.map((member) => member.userID);
+    if (existingGroupMembers.length >= 12){
+        return {canJoinGroup : false, errorMessage : JOIN_GROUP_ERROR_CODES.GROUP_IS_FULL};
+    }
+
+
+    if (existingGroupMembers.includes(userID)){
+        console.log("should be returning false here");
+        return {canJoinGroup : false, errorMessage : JOIN_GROUP_ERROR_CODES.ALREADY_IN};
+    }
+    return {canJoinGroup : true, errorMessage : "You can join this group"};
+}
+
+/**
+ * 
+ * @param {*} groupRef 
+ * @returns {Promise<{groupName : string, tentType : string}>}
+ */
+async function getGroupNameAndTypeForGroupRef(groupRef) {
+    let groupName = '';
+    let tentType = '';
+    await groupRef.get().then((groupSnapshot) => {
+        groupName = groupSnapshot.data().name;
+        tentType = groupSnapshot.data().tentType;
+    })
+    return {groupName, tentType};
+}
+
+export async function getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode){
+    
+    let oldUserData = (await userRef.get()).data();
+    let newUserData = {
+        ...oldUserData, 
+        groupCode : [
+            ...oldUserData.groupCode,
+            {
+                groupCode : groupCode,
+                groupName : groupName
+            }
+        ]
+    }
+    return newUserData;
+}
+
+/**
+ * 
+ * @param {String} groupCode
+ * @param {String} userID
+ * @returns {Promise<GroupDescription>}
+ */
+export async function tryToJoinGroup(groupCode, userID) {
+    const groupRef = firestore.collection('groups').doc(groupCode);
+    const userRef = firestore.collection('users').doc(userID);
+    let {canJoinGroup, errorMessage} = await checkIfItIsPossibleToJoinGroup(groupCode, groupRef, userRef, userID);
+    if (!canJoinGroup){
+        throw new Error(errorMessage);
+    }
+    let {groupName, tentType} = await getGroupNameAndTypeForGroupRef(groupRef);
+    let newUserData = await getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode);
+    let myUsername = newUserData.username;
+    try {
+        await firestore.runTransaction(async (transaction) => {
+            
+            transaction.set(userRef, newUserData);
+            let newMemberRef = groupRef.collection('members').doc(userID)
+
+            transaction.set(newMemberRef,  getDefaultGroupMemberData(myUsername, tentType, "Member"));
+        })
+    } catch (error) {
+        console.log("error from transaction : " + error.message);
+        throw new Error(error.message);
+    } 
+    return new GroupDescription(groupCode, groupName, tentType);
+
+}
