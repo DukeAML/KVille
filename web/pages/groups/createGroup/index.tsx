@@ -1,19 +1,19 @@
-import {KvilleAccordion} from "@/components/utils/accordion";
-import { BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
-import { UserContext } from "@/context/userContext";
+import {KvilleAccordion} from "@/components/shared/utils/accordion";
+import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { UserContext } from "@/lib/shared/context/userContext";
 import { Container, Typography } from "@mui/material";
 import { Component, useContext, useState } from "react";
 import { useQuery } from "react-query";
-import { KvilleForm } from "@/components/utils/form";
+import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { createGroupValidationSchema, tryToCreateGroup } from "../../../../common/db/createGroup";
+import { createGroupValidationSchema, tryToCreateGroup } from "../../../../common/src/db/groupExistenceAndMembership/createGroup";
 
 
-import { NO_ERROR_MESSAGE } from "@/components/utils/form";
-import { GroupContext } from "@/context/groupContext";
-import { GroupDescription } from "../../../../common/db/groupMembership";
+import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
+import { GroupContext } from "@/lib/shared/context/groupContext";
+import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 
 interface CreateGroupFormValues {
     groupName : string;
@@ -49,7 +49,7 @@ export default function CreateGroupPage() {
         <BasePageContainerWithNavBarAndTitle title="Group Membership">
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">If someone has already created your team's group, ask them for the group code</Typography>
+                    <Typography variant="h5">If someone has already created the group, ask them for the group code</Typography>
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}

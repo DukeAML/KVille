@@ -3,13 +3,12 @@ import type { AppProps } from 'next/app'
 import { ThemeProvider } from '@material-ui/core'
 import  theme  from '@/styles/theme';
 import { useState, useContext } from 'react';
-import { UserContext } from '@/context/userContext';
-import { GroupContext } from '@/context/groupContext';
+import { UserContext } from '@/lib/shared/context/userContext';
+import { GroupContext } from '@/lib/shared/context/groupContext';
 import { QueryClient } from 'react-query';
 import { QueryClientProvider } from 'react-query';
-import { GroupDescription } from '../../common/db/groupMembership';
+import { GroupDescription } from '../../common/src/db/groupExistenceAndMembership/groupMembership';
 
-import { initializeApp } from 'firebase/app';
  
 import {
   initializeAuth,
@@ -20,13 +19,9 @@ import {
   getAuth
 } from 'firebase/auth';
  
-import {
-  FirebaseAppProvider,
-  AuthProvider
-} from 'reactfire';
  
-import { firebase_app, auth } from '../../common/db/firebase_config';
-import { isBrowser } from "../lib/generic/isBrowser";
+import { firebase_app, auth } from '../../common/src/db/firebase_config';
+import { isBrowser } from "../lib/shared/isBrowser";
 
 export const LOGGED_OUT_ID = "";
 export const INVALID_GROUP_CODE = "";
