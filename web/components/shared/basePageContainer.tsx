@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
-import { UserContext } from '@/context/userContext';
+import { UserContext } from '@/lib/shared/context/userContext';
 import {
   Container,
   Typography,
@@ -11,10 +11,10 @@ import {
 
 import { KvilleLoggedInNavBar } from './navBars/loggedInNavBar';
 import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
-import { GroupContext } from '@/context/groupContext';
+import { GroupContext } from '@/lib/shared/context/groupContext';
 import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
 import { LOGGED_OUT_ID } from '@/pages/_app';
-import { auth } from '../../common/src/db/firebase_config';
+import { auth } from '../../../common/src/db/firebase_config';
 
 
 const DEFAULT_TITLE = '';

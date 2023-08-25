@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
-import { DateBeingShownContext } from "./context/dateBeingShownContext";
-import { getDatePlusNumShifts, getDayAbbreviation } from "../../../../../common/src/calendarAndDates/datesUtils";
+import { DateBeingShownContext } from "../../../../../lib/pageSpecific/schedule/dateBeingShownContext";
+import { getDatePlusNumShifts, getDayAbbreviation } from "../../../../../../common/src/calendarAndDates/datesUtils";
 import { Typography } from "@mui/material";
-import { KvilleButton } from "@/components/utils/button";
-import { DateChanger } from "@/components/dateRangeChanger/dateChanger";
+import { KvilleButton } from "@/components/shared/utils/button";
+import { DateChanger } from "@/components/shared/dateRangeChanger/dateChanger";
 
 
 interface DatesRowProps {
@@ -21,12 +21,12 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
                 let date = getDatePlusNumShifts(dateBeingShown, 48 * offset);
                 if (offset != 0){
                     return (
-                        <KvilleButton onClick={() => {setDateBeingShown(date)}}>
+                        <KvilleButton onClick={() => {setDateBeingShown(date)}} key={index}>
                             <Typography>{getDayAbbreviation(date)}</Typography>
                         </KvilleButton>
                     );
                 } else {
-                    return <DateChanger date={dateBeingShown} setDate={setDateBeingShown} includeHours={false}/>
+                    return <DateChanger date={dateBeingShown} setDate={setDateBeingShown} includeHours={false} key={index}/>
                 }
                 
             })}

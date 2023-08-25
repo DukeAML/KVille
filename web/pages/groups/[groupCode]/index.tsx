@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useRouter } from "next/router";
-import { BasePageContainerForGroupsPage } from "@/components/basePageContainer";
-import { GroupContext } from "@/context/groupContext";
+import { BasePageContainerForGroupsPage } from "@/components/shared/basePageContainer";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 import { Typography } from "@material-ui/core";
 
 const GroupHomePage : React.FC = () => {

@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
-import { KvilleAccordion } from "@/components/utils/accordion";
+import { KvilleAccordion } from "@/components/shared/utils/accordion";
 import { Typography } from "@material-ui/core";
-import { DateRangeChanger } from "@/components/dateRangeChanger/dateRangeChanger";
+import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import {Container} from "@material-ui/core";
-import { AvailabilityCalendarDatesContext } from "./hooks/availabilityCalendarDatesContext";
+import { AvailabilityCalendarDatesContext } from "../../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext";
 
 
 export const AvailabilityOptions : React.FC = () => {

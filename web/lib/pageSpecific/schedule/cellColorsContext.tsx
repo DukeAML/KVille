@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { CellColorsCoordinator } from '../cellColorsCoordinator';
+import { CellColorsCoordinator } from '../../../components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator';
 
 interface CellColorsContextType {
     cellColorsCoordinator : CellColorsCoordinator;

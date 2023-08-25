@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import { Grid, Paper, Typography } from "@mui/material";
-import { CellColorsContext } from "../context/cellColorsContext";
+import { CellColorsContext } from "../../../../../../lib/pageSpecific/schedule/cellColorsContext";
 
 interface ScheduleCellProps {
     name : string;

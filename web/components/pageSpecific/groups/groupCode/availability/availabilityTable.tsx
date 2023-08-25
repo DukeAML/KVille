@@ -1,17 +1,17 @@
-import { AvailabilitySlot, setDBAvailability } from '../../../../../common/src/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../common/src/calendarAndDates/calendarUtils';
+import { AvailabilitySlot, setDBAvailability } from '../../../../../../common/src/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../common/src/calendarAndDates/calendarUtils';
 import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
 import { Grid, Paper, Container, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
 import { MouseTracker } from './mouseTracker';
 import { useEffect, useState, useContext } from 'react';
-import { AvailabilityCalendarDatesContext } from './hooks/availabilityCalendarDatesContext';
-import { GroupContext } from '@/context/groupContext';
-import { UserContext } from '@/context/userContext';
+import { AvailabilityCalendarDatesContext } from '../../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext';
+import { GroupContext } from '@/lib/shared/context/groupContext';
+import { UserContext } from '@/lib/shared/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { INVALID_GROUP_CODE } from '@/pages/_app';
-import { getQueryKeyNameForFetchAvailability } from './hooks/availabilityHooks';
+import { getQueryKeyNameForFetchAvailability } from '../../../../../lib/pageSpecific/availability/availabilityHooks';
 
 interface RowAndCol {
     row : number;

@@ -1,14 +1,14 @@
 import React from "react";
 import { useContext } from "react";
-import { UserContext } from "@/context/userContext";
+import { UserContext } from "@/lib/shared/context/userContext";
 import { useQuery, useQueryClient } from "react-query";
-import { ScheduleAndStartDate } from "../../../../../../common/src/Scheduling/scheduleAndStartDate";
-import { getNumSlotsBetweenDates } from "../../../../../../common/src/calendarAndDates/datesUtils";
+import { ScheduleAndStartDate } from "../../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Grid } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
-import { fetchGroupSchedule } from "../../../../../../common/src/db/schedule";
-import { getQueryKeyNameForGroupCode, getQueryDataForSchedule } from "../hooks/scheduleHooks";
-import { GroupContext } from "@/context/groupContext";
+import { fetchGroupSchedule } from "../../../../../../../common/src/db/schedule";
+import { getQueryKeyNameForGroupCode, useGetQueryDataForSchedule, useQueryToFetchSchedule } from "../../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 import { useRouter } from "next/dist/client/router";
 import { INVALID_GROUP_CODE } from "@/pages/_app";
 interface OneDayScheduleRowProps {
@@ -20,16 +20,17 @@ export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : One
 
     const router = useRouter();
     const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
-    //const {isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(getQueryKeyNameForGroupCode(groupCode), ()=>fetchGroupSchedule(groupCode));
-    const queryClient = useQueryClient();
-    const scheduleAndStartDate : ScheduleAndStartDate | undefined = getQueryDataForSchedule(groupCode);
+    //for some reason the custom hook with queryClient.getQueryData isn't working
+    //const scheduleAndStartDate : ScheduleAndStartDate | undefined = getQueryDataForSchedule(groupCode);
+     const {data : scheduleAndStartDate, isLoading, isError} = useQueryToFetchSchedule(groupCode);
+
 
     
     if (scheduleAndStartDate){
         
         return <RowGivenData scheduleAndStartDate={scheduleAndStartDate ? scheduleAndStartDate : new ScheduleAndStartDate([""], new Date(Date.now()))} rowStartDate={props.rowStartDate}/>
     } else {
-        return <div>"what hte heck"</div>
+        return <div>what hte heck</div>
     }
     
 }

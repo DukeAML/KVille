@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { CalendarDatesContextType } from '@/context/calendarDatesContextType';
+import { CalendarDatesContextType } from '@/lib/shared/context/calendarDatesContextType';
 
 export const AvailabilityCalendarDatesContext = createContext<CalendarDatesContextType>({
   calendarStartDate : new Date(2024, 0, 15),

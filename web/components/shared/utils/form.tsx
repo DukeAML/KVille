@@ -52,7 +52,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                     <Form>
                         {props.textFields?.map((fieldProps, index) => {
                             return (
-                                <div key={index}>
+                                <div key={index} style={{marginBottom : 4}}>
                                     <Field
                                         as={TextField}
                                         type={fieldProps.type}
@@ -62,7 +62,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                                         fullWidth
                                         required
                                     />
-                                    <ErrorMessage name={fieldProps.name} component="div" className="error" />
+                                    <ErrorMessage name={fieldProps.name} component="Typography" />
                                 </div>
                             );
                         })}

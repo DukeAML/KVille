@@ -1,8 +1,8 @@
 import { Grid, Paper, makeStyles, Theme } from '@material-ui/core';
 import { MouseTracker } from './mouseTracker';
 import { useState, useEffect, useContext } from 'react';
-import { GroupContext } from '@/context/groupContext';
-import { AvailabilitySlot } from '../../../../../common/src/db/availability';
+import { GroupContext } from '@/lib/shared/context/groupContext';
+import { AvailabilitySlot } from '../../../../../../common/src/db/availability';
 
 const useStyles = makeStyles((theme:Theme) => ({
   gridCell: {

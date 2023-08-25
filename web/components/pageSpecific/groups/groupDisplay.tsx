@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, ComponentType } from 'react';
 
-import {GroupDescription} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+import {GroupDescription} from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 import { useContext } from 'react';
 import {
   Container,
@@ -10,9 +10,9 @@ import {
   makeStyles,
   Input,
 } from '@material-ui/core';
-import { UserContext } from '@/context/userContext';
-import { GroupContext } from '@/context/groupContext';
-import { KvilleButton } from '@/components/utils/button';
+import { UserContext } from '@/lib/shared/context/userContext';
+import { GroupContext } from '@/lib/shared/context/groupContext';
+import { KvilleButton } from '@/components/shared/utils/button';
 import { useRouter } from 'next/router';
 
 

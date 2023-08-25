@@ -1,7 +1,7 @@
 import { KvilleNavBarGivenButtonDescriptions, ButtonDescription } from "./navBar";
 import React, { useContext, ReactNode } from "react";
 import { useRouter } from "next/router";
-import { GroupContext } from "@/context/groupContext";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 import { group } from "console";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 

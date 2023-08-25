@@ -1,17 +1,17 @@
-import { UserContext } from "@/context/userContext";
-import { AvailabilityCalendarDatesContext } from "./hooks/availabilityCalendarDatesContext";
+import { UserContext } from "@/lib/shared/context/userContext";
+import { AvailabilityCalendarDatesContext } from "../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext";
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
-import {  BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
-import { KvilleLoadingContainer} from "@/components/utils/loading";
+import {  BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
-import { AvailabilityTable } from "./availabilityTable";
+import { AvailabilityTable } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityTable";
 import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
-import { AvailabilityOptions } from "./availabilityOptions";
-import { GroupContext } from "@/context/groupContext";
-import { getQueryKeyNameForFetchAvailability } from "./hooks/availabilityHooks";
+import { AvailabilityOptions } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityOptions";
+import { GroupContext } from "@/lib/shared/context/groupContext";
+import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
 import { useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "@/pages/_app";
 

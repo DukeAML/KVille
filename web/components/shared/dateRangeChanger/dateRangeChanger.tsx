@@ -3,7 +3,7 @@ import { Container, Typography } from "@material-ui/core";
 import { DatePicker } from "@mui/x-date-pickers";
 import {Grid} from "@material-ui/core";
 import { DateChanger } from "./dateChanger";
-import { AvailabilityCalendarDatesContext } from "@/pages/groups/[groupCode]/availability/hooks/availabilityCalendarDatesContext";
+import { AvailabilityCalendarDatesContext } from "@/lib/pageSpecific/availability/availabilityCalendarDatesContext";
 import { KvilleButton } from "../utils/button";
 interface DateRangeChangerProps {
     includeHours : boolean;

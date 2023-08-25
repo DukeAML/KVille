@@ -5,14 +5,14 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginValidationSchema } from '../../../common/src/db/auth/login';
 import { TextField, Typography } from '@mui/material';
 import {Button} from '@material-ui/core';
-import { BasePageContainerWithNavBarAndTitle } from '@/components/basePageContainer';
+import { BasePageContainerWithNavBarAndTitle } from '@/components/shared/basePageContainer';
 import { Container } from '@material-ui/core';
-import { KvilleButton } from '@/components/utils/button';
+import { KvilleButton } from '@/components/shared/utils/button';
 import { useContext } from 'react';
-import { UserContext } from '@/context/userContext';
+import { UserContext } from '@/lib/shared/context/userContext';
 import {useRouter} from 'next/router';
 import { tryToLogin } from '../../../common/src/db/auth/login';
-import { KvilleForm } from '@/components/utils/form';
+import { KvilleForm } from '@/components/shared/utils/form';
 
 interface LoginFormValues {
   email: string;

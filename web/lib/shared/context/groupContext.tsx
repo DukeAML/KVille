@@ -1,5 +1,5 @@
 import { createContext, Context } from 'react';
-import { GroupDescription } from '../../common/src/db/groupExistenceAndMembership/groupMembership';
+import { GroupDescription } from '../../../../common/src/db/groupExistenceAndMembership/groupMembership';
 
 interface GroupContextType {
     groupDescription : GroupDescription;

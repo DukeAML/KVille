@@ -1,12 +1,12 @@
-import {KvilleAccordion} from "@/components/utils/accordion";
-import { BasePageContainerWithNavBarAndTitle } from "@/components/basePageContainer";
-import { UserContext } from "@/context/userContext";
+import {KvilleAccordion} from "@/components/shared/utils/accordion";
+import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { UserContext } from "@/lib/shared/context/userContext";
 import { Container, Typography } from "@material-ui/core";
 import { Component, useContext } from "react";
 import { useQuery } from "react-query";
 import {fetchGroups, GroupDescription} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { GroupDisplay } from "./groupDisplay";
-import { KvilleLoadingCircle, KvilleLoadingContainer } from "@/components/utils/loading";
+import { GroupDisplay } from "../../components/pageSpecific/groups/groupDisplay";
+import { KvilleLoadingCircle, KvilleLoadingContainer } from "@/components/shared/utils/loading";
 
 export default function GroupPage() {
    

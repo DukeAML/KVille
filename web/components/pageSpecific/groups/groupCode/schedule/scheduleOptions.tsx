@@ -1,22 +1,22 @@
 import React, {useContext, useState} from "react";
-import { KvilleAccordion } from "@/components/utils/accordion";
+import { KvilleAccordion } from "@/components/shared/utils/accordion";
 import { Typography } from "@material-ui/core";
 import {Container} from "@material-ui/core";
 import { DatesRow } from "./datesRow";
-import { DateRangeChanger } from "@/components/dateRangeChanger/dateRangeChanger";
-import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../common/src/frontendLogic/schedule/assignTenters";
+import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
+import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
 import { useQueryClient } from "react-query";
-import { UserContext } from "@/context/userContext";
-import { ScheduleAndStartDate } from "../../../../../common/src/Scheduling/scheduleAndStartDate";
-import { getQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule } from "./hooks/scheduleHooks";
-import { assignTentersAndGetNewFullSchedule } from "../../../../../common/src/Scheduling/CreateGroupSchedule";
-import { GroupContext } from "@/context/groupContext";
+import { UserContext } from "@/lib/shared/context/userContext";
+import { ScheduleAndStartDate } from "../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { useGetQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/Scheduling/CreateGroupSchedule";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 
 
 
 export const ScheduleOptions : React.FC = () => {
     const {groupDescription : {groupCode, tentType}} = useContext(GroupContext);
-    const scheduleAndStartDate : ScheduleAndStartDate | undefined = getQueryDataForSchedule(groupCode);
+    const scheduleAndStartDate : ScheduleAndStartDate | undefined = useGetQueryDataForSchedule(groupCode);
     const queryClient = useQueryClient();
 
     const {mutate : updateScheduleInDB, error, isError, isLoading } = useMutationToUpdateSchedule(groupCode, 
