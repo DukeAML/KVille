@@ -19,7 +19,7 @@ export async function deleteGroup(groupCodeToDelete) {
                 const oldData = await memberRef.get();
         
                 const newData = {...oldData.data()}
-                newData.groupCode = newData.groupCode.filter(group => (group.groupCode !== groupCodeToDelete));
+                newData.groups = newData.groups.filter(group => (group.groupCode !== groupCodeToDelete));
                 firestore.collection('users').doc(member.userID).update(newData);
             });
 

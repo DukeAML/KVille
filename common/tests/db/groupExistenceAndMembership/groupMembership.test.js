@@ -9,7 +9,7 @@ describe("fetchGroups", () => {
                 expect(data.length).toBeGreaterThanOrEqual(1);
             })
             .catch((error) => {
-                fail();
+                expect(true).toBe(false);;
             });
     } );
 });

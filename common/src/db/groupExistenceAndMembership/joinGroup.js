@@ -100,8 +100,8 @@ export async function getNewUserDataAfterJoiningGroup(userRef, groupName, groupC
     let oldUserData = (await userRef.get()).data();
     let newUserData = {
         ...oldUserData, 
-        groupCode : [
-            ...oldUserData.groupCode,
+        groups : [
+            ...oldUserData.groups,
             {
                 groupCode : groupCode,
                 groupName : groupName

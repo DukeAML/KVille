@@ -9,7 +9,7 @@ describe("fetchHoursPerPersonInDateRange", () => {
                 expect(data.nightHoursPerPersonInRange[KTEST1_UID]).toBeGreaterThanOrEqual(0);
             })
             .catch((error) => {
-                fail();
+                expect(true).toBe(false);;
             });
         
     })
@@ -17,7 +17,8 @@ describe("fetchHoursPerPersonInDateRange", () => {
     it("should throw error when given bad group code", async () => {
         fetchHoursPerPersonInDateRange("BADGROUPCODE", new Date(2023, 7, 21), new Date(2023, 7, 23))
             .then((data) => {
-                fail();
+                
+                expect(false).toBe(true);
             })
             .catch((error) => {
                 expect(error.message).toEqual(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST);
@@ -33,7 +34,7 @@ describe("fetchHoursPerPerson", () => {
                 expect(data.nightHoursPerPerson[KTEST1_UID]).toBeGreaterThanOrEqual(0);
             })
             .catch((error) => {
-                fail();
+                expect(true).toBe(false);;
             });
         
     })
@@ -41,7 +42,7 @@ describe("fetchHoursPerPerson", () => {
     it("should throw error when given bad group code", async () => {
         fetchHoursPerPerson("BADGROUPCODE")
             .then((data) => {
-                fail();
+                expect(true).toBe(false);;
             })
             .catch((error) => {
                 expect(error.message).toEqual(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST);

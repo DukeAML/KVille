@@ -11,7 +11,7 @@ describe("tryToRegister", () => {
     it("creates user in users collection upon success", async () => {
         const id = await tryToRegister("kTest15@gmail.com", "kTest15", "kTest15");
         const userData = await firestore.collection('users').doc(id).get();
-        expect(userData.data().groupCode.length).toBe(0);
+        expect(userData.data().groups.length).toBe(0);
         deleteLoggedInUser();
     });
 });
