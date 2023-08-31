@@ -23,7 +23,7 @@ export default function Schedule() {
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
 
     
-    const {userID} = useContext(UserContext); //TODO: refactor out group context
+    const {userID} = useContext(UserContext); 
     const router = useRouter();
     const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
     console.log("the group code is " + groupCode);
