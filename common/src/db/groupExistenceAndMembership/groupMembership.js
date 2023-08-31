@@ -42,11 +42,10 @@ export async function fetchGroups(userID) {
         .doc(userID)
         .get()
         .then((doc) => {
-          let groupsInDB = doc.data().groupCode;
+          let groupsInDB = doc.data().groups;
           //console.log("Current user's groups", currGroup);
           groupsInDB.forEach((group, index) => {
               allGroupCodes.push(group.groupCode);
-              //allGroups.push(new GroupDescription(group.groupCode, group.groupName, group.tentType));
           });
         })
         .catch((error) => {
@@ -80,7 +79,7 @@ export async function removeUserFromGroup(userID, groupCode) {
         throw new Error(REMOVE_USER_ERRORS.USER_DOES_NOT_EXIST);
     }
     let newUserData = {...userDoc.data()}
-    newUserData.groupCode = newUserData.groupCode.filter((group) => (group.groupCode !== groupCode));
+    newUserData.groups = newUserData.groups.filter((group) => (group.groupCode !== groupCode));
     const userInGroupRef = firestore.collection("groups").doc(groupCode).collection("members").doc(userID);
     const userInGroupDoc = await userInGroupRef.get();
     if (!(userInGroupDoc.exists)){

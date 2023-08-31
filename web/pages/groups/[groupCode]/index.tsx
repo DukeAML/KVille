@@ -11,7 +11,7 @@ const GroupHomePage : React.FC = () => {
 
     return (
         <BasePageContainerForGroupsPage title={groupDescription.groupName}>
-            <Typography>Add content for group, including members and their respective hours</Typography>
+            <Typography>On this page I want to add content for group, including members and their respective hours. I also want the group creator to have the option to remove members. We also need to make the group code visible here</Typography>
         </BasePageContainerForGroupsPage>
     )
 }

@@ -12,7 +12,7 @@ describe("fetchGroupSchedule", () => {
                 expect(groupData.schedule.length).toBeGreaterThan(0);
             })
             .catch((error) => {
-                fail();
+                expect(true).toBe(false);;
             })
     });
 });

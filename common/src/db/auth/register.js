@@ -34,7 +34,7 @@ export async function tryToRegister(email, username, password){
             const newUserData = {
                 email : email,
                 username : username,
-                groupCode : []
+                groups : []
             }
             transaction.set(newUserDocRef, newUserData);
         })
