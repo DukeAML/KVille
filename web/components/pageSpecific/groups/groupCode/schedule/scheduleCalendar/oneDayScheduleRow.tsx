@@ -2,7 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import { UserContext } from "@/lib/shared/context/userContext";
 import { useQuery, useQueryClient } from "react-query";
-import { ScheduleAndStartDate } from "../../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { ScheduleAndStartDate } from "../../../../../../../common/src/scheduling/scheduleAndStartDate";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Grid } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
@@ -11,6 +11,7 @@ import { getQueryKeyNameForGroupCode, useGetQueryDataForSchedule, useQueryToFetc
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { useRouter } from "next/dist/client/router";
 import { INVALID_GROUP_CODE } from "@/pages/_app";
+import { EMPTY } from "../../../../../../../common/src/scheduling/tenterSlot";
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
@@ -49,7 +50,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
         names = props.scheduleAndStartDate.schedule[scheduleIndex].split(" ");
     }
     if (names.length == 0){
-        names = ["empty"];
+        names = [EMPTY];
     }
     return (
         <Grid item container spacing={0}>

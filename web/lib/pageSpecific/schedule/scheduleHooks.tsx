@@ -8,7 +8,7 @@ import { useContext } from "react";
 
 
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule";
-import {ScheduleAndStartDate} from '../../../../common/src/Scheduling/scheduleAndStartDate';
+import {ScheduleAndStartDate} from '../../../../common/src/scheduling/scheduleAndStartDate';
 
 
 
