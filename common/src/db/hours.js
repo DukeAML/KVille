@@ -1,5 +1,5 @@
 import { firestore } from "./firebase_config.js";
-import { ScheduleAndStartDate } from "../Scheduling/scheduleAndStartDate.js";
+import { ScheduleAndStartDate } from "../scheduling/scheduleAndStartDate.js";
 import { getGroupMembersByGroupCode } from "./groupExistenceAndMembership/groupMembership.js";
 
 export const HOURS_ERROR_CODES = {

@@ -8,7 +8,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Container } from "@material-ui/core";
 
 interface DateChangerProps {
-    includeHours : boolean
+    includeHours : boolean;
+    text : string;
     date : Date;
     setDate : (d : Date) => void;
 }
@@ -19,7 +20,7 @@ export const DateChanger : React.FC<DateChangerProps> = (props : DateChangerProp
             
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker 
-                    label="Basic date picker" 
+                    label={props.text} 
                     value={dayjs(props.date)}
                     onChange={(newDate) => {
                         if (newDate != null){

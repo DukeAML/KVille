@@ -1,4 +1,4 @@
-import ScheduleAndStartDate from "../../Scheduling/scheduleAndStartDate";
+import ScheduleAndStartDate from "../../scheduling/scheduleAndStartDate";
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDates/datesUtils";
 
 /**

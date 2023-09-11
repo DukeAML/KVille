@@ -1,6 +1,6 @@
 import { getDatePlusNumShifts, getCurrentDate } from "../../calendarAndDates/datesUtils";
-import { Helpers } from "../../Scheduling/helpers.js";
-
+import { Helpers } from "../../scheduling/helpers.js";
+import { EMPTY } from "../../scheduling/tenterSlot.js";
 /**
  * 
  * @param {String[]} groupSchedule 
@@ -11,7 +11,7 @@ export const getDefaultAssignDateRangeStartDate = (groupSchedule, groupScheduleS
     for (let i = 0; i < groupSchedule.length; i += 1){
         let names = groupSchedule[i].split(' ');
         for (let j = 0; j < names.length; j+= 1){
-            if (names[j] == "empty")
+            if (names[j] == EMPTY)
                 return getDatePlusNumShifts(groupScheduleStartDate, i);
       }
     }

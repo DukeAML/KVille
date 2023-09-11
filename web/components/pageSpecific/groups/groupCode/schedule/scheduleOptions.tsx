@@ -7,9 +7,9 @@ import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRange
 import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
 import { useQueryClient } from "react-query";
 import { UserContext } from "@/lib/shared/context/userContext";
-import { ScheduleAndStartDate } from "../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { ScheduleAndStartDate } from "../../../../../../common/src/scheduling/scheduleAndStartDate";
 import { useGetQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
-import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/Scheduling/CreateGroupSchedule";
+import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/scheduling/CreateGroupSchedule";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 
 

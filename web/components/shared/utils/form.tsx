@@ -74,6 +74,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                                         as={Select}
                                         id={fieldProps.name}
                                         name={fieldProps.name}
+                                        label={fieldProps.name}
                                         variant="outlined"
                                         fullWidth
                                         required

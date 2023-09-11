@@ -2,7 +2,7 @@
 
 import { Helpers } from "./helpers.js";
 import {olsonParams} from "../../data/olsonParams.js"; 
-import { TenterSlot } from "./tenterSlot.js";
+import { TenterSlot, TENTER_STATUS_CODES } from "./tenterSlot.js";
 
 
 export class Weight{
@@ -94,22 +94,22 @@ export class Weight{
             var aboveIsNight = !skipAboveRow && allSlots[aboveRow].isNight;
             var belowIsNight = !skipBelowRow && allSlots[belowRow].isNight;
 
-            var aboveTent = !skipAboveRow && allSlots[aboveRow].status == "Scheduled";
-            var belowTent = !skipBelowRow && allSlots[belowRow].status == "Scheduled";
+            var aboveTent = !skipAboveRow && allSlots[aboveRow].status == TENTER_STATUS_CODES.SCHEDULED;
+            var belowTent = !skipBelowRow && allSlots[belowRow].status == TENTER_STATUS_CODES.SCHEDULED;
             var aboveSome = !skipAboveRow && allSlots[aboveRow].status == "Somewhat";
             var belowSome = !skipBelowRow && allSlots[belowRow].status == "Somewhat";
-            var aboveFree = !skipAboveRow && allSlots[aboveRow].status == "Available";
-            var belowFree = !skipBelowRow && allSlots[belowRow].status == "Available";
+            var aboveFree = !skipAboveRow && allSlots[aboveRow].status == TENTER_STATUS_CODES.AVAILABLE;
+            var belowFree = !skipBelowRow && allSlots[belowRow].status == TENTER_STATUS_CODES.AVAILABLE;
 
             var numScheduledAbove = 0; //num contiguous day slots directly above already scheduled
             var numScheduledBelow = 0; //num contiguous day slots directly below already scheduled
             var nA = 1;
-            while ((currentRow -nA >= 0) && (allSlots[currentRow - nA].status == "Scheduled") && !(allSlots[currentRow-nA].isNight)){
+            while ((currentRow -nA >= 0) && (allSlots[currentRow - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow-nA].isNight)){
                 numScheduledAbove += 1;
                 nA ++;
             }
             var nB = 1;
-            while ((currentRow + nB < allSlots.length) && (allSlots[currentRow + nB].status == "Scheduled") && !(allSlots[currentRow+nB].isNight)){
+            while ((currentRow + nB < allSlots.length) && (allSlots[currentRow + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow+nB].isNight)){
                 numScheduledBelow += 1;
                 nB ++;
             }
@@ -118,7 +118,7 @@ export class Weight{
 
             nA = 1;
             while ((currentRow -nA >= 0) && (nA < 24)){
-                if ((allSlots[currentRow - nA].status == "Scheduled") && !(allSlots[currentRow-nA].isNight))
+                if ((allSlots[currentRow - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow-nA].isNight))
                     //Keith: might wanna weight these higher if they are closer to the current slot
                     //something like numScheduledToday += 12.0 / (6.0 + nA)
                     numScheduledToday += 12.0 / (6.0 + nA);
@@ -126,7 +126,7 @@ export class Weight{
             }
             nB = 1;
             while ((currentRow + nB < allSlots.length) && (nB < 24)){
-                if ((allSlots[currentRow + nB].status == "Scheduled") && !(allSlots[currentRow+nB].isNight))
+                if ((allSlots[currentRow + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow+nB].isNight))
                     numScheduledToday += 12.0 / (6.0 + nB);
                 nB ++;
             }
@@ -238,7 +238,7 @@ export class Weight{
             var currentPhase = currentSlot.phase;
             var nightBoolean = currentSlot.isNight;
         
-            var peopleNeeded = Helpers.calculatePeopleNeeded(currentSlot);
+            var peopleNeeded = currentSlot.calculatePeopleNeeded();
             
             var numFreePeople = counterArray[currentRow];
             var newWeight = currentSlot.weight*(12/(numFreePeople + 0.01))*peopleNeeded;
@@ -281,18 +281,18 @@ export class Weight{
         var tentCounter = 0;
 
         // Update Data
-        scheduleGrid[currentCol][currentRow].status = "Scheduled";
+        scheduleGrid[currentCol][currentRow].status = TENTER_STATUS_CODES.SCHEDULED;
 
         // Count number of scheduled tenters during winner slot.
         var i = 0;
         while (i < scheduleGrid.length){
-            if (scheduleGrid[i][currentRow].status == "Scheduled")
+            if (scheduleGrid[i][currentRow].status == TENTER_STATUS_CODES.SCHEDULED);
                 tentCounter = tentCounter + 1;
             i += 1;
         }
 
         // Determine how many people are needed.
-        var peopleNeeded = Helpers.calculatePeopleNeeded(winner);
+        var peopleNeeded = winner.calculatePeopleNeeded();
 
         // Update Slots and Graveyard
         if (tentCounter >= peopleNeeded){

@@ -4,7 +4,7 @@ import {Helpers} from "./helpers.js";
 import {Weight} from "./weight.js";
 import {FinalTouches} from "./finalTouches.js";
 import {Fairness} from "./fairness.js";
-import {TenterSlot} from "./tenterSlot.js";
+import {TenterSlot, TENTER_STATUS_CODES} from "./tenterSlot.js";
 import {ScheduledSlot} from "./scheduledSlot.js";
 import {Person} from "./person.js";
 
@@ -23,7 +23,7 @@ export class Algorithm{
 
     /**
      * Olson Scheduling Algo
-     * @param {Array<Person>} people is an array of Person objects, as defined in Olson_Scheduling/person
+     * @param {Array<Person>} people is an array of Person objects, as defined in person.js
      * @param {Array<Array<TenterSlot>>} scheduleGrid is an array of arrays of Tenter slots (TenterSlot objects in ./tenterSlot). 
      *    For instance, scheduleGrid[0] corresponds to slots for the person identified by people[0]. 
      *    There is a slot for EVERY TIME. The slot object says whether or not the person is available.
@@ -92,7 +92,7 @@ export class Algorithm{
             currentPerson = scheduleGrid[i];
             var counter = 0;
             while (counter < currentPerson.length){
-                if (currentPerson[counter].status == "Scheduled")
+                if (currentPerson[counter].status == TENTER_STATUS_CODES.SCHEDULED)
                     counterArray[counter] = counterArray[counter] + 1;
                 counter = counter + 1;
             }
@@ -109,10 +109,10 @@ export class Algorithm{
                 // Determine how many people are needed.
                 var isNight = currentPerson[counter].isNight;
                 var phase = currentPerson[counter].phase;
-                var peopleNeeded = Helpers.calculatePeopleNeeded(currentPerson[counter]);
+                var peopleNeeded = currentPerson[counter].calculatePeopleNeeded();
                 var numPeople = counterArray[counter];
 
-                var addToSlot =  (currentPerson[counter].status == "Available") || (currentPerson[counter].status == "Somewhat");
+                var addToSlot =  (currentPerson[counter].status == TENTER_STATUS_CODES.AVAILABLE) || (currentPerson[counter].status == "Somewhat");
                 // Only add in slot if necessary.
                 if ((numPeople < peopleNeeded) && addToSlot)
                     slots.push(currentPerson[counter]);
@@ -129,37 +129,37 @@ export class Algorithm{
         return [slots, graveyard, people]
     }
   
-  /**
-   * 
-   * @param {Array<Person>} people 1d array of Person objects
-   * @param {Array<Array<TenterSlot>>} scheduleGrid 2d array of shape (number of people, number of time slots)
-   * @returns {Array<TenterSlot>} combinedGrid, a 1d array of TenterSlot objects
-   */
-  static processData(people, scheduleGrid){
-    // compress data from 2d grid with a single-deminsion of
-    // all of the scheduled slots
-    var combinedGrid = [];
+    /**
+     * 
+     * @param {Array<Person>} people 1d array of Person objects
+     * @param {Array<Array<TenterSlot>>} scheduleGrid 2d array of shape (number of people, number of time slots)
+     * @returns {Array<TenterSlot>} combinedGrid, a 1d array of TenterSlot objects
+     */
+    static processData(people, scheduleGrid){
+        // compress data from 2d grid with a single-deminsion of
+        // all of the scheduled slots
+        var combinedGrid = [];
 
-    // iterating through every unique slot, and
-    // checking for any people that are scheduled on that slot as well
-    //should be <= in the for ??
-    for (var slotIndex = 0; slotIndex < scheduleGrid[0].length; slotIndex++){
+        // iterating through every unique slot, and
+        // checking for any people that are scheduled on that slot as well
+        //should be <= in the for ??
+        for (var slotIndex = 0; slotIndex < scheduleGrid[0].length; slotIndex++){
 
-     var slot = new ScheduledSlot(scheduleGrid[0][slotIndex].startDate, scheduleGrid[0][slotIndex].phase);
+        var slot = new ScheduledSlot(scheduleGrid[0][slotIndex].startDate, scheduleGrid[0][slotIndex].phase);
 
 
-      // checking every person at that slot for status
-      for (var personIndex = 0; personIndex < people.length; personIndex++){
-        var person = people[personIndex];
-        if (scheduleGrid[personIndex][slotIndex].status == "Scheduled"){
-          slot.ids.push(person.id);
+        // checking every person at that slot for status
+        for (var personIndex = 0; personIndex < people.length; personIndex++){
+            var person = people[personIndex];
+            if (scheduleGrid[personIndex][slotIndex].status == TENTER_STATUS_CODES.SCHEDULED){
+            slot.ids.push(person.id);
+            }
         }
-      }
-      combinedGrid.push(slot);
+        combinedGrid.push(slot);
+        }
+        
+        return combinedGrid;
     }
-    
-    return combinedGrid;
-  }
 
 
 }
