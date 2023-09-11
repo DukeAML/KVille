@@ -11,19 +11,19 @@ export class Slot{
      * @param {String} phase 
      */
     constructor(startDate, phase){
-      this.startDate = startDate;
-      this.endDate = new Date(startDate.getTime() + 30*60000);
-      this.phase = phase;
-      this.isNight = Slot.checkNight(startDate);
-      this.isGrace = Slot.checkGrace(startDate);
+		this.startDate = startDate;
+		this.endDate = new Date(startDate.getTime() + 30*60000);
+		this.phase = phase;
+		this.isNight = Slot.checkNight(startDate);
+		this.isGrace = Slot.checkGrace(startDate);
     }
   
     to_hash() {
-      var hash = {};
-      for (const instance_variable in this){
-        hash[instance_variable] = this[instance_variable];
-      }
-      return hash;
+		var hash = {};
+		for (const instance_variable in this){
+			hash[instance_variable] = this[instance_variable];
+		}
+		return hash;
     }
 
     /**
@@ -32,15 +32,15 @@ export class Slot{
      * @returns {boolean} true iff this is a night slot, false otherwise
      */
     static checkNight(slotDate){
-      var startHour = slotDate.getHours();
-      var minutes = slotDate.getMinutes();
-      startHour += minutes / 60;
+		var startHour = slotDate.getHours();
+		var minutes = slotDate.getMinutes();
+		startHour += minutes / 60;
 
-      if ((startHour >= nightData.nightStartHour) && (startHour < nightData.nightEndHour)){
-        return true;
-      } else {
-        return false;
-      }
+		if ((startHour >= nightData.nightStartHour) && (startHour < nightData.nightEndHour)){
+			return true;
+		} else {
+			return false;
+		}
     }
 
     /**
@@ -48,7 +48,7 @@ export class Slot{
      * @returns {boolean}
      */
     checkNight(){
-      return Slot.checkNight(this.startDate);
+		return Slot.checkNight(this.startDate);
     }
 
     /**
@@ -57,20 +57,20 @@ export class Slot{
      * @returns {boolean} true iff this slot is during a grace period
      */
     static checkGrace(startDate){
-      var gracePeriods = graceData.gracePeriods;
-      for (var i = 0; i < gracePeriods.length; i += 1){
-        var gracePeriod = gracePeriods[i];
-        var start = gracePeriod.startDate;
-        var end = gracePeriod.endDate;
- 
-        var graceStartDate = new Date(start.year, start.monthIndex, start.day, start.hours, start.minutes);
-        var graceEndDate = new Date(end.year, end.monthIndex, end.day, end.hours, end.minutes);
-        
-        if ((startDate >= graceStartDate) && (startDate < graceEndDate)){
-          return true;
-        } 
-      }
-      return false;
+		var gracePeriods = graceData.gracePeriods;
+		for (var i = 0; i < gracePeriods.length; i += 1){
+			var gracePeriod = gracePeriods[i];
+			var start = gracePeriod.startDate;
+			var end = gracePeriod.endDate;
+	
+			var graceStartDate = new Date(start.year, start.monthIndex, start.day, start.hours, start.minutes);
+			var graceEndDate = new Date(end.year, end.monthIndex, end.day, end.hours, end.minutes);
+			
+			if ((startDate >= graceStartDate) && (startDate < graceEndDate)){
+				return true;
+			} 
+		}
+		return false;
     }
 
     /**
@@ -78,7 +78,7 @@ export class Slot{
      * @returns {boolean}
      */
     checkGrace(){
-      return Slot.checkGrace(this.startDate);
+      	return Slot.checkGrace(this.startDate);
     }
 
     /**
@@ -86,30 +86,30 @@ export class Slot{
      * @returns {number} number of people needed
      */
     calculatePeopleNeeded() {
-      //first check if there's grace
-      if (this.isGrace){
-        return 0;
-      }
+		//first check if there's grace
+		if (this.isGrace){
+			return 0;
+		}
 
-      if (this.phase == TENTING_COLORS.BLACK) {
-        if (this.isNight)
-          return phaseData.Black.night
-        else
-          return phaseData.Black.day;
-        
-      }
-      if (this.phase == TENTING_COLORS.BLUE){
-        if (this.isNight)
-          return phaseData.Blue.night;
-        else
-          return phaseData.Blue.day;
-      }
-      if (this.phase == TENTING_COLORS.WHITE){
-        if (this.isNight)
-          return phaseData.White.night;
-        else
-          return phaseData.White.day;
-      }
+		if (this.phase == TENTING_COLORS.BLACK) {
+			if (this.isNight)
+				return phaseData.Black.night
+			else
+				return phaseData.Black.day;
+			
+		}
+		if (this.phase == TENTING_COLORS.BLUE){
+			if (this.isNight)
+				return phaseData.Blue.night;
+			else
+				return phaseData.Blue.day;
+		}
+		if (this.phase == TENTING_COLORS.WHITE){
+			if (this.isNight)
+				return phaseData.White.night;
+			else
+				return phaseData.White.day;
+		}
     }
   
 }

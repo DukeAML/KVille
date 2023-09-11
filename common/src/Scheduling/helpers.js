@@ -13,9 +13,6 @@ import { TenterSlot, EMPTY, TENTER_STATUS_CODES } from "./tenterSlot.js";
 export class Helpers {
 
 
-
-
-
     /**
      * Finds number of slots for which this person is free during day and night each 
      * @param {Array} availabilities an array of booleans, 336 of them if it is for one week 
@@ -24,19 +21,19 @@ export class Helpers {
      *    and the second element is the number of night slots where they are free. 
      */
     static dayNightFree(availabilities, availabilitiesStartDate){
-      var dayFree = 0;
-      var nightFree = 0;
-      for (var index = 0; index < availabilities.length; index++){
-        if (availabilities[index] == true){
-          var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
-          if (Slot.checkNight(date)){
-            nightFree += 1;
-          } else{
-            dayFree += 1;
-          }
-        }
-      }
-      return [dayFree, nightFree];
+		var dayFree = 0;
+		var nightFree = 0;
+		for (var index = 0; index < availabilities.length; index++){
+			if (availabilities[index] == true){
+				var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
+				if (Slot.checkNight(date)){
+					nightFree += 1;
+				} else{
+					dayFree += 1;
+				}
+			}
+		}
+		return [dayFree, nightFree];
     }
 
     /**
@@ -51,19 +48,19 @@ export class Helpers {
      * @returns {Array<TenterSlot>} an array of TenterSlot objects corresponding to each slot given in the availabilities argument
      */
     static availabilitiesToSlots(personID, availabilities, availabilitiesStartDate, phase, userCount){
-      var slots = [];
-      for (var index = 0; index < availabilities.length; index++){
-        var status = TENTER_STATUS_CODES.AVAILABLE;
-        if (availabilities[index] == false){
-          status = "Unavailable";
-        }
-        var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
-        var slot = new TenterSlot(personID, date, phase, status, index, userCount, 1);
-        
-        slots.push(slot);
-      }
+		var slots = [];
+		for (var index = 0; index < availabilities.length; index++){
+			var status = TENTER_STATUS_CODES.AVAILABLE;
+			if (availabilities[index] == false){
+				status = "Unavailable";
+			}
+			var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
+			var slot = new TenterSlot(personID, date, phase, status, index, userCount, 1);
+			
+			slots.push(slot);
+		}
 
-      return slots;
+		return slots;
 
     }
 
@@ -74,71 +71,73 @@ export class Helpers {
      * @returns {int} -1 if the item is not in arr, or returns i s.t. (arr[i] == item) if item is in arr
      */
     static inArray(item, arr){
-      for (var i = 0; i < arr.length; i++){
-        if (arr[i] == item)
-          return i;
-      }
+		for (var i = 0; i < arr.length; i++){
+			if (arr[i] == item){
+				return i;
+			}
+		}
 
-      return -1;
+		return -1;
     }
 
   
-  /**
-   * 
-   * @param {String} tentType denote which type of tent this is
-   * @returns {Date} the Date (year, month, day, hour, minutes) on which tenting begings
-   */
-  static getTentingStartDate(tentType){
-    if (tentType == TENTING_COLORS.BLACK){
-      return this.getBlackTentingStartDate();
-    } else if (tentType == TENTING_COLORS.BLUE){
-      return this.getBlueTentingStartDate();
-    } else if (tentType == TENTING_COLORS.WHITE){
-      return this.getWhiteTentingStartDate();
-    } else {
-      return this.getBlackTentingStartDate();
-    }
-  }
+	/**
+	 * 
+	 * @param {String} tentType denote which type of tent this is
+	 * @returns {Date} the Date (year, month, day, hour, minutes) on which tenting begings
+	 */
+	static getTentingStartDate(tentType){
+		if (tentType == TENTING_COLORS.BLACK){
+			return this.getBlackTentingStartDate();
+		} else if (tentType == TENTING_COLORS.BLUE){
+			return this.getBlueTentingStartDate();
+		} else if (tentType == TENTING_COLORS.WHITE){
+			return this.getWhiteTentingStartDate();
+		} else {
+			return this.getBlackTentingStartDate();
+		}
+	}
 
-  static getBlackTentingStartDate(){
-    const data = scheduleDates.startOfBlack;
-    const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
-    return startDate;
-  }
+	static getBlackTentingStartDate(){
 
-  static getBlueTentingStartDate(){
-    const data = scheduleDates.startOfBlue;
-    const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
-    return startDate;
-  }
+		const data = scheduleDates.startOfBlack;
+		const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
+		return startDate;
+	}
 
-  static getWhiteTentingStartDate(){
-    const data = scheduleDates.startOfWhite;
-    const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
-    return startDate;
-  }
+	static getBlueTentingStartDate(){
+		const data = scheduleDates.startOfBlue;
+		const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
+		return startDate;
+	}
 
-  /**
-   * 
-   * @param {String} tentType 
-   * @returns {Array<String>} an array with an entry for each timeslot, autofilled with "empty"
-   */
-  static getDefaultSchedule(tentType){
-    let startDate = this.getTentingStartDate(tentType);
-    let endDate = this.getTentingEndDate();
-    let numSlots = getNumSlotsBetweenDates(startDate, endDate);
-    return new Array(numSlots).fill(EMPTY);
-  }
+	static getWhiteTentingStartDate(){
+		const data = scheduleDates.startOfWhite;
+		const startDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
+		return startDate;
+	}
 
-  /**
-   * 
-   * @returns {Date} the Date (year, month, day, hour, minutes) on which tenting ends
-   */
-  static getTentingEndDate(){
-    const data = scheduleDates.endOfTenting;
-    const endDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
-    return endDate;
-  }
+	/**
+	 * 
+	 * @param {String} tentType 
+	 * @returns {Array<String>} an array with an entry for each timeslot, autofilled with "empty"
+	 */
+	static getDefaultSchedule(tentType){
+		let startDate = this.getTentingStartDate(tentType);
+		let endDate = this.getTentingEndDate();
+		let numSlots = getNumSlotsBetweenDates(startDate, endDate);
+		return new Array(numSlots).fill(EMPTY);
+	}
+
+	/**
+	 * 
+	 * @returns {Date} the Date (year, month, day, hour, minutes) on which tenting ends
+	 */
+	static getTentingEndDate(){
+		const data = scheduleDates.endOfTenting;
+		const endDate = new Date(data.year, data.monthIndex, data.day, data.hours, data.minutes);
+		return endDate;
+	}
   
   }
 

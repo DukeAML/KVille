@@ -28,5 +28,5 @@ export class TenterSlot extends Slot{
         this.row = row;
         this.col = col;
         this.weight = weight;
-      }
+    }
 }
