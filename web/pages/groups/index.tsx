@@ -22,7 +22,7 @@ export default function GroupPage() {
     } else {
         body = (
             <Container maxWidth="sm">       
-                <Typography variant="h6" align="center" >Select your Group or Join/Create one to Continue</Typography> 
+                <Typography variant="h6" align="center" >Select your Group or Join/Create one to Continue. On this page, we need to add buttons that will take you to the /joinGroup or /createGroup pages</Typography> 
                 <Typography align="center">My Group</Typography>
                 {groups?.map((group, index) => {
                     return (

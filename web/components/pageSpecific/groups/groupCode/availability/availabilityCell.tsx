@@ -1,5 +1,5 @@
 import { Grid, Paper, makeStyles, Theme } from '@material-ui/core';
-import { MouseTracker } from './mouseTracker';
+import { MouseTracker } from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { AvailabilitySlot } from '../../../../../../common/src/db/availability';
 
 const useStyles = makeStyles((theme:Theme) => ({

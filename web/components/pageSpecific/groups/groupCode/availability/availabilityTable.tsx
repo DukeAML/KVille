@@ -3,7 +3,7 @@ import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../common
 import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
 import { Grid, Paper, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
-import { MouseTracker } from './mouseTracker';
+import {MouseTracker} from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
 import { AvailabilityCalendarDatesContext } from '../../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext';
 import { UserContext } from '@/lib/shared/context/userContext';
