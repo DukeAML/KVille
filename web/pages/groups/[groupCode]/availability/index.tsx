@@ -14,7 +14,7 @@ import { GroupContext } from "@/lib/shared/context/groupContext";
 import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
 import { useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "@/pages/_app";
-import { BLACK } from "../../../../../common/data/phaseData";
+import { TENTING_COLORS } from "../../../../../common/data/phaseData";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
@@ -27,8 +27,8 @@ export default function Availability(){
         );
 
 
-    let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(BLACK));
-    let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(BLACK));
+    let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
+    let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
     return (
         <BasePageContainerForGroupsPage title="Availability">
             {isLoading ? 

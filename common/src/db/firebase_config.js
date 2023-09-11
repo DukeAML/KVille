@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth} from 'firebase/auth';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: './.env' });
@@ -43,5 +43,6 @@ export const firebase_app = initializeFirebase();
 // Export other constants here...
 export const firestore = firebase.firestore();
 export const auth = getAuth();
+
 export const firebase_FieldValue = firebase.firestore.FieldValue;
 export const EmailAuthProvider = firebase.auth.EmailAuthProvider;

@@ -2,7 +2,7 @@
 
 import {olsonParams} from "../../data/olsonParams.js" 
 import {FinalTouches} from "./finalTouches.js";
-import {TenterSlot} from "./tenterSlot.js";
+import {TenterSlot, TENTER_STATUS_CODES} from "./tenterSlot.js";
 import {ScheduledSlot} from "./scheduledSlot.js";
 import {Person} from "./person.js";
 
@@ -51,7 +51,7 @@ export class Fairness{
         //find a day shift of 1.5hours or more that can be given from donor to recipient
         var contiguous_slots = 0;
         for (var i = 0; i < scheduleGrid[0].length; i++){
-            if ((scheduleGrid[donor][i].status == "Scheduled") && !(scheduleGrid[donor][i].isNight)){
+            if ((scheduleGrid[donor][i].status == TENTER_STATUS_CODES.SCHEDULED) && !(scheduleGrid[donor][i].isNight)){
                 contiguous_slots += 1;
 
             } else{
@@ -88,19 +88,19 @@ export class Fairness{
         //basically check if recipient is free from beginning to end
         var canSchedule = true;
         for (var time = beginning; time <= end; time++){
-            if (!(scheduleGrid[recipient][time].status == "Available")){
+            if (!(scheduleGrid[recipient][time].status == TENTER_STATUS_CODES.AVAILABLE)){
                 return false;
             }
         }
 
         //now check if they are scheduled for any slots close by. If so return false
         for (var time = beginning; time >= Math.max(beginning - 4, 0); time--){
-            if ((scheduleGrid[recipient][time].status == "Scheduled") && !(scheduleGrid[recipient][time].isNight)){
+            if ((scheduleGrid[recipient][time].status == TENTER_STATUS_CODES.SCHEDULED) && !(scheduleGrid[recipient][time].isNight)){
                 return false;
             }
         }
         for (var time = end; time < Math.min(end + 5, scheduleGrid[recipient].length); time++){
-            if ((scheduleGrid[recipient][time].status == "Scheduled") && !(scheduleGrid[recipient][time].isNight)){
+            if ((scheduleGrid[recipient][time].status == TENTER_STATUS_CODES.SCHEDULED) && !(scheduleGrid[recipient][time].isNight)){
                 return false;
             }
         }

@@ -14,3 +14,10 @@ export const phaseData = {
         night:2
     }
 }
+
+
+export const TENTING_COLORS = {
+    BLACK : "Black",
+    BLUE : "Blue",
+    WHITE : "White"
+}

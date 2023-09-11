@@ -3,20 +3,22 @@
 import { Helpers } from "./helpers.js";
 import { Person } from "./person.js";
 import { ScheduledSlot } from "./scheduledSlot.js";
-import { TenterSlot } from "./tenterSlot.js";
+import { TenterSlot, EMPTY, GRACE, TENTER_STATUS_CODES } from "./tenterSlot.js";
+
+
 
 export class FinalTouches{
     
 /**
- * Adds in 'Grace' to combinedGrid where appropriate
+ * Adds in 'Grace Period' to combinedGrid where appropriate
  * @param {Array<ScheduledSlot>} combinedGrid 
  * returns nothing, modifies the grid in place
  */
   static fillGrace(combinedGrid){
     for (var i = 0; i < combinedGrid.length; i++){
-      var peopleNeeded = Helpers.calculatePeopleNeeded(combinedGrid[i]);
+      var peopleNeeded = combinedGrid[i].calculatePeopleNeeded();
       if (peopleNeeded == 0){
-        combinedGrid[i].ids.push('Grace');
+        combinedGrid[i].ids.push(GRACE);
       }
 
     }   
@@ -30,9 +32,9 @@ export class FinalTouches{
    */
   static fillEmptySpots(combinedGrid){
     for (var i = 0; i < combinedGrid.length; i++){
-      var peopleNeeded = Helpers.calculatePeopleNeeded(combinedGrid[i]);
+      var peopleNeeded = combinedGrid[i].calculatePeopleNeeded();
       while (combinedGrid[i].ids.length < peopleNeeded){
-        combinedGrid[i].ids.push('empty');
+        combinedGrid[i].ids.push(EMPTY);
       }
 
     }
@@ -62,7 +64,7 @@ static cleanStraySlots(combinedGrid, people, scheduleGrid){
       //check if this person is also in the slot above/below
       var loneShift = true;
       var tenter = currTenters[tenterIndex];
-      if (tenter == "empty" || tenter == "Grace")
+      if (tenter == EMPTY || tenter == GRACE)
         continue;
       var previousTenters = newGrid[i-1].ids;
       var nextTenters = newGrid[i+1].ids;
@@ -93,7 +95,7 @@ static cleanStraySlots(combinedGrid, people, scheduleGrid){
         }
 
         //first try to schedule tenter in the above time slot
-        if ((scheduleGrid[tenterIDNum][i-1].status == "Available") && !(scheduleGrid[tenterIDNum][i-1].isNight)){
+        if ((scheduleGrid[tenterIDNum][i-1].status == TENTER_STATUS_CODES.AVAILABLE) && !(scheduleGrid[tenterIDNum][i-1].isNight)){
           if (this.findTenterAboveToEdit(scheduleGrid, i) != null){
             var [indexToRemove, IDToRemove] = this.findTenterAboveToEdit(scheduleGrid, i);
             this.shiftReplacement(people, scheduleGrid, newGrid, indexToRemove, tenterIDNum, i-1);
@@ -102,7 +104,7 @@ static cleanStraySlots(combinedGrid, people, scheduleGrid){
         }
 
         //if that doesn't work, try to schedule tenter in the below slot
-        if ((scheduleGrid[tenterIDNum][i+1].status == "Available") && !(scheduleGrid[tenterIDNum][i-1].isNight)){
+        if ((scheduleGrid[tenterIDNum][i+1].status == TENTER_STATUS_CODES.AVAILABLE) && !(scheduleGrid[tenterIDNum][i-1].isNight)){
           if (this.findTenterBelowToEdit(scheduleGrid, i) != null){
             var [indexToRemove, IDToRemove] = this.findTenterBelowToEdit(scheduleGrid, i);
             this.shiftReplacement(people, scheduleGrid, newGrid, indexToRemove, tenterIDNum, i+1);
@@ -132,8 +134,8 @@ static shiftReplacement(people, scheduleGrid, newGrid, IndexToRemove, newTenterI
   var personToRemove = people[IndexToRemove];
   personToRemove.dayScheduled -= 1;
   people[newTenterIndex].dayScheduled += 1;
-  scheduleGrid[IndexToRemove][timeslot].status = "Available";
-  scheduleGrid[newTenterIndex][timeslot].status = "Scheduled";
+  scheduleGrid[IndexToRemove][timeslot].status = TENTER_STATUS_CODES.AVAILABLE;
+  scheduleGrid[newTenterIndex][timeslot].status = TENTER_STATUS_CODES.SCHEDULED;
 
   var newSlotIDs = [people[newTenterIndex].id];
   for (var i = 0; i < newGrid[timeslot].ids.length; i++){
@@ -159,7 +161,7 @@ static findTenterAboveToEdit(scheduleGrid, timeslot){
     return null;
   }
   for (var i = 0; i < scheduleGrid.length; i++){
-    if ((scheduleGrid[i][timeslot-1].status == "Scheduled") && (scheduleGrid[i][timeslot].status == "Available")){
+    if ((scheduleGrid[i][timeslot-1].status == TENTER_STATUS_CODES.SCHEDULED) && (scheduleGrid[i][timeslot].status == TENTER_STATUS_CODES.AVAILABLE)){
       return [i, scheduleGrid[i][timeslot-1].personID];
     }
   }
@@ -179,7 +181,7 @@ static findTenterBelowToEdit(scheduleGrid, timeslot){
     return null;
   }
   for (var i = 0; i < scheduleGrid.length; i++){
-    if ((scheduleGrid[i][timeslot+1].status == "Scheduled") && (scheduleGrid[i][timeslot].status == "Available")){
+    if ((scheduleGrid[i][timeslot+1].status == TENTER_STATUS_CODES.SCHEDULED) && (scheduleGrid[i][timeslot].status == TENTER_STATUS_CODES.AVAILABLE)){
       return [i, scheduleGrid[i][timeslot+1].personID];
     }
   }
@@ -205,18 +207,18 @@ static reorganizeGrid(grid){
     for (var j = 0; j < prevIDs.length; j++){
       if (Helpers.inArray(prevIDs[j], currIDs) >= 0){
         newIDList[j] = prevIDs[j];
-        if (prevIDs[j] == "empty")
+        if (prevIDs[j] == EMPTY)
           emptiesAdded += 1;
       }
     }
 
     var emptiesInCurrent = 0;
     for (var j = 0; j < currIDs.length; j++){
-      if (currIDs[j] == "empty")
+      if (currIDs[j] == EMPTY)
         emptiesInCurrent += 1;
     }
     for (var j = 0; j < currIDs.length; j++){
-      if ((currIDs[j] != "empty") && (Helpers.inArray(currIDs[j], newIDList) >= 0))
+      if ((currIDs[j] != EMPTY) && (Helpers.inArray(currIDs[j], newIDList) >= 0))
         continue;
       else{
         //find somewhere to insert it
@@ -226,7 +228,7 @@ static reorganizeGrid(grid){
             break;
           }
         }
-        if (currIDs[j] == "empty")
+        if (currIDs[j] == EMPTY)
           emptiesAdded += 1;
       }
     }

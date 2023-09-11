@@ -109,11 +109,13 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
           
         {/* Row labels and data cells */}
         {rowLabels.map((row, rowIndex) => (
-          <Grid item container spacing={0} key={rowIndex}>
+          <Grid item container spacing={0} key={row}>
             {/* Row label */}
             
-            <Grid item xs={1} key={rowIndex}>
-              <Typography>{row}</Typography>
+
+            <Grid item xs={1} key={row}>
+              {}
+              <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "2px"}}>{row}</Typography>
             </Grid>
             
 
@@ -123,7 +125,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
               const isInBounds = cellIsInBounds(correspondingIndex);
               const correspondingSlot = isInBounds ? availability[correspondingIndex] : new AvailabilitySlot(new Date(Date.now()), false);
               return (
-              <AvailabilityCell mouseTracker={mouseTracker} slot={correspondingSlot} row={rowIndex} col={columnIndex} inBounds={isInBounds} updateAvailabilityInDB={updateAvailabilityInDB} key={columnIndex}/>
+              <AvailabilityCell mouseTracker={mouseTracker} slot={correspondingSlot} row={rowIndex} col={columnIndex} inBounds={isInBounds} updateAvailabilityInDB={updateAvailabilityInDB} key={correspondingIndex}/>
               );
             })}
           </Grid>

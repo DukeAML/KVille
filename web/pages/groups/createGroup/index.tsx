@@ -14,7 +14,7 @@ import { createGroupValidationSchema, tryToCreateGroup } from "../../../../commo
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { BLACK, BLUE, WHITE } from "../../../../common/data/phaseData";
+import { TENTING_COLORS } from "../../../../common/data/phaseData";
 
 interface CreateGroupFormValues {
     groupName : string;
@@ -23,7 +23,7 @@ interface CreateGroupFormValues {
 
 const initialValues : CreateGroupFormValues = {
     groupName : ' ',
-    tentType : BLUE
+    tentType : TENTING_COLORS.BLUE
 }
 
 export default function CreateGroupPage() {
@@ -55,7 +55,7 @@ export default function CreateGroupPage() {
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}
                         textFields={[{name : "groupName", type : "string"}]}
-                        selectFields={[{name : "tentType", options : [BLACK, BLUE, WHITE]}]}
+                        selectFields={[{name : "tentType", options : [TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, TENTING_COLORS.WHITE]}]}
                         errorMessage={errorMessage}
                         handleSubmit={handleSubmit}
                     />

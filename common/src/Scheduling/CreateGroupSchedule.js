@@ -6,14 +6,16 @@ import { getNumDaysBetweenDates, getNumSlotsBetweenDates } from '../calendarAndD
 import { fetchHoursPerPersonInDateRange } from "../db/hours.js";
 import { ScheduleAndStartDate } from './scheduleAndStartDate.js';
 
-import {Helpers} from './helpers.js';
+import {Helpers} from "./helpers.js";
 import {Algorithm} from './algorithm.js';
+import { EMPTY, GRACE } from './tenterSlot.js';
+import { TENTING_COLORS } from '../../data/phaseData.js';
 
 
 /**
  * Keith's new scheduling method with the Olson algo
  * @param {String} groupCode 
- * @param {String} tentType a string like "Blue", "Black", or "White". I set it to "White" if it is not "Black" or "Blue"
+ * @param {String} tentType a string like TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, or TENTING_COLORS.WHITE. I set it to TENTING_COLORS.WHITE if it is not TENTING_COLORS.BLACK or TENTING_COLORS.BLUE
  * @param {Date} startDate 30 minute granularity
  * @param {Date} endDate this method will assign tenters from the startDate to the endDate - both should have 30 minute granularity
  * @returns {String[]} groupScheduleArr, an array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
@@ -21,15 +23,15 @@ import {Algorithm} from './algorithm.js';
 export async function createGroupSchedule(groupCode, tentType, startDate, endDate){
   console.log("creating group schedule from " + startDate.getTime() + " to " + endDate.getTime());
 
-  if ((tentType != "Blue") && (tentType != "Black")){
-    tentType = "White"; 
+  if ((tentType != TENTING_COLORS.BLUE) && (tentType != TENTING_COLORS.BLACK)){
+    tentType = TENTING_COLORS.WHITE; 
   }
 
   var people = new Array();
   var scheduleGrid = new Array();
   var idToName = {};
-  idToName['empty'] = 'empty';
-  idToName['Grace'] = 'Grace';
+  idToName[EMPTY] = EMPTY;
+  idToName[GRACE] = GRACE;
 
 
 

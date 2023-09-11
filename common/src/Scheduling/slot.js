@@ -1,5 +1,6 @@
 import {nightData} from "../../data/nightData.js" 
 import {graceData} from "../../data/gracePeriods.js"
+import { phaseData, TENTING_COLORS } from "../../data/phaseData.js";
 
 
 export class Slot{
@@ -7,7 +8,7 @@ export class Slot{
     /**
      * Generic slot object
      * @param {Date} startDate a JS Date Object
-     * @param {String} phase (string) "Black", "Blue", or "White"
+     * @param {String} phase 
      */
     constructor(startDate, phase){
       this.startDate = startDate;
@@ -43,6 +44,14 @@ export class Slot{
     }
 
     /**
+     * 
+     * @returns {boolean}
+     */
+    checkNight(){
+      return Slot.checkNight(this.startDate);
+    }
+
+    /**
      * Determine if this slot is in a grace period
      * @param {Date} startDate the starting date for this time slot
      * @returns {boolean} true iff this slot is during a grace period
@@ -62,6 +71,45 @@ export class Slot{
         } 
       }
       return false;
+    }
+
+    /**
+     * 
+     * @returns {boolean}
+     */
+    checkGrace(){
+      return Slot.checkGrace(this.startDate);
+    }
+
+    /**
+     * Calculate how many people are needed during this shift
+     * @returns {number} number of people needed
+     */
+    calculatePeopleNeeded() {
+      //first check if there's grace
+      if (this.isGrace){
+        return 0;
+      }
+
+      if (this.phase == TENTING_COLORS.BLACK) {
+        if (this.isNight)
+          return phaseData.Black.night
+        else
+          return phaseData.Black.day;
+        
+      }
+      if (this.phase == TENTING_COLORS.BLUE){
+        if (this.isNight)
+          return phaseData.Blue.night;
+        else
+          return phaseData.Blue.day;
+      }
+      if (this.phase == TENTING_COLORS.WHITE){
+        if (this.isNight)
+          return phaseData.White.night;
+        else
+          return phaseData.White.day;
+      }
     }
   
 }

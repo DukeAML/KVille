@@ -4,6 +4,7 @@ import { OneDayScheduleRow } from "./oneDayScheduleRow";
 import { getDatePlusNumShifts } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { useContext } from "react";
 import { DateBeingShownContext } from "../../../../../../lib/pageSpecific/schedule/dateBeingShownContext";
+import { TimeColumn } from "@/components/shared/timeColumn";
 
 
 interface OneDayScheduleProps {

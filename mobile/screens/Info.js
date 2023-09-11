@@ -39,7 +39,7 @@ const BLACKTENT = {
     ],
   ],
 };
-const BLUETENT = {
+const TENTING_COLORS.BLUETENT = {
   tableData: [
     ['Starting Dates', text["blueTent"]["dates"]],
     [
@@ -48,7 +48,7 @@ const BLUETENT = {
     ],
   ],
 };
-const WHITETENT = {
+const TENTING_COLORS.WHITETENT = {
   tableData: [
     ['Starting Dates', text["whiteTent"]["dates"]],
     [
@@ -358,7 +358,7 @@ export default function Info() {
           <Table borderStyle={{ borderWidth: 1.3 }}>
             <TableWrapper style={styles(theme).tableWrapper}>
               <Rows
-                data={BLUETENT.tableData}
+                data={TENTING_COLORS.BLUETENT.tableData}
                 flexArr={[1, 1.987]}
                 style={StyleSheet.flatten(styles(theme).tentTableRow)}
                 textStyle={StyleSheet.flatten(styles(theme).tableText)}
@@ -389,7 +389,7 @@ export default function Info() {
           <Table borderStyle={{ borderWidth: 1.3 }}>
             <TableWrapper style={styles(theme).tableWrapper}>
               <Rows
-                data={WHITETENT.tableData}
+                data={TENTING_COLORS.WHITETENT.tableData}
                 flexArr={[1, 1.987]}
                 style={StyleSheet.flatten(styles(theme).tentTableRow)}
                 textStyle={StyleSheet.flatten(styles(theme).tableText)}

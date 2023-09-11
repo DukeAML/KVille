@@ -29,6 +29,7 @@ import {
 import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
+import { TENTING_COLORS } from '../../common/data/phaseData';
 
 
 
@@ -87,7 +88,7 @@ export default function JoinGroup({ navigation }) {
     }
     const groupRef = firestore.collection('groups').doc(groupCode);
     const userRef = firestore.collection('users').doc(auth.currentUser.uid);
-    let tentType = "Black"; //set later
+    let tentType = TENTING_COLORS.BLACK; //set later
     //checks to make sure entered group code exists
     await groupRef.get().then(async (docSnapshot) => {
       console.log('Group exists: ', docSnapshot.exists);
