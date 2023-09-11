@@ -3,13 +3,11 @@ import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePag
 import { UserContext } from "@/lib/shared/context/userContext";
 import { Container, Typography } from "@mui/material";
 import { Component, useContext, useState } from "react";
-import { useQuery } from "react-query";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
 import { joinGroupValidationSchema, tryToJoinGroup } from '../../../../common/src/db/groupExistenceAndMembership/joinGroup';
-import { join } from "path";
 
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";

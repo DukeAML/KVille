@@ -4,7 +4,7 @@ import { CalendarDatesContextType } from '@/lib/shared/context/calendarDatesCont
 
 export const AvailabilityCalendarDatesContext = createContext<CalendarDatesContextType>({
   calendarStartDate : new Date(2024, 0, 15),
-  calendarEndDate : new Date(2024, 0, 20),
-  setCalendarStartDate : (d : Date) => {},
-  setCalendarEndDate : (d : Date) => {},
+	calendarEndDate : new Date(2024, 0, 20),
+	setCalendarStartDate : (d : Date) => {},
+	setCalendarEndDate : (d : Date) => {},
 });

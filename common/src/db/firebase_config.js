@@ -12,29 +12,29 @@ dotenv.config({ path: './.env' });
  * @returns {firebase.app.App}
  */
 const initializeFirebase = () => {
-  console.log("api key 1 is " + process.env.API_KEY);
-  const firebaseConfig = {
-    apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
-    authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
-    databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
-    projectId: "duke-tenting-app-cc15b",
-    storageBucket: "duke-tenting-app-cc15b.appspot.com",
-    messagingSenderId: "391061238630",
-    appId: "1:391061238630:web:85fbc00e4babf43cdc8ea7",
-    measurementId: "G-6QNGDGFLHZ",
-  };
+	console.log("api key 1 is " + process.env.API_KEY);
+	const firebaseConfig = {
+		apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
+		authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
+		databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
+		projectId: "duke-tenting-app-cc15b",
+		storageBucket: "duke-tenting-app-cc15b.appspot.com",
+		messagingSenderId: "391061238630",
+		appId: "1:391061238630:web:85fbc00e4babf43cdc8ea7",
+		measurementId: "G-6QNGDGFLHZ",
+	};
 
-  if (firebase.apps.length === 0) {
-    console.log("API key 2 is " + firebaseConfig.apiKey);
-    console.log("Trying to initialize Firebase");
-    return firebase.initializeApp(firebaseConfig);
-    // firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
-  } else {
-    return firebase.app;
-  }
-  return firebase.app;
+	if (firebase.apps.length === 0) {
+		console.log("API key 2 is " + firebaseConfig.apiKey);
+		console.log("Trying to initialize Firebase");
+		return firebase.initializeApp(firebaseConfig);
+		// firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+	} else {
+		return firebase.app;
+	}
+	return firebase.app;
 
-  // Export other constants here...
+	// Export other constants here...
 };
 
 // Call the function to initialize Firebase after environment variables are loaded

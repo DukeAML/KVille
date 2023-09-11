@@ -13,17 +13,17 @@ interface DateRangeChangerProps {
 }
 
 export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateRangeChangerProps) => {
-    const {calendarStartDate} = useContext(AvailabilityCalendarDatesContext);
+
     const [newStartDate, setNewStartDate] = useState<Date>(props.externalStartDate);
     const [newEndDate, setNewEndDate] = useState<Date>(props.externalEndDate);
     return (
         <Container>
             <Grid container spacing={2} alignItems="center" direction="row">
                 <Grid item>
-                    <DateChanger includeHours={props.includeHours} date={newStartDate} setDate={setNewStartDate}/>
+                    <DateChanger text={"start"} includeHours={props.includeHours} date={newStartDate} setDate={setNewStartDate}/>
                 </Grid>
                 <Grid item>
-                    <DateChanger includeHours={props.includeHours} date ={newEndDate} setDate={setNewEndDate}/>
+                    <DateChanger text={"end"} includeHours={props.includeHours} date ={newEndDate} setDate={setNewEndDate}/>
                 </Grid>
             </Grid>
             <KvilleButton onClick={() => {
