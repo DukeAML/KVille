@@ -1,9 +1,10 @@
 import * as Yup from "yup";
 import { firestore, auth } from "../firebase_config.js";
-import { Helpers } from "../../Scheduling/helpers.js";
+import { Helpers } from "../../scheduling/helpers.js";
 import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { getDefaultGroupMemberData, checkIfGroupExistsByGroupCode, getNewUserDataAfterJoiningGroup } from "./joinGroup.js";
 import {generateGroupCode} from "./GroupCode.js";
+import { TENTING_COLORS } from "../../../data/phaseData.js";
 
 const GROUP_CODE_LENGTH = 8;
 const CREATOR_ROLE = "Creator";
@@ -15,7 +16,7 @@ export const CREATE_GROUP_ERROR_CODES = {
 
 export const createGroupValidationSchema = Yup.object({
     groupName: Yup.string().required('Required'),
-    tentType : Yup.string().required().oneOf(["Blue", "Black", "White"]) //should try to avoid hard coding this
+    tentType : Yup.string().required().oneOf([TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, TENTING_COLORS.WHITE]) 
 });
 
 /**

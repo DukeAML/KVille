@@ -5,7 +5,7 @@ import { ScheduleOptions } from "../../../../components/pageSpecific/groups/grou
 import { UserContext } from "@/lib/shared/context/userContext";
 import {fetchGroupSchedule} from "../../../../../common/src/db/schedule";
 import {getDefaultDisplayDateRangeStartDate} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
-import {ScheduleAndStartDate} from '../../../../../common/src/Scheduling/scheduleAndStartDate';
+import {ScheduleAndStartDate} from '../../../../../common/src/scheduling/scheduleAndStartDate';
 import { OneDaySchedule } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
 import { Typography } from "@mui/material";
 import { CellColorsCoordinator } from "../../../../components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";

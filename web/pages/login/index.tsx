@@ -1,13 +1,8 @@
 // LoginForm.tsx
 
 import React, {useState} from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginValidationSchema } from '../../../common/src/db/auth/login';
-import { TextField, Typography } from '@mui/material';
-import {Button} from '@material-ui/core';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/shared/basePageContainer';
-import { Container } from '@material-ui/core';
-import { KvilleButton } from '@/components/shared/utils/button';
 import { useContext } from 'react';
 import { UserContext } from '@/lib/shared/context/userContext';
 import {useRouter} from 'next/router';
@@ -15,53 +10,49 @@ import { tryToLogin } from '../../../common/src/db/auth/login';
 import { KvilleForm } from '@/components/shared/utils/form';
 
 interface LoginFormValues {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 const initialValues: LoginFormValues = {
-  email: '',
-  password: '',
+	email: '',
+	password: '',
 };
-
-
 
 
 const LoginPage: React.FC = () => {
 
-  const {setIsLoggedIn, setUserID}= useContext(UserContext)
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const router = useRouter();
-  const handleSubmit = (values: LoginFormValues) => {
-    // Handle login logic here (e.g., API call to authenticate the user)
-    tryToLogin(values.email, values.password)
-      .then((id) => {
-        localStorage.setItem("userID", id);
-        localStorage.setItem("isLoggedIn", "true");
-        setUserID(id);
-        setIsLoggedIn(true);
-        router.push("/groups/");
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      })
-  };
+	const {setIsLoggedIn, setUserID}= useContext(UserContext)
+	const [errorMessage, setErrorMessage] = useState<string>("");
+	const router = useRouter();
+	const handleSubmit = (values: LoginFormValues) => {
+		// Handle login logic here (e.g., API call to authenticate the user)
+		tryToLogin(values.email, values.password)
+		.then((id) => {
+			localStorage.setItem("userID", id);
+			localStorage.setItem("isLoggedIn", "true");
+			setUserID(id);
+			setIsLoggedIn(true);
+			router.push("/groups/");
+		})
+		.catch((error) => {
+			setErrorMessage(error.message);
+		})
+	};
 
+	return (
+		<BasePageContainerWithNavBarAndTitle title='Login'>
+			<KvilleForm 
+				handleSubmit={handleSubmit} 
+				initialValues={initialValues} 
+				validationSchema={loginValidationSchema} 
+				textFields={[{name : "email", type : "email"}, {name : "password", type : "password"}]}
+				errorMessage={errorMessage}
+				/>
 
-
-  return (
-    <BasePageContainerWithNavBarAndTitle title='Login'>
-        <KvilleForm 
-            handleSubmit={handleSubmit} 
-            initialValues={initialValues} 
-            validationSchema={loginValidationSchema} 
-            textFields={[{name : "email", type : "email"}, {name : "password", type : "password"}]}
-            errorMessage={errorMessage}
-            />
-
-        
-    </BasePageContainerWithNavBarAndTitle>
-  );
+			
+		</BasePageContainerWithNavBarAndTitle>
+	);
 };
 
 export default LoginPage;

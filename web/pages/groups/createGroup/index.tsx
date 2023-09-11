@@ -14,6 +14,7 @@ import { createGroupValidationSchema, tryToCreateGroup } from "../../../../commo
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
+import { TENTING_COLORS } from "../../../../common/data/phaseData";
 
 interface CreateGroupFormValues {
     groupName : string;
@@ -22,7 +23,7 @@ interface CreateGroupFormValues {
 
 const initialValues : CreateGroupFormValues = {
     groupName : ' ',
-    tentType : 'Blue'
+    tentType : TENTING_COLORS.BLUE
 }
 
 export default function CreateGroupPage() {
@@ -49,12 +50,12 @@ export default function CreateGroupPage() {
         <BasePageContainerWithNavBarAndTitle title="Group Membership">
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">If someone has already created the group, ask them for the group code</Typography>
+                    <Typography variant="h5">If someone has already created the group, ask them for the group code. Also, we need to make this page look better</Typography>
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}
                         textFields={[{name : "groupName", type : "string"}]}
-                        selectFields={[{name : "tentType", options : ["Black", "Blue", "White"]}]}
+                        selectFields={[{name : "tentType", options : [TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, TENTING_COLORS.WHITE]}]}
                         errorMessage={errorMessage}
                         handleSubmit={handleSubmit}
                     />

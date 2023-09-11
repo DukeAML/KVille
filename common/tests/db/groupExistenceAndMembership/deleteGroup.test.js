@@ -1,3 +1,4 @@
+import { TENTING_COLORS.WHITE } from "../../../data/phaseData";
 import { tryToCreateGroup } from "../../../src/db/groupExistenceAndMembership/createGroup";
 import { DELETE_GROUPS_ERROR_CODES, deleteGroup } from "../../../src/db/groupExistenceAndMembership/deleteGroup";
 import { fetchGroups, getGroupMembersByGroupCode, GET_GROUP_MEMBERS_ERRORS } from "../../../src/db/groupExistenceAndMembership/groupMembership";
@@ -7,7 +8,7 @@ import { KTEST13_UID, KTEST1_UID, KTEST5_UID } from "../testUserCredentials";
 describe("deleteGroup", () => {
     it("works given a valid group", async () => {
         //first create a group with two members
-        const groupCode = await tryToCreateGroup("x", "White", KTEST1_UID);
+        const groupCode = await tryToCreateGroup("x", TENTING_COLORS.WHITE, KTEST1_UID);
         await tryToJoinGroup(groupCode, KTEST5_UID);
 
         await deleteGroup(groupCode);

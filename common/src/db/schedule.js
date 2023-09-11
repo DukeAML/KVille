@@ -1,4 +1,4 @@
-import {ScheduleAndStartDate} from "../Scheduling/scheduleAndStartDate.js";
+import {ScheduleAndStartDate} from "../scheduling/scheduleAndStartDate.js";
 import { firestore } from "./firebase_config.js";
 import { getDateRoundedTo30MinSlot } from "../calendarAndDates/datesUtils.js";
 

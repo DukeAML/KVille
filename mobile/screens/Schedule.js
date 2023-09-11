@@ -40,7 +40,7 @@ import scheduleDates from '../../common/data/scheduleDates.json';
 import { DateRangeChanger } from '../components/DateRangeChanger/DateRangeChanger';
 import { getNumSlotsBetweenDates, getNumDaysBetweenDates, getDatePlusNumShifts, getCurrentDate, getDayAbbreviation} from '../../common/services/dates_services';
 import { DropdownHeaderBar } from '../components/DropdownHeaderBar/DropdownHeaderBar'
-
+import { EMPTY, GRACE } from '../../common/src/scheduling/tenterSlot';
 const Helpers = require ('../../common/Scheduling/helpers');
 
 
@@ -91,8 +91,8 @@ export default function Schedule({ navigation }) {
   const scrollRef = useRef([]);
   const colors = ['#ececec', '#3c78d8', '#dd7e6b', '#ea9999', '#f9cb9c', '#ffe599', '#b6d7a8', '#a2c4c9',
   '#a4c2f4' , '#fed9c9', '#b4a7d6', '#d5a6bd', '#e69138', '#6aa84f'];
-  const colorCodes = useRef([{ id: 1, name: 'empty', color: '#ececec', changedHrs: 0},
-                              {id: '6789', name: 'Grace', color:'#3c78d8', changedHrs:0}]);
+  const colorCodes = useRef([{ id: 1, name: EMPTY, color: '#ececec', changedHrs: 0},
+                              {id: '6789', name: GRACE, color:'#3c78d8', changedHrs:0}]);
 
   const getIndexInColorCodes = (name) => {
     return getIndexAddElementIfNeeded(colorCodes.current, name, "name", 
@@ -165,7 +165,7 @@ export default function Schedule({ navigation }) {
 
     let currSchedule = groupSchedule;
     //Must check if the member already exists in the array
-    if (newMember !== 'empty' && groupSchedule[index].trim().split(' ').includes(newMember)) {
+    if (newMember !== EMPTY && groupSchedule[index].trim().split(' ').includes(newMember)) {
       dispatch(toggleSnackBar());
       dispatch(setSnackMessage('Member already in chosen timeslot'));
       editSuccessful.current = false;
@@ -285,7 +285,7 @@ export default function Schedule({ navigation }) {
     for (let i = 0; i < groupSchedule.length; i += 1){
       let names = groupSchedule[i].split(' ');
       for (let j = 0; j < names.length; j+= 1){
-        if (names[j] == "empty")
+        if (names[j] == EMPTY)
           return getDatePlusNumShifts(groupScheduleStartDate, i);
       }
     }
@@ -397,7 +397,7 @@ export default function Schedule({ navigation }) {
     const indexofUser =  getIndexInColorCodes(person); 
     const backgroundColor = colorCodes.current[indexofUser].color;
 
-    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') && person != 'Grace') {
+    if (weekDisplay == 'Current Week' && (groupRole == 'Creator' || groupRole == 'Admin') && person != GRACE) {
       return (
         <View style={{ flex: 1 }}>
           <TouchableOpacity
@@ -411,7 +411,7 @@ export default function Schedule({ navigation }) {
             <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
               <Text
                 style={
-                  person == 'empty'
+                  person == EMPTY
                     ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
                     : styles(theme).btnText
                 }
@@ -431,9 +431,9 @@ export default function Schedule({ navigation }) {
           <View style={[styles(theme).timeSlotBtn, { backgroundColor: backgroundColor }]}>
             <Text
               style={
-                person == 'empty'
+                person == EMPTY
                   ? [styles(theme).btnText, { color: theme.error, fontWeight: '700' }]
-                  : person == 'Grace' ? 
+                  : person == GRACE ? 
                   [styles(theme).btnText, { color: theme.text1, fontWeight: '700' }]:
                   styles(theme).btnText
               }

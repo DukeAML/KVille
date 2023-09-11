@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { firestore, auth } from "../firebase_config.js";
-import { Helpers } from "../../Scheduling/helpers.js";
+import { Helpers } from "../../scheduling/helpers.js";
 import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { GroupDescription } from "./groupMembership.js";
 import { getGroupMembersByGroupCode } from "./groupMembership.js";

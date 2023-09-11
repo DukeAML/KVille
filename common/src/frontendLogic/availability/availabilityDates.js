@@ -1,4 +1,4 @@
-import { Helpers } from "../../Scheduling/helpers.js";
+import { Helpers } from "../../scheduling/helpers.js";
 import { getCurrentDate } from "../../calendarAndDates/datesUtils.js";
 
 

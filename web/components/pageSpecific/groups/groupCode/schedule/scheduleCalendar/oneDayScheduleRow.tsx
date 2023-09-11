@@ -2,7 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import { UserContext } from "@/lib/shared/context/userContext";
 import { useQuery, useQueryClient } from "react-query";
-import { ScheduleAndStartDate } from "../../../../../../../common/src/Scheduling/scheduleAndStartDate";
+import { ScheduleAndStartDate } from "../../../../../../../common/src/scheduling/scheduleAndStartDate";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Grid } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
@@ -11,6 +11,8 @@ import { getQueryKeyNameForGroupCode, useGetQueryDataForSchedule, useQueryToFetc
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { useRouter } from "next/dist/client/router";
 import { INVALID_GROUP_CODE } from "@/pages/_app";
+import { EMPTY } from "../../../../../../../common/src/scheduling/tenterSlot";
+import { Typography } from "@material-ui/core";
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
@@ -40,6 +42,28 @@ interface RowGivenDataProps {
     scheduleAndStartDate : ScheduleAndStartDate;
     rowStartDate : Date;
 }
+
+const dateToTextLabel = (date : Date) : string => {
+
+    let hours = date.getHours();
+    let am = hours < 12;
+    hours = hours % 12;
+    if (hours % 12 === 0){
+        hours = 12;
+    }
+    let text : string = hours + ":00";
+    if (am){
+        text += "am";
+    } else {
+        text += "pm";
+    }
+    if (text.length == 6){
+        text = "0" + text;
+    }
+    return text;
+
+}
+
 const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) => {
     let scheduleIndex = getNumSlotsBetweenDates(props.scheduleAndStartDate.startDate, props.rowStartDate);
     let names : string[] = [];
@@ -49,10 +73,14 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
         names = props.scheduleAndStartDate.schedule[scheduleIndex].split(" ");
     }
     if (names.length == 0){
-        names = ["empty"];
+        names = [EMPTY];
     }
     return (
         <Grid item container spacing={0}>
+            <Typography style={{marginTop: '-10px', textAlign : "right", color : (props.rowStartDate.getMinutes() == 0 ? "inherit" : "transparent")}}>
+                {dateToTextLabel(props.rowStartDate)}
+            </Typography>
+
             {names.map((name, index) => {
                 return (
                     <ScheduleCell name={name} key={index}/>
