@@ -17,6 +17,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 
 import { getDefaultGroupMemberData } from '../../common/services/db_services';
+import { getTentingStartDate } from '../../common/src/calendarAndDates/tentingDates';
+import { getDefaultSchedule } from '../../common/src/db/groupExistenceAndMembership/createGroup';
 
 import {firestore, auth} from "../../common/services/db/firebase_config";
 
@@ -117,8 +119,8 @@ export default function CreateGroup({ navigation }) {
     groupRef.set({
       name: group.groupName,
       tentType: group.tentType,
-      groupSchedule: Helpers.getDefaultSchedule(group.tentType),
-      groupScheduleStartDate: Helpers.getTentingStartDate(group.tentType),
+      groupSchedule: getDefaultSchedule(group.tentType),
+      groupScheduleStartDate: getTentingStartDate(group.tentType),
     }).catch((error)=>{
       console.error(error);
     });

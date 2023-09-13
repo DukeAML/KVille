@@ -12,7 +12,7 @@ export const getCurrentDate = () => {
  * 
  * @param {Date} startDate 
  * @param {Date} endDate 
- * @returns {int} the number of 30 minute slots between the two dates, rounded to the nearest int
+ * @returns {number} the number of 30 minute slots between the two dates, rounded to the nearest number
  */
 export const getNumSlotsBetweenDates = (startDate, endDate) => {
     let diff_ms = endDate.getTime() - startDate.getTime();
@@ -23,7 +23,7 @@ export const getNumSlotsBetweenDates = (startDate, endDate) => {
 /**
  * 
  * @param {Date} origDate 
- * @param {int} shiftsAdder 
+ * @param {number} shiftsAdder 
  * @returns {Date} a Date corresponding to origDate + 30 minutes * shiftsAdder
  */
 export const getDatePlusNumShifts = (origDate, shiftsAdder) => {
@@ -35,7 +35,7 @@ export const getDatePlusNumShifts = (origDate, shiftsAdder) => {
  * returns the number of calendar days involved in the schedule
  * @param {Date} startDate 
  * @param {Date} endDate 
- * @returns {int} number of days involved
+ * @returns {number} number of days involved
  */
 export const getNumDaysBetweenDates = (startDate, endDate) => {
     let ms_diff = Math.abs(endDate.getTime() - startDate.getTime());

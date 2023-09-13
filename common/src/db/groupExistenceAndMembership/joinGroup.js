@@ -1,9 +1,10 @@
 import * as Yup from "yup";
-import { firestore, auth } from "../firebase_config.js";
-import { Helpers } from "../../scheduling/helpers.js";
+import { firestore} from "../firebase_config.js";
 import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { GroupDescription } from "./groupMembership.js";
 import { getGroupMembersByGroupCode } from "./groupMembership.js";
+import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 
 export const JOIN_GROUP_ERROR_CODES = {
     GROUP_DOES_NOT_EXIST : "Group does not exist",
@@ -25,9 +26,9 @@ export const joinGroupValidationSchema = Yup.object({
  * @returns {{availability : boolean[], availabilityStartDate : Date, name : string, groupRole : string, inTent: boolean}}
  */
 export function getDefaultGroupMemberData(name, tentType, groupRole) {
-    let availabilityStartDate = Helpers.getTentingStartDate(tentType);
+    let availabilityStartDate = getTentingStartDate(tentType);
     
-    let endDate = Helpers.getTentingEndDate();
+    let endDate = scheduleDates.endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
     let availability = new Array(numSlots).fill(false);
     let inTent = false;

@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import * as Yup from 'yup';
 
 export const LOGIN_ERROR_CODES = {
-  	FAILURE : "Incorrect email/password"
+	FAILURE : "Incorrect email/password"
 }
 
 /**

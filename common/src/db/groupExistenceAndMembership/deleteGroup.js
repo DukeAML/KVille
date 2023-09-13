@@ -1,4 +1,4 @@
-import { firestore, auth } from "../firebase_config.js";
+import { firestore } from "../firebase_config.js";
 import { getGroupMembersByGroupCode } from "./groupMembership.js";
 
 export const DELETE_GROUPS_ERROR_CODES = {

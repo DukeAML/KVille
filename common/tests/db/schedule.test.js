@@ -1,4 +1,4 @@
-import {fetchGroupSchedule, setGroupScheduleInDB, FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES} from "../../src/db/schedule.js";
+import {fetchGroupSchedule, setGroupScheduleInDB, FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES} from "../../src/db/schedule/schedule";
 import { KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "./testUserCredentials.js";
 
 describe("fetchGroupSchedule", () => {
@@ -12,7 +12,7 @@ describe("fetchGroupSchedule", () => {
                 expect(groupData.schedule.length).toBeGreaterThan(0);
             })
             .catch((error) => {
-                expect(true).toBe(false);;
+                expect(true).toBe(false);
             })
     });
 });
