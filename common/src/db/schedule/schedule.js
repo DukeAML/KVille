@@ -1,6 +1,6 @@
-import {ScheduleAndStartDate} from "../scheduling/scheduleAndStartDate.js";
-import { firestore } from "./firebase_config.js";
-import { getDateRoundedTo30MinSlot } from "../calendarAndDates/datesUtils.js";
+import { ScheduleAndStartDate } from "./scheduleAndStartDate.js";
+import { firestore } from "../firebase_config.js";
+import { getDateRoundedTo30MinSlot } from "../../calendarAndDates/datesUtils.js";
 
 
 export const FETCH_SCHEDULE_ERROR_CODES = {

@@ -1,4 +1,4 @@
-import {Slot} from "../../src/scheduling/slot";
+import {Slot} from "../../src/scheduling/slots/slot";
 import { TENTING_COLORS } from "../../data/phaseData";
 
 describe("checkNight", () => {

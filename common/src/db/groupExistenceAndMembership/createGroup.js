@@ -1,11 +1,12 @@
 import * as Yup from "yup";
-import { firestore, auth } from "../firebase_config.js";
-import { Helpers } from "../../scheduling/helpers.js";
-import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
-import { getDefaultGroupMemberData, checkIfGroupExistsByGroupCode, getNewUserDataAfterJoiningGroup } from "./joinGroup.js";
+import { firestore} from "../firebase_config.js";
+import { getDefaultGroupMemberData, getNewUserDataAfterJoiningGroup } from "./joinGroup.js";
 import {generateGroupCode} from "./GroupCode.js";
 import { TENTING_COLORS } from "../../../data/phaseData.js";
-
+import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
+import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
+import { EMPTY } from "../../scheduling/slots/tenterSlot.js";
 const GROUP_CODE_LENGTH = 8;
 const CREATOR_ROLE = "Creator";
 
@@ -37,6 +38,18 @@ async function checkIfGroupExistsByGroupName(groupName) {
 
 /**
  * 
+ * @param {String} tentType 
+ * @returns {Array<String>} an array with an entry for each timeslot, autofilled with "empty"
+ */
+export function getDefaultSchedule(tentType){
+    let startDate = getTentingStartDate(tentType);
+    let endDate = scheduleDates.endOfTenting;
+    let numSlots = getNumSlotsBetweenDates(startDate, endDate);
+    return new Array(numSlots).fill(EMPTY);
+}
+
+/**
+ * 
  * @param {String} groupName 
  * @param {String} tentType 
  */
@@ -44,8 +57,8 @@ function getDefaultNewGroupData(groupName, tentType){
     return {
         name : groupName,
         tentType : tentType,
-        groupSchedule : Helpers.getDefaultSchedule(tentType),
-        groupScheduleStartDate : Helpers.getTentingStartDate(tentType)
+        groupSchedule : getDefaultSchedule(tentType),
+        groupScheduleStartDate : getTentingStartDate(tentType)
     }
 }
 

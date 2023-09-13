@@ -1,4 +1,4 @@
-import { firestore, auth } from "../firebase_config.js";
+import { firestore } from "../firebase_config.js";
 
 export class GroupDescription{
     /**

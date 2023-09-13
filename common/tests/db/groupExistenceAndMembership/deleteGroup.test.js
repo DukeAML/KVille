@@ -1,7 +1,7 @@
-import { TENTING_COLORS.WHITE } from "../../../data/phaseData";
+import { TENTING_COLORS} from "../../../data/phaseData";
 import { tryToCreateGroup } from "../../../src/db/groupExistenceAndMembership/createGroup";
 import { DELETE_GROUPS_ERROR_CODES, deleteGroup } from "../../../src/db/groupExistenceAndMembership/deleteGroup";
-import { fetchGroups, getGroupMembersByGroupCode, GET_GROUP_MEMBERS_ERRORS } from "../../../src/db/groupExistenceAndMembership/groupMembership";
+import { fetchGroups } from "../../../src/db/groupExistenceAndMembership/groupMembership";
 import { tryToJoinGroup } from "../../../src/db/groupExistenceAndMembership/joinGroup";
 import { KTEST13_UID, KTEST1_UID, KTEST5_UID } from "../testUserCredentials";
 

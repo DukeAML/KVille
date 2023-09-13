@@ -36,11 +36,12 @@ import { ActionSheetModal } from '../components/ActionSheetModal';
 import { LoadingIndicator } from '../components/LoadingIndicator';
 import { ErrorPage } from '../components/ErrorPage';
 import { toggleSnackBar, setSnackMessage } from '../redux/reducers/snackbarSlice';
-import scheduleDates from '../../common/data/scheduleDates.json';
 import { DateRangeChanger } from '../components/DateRangeChanger/DateRangeChanger';
 import { getNumSlotsBetweenDates, getNumDaysBetweenDates, getDatePlusNumShifts, getCurrentDate, getDayAbbreviation} from '../../common/services/dates_services';
 import { DropdownHeaderBar } from '../components/DropdownHeaderBar/DropdownHeaderBar'
 import { EMPTY, GRACE } from '../../common/src/scheduling/tenterSlot';
+import { scheduleDates } from '../../common/data/scheduleDates';
+import { getTentingStartDate } from '../../common/src/calendarAndDates/tentingDates';
 const Helpers = require ('../../common/Scheduling/helpers');
 
 
@@ -78,9 +79,9 @@ export default function Schedule({ navigation }) {
   const [fabState, setFabState] = useState({ open: false });
   const [weekDisplay, setWeekDisplay] = useState('Current Week');
   console.log("my current tent type is " + tentType);
-  console.log("default start date is " + Helpers.getTentingStartDate(tentType));
-  const [displayStartDate, setDisplayStartDate] = useState(Helpers.getTentingStartDate(tentType));
-  const [displayEndDate, setDisplayEndDate] = useState(getDatePlusNumShifts(Helpers.getTentingStartDate(tentType), 48));
+  console.log("default start date is " + getTentingStartDate(tentType));
+  const [displayStartDate, setDisplayStartDate] = useState(getTentingStartDate(tentType));
+  const [displayEndDate, setDisplayEndDate] = useState(getDatePlusNumShifts(getTentingStartDate(tentType), 48));
   const [renderDay, setRenderDay] = useState(0); //stores the current day that is being rendered
   const [newMember, setNewMember] = useState('Select a Member'); //to set the new member to replace old one
 
@@ -112,7 +113,7 @@ export default function Schedule({ navigation }) {
     ['groupSchedule', auth.currentUser.uid, groupCode],
     () => fetchGroupSchedule(groupCode),
     {
-        initialData: {groupSchedule: [], groupScheduleStartDate: Helpers.getTentingStartDate(tentType)},
+        initialData: {groupSchedule: [], groupScheduleStartDate: getTentingStartDate(tentType)},
         onSuccess: () => {
         setIsReady(true);
         setIsRefetching(false);
@@ -270,7 +271,7 @@ export default function Schedule({ navigation }) {
   const getDefaultDisplayDateRangeEndDate = () => {
     let correspondingStartDate = getDefaultDisplayDateRangeStartDate();
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
-    let endOfTenting = Helpers.getTentingEndDate();
+    let endOfTenting = scheduleDates.endOfTenting;
     
   
     if (startDatePlusWeek <= endOfTenting) {
@@ -305,7 +306,7 @@ export default function Schedule({ navigation }) {
   const getDefaultAssignDateRangeEndDate = () => {
     let correspondingStartDate = getDefaultAssignDateRangeStartDate();
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
-    let endOfTenting = Helpers.getTentingEndDate();
+    let endOfTenting = scheduleDates.endOfTenting;
     
   
     if (startDatePlusWeek <= endOfTenting) {
@@ -319,7 +320,7 @@ export default function Schedule({ navigation }) {
   const validateAssignTentersDateRange = (newStartDate, newEndDate) => {
     if (newStartDate < groupScheduleStartDate){
       return {successful: false, message: "Start date of " + newStartDate.getTime() + " must be at least " + groupScheduleStartDate.getTime()};
-    } else if (newEndDate > Helpers.getTentingEndDate()){
+    } else if (newEndDate > scheduleDates.endOfTenting){
       return {succesful: false, message: "End date cannot occur after the end of tenting"};
     } else if (newEndDate <= newStartDate){
       return {succesful: false, message: "End date must be later than the start date"};

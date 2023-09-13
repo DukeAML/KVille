@@ -1,16 +1,14 @@
-import { firestore } from '../db/firebase_config.js';
-import {Person} from './person.js';
+import { firestore } from '../../db/firebase_config.js';
+import {Person} from '../person.js';
 
 
-import { getNumDaysBetweenDates, getNumSlotsBetweenDates } from '../calendarAndDates/datesUtils.js';
-import { fetchHoursPerPersonInDateRange } from "../db/hours.js";
-import { ScheduleAndStartDate } from './scheduleAndStartDate.js';
+import { getNumSlotsBetweenDates } from '../../calendarAndDates/datesUtils.js';
+import { fetchHoursPerPersonInDateRange } from "../../db/hours.js";
+import {scheduleAlgorithm} from '../algorithm.js';
+import { EMPTY, GRACE } from '../slots/tenterSlot.js';
+import { TENTING_COLORS } from '../../../data/phaseData.js';
 
-import {Helpers} from "./helpers.js";
-import {Algorithm} from './algorithm.js';
-import { EMPTY, GRACE } from './tenterSlot.js';
-import { TENTING_COLORS } from '../../data/phaseData.js';
-
+import {availabilitiesToSlots, dayNightFree} from "./algoInputCleansing.js";
 
 /**
  * Keith's new scheduling method with the Olson algo
@@ -21,14 +19,13 @@ import { TENTING_COLORS } from '../../data/phaseData.js';
  * @returns {String[]} groupScheduleArr, an array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
  */
 export async function createGroupSchedule(groupCode, tentType, startDate, endDate){
-	console.log("creating group schedule from " + startDate.getTime() + " to " + endDate.getTime());
 
 	if ((tentType != TENTING_COLORS.BLUE) && (tentType != TENTING_COLORS.BLACK)){
 		tentType = TENTING_COLORS.WHITE; 
 	}
 
 	var people = new Array();
-	var scheduleGrid = new Array();
+	var tenterSlotsGrid = new Array();
 	var idToName = {};
 	idToName[EMPTY] = EMPTY;
 	idToName[GRACE] = GRACE;
@@ -37,45 +34,38 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 
 	let {dayHoursPerPersonInRange, nightHoursPerPersonInRange, dayHoursPerPersonEntire, nightHoursPerPersonEntire} = await fetchHoursPerPersonInDateRange(groupCode, startDate, endDate);
 
-	console.log("got past reading from fb");
-
 	await firestore
 		.collection('groups') 
 		.doc(groupCode)
 		.collection('members')
 		.get()
 		.then((collSnap) => {
-		collSnap.forEach((doc) => {
-			var name = doc.data().name;
-			var id = doc.id;
-			idToName[id] = name;
-			var fullAvailability = doc.data().availability; //array of boolean values indicating availability
-			var fullAvailabilityStartDate = doc.data().availabilityStartDate.toDate();
-			var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
-			var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
-			var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
-			var availabilityInRangeStartDate = startDate;
+			collSnap.forEach((doc) => {
+				var name = doc.data().name;
+				var id = doc.id;
+				idToName[id] = name;
+				var fullAvailability = doc.data().availability; //array of boolean values indicating availability
+				var fullAvailabilityStartDate = doc.data().availabilityStartDate.toDate();
+				var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
+				var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
+				var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
+				var availabilityInRangeStartDate = startDate;
 
 
-			var user_slots = Helpers.availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
-			scheduleGrid.push(user_slots); 
+				var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
+				tenterSlotsGrid.push(user_slots); 
 
 
-			var [numFreeDaySlots, numFreeNightSlots] = Helpers.dayNightFree(availabilityInRange, availabilityInRangeStartDate);
-			//Keith: For now, can just say dayScheduled and nightScheduled = 0
-			var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
-			dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
-			people.push(person);
+				var [numFreeDaySlots, numFreeNightSlots] = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
+				var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
+					dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
+				people.push(person);
+			});
 		});
-		});
-	console.log(people);
-	console.log("read members");
 
-	var newScheduleInRange = Algorithm.schedule(people, scheduleGrid);
-	console.log("created the schedule");
 
-	//TODO 6/22: figure out how to return the right thing and what not
-	
+	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
+
 	//Keith: now need to return the array of strings
 	var groupScheduleArr = [];
 	for (var i = 0; i < newScheduleInRange.length; i++){
