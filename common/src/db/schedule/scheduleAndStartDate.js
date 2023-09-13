@@ -1,6 +1,6 @@
 
-import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../calendarAndDates/datesUtils.js";
-import {Slot} from "./slot.js";
+import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
+import { Slot } from "../../scheduling/slots/slot.js";
 
 
 export class ScheduleAndStartDate{
@@ -66,12 +66,13 @@ export class ScheduleAndStartDate{
 
     /**
      * @param {Array<String>} allMembers an array of the identifiers (i.e. name) for each person relevant
-     * @returns an object containing day_hours_per_person, and night_hours_per_person, where each is an object that maps a person's identifier to their number of hours
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}}
      */
     getHoursPerPersonWholeSchedule(allMembers) {
         return this.getHoursPerPersonInDateRange(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length), allMembers);
 
     }
+
   
     
   

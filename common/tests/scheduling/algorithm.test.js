@@ -1,6 +1,7 @@
-import { Algorithm } from "../../src/Scheduling/algorithm";
-import { Person } from "../../src/Scheduling/person";
-import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../src/scheduling/tenterSlot";
+import { scheduleAlgorithm} from "../../src/scheduling/algorithm";
+import { Person } from "../../src/scheduling/person";
+import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../src/scheduling/slots/tenterSlot";
+
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
 import { TENTING_COLORS} from "../../data/phaseData";
 describe("schedule", () => {
@@ -10,13 +11,13 @@ describe("schedule", () => {
         let people = [p1, p2];
         let startDate = new Date(2023, 0, 15, 0, 0);
         let PHASE = TENTING_COLORS.BLUE;
-        const scheduleGrid = [[], []];
+        const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 48; i+=1){
-            scheduleGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
-            scheduleGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 1);
+            tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
+            tenterSlotsGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 1);
         };
 
-        const schedule = Algorithm.schedule(people, scheduleGrid);
+        const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         for (let i = 0; i < schedule.length; i+=1){
             expect(schedule[i].ids.length).toBe(schedule[i].calculatePeopleNeeded());
         }
@@ -28,19 +29,20 @@ describe("schedule", () => {
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
         let startDate = new Date(2023, 0, 16, 12, 0);
-        const scheduleGrid = [[], []];
+        const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
-            scheduleGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 0);
-            scheduleGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 1);
+            tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 0);
+            tenterSlotsGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 1);
         }
 
-        const schedule = Algorithm.schedule(people, scheduleGrid);
+        const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(false);
             expect(schedule[i].ids.includes("p2")).toBe(false);
             expect(schedule[i].ids.includes(EMPTY)).toBe(true);
         }
     })
+    
 
     it("shows basic fairness", () => {
         const p1 = new Person("p1", "p1", 4, 0, 0, 0);  //p1 has not been scheduled for any slots yet
@@ -48,13 +50,13 @@ describe("schedule", () => {
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
         let startDate = new Date(2023, 0, 16, 12, 0);
-        const scheduleGrid = [[], []];
+        const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
-            scheduleGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
-            scheduleGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 1);
+            tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
+            tenterSlotsGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 1);
         }
 
-        const schedule = Algorithm.schedule(people, scheduleGrid);
+        const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);
@@ -63,7 +65,7 @@ describe("schedule", () => {
 
     it("shows more advanced fairness", () => {
         const people = [];
-        const scheduleGrid = [];
+        const tenterSlotsGrid = [];
         const PHASE = TENTING_COLORS.WHITE;
         let startDate = new Date(2023, 0, 17, 0, 0);
         for (let i = 0; i < 12; i += 1){
@@ -71,12 +73,12 @@ describe("schedule", () => {
             people.push(new Person(id, id, 266, 70, 0, 0 ));
             let availability = [];
             for (let j = 0; j < 336; j += 1){
-                availability.push(new TenterSlot(id, getDatePlusNumShifts(startDate, j), TENTING_COLORS.WHITE, TENTER_STATUS_CODES.AVAILABLE, j, i));
+                availability.push(new TenterSlot(id, getDatePlusNumShifts(startDate, j), PHASE, TENTER_STATUS_CODES.AVAILABLE, j, i));
             }
-            scheduleGrid.push(availability);
+            tenterSlotsGrid.push(availability);
         }
 
-        const schedule = Algorithm.schedule(people, scheduleGrid);
+        scheduleAlgorithm(people, tenterSlotsGrid);
         people.sort((a, b) => a.dayScheduled < b.dayScheduled);
         const dayHoursMinMaxDiffRatio = (people[11].dayScheduled - people[0].dayScheduled) / people[11].dayScheduled;
         expect(dayHoursMinMaxDiffRatio < 0.5).toBe(true);

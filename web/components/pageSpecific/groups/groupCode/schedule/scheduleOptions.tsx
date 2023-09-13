@@ -7,16 +7,21 @@ import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRange
 import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
 import { useQueryClient } from "react-query";
 import { UserContext } from "@/lib/shared/context/userContext";
-import { ScheduleAndStartDate } from "../../../../../../common/src/scheduling/scheduleAndStartDate";
-import { useGetQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
-import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/scheduling/CreateGroupSchedule";
+import { ScheduleAndStartDate } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { useGetQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToUpdateSchedule, useQueryToFetchSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 import { GroupContext } from "@/lib/shared/context/groupContext";
+import { useRouter } from "next/router";
+import { INVALID_GROUP_CODE } from "@/pages/_app";
+import { TENTING_COLORS } from "../../../../../../common/data/phaseData";
 
 
 
 export const ScheduleOptions : React.FC = () => {
-    const {groupDescription : {groupCode, tentType}} = useContext(GroupContext);
-    const scheduleAndStartDate : ScheduleAndStartDate | undefined = useGetQueryDataForSchedule(groupCode);
+    const router = useRouter();
+    const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
+    const scheduleAndStartDate = useGetQueryDataForSchedule(groupCode);
+   
     const queryClient = useQueryClient();
 
     const {mutate : updateScheduleInDB, error, isError, isLoading } = useMutationToUpdateSchedule(groupCode, 
@@ -56,7 +61,7 @@ export const ScheduleOptions : React.FC = () => {
                 let {successful, message} = validateAssignTentersDateRange(startDate, endDate, getDefinedScheduleAndStartDate().startDate);
                 if (successful) {
                     let data = getDefinedScheduleAndStartDate();
-                    assignTentersAndGetNewFullSchedule(groupCode, tentType, startDate, endDate, data)
+                    assignTentersAndGetNewFullSchedule(groupCode, TENTING_COLORS.BLACK, startDate, endDate, data)
                         .then((newSchedule) => {
                             console.log("new schedule slot 1 is " );
                             console.log(newSchedule);

@@ -73,7 +73,6 @@ export class MouseTracker {
 		if (!this.mouseIsDown){
 			return;
 		}
-		
 	
 		this.previousRow = this.currentRow;
 		this.previousCol = this.currentCol;
@@ -127,7 +126,7 @@ export class MouseTracker {
      * @returns {void}
      */
     setChangeAvailabilityAtRowsAndCols (newFunction ) {
-      	this.changeAvailabilityAtRowsAndCols = newFunction;
+		this.changeAvailabilityAtRowsAndCols = newFunction;
     }
   
     /**
@@ -136,7 +135,7 @@ export class MouseTracker {
      * @returns {void}
      */
     setUpdateAvailabilityInDB (newFunction ) {
-      	this.updateAvailabilityInDB = newFunction;
+		this.updateAvailabilityInDB = newFunction;
     }
 }
-let x = new MouseTracker();
+

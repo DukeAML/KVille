@@ -1,5 +1,6 @@
-import { Helpers } from "../../scheduling/helpers.js";
 import { getCurrentDate } from "../../calendarAndDates/datesUtils.js";
+import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 
 
 /**
@@ -12,8 +13,8 @@ export const getInitialAvailabilityDisplayStartDate = (tentType) => {
     //use current day, if in tenting range. Else, use first day of tenting
     const currDate = getCurrentDate();
     let startDateNow = new Date(currDate.getFullYear(), currDate.getMonth(), currDate.getDay(), 0, 0);
-    let firstDay = Helpers.getTentingStartDate(tentType);
-    let endDay = Helpers.getTentingEndDate();
+    let firstDay = getTentingStartDate(tentType);
+    let endDay = scheduleDates.endOfTenting;
     if ((startDateNow > firstDay) && (startDateNow < endDay)){
         return startDateNow;
     } else {
@@ -28,7 +29,7 @@ export const getInitialAvailabilityDisplayStartDate = (tentType) => {
  */
 export const getInitialAvailabilityDisplayEndDate = (tentType) => {
     let startDate = getInitialAvailabilityDisplayStartDate(tentType);
-    let tentingEndDate = Helpers.getTentingEndDate();
+    let tentingEndDate = scheduleDates.endOfTenting;
     let startDatePlusWeek = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
     if (startDatePlusWeek < tentingEndDate){
         return startDatePlusWeek;

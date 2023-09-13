@@ -1,6 +1,6 @@
-import {nightData} from "../../data/nightData.js" 
-import {graceData} from "../../data/gracePeriods.js"
-import { phaseData, TENTING_COLORS } from "../../data/phaseData.js";
+import {nightData} from "../../../data/nightData.js" 
+import {graceData} from "../../../data/gracePeriods.js"
+import { phaseData, TENTING_COLORS } from "../../../data/phaseData.js";
 
 
 export class Slot{
@@ -18,13 +18,6 @@ export class Slot{
 		this.isGrace = Slot.checkGrace(startDate);
     }
   
-    to_hash() {
-		var hash = {};
-		for (const instance_variable in this){
-			hash[instance_variable] = this[instance_variable];
-		}
-		return hash;
-    }
 
     /**
      * Check if this corresponds to a night slot
@@ -78,7 +71,7 @@ export class Slot{
      * @returns {boolean}
      */
     checkGrace(){
-      	return Slot.checkGrace(this.startDate);
+		return Slot.checkGrace(this.startDate);
     }
 
     /**

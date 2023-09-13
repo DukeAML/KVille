@@ -1,5 +1,5 @@
 import { firestore } from "./firebase_config.js";
-import { ScheduleAndStartDate } from "../scheduling/scheduleAndStartDate.js";
+import { ScheduleAndStartDate } from "./schedule/scheduleAndStartDate.js";
 import { getGroupMembersByGroupCode } from "./groupExistenceAndMembership/groupMembership.js";
 
 export const HOURS_ERROR_CODES = {
@@ -62,12 +62,11 @@ export async function fetchHoursPerPerson(groupCode){
         let fullResult = scheduleAndDateObj.getHoursPerPersonWholeSchedule(allMembers);
         dayHoursPerPerson = fullResult.dayHoursPerPerson;
         nightHoursPerPerson = fullResult.nightHoursPerPerson;
+        return {dayHoursPerPerson, nightHoursPerPerson};
     } else {
         throw new Error(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST);
     }
    
-
-    return {dayHoursPerPerson, nightHoursPerPerson}
 
 }
 
