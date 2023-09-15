@@ -9,6 +9,7 @@ import { EMPTY, GRACE } from '../slots/tenterSlot.js';
 import { TENTING_COLORS } from '../../../data/phaseData.js';
 
 import {availabilitiesToSlots, dayNightFree} from "./algoInputCleansing.js";
+import { slotsArrToStringArr } from './algoOutputCleansing.js';
 
 /**
  * Keith's new scheduling method with the Olson algo
@@ -39,13 +40,13 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 		.doc(groupCode)
 		.collection('members')
 		.get()
-		.then((collSnap) => {
-			collSnap.forEach((doc) => {
-				var name = doc.data().name;
-				var id = doc.id;
+		.then((groupMembers) => {
+			groupMembers.forEach((tenterInGroup) => {
+				var name = tenterInGroup.data().name;
+				var id = tenterInGroup.id;
 				idToName[id] = name;
-				var fullAvailability = doc.data().availability; //array of boolean values indicating availability
-				var fullAvailabilityStartDate = doc.data().availabilityStartDate.toDate();
+				var fullAvailability = tenterInGroup.data().availability; //array of boolean values indicating availability
+				var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
 				var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
 				var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
 				var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
@@ -66,23 +67,7 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 
 	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
 
-	//Keith: now need to return the array of strings
-	var groupScheduleArr = [];
-	for (var i = 0; i < newScheduleInRange.length; i++){
-		var ids = newScheduleInRange[i].ids;
-		var names = "";
-		for (var j = 0; j < ids.length; j++){
-		names = names + idToName[ids[j]] + " ";
-		}
-		if (names.endsWith(" ")){
-		names = names.substring(0, names.length -1);
-		}
-		groupScheduleArr.push(names);
-	}
-
-
-	return groupScheduleArr;
-
+	return slotsArrToStringArr(newScheduleInRange, idToName);
 }
 
 

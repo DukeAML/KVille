@@ -12,145 +12,204 @@ function gridLimits(row, rowLength){
 
 /**
  * Weight Contiguous - prioritize people to stay in the tent more time at once.
- * @param {Array<import("../slots/tenterSlot").import("../slots/tenterSlot").import("../slots/tenterSlot").TenterSlot>} slots 
- * @param {Array<Array<import("../slots/tenterSlot").import("../slots/tenterSlot").import("../slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} allRemainingTenterSlots 
+ * @param {Array<Array<import("../slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
  * @returns [slot, ScheduleGrid]
  */
-export function prioritizeContinuity(slots, tenterSlotsGrid){
-    //length of ideal day shift is 4 slots (i.e. 2 hours)
-    const IDEAL_DAY_SHIFT_LENGTH = olsonParams["IDEAL_DAY_SHIFT_LENGTH"];
-    var i = 0
-    while (i < slots.length){
-        // Establish Variables
-        var currentRow = slots[i].row;
-        var currentCol = slots[i].col;
+export function prioritizeContinuity(allRemainingTenterSlots, tenterSlotsGrid){
+    var slotIndex = 0
+    while (slotIndex < allRemainingTenterSlots.length){
+        var { currentPersonIndex, currentTimeIndex, priorTimeIndex, nextTimeIndex } = getRelevantTimeAndPersonIndices(allRemainingTenterSlots, slotIndex);
+        var allSlotsForThisPeson = tenterSlotsGrid[currentPersonIndex];
+        var slotsLength = allSlotsForThisPeson.length;
+        var [skipAboveRow, skipBelowRow] = gridLimits(currentTimeIndex, slotsLength);
+        var currentIsNight = allRemainingTenterSlots[slotIndex].isNight;
+        var priorIsNight = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].isNight;
+        var nextIsNight = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].isNight;
+        var { scheduledForPriorTime, scheduledForNextTime, availableForNextTime, availableForPriorTime } = getStatusAtAdjacentTimes(skipAboveRow, allSlotsForThisPeson, priorTimeIndex, skipBelowRow, nextTimeIndex);
+        var { numScheduledAbove, numScheduledBelow } = getNumberSlotsScheduledAdjacent(currentTimeIndex, allSlotsForThisPeson);
+        var numScheduledToday = getNumScheduledInSurrounding24Hrs(currentTimeIndex, allSlotsForThisPeson);
 
-        var aboveRow = currentRow-1;
-        var belowRow = currentRow+1;
+        var weightMultiplier = getBasicWeightMultiplier(scheduledForPriorTime, scheduledForNextTime, weightMultiplier, availableForNextTime, availableForPriorTime);
+        weightMultiplier = deprioritizeThoseWithLotsOfShiftsThisDay(numScheduledToday, weightMultiplier);
+        weightMultiplier = prioritizeIdealDayShiftLength(numScheduledAbove, numScheduledBelow, weightMultiplier, availableForPriorTime, priorIsNight, availableForNextTime, nextIsNight);
 
-        // grab all slots under the same col as the inspected slot in order
-        // to get the slots above and below
-        var allSlots = tenterSlotsGrid[currentCol];
-        var slotsLength = allSlots.length;
-
-        // find what to skip
-        var [skipAboveRow, skipBelowRow] = gridLimits(currentRow, slotsLength);
-
-        var currentIsNight = slots[i].isNight;
-        var aboveIsNight = !skipAboveRow && allSlots[aboveRow].isNight;
-        var belowIsNight = !skipBelowRow && allSlots[belowRow].isNight;
-
-        var aboveTent = !skipAboveRow && allSlots[aboveRow].status == TENTER_STATUS_CODES.SCHEDULED;
-        var belowTent = !skipBelowRow && allSlots[belowRow].status == TENTER_STATUS_CODES.SCHEDULED;
-        var aboveSome = !skipAboveRow && allSlots[aboveRow].status == "Somewhat";
-        var belowSome = !skipBelowRow && allSlots[belowRow].status == "Somewhat";
-        var aboveFree = !skipAboveRow && allSlots[aboveRow].status == TENTER_STATUS_CODES.AVAILABLE;
-        var belowFree = !skipBelowRow && allSlots[belowRow].status == TENTER_STATUS_CODES.AVAILABLE;
-
-        var numScheduledAbove = 0; //num contiguous day slots directly above already scheduled
-        var numScheduledBelow = 0; //num contiguous day slots directly below already scheduled
-        var nA = 1;
-        while ((currentRow -nA >= 0) && (allSlots[currentRow - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow-nA].isNight)){
-            numScheduledAbove += 1;
-            nA ++;
-        }
-        var nB = 1;
-        while ((currentRow + nB < allSlots.length) && (allSlots[currentRow + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow+nB].isNight)){
-            numScheduledBelow += 1;
-            nB ++;
-        }
-
-        var numScheduledToday = 0; //num day slots scheduled in the surrounding 24 hours
-
-        nA = 1;
-        while ((currentRow -nA >= 0) && (nA < 24)){
-            if ((allSlots[currentRow - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow-nA].isNight))
-                //Keith: might wanna weight these higher if they are closer to the current slot
-                //something like numScheduledToday += 12.0 / (6.0 + nA)
-                numScheduledToday += 12.0 / (6.0 + nA);
-            nA ++;
-        }
-        nB = 1;
-        while ((currentRow + nB < allSlots.length) && (nB < 24)){
-            if ((allSlots[currentRow + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlots[currentRow+nB].isNight))
-                numScheduledToday += 12.0 / (6.0 + nB);
-            nB ++;
-        }
-        
-
-        var multi = 1;
-
-        // Both are scheduled.
-        if (aboveTent && belowTent)
-            multi = 100;
-        
-        // Both are not free
-        if (!belowTent && !belowFree && !aboveSome && !belowSome && !aboveTent && !aboveFree)
-            multi *= 0.25;
-        
-        // Above is scheduled, below is free.
-        if (aboveTent && !belowTent && belowFree)
-            multi = 3.25;
-
-        // Below is scheduled, above is free.
-        if (belowTent && !aboveTent && aboveFree )
-            multi = 3.25;
+        //prioritize continuity at night
+        if ((scheduledForPriorTime && priorIsNight ) || (scheduledForNextTime && nextIsNight && currentIsNight))
+            weightMultiplier = 10000;    
     
-
-        // Above is scheduled, below is not free.
-        if (aboveTent && !belowTent && !belowFree)
-            multi = 3;
-
-        // Below is scheduled, above is not free.
-        if (belowTent && !aboveTent && !aboveFree)
-            multi = 3;
-
-        // Both are free
-        if (belowFree && aboveFree)
-            multi = 2.75;
-
-        // Above is free, below is not free
-        if (aboveFree && !belowTent && !belowFree)
-            multi = 1;
-
-        // Below is free, above is not free
-        if(belowFree && !aboveTent && !aboveFree)
-            multi = 1;
-
-        //deprioritize if they already have a bunch of slots scheduled today, but not necessarily directly above/below this slot
-        var index = 0;
-        while (index < numScheduledToday){
-            multi *= 0.95;
-            index += 1;
-        }
-        
-        //Keith: prioritize ideal shift continuity length
-        var newDayLength = numScheduledAbove + numScheduledBelow + 1;
-        if (newDayLength > IDEAL_DAY_SHIFT_LENGTH){ 
-            for (var m = 0; m < (newDayLength - IDEAL_DAY_SHIFT_LENGTH); m++){
-                multi /= 8;
-            }
-        } else {
-            //prioritize continuity
-            if ((newDayLength > 1) && ((aboveFree && !aboveIsNight) || (belowFree && !belowIsNight)))
-                multi = 200;
-        }
-
-
-
-        //Keith: prioritize continuity at night
-        if ((aboveTent && aboveIsNight ) || (belowTent && belowIsNight && currentIsNight))
-            multi = 1000;
-        
-    
-        
-
-        slots[i].weight = slots[i].weight*multi;
-        i += 1;
-
+        allRemainingTenterSlots[slotIndex].weight = allRemainingTenterSlots[slotIndex].weight*weightMultiplier;
+        slotIndex += 1;
     }
-
-    return [slots, tenterSlotsGrid];
 }
 
+
+
+/**
+ * 
+ * @param {number} numScheduledAbove 
+ * @param {number} numScheduledBelow 
+ * @param {number} weightMultiplier 
+ * @param {boolean} availableForPriorTime 
+ * @param {boolean} priorIsNight 
+ * @param {boolean} availableForNextTime 
+ * @param {boolean} nextIsNight 
+ * @returns {number}
+ */
+function prioritizeIdealDayShiftLength(numScheduledAbove, numScheduledBelow, weightMultiplier, availableForPriorTime, priorIsNight, availableForNextTime, nextIsNight) {
+    var newDayLength = numScheduledAbove + numScheduledBelow + 1;
+    const IDEAL_DAY_SHIFT_LENGTH = olsonParams.IDEAL_DAY_SHIFT_LENGTH;
+    if (newDayLength > IDEAL_DAY_SHIFT_LENGTH) {
+        for (var m = 0; m < (newDayLength - IDEAL_DAY_SHIFT_LENGTH); m++) {
+            weightMultiplier /= 8;
+        }
+    } else {
+        //prioritize continuity
+        if ((newDayLength > 1) && ((availableForPriorTime && !priorIsNight) || (availableForNextTime && !nextIsNight)))
+            weightMultiplier = 200;
+    }
+    return weightMultiplier;
+}
+
+/**
+ * 
+ * @param {number} numScheduledToday 
+ * @param {number} weightMultiplier 
+ * @returns {number}
+ */
+function deprioritizeThoseWithLotsOfShiftsThisDay(numScheduledToday, weightMultiplier) {
+    var index = 0;
+    while (index < numScheduledToday) {
+        weightMultiplier *= 0.95;
+        index += 1;
+    }
+    return weightMultiplier;
+}
+
+/**
+ * 
+ * @param {boolean} scheduledForPriorTime 
+ * @param {boolean} scheduledForNextTime 
+ * @param {boolean} availableForNextTime 
+ * @param {boolean} availableForPriorTime 
+ * @returns {number}
+ */
+function getBasicWeightMultiplier(scheduledForPriorTime, scheduledForNextTime, availableForNextTime, availableForPriorTime) {
+    var multi = 1;
+    if (scheduledForPriorTime && scheduledForNextTime)
+        multi = 100;
+
+    // Both are not free
+    if (!scheduledForNextTime && !availableForNextTime && !scheduledForPriorTime && !availableForPriorTime)
+        multi *= 0.25;
+
+    // Above is scheduled, below is free.
+    if (scheduledForPriorTime && !scheduledForNextTime && availableForNextTime)
+        multi = 3.25;
+
+    // Below is scheduled, above is free.
+    if (scheduledForNextTime && !scheduledForPriorTime && availableForPriorTime)
+        multi = 3.25;
+
+
+    // Above is scheduled, below is not free.
+    if (scheduledForPriorTime && !scheduledForNextTime && !availableForNextTime)
+        multi = 3;
+
+    // Below is scheduled, above is not free.
+    if (scheduledForNextTime && !scheduledForPriorTime && !availableForPriorTime)
+        multi = 3;
+
+    // Both are free
+    if (availableForNextTime && availableForPriorTime)
+        multi = 2.75;
+
+    // Above is free, below is not free
+    if (availableForPriorTime && !scheduledForNextTime && !availableForNextTime)
+        multi = 1;
+
+    // Below is free, above is not free
+    if (availableForNextTime && !scheduledForPriorTime && !availableForPriorTime)
+        multi = 1;
+    return multi;
+}
+
+/**
+ * 
+ * @param {number} currentTimeIndex 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} allSlotsForThisPeson 
+ * @returns {number}
+ */
+function getNumScheduledInSurrounding24Hrs(currentTimeIndex, allSlotsForThisPeson) {
+    var numScheduledToday = 0; //num day slots scheduled in the surrounding 24 hours
+
+    var nA = 1;
+    while ((currentTimeIndex - nA >= 0) && (nA < 24)) {
+        if ((allSlotsForThisPeson[currentTimeIndex - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlotsForThisPeson[currentTimeIndex - nA].isNight))
+            //Keith: weight these higher if they are closer to the current slot, rather than just numScheduledToday += 1
+            numScheduledToday += 12.0 / (6.0 + nA);
+        nA++;
+    }
+    var nB = 1;
+    while ((currentTimeIndex + nB < allSlotsForThisPeson.length) && (nB < 24)) {
+        if ((allSlotsForThisPeson[currentTimeIndex + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlotsForThisPeson[currentTimeIndex + nB].isNight))
+            numScheduledToday += 12.0 / (6.0 + nB);
+        nB++;
+    }
+    return numScheduledToday;
+}
+
+/**
+ * 
+ * @param {number} currentTimeIndex 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} allSlotsForThisPeson 
+ * @returns {{numScheduledAbove : number, numScheduledBelow : number}}
+ */
+function getNumberSlotsScheduledAdjacent(currentTimeIndex, allSlotsForThisPeson) {
+    var numScheduledAbove = 0; //num contiguous day slots directly above already scheduled
+    var numScheduledBelow = 0; //num contiguous day slots directly below already scheduled
+    var nA = 1;
+    while ((currentTimeIndex - nA >= 0) && (allSlotsForThisPeson[currentTimeIndex - nA].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlotsForThisPeson[currentTimeIndex - nA].isNight)) {
+        numScheduledAbove += 1;
+        nA++;
+    }
+    var nB = 1;
+    while ((currentTimeIndex + nB < allSlotsForThisPeson.length) && (allSlotsForThisPeson[currentTimeIndex + nB].status == TENTER_STATUS_CODES.SCHEDULED) && !(allSlotsForThisPeson[currentTimeIndex + nB].isNight)) {
+        numScheduledBelow += 1;
+        nB++;
+    }
+    return { numScheduledAbove, numScheduledBelow };
+}
+
+/**
+ * 
+ * @param {boolean} skipAboveRow 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} allSlotsForThisPeson 
+ * @param {number} priorTimeIndex
+ * @param {boolean} skipBelowRow 
+ * @param {number} nextTimeIndex 
+ * @returns {{scheduledForPriorTime : boolean, scheduledForNextTime : boolean, availableForNextTime : boolean, availableForPriorTime : boolean}}
+ */
+function getStatusAtAdjacentTimes(skipAboveRow, allSlotsForThisPeson, priorTimeIndex, skipBelowRow, nextTimeIndex) {
+    var scheduledForPriorTime = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED;
+    var scheduledForNextTime = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED;
+    var availableForPriorTime = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].status == TENTER_STATUS_CODES.AVAILABLE;
+    var availableForNextTime = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].status == TENTER_STATUS_CODES.AVAILABLE;
+    return { scheduledForPriorTime, scheduledForNextTime, availableForNextTime, availableForPriorTime };
+}
+
+/**
+ * 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} allRemainingTenterSlots 
+ * @param {number} i 
+ * @returns {{currentPersonIndex : number, currentTimeIndex : number, priorTimeIndex : number, nextTimeIndex : number}}
+ */
+function getRelevantTimeAndPersonIndices(allRemainingTenterSlots, i) {
+    var currentTimeIndex = allRemainingTenterSlots[i].row;
+    var currentPersonIndex = allRemainingTenterSlots[i].col;
+
+    var priorTimeIndex = currentTimeIndex - 1;
+    var nextTimeIndex = currentTimeIndex + 1;
+    return { currentPersonIndex, currentTimeIndex, priorTimeIndex, nextTimeIndex };
+}
 
