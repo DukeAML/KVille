@@ -8,45 +8,59 @@ import { TENTER_STATUS_CODES} from "./slots/tenterSlot";
  * 
  */
 export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid){
-    // Remove winner from list.
-    var winner = slots.shift(); //remove first element and remove it
-    // Update person information.
-    var currentPersonID = winner.col;
-    var currentTime = winner.isNight;
+    var chosenTenterSlot = slots.shift(); //remove first element and remove it
 
-    if (currentTime){
-        people[currentPersonID].nightScheduled += 1;
-        people[currentPersonID].nightFree -= 1;
-    }else{
-        people[currentPersonID].dayScheduled += 1;
-        people[currentPersonID].dayFree -= 1;
-    }
+    updateChosenPerson(chosenTenterSlot, people);
 
+    var chosenTimeIndex = chosenTenterSlot.row;
+    var chosenPersonIndex = chosenTenterSlot.col;
+    tenterSlotsGrid[chosenPersonIndex][chosenTimeIndex].status = TENTER_STATUS_CODES.SCHEDULED;
 
-    // Establish Variables
-    var currentRow = winner.row;
-    var currentCol = winner.col;
-    var tentCounter = 0;
+    var numberScheduledAtChosenTime = getNumberScheduledAtChosenTime(tenterSlotsGrid, chosenTimeIndex);
 
-    // Update Data
-    tenterSlotsGrid[currentCol][currentRow].status = TENTER_STATUS_CODES.SCHEDULED;
-
-    // Count number of scheduled tenters during winner slot.
-    var i = 0;
-    while (i < tenterSlotsGrid.length){
-        if (tenterSlotsGrid[i][currentRow].status == TENTER_STATUS_CODES.SCHEDULED);
-            tentCounter = tentCounter + 1;
-        i += 1;
-    }
-
-    // Determine how many people are needed.
-    var peopleNeeded = winner.calculatePeopleNeeded();
+    var peopleNeeded = chosenTenterSlot.calculatePeopleNeeded();
     let remainingSlots = slots;
-    if (tentCounter >= peopleNeeded){
-        remainingSlots = slots.filter((s) => (s.row != currentRow));
+    if (numberScheduledAtChosenTime >= peopleNeeded){
+        remainingSlots = slots.filter((s) => (s.row != chosenTimeIndex));
     }
     return remainingSlots;
 
-    
 
+}
+
+
+/**
+ * 
+ * @param {Array<Array<import("./slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
+ * @param {number} chosenTimeIndex 
+ * @returns {number}
+ */
+function getNumberScheduledAtChosenTime(tenterSlotsGrid, chosenTimeIndex) {
+    var personIndex = 0;
+    var numberScheduledAtChosenTime = 0;
+    while (personIndex < tenterSlotsGrid.length) {
+        if (tenterSlotsGrid[personIndex][chosenTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED);
+        numberScheduledAtChosenTime = numberScheduledAtChosenTime + 1;
+        personIndex += 1;
+    }
+    return numberScheduledAtChosenTime;
+}
+
+/**
+ * 
+ * @param {import("./slots/tenterSlot").TenterSlot} chosenTenterSlot 
+ * @param {Array<import("./person").Person>} people 
+ */
+function updateChosenPerson(chosenTenterSlot, people){
+    var chosenPersonIndex = chosenTenterSlot.col;
+    var chosenPerson = people[chosenPersonIndex];
+    var currentTime = chosenTenterSlot.isNight;
+
+    if (currentTime){
+        chosenPerson.nightScheduled += 1;
+        chosenPerson.nightFree -= 1;
+    }else{
+        chosenPerson.dayScheduled += 1;
+        chosenPerson.dayFree -= 1;
+    }
 }

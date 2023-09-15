@@ -7,10 +7,10 @@ import { GRACE } from "../slots/tenterSlot";
  * returns nothing, modifies the grid in place
 */
 export function fillGrace(scheduleArr){
-    for (var i = 0; i < scheduleArr.length; i++){
-        var peopleNeeded = scheduleArr[i].calculatePeopleNeeded();
+    for (var timeIndex = 0; timeIndex < scheduleArr.length; timeIndex++){
+        var peopleNeeded = scheduleArr[timeIndex].calculatePeopleNeeded();
         if (peopleNeeded == 0){
-            scheduleArr[i].ids.push(GRACE);
+            scheduleArr[timeIndex].ids.push(GRACE);
         }
 
     }   
