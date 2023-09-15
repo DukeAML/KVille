@@ -114,7 +114,6 @@ export class MouseTracker {
      * @returns {void}
      */
     alertMouseUpAtRowCol(row, col ){
-		//this.updateAvailabilityInDB();
 		this.mouseIsDown = false;
     }
   

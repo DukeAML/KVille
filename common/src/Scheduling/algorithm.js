@@ -33,7 +33,6 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
         prioritizeToughTimes(slots, scheduleLength);
         slots.sort( (a, b) => (b.weight - a.weight));
 
-        // Update people, spreadsheet, and remove slots.
         slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
     }
 
@@ -57,9 +56,9 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
  */
 function getAllTenterSlots(tenterSlotsGrid){
     let allSlots = [];
-    for (let i =0; i < tenterSlotsGrid.length; i += 1){
-        for (let j = 0; j < tenterSlotsGrid[0].length; j += 1){
-            let slot = tenterSlotsGrid[i][j];
+    for (let personIndex =0; personIndex < tenterSlotsGrid.length; personIndex += 1){
+        for (let timeIndex = 0; timeIndex < tenterSlotsGrid[0].length; timeIndex += 1){
+            let slot = tenterSlotsGrid[personIndex][timeIndex];
             if (slot.status === TENTER_STATUS_CODES.AVAILABLE){
                 allSlots.push(slot);
             }
@@ -77,17 +76,11 @@ function getAllTenterSlots(tenterSlotsGrid){
  * @returns {Array<ScheduledSlot>} scheduleArr, a 1d array of import("./slots/tenterSlot").TenterSlot objects
  */
 function formatTo1DSchedule(people, tenterSlotsGrid){
-    // compress data from 2d grid with a single-deminsion of
-    // all of the scheduled slots
     var scheduleArr = [];
 
-    // iterating through every unique slot, and
-    // checking for any people that are scheduled on that slot as well
-    //should be <= in the for ??
+    // iterating through every timeslot, and adding up all the people scheduled for that time slot
     for (var slotIndex = 0; slotIndex < tenterSlotsGrid[0].length; slotIndex++){
-
         var slot = new ScheduledSlot(tenterSlotsGrid[0][slotIndex].startDate, tenterSlotsGrid[0][slotIndex].phase);
-
 
         // checking every person at that slot for status
         for (var personIndex = 0; personIndex < people.length; personIndex++){

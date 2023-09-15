@@ -51,8 +51,8 @@ export class Slot{
      */
     static checkGrace(startDate){
 		var gracePeriods = graceData.gracePeriods;
-		for (var i = 0; i < gracePeriods.length; i += 1){
-			var gracePeriod = gracePeriods[i];
+		for (var gracePeriodIndex = 0; gracePeriodIndex < gracePeriods.length; gracePeriodIndex += 1){
+			var gracePeriod = gracePeriods[gracePeriodIndex];
 			var start = gracePeriod.startDate;
 			var end = gracePeriod.endDate;
 	

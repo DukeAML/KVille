@@ -17,9 +17,9 @@ export class TenterSlot extends Slot{
      * @param {Date} startDate a JS Date Object
      * @param {String} phase (string) TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, or TENTING_COLORS.WHITE
      * @param {String} status (string) "Available" for available, any other string for not available
-     * @param {int} row corresponds to startDate
-     * @param {int} col corresponds to personID
-     * @param {int} weight 
+     * @param {number} row corresponds to startDate
+     * @param {number} col corresponds to personID
+     * @param {number} weight 
      */
     constructor(personID, startDate, phase, status, row, col, weight=1){
         super(startDate, phase);
