@@ -2,37 +2,30 @@ import React, {ReactNode} from 'react';
 
 import {
 	Button,
+	Typography,
 	makeStyles,
 } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+		fontFamily: '"TT Norms", Helvetica, Arial, "Lucida Grande", sans-serif',
+		fontWeight : "bold"
+	},
 }));
 
 
 
 interface ButtonInputInterface {
     onClick: ()=>void;
-    children: ReactNode;
+    text : string
 }
 
 export const KvilleButton: React.FC<ButtonInputInterface> = (props:ButtonInputInterface) => {
-  const classes = useStyles();
+	const classes = useStyles();
 
-  return (
+	return (
 
     
 
@@ -44,7 +37,7 @@ export const KvilleButton: React.FC<ButtonInputInterface> = (props:ButtonInputIn
         className={classes.submit}
         onClick={props.onClick}
     >
-        {props.children? props.children : <></>}
+        <Typography variant='button'>{props.text}</Typography>
     </Button>
   );
 };
