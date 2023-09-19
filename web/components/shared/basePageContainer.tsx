@@ -26,10 +26,13 @@ const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageConta
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			const id = auth.currentUser?.uid;
-			setUserID(id ? id : "");
-			setIsLoggedIn(true);
-			console.log("I logged them in from the useEffect with " + id);
+			if (auth.currentUser){
+				const id = auth.currentUser.uid;
+				setUserID(id);
+				setIsLoggedIn(true);
+				console.log("I logged them in from the useEffect with " + id);
+			}
+			
 		})
 
 		return () => unsubscribe();
