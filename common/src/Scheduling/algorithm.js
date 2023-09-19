@@ -32,7 +32,6 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
         prioritizeContinuity(slots, tenterSlotsGrid);
         prioritizeToughTimes(slots, scheduleLength);
         slots.sort( (a, b) => (b.weight - a.weight));
-
         slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
     }
 
