@@ -36,6 +36,8 @@ export default function Schedule() {
         body = (
             <DateBeingShownContext.Provider value={{dateBeingShown : dateBeingShown, setDateBeingShown : setDateBeingShown}}>
                 <CellColorsContext.Provider value={{cellColorsCoordinator : cellColorCoordinator}}>
+                <Typography align="center">This shows who is supposed to be in the tent at all times. Click the "Assign Tenters" option below to get started with using our algorithm to auto-fill the schedule</Typography>
+            
                     <ScheduleOptions/>
                     
                     <OneDaySchedule/>
@@ -47,7 +49,7 @@ export default function Schedule() {
     //console.log(scheduleAndStartDate);
     return (
         <BasePageContainerForGroupsPage title="Schedule">
-            {body}
+           {body}
         </BasePageContainerForGroupsPage>
     )
 }
