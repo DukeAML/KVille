@@ -12,7 +12,7 @@ import { useGetQueryDataForSchedule, getQueryKeyNameForGroupCode, useMutationToU
 import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { useRouter } from "next/router";
-import { INVALID_GROUP_CODE } from "@/pages/_app";
+import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { TENTING_COLORS } from "../../../../../../common/data/phaseData";
 
 
