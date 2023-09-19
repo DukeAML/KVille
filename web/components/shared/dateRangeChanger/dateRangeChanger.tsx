@@ -26,11 +26,7 @@ export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateR
                     <DateChanger text={"end"} includeHours={props.includeHours} date ={newEndDate} setDate={setNewEndDate}/>
                 </Grid>
             </Grid>
-            <KvilleButton onClick={() => {
-                props.submitNewDateRange(newStartDate, newEndDate);
-            }}>
-                <Typography variant="h6" >Submit</Typography>
-            </KvilleButton>
+            <KvilleButton onClick={() => {props.submitNewDateRange(newStartDate, newEndDate);}} text={"Submit"}/>
         </Container>
     )
 }

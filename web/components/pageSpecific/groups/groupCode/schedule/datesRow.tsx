@@ -21,9 +21,8 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
                 let date = getDatePlusNumShifts(dateBeingShown, 48 * offset);
                 if (offset != 0){
                     return (
-                        <KvilleButton onClick={() => {setDateBeingShown(date)}} key={index}>
-                            <Typography>{getDayAbbreviation(date)}</Typography>
-                        </KvilleButton>
+                        <KvilleButton onClick={() => {setDateBeingShown(date)}} text={getDayAbbreviation(date)} key={index}/>
+
                     );
                 } else {
                     return <DateChanger text={"Date Shown"} date={dateBeingShown} setDate={setDateBeingShown} includeHours={false} key={index}/>

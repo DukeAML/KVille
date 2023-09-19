@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, useContext, useEffect} from 'react';
 import { UserContext } from '@/lib/shared/context/userContext';
 import {
   Container,
@@ -9,9 +9,11 @@ import {
 
 import { KvilleLoggedInNavBar } from './navBars/loggedInNavBar';
 import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
-import { GroupContext } from '@/lib/shared/context/groupContext';
 import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
 import { auth } from '../../../common/src/db/firebase_config';
+import { onAuthStateChanged } from 'firebase/auth';
+
+
 
 
 interface BasePageContainerProps {
@@ -20,20 +22,18 @@ interface BasePageContainerProps {
 
 
 const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
-	const {userID, setUserID, isLoggedIn, setIsLoggedIn} = useContext(UserContext);
+	const {setUserID, setIsLoggedIn} = useContext(UserContext);
 
-	setTimeout(() => {
-			if (!isLoggedIn){
-		
-			if (auth.currentUser){
-				const id = auth.currentUser?.uid;
-				setUserID(id);
-				setIsLoggedIn(true);
-				console.log("I logged them in with " + id);
-			}
-		
-			}
-	}, 1000);
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			const id = auth.currentUser?.uid;
+			setUserID(id ? id : "");
+			setIsLoggedIn(true);
+			console.log("I logged them in from the useEffect with " + id);
+		})
+
+		return () => unsubscribe();
+	});
 	
 	return (
 		<Container component="main" maxWidth={false} >
@@ -69,8 +69,6 @@ interface BasePageContainerForGroupsPageProps {
 }
 
 export const BasePageContainerForGroupsPage: React.FC<BasePageContainerForGroupsPageProps> = (props:BasePageContainerForGroupsPageProps) => {
-	const {isLoggedIn} = useContext(UserContext);
-	const {groupDescription} = useContext(GroupContext);
 	return (
 		<BasePageContainer>
 				
