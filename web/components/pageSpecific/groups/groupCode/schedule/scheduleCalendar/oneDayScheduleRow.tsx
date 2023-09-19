@@ -10,7 +10,7 @@ import { fetchGroupSchedule } from "../../../../../../../common/src/db/schedule/
 import { getQueryKeyNameForGroupCode, useGetQueryDataForSchedule, useQueryToFetchSchedule } from "../../../../../../lib/pageSpecific/schedule/scheduleHooks";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { useRouter } from "next/dist/client/router";
-import { INVALID_GROUP_CODE } from "@/pages/_app";
+import { INVALID_GROUP_CODE } from "../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
 import { Typography } from "@material-ui/core";
 interface OneDayScheduleRowProps {

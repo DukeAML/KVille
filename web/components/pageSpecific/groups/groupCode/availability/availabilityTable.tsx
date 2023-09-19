@@ -9,7 +9,7 @@ import { AvailabilityCalendarDatesContext } from '../../../../../lib/pageSpecifi
 import { UserContext } from '@/lib/shared/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { INVALID_GROUP_CODE } from '@/pages/_app';
+import { INVALID_GROUP_CODE } from '../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
 import { getQueryKeyNameForFetchAvailability } from '../../../../../lib/pageSpecific/availability/availabilityHooks';
 
 interface RowAndCol {

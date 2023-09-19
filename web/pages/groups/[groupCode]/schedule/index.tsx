@@ -1,9 +1,6 @@
 import React, {useContext, useState, useRef, useEffect} from "react";
-import { useQuery } from "react-query";
 import { BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
 import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
-import { UserContext } from "@/lib/shared/context/userContext";
-import {fetchGroupSchedule} from "../../../../../common/src/db/schedule/schedule";
 import {getDefaultDisplayDateRangeStartDate} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
 import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';
 import { OneDaySchedule } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
@@ -13,19 +10,15 @@ import { CellColorsContext } from "../../../../lib/pageSpecific/schedule/cellCol
 import { DateBeingShownContext } from "../../../../lib/pageSpecific/schedule/dateBeingShownContext";
 import { getQueryKeyNameForGroupCode, useQueryToFetchSchedule } from "../../../../lib/pageSpecific/schedule/scheduleHooks";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { useRouter } from "next/router";
-import { INVALID_GROUP_CODE } from "@/pages/_app";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
+import { useGroupCode } from "@/lib/shared/useGroupCode";
 
 
 export default function Schedule() {
     const defaultData = new ScheduleAndStartDate([], new Date(Date.now()));
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
 
-    
-    const {userID} = useContext(UserContext); 
-    const router = useRouter();
-    const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
+    const groupCode = useGroupCode();
     console.log("the group code is " + groupCode);
     const {groupDescription} = useContext(GroupContext);
     const {data : scheduleAndStartDate, isLoading, isError} = useQueryToFetchSchedule(groupCode);

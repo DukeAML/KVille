@@ -10,17 +10,13 @@ import { Container } from "@material-ui/core";
 import { AvailabilityTable } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityTable";
 import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
 import { AvailabilityOptions } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityOptions";
-import { GroupContext } from "@/lib/shared/context/groupContext";
 import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
-import { useRouter} from "next/router";
-import { INVALID_GROUP_CODE } from "@/pages/_app";
 import { TENTING_COLORS } from "../../../../../common/data/phaseData";
+import { useGroupCode } from "@/lib/shared/useGroupCode";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
-  
-    const router = useRouter();
-    const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
+    const groupCode = useGroupCode();
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
         ()=> fetchAvailability(groupCode, userID),
