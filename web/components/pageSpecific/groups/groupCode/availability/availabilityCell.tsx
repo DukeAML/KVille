@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme:Theme) => ({
     gridCell: {
         border: '1px solid black',
         padding: theme.spacing(1),
+        cursor: 'crosshair'
     },
     rowLabelCell: {
         border: '1px solid black',
@@ -55,6 +56,7 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
 				props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
 				props.updateAvailabilityInDB();
 			}}
+            
         >
           	<Paper></Paper>
         </Grid>
