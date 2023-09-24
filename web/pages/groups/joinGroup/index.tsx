@@ -44,10 +44,10 @@ export default function JoinGroupPage() {
 
 
     return (
-        <BasePageContainerWithNavBarAndTitle title="Group Membership">
+        <BasePageContainerWithNavBarAndTitle title="Join a Group">
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">If someone has already created the group, ask them for the group code</Typography>
+                    <Typography variant="h5">Ask a Group member for the group code to join</Typography>
                     <KvilleForm 
                         validationSchema={joinGroupValidationSchema} 
                         initialValues={initialValues}
