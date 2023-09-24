@@ -47,10 +47,10 @@ export default function CreateGroupPage() {
 
 
     return (
-        <BasePageContainerWithNavBarAndTitle title="Group Membership">
+        <BasePageContainerWithNavBarAndTitle title="Create a Group">
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">If someone has already created the group, ask them for the group code. Also, we need to make this page look better</Typography>
+                    <Typography variant="h5">If someone has already created your group, ask them for the group code and go to the join group pae. Also, we need to make this page look better</Typography>
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}
