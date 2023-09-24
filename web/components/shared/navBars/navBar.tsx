@@ -1,11 +1,11 @@
 import React, {ReactNode} from 'react';
 import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
-import { useRouter } from 'next/router';
+import { useRouter, NextRouter } from 'next/router';
 
 
 
 interface KvilleNavBarGivenOptionsProps {
-    optionButtons : ReactNode[];
+    options : ReactNode;
     colorIsPrimary? : boolean;
 }
 
@@ -18,45 +18,51 @@ const KvilleNavBarGivenOptions : React.FC<KvilleNavBarGivenOptionsProps> = (prop
                 <Typography variant="h5" style={{ flexGrow: 1 }}>
                     KVille
                 </Typography>
-                {props.optionButtons}
+                {props.options}
             </Toolbar>
         </AppBar>
     )
 }
 
 KvilleNavBarGivenOptions.defaultProps = {
-    optionButtons : undefined,
+    options : undefined,
     colorIsPrimary : true
 
 }
 
-export interface ButtonDescription {
+export interface OptionDescription {
     text : string;
     route : string;
 }
 
-interface KvilleNavBarGivenButtonDescriptionsProps {
-    buttonDescriptions : ButtonDescription[];
+interface KvilleNavBarGivenOptionDescriptionsProps {
+    optionDescriptions : OptionDescription[];
     colorIsPrimary? : boolean;
 }
 
-export const KvilleNavBarGivenButtonDescriptions : React.FC<KvilleNavBarGivenButtonDescriptionsProps> = (props : KvilleNavBarGivenButtonDescriptionsProps) => {
+export const KvilleNavBarGivenOptionDescriptions : React.FC<KvilleNavBarGivenOptionDescriptionsProps> = (props : KvilleNavBarGivenOptionDescriptionsProps) => {
     const router = useRouter();
-    let buttons = props.buttonDescriptions.map((description, index) => {
-        return (
-            <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
-        )
-    });
-    return <KvilleNavBarGivenOptions optionButtons={buttons} colorIsPrimary={props.colorIsPrimary}/>
+    return <KvilleNavBarGivenOptions options={descriptionsToOptions(props.optionDescriptions, router)} colorIsPrimary={props.colorIsPrimary}/>
 }
 
 
-KvilleNavBarGivenButtonDescriptions.defaultProps = {
-    buttonDescriptions : [],
-    colorIsPrimary : true
+
+KvilleNavBarGivenOptionDescriptions.defaultProps = {
+    optionDescriptions : [],
+    colorIsPrimary : true, 
 }
 
-
+export const descriptionsToOptions = (optionDescriptions : OptionDescription[], router : NextRouter) : ReactNode => {
+    return (
+        <div>
+            {optionDescriptions.map((description, index) => {
+                return (
+                    <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
+                )
+            })}
+        </div>
+    );
+}
 
 
 

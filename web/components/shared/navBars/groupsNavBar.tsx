@@ -1,4 +1,4 @@
-import { KvilleNavBarGivenButtonDescriptions, ButtonDescription } from "./navBar";
+import { KvilleNavBarGivenOptionDescriptions, OptionDescription, descriptionsToOptions } from "./navBar";
 import React, { useContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { GroupContext } from "@/lib/shared/context/groupContext";
@@ -11,7 +11,7 @@ export const KvilleGroupsNavBar : React.FC = () => {
     
     let {groupDescription} = useContext(GroupContext);
     let groupBasePath = "/groups/" + groupDescription.groupCode;
-    let buttonDescriptions : ButtonDescription[] = [
+    let optionDescriptions : OptionDescription[] = [
 
         {text : "Overview", route : groupBasePath},
         {text : "Availability", route : groupBasePath + "/availability"},
@@ -26,13 +26,7 @@ export const KvilleGroupsNavBar : React.FC = () => {
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
                     {groupDescription.groupName}
                 </Typography>
-
-      
-                {buttonDescriptions.map((description, index) => {
-                    return (
-                        <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
-                    )
-                })}
+                {descriptionsToOptions(optionDescriptions, router)}
             </Toolbar>
         </AppBar>
     )
