@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { ThemeProvider } from '@material-ui/core'
 import  theme  from '@/styles/theme';
-import { useState, useContext } from 'react';
+import { useState, } from 'react';
 import { UserContext } from '@/lib/shared/context/userContext';
 import { GroupContext } from '@/lib/shared/context/groupContext';
 import { QueryClient } from 'react-query';
@@ -12,17 +12,13 @@ import { INVALID_USER_ID } from '../../common/src/db/auth/login';
 import { INVALID_GROUP_CODE } from '../../common/src/db/groupExistenceAndMembership/GroupCode';
  
 import {
-  initializeAuth,
   indexedDBLocalPersistence,
-  connectAuthEmulator,
   inMemoryPersistence,
-  setPersistence,
-  getAuth
 } from 'firebase/auth';
  
  
-import { firebase_app, auth } from '../../common/src/db/firebase_config';
-import { isBrowser } from "../lib/shared/isBrowser";
+import {  auth } from '../../common/src/db/firebase_config';
+import { isBrowser } from "../lib/shared/windowProperties";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [userID, setUserID] = useState(INVALID_USER_ID);

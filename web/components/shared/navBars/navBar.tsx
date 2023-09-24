@@ -10,8 +10,10 @@ interface KvilleNavBarGivenOptionsProps {
 }
 
 const KvilleNavBarGivenOptions : React.FC<KvilleNavBarGivenOptionsProps> = (props : KvilleNavBarGivenOptionsProps) => {
+    let position : "sticky" | "fixed" = props.colorIsPrimary ? "sticky" : "fixed";
+
     return (
-        <AppBar position="sticky" color={props.colorIsPrimary ? "primary" : "transparent"} >
+        <AppBar position={position} color={props.colorIsPrimary ? "primary" : "secondary"} >
             <Toolbar>
                 <Typography variant="h5" style={{ flexGrow: 1 }}>
                     KVille
@@ -47,6 +49,7 @@ export const KvilleNavBarGivenButtonDescriptions : React.FC<KvilleNavBarGivenBut
     });
     return <KvilleNavBarGivenOptions optionButtons={buttons} colorIsPrimary={props.colorIsPrimary}/>
 }
+
 
 KvilleNavBarGivenButtonDescriptions.defaultProps = {
     buttonDescriptions : [],

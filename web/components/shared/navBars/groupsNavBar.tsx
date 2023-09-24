@@ -1,9 +1,9 @@
 import { KvilleNavBarGivenButtonDescriptions, ButtonDescription } from "./navBar";
-import React, { useContext, ReactNode } from "react";
+import React, { useContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { group } from "console";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { getWindowProperties, useCheckIfScreenIsNarrow } from "@/lib/shared/windowProperties";
 
 
 export const KvilleGroupsNavBar : React.FC = () => {
@@ -17,13 +17,17 @@ export const KvilleGroupsNavBar : React.FC = () => {
         {text : "Availability", route : groupBasePath + "/availability"},
         {text : "Schedule", route : groupBasePath + "/schedule"}
     ]
-    //return <KvilleNavBarGivenButtonDescriptions buttonDescriptions={buttonDescriptions} colorIsPrimary={false}/>;
+
+    const {isNarrow, checkingIfNarrow} = useCheckIfScreenIsNarrow();
+
     return (
         <AppBar position="static" color={"transparent"} >
             <Toolbar style={{justifyContent : "left"}}>
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
                     {groupDescription.groupName}
                 </Typography>
+
+      
                 {buttonDescriptions.map((description, index) => {
                     return (
                         <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
