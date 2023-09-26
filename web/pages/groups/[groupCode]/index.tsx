@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useQuery } from "react-query";
 import { BasePageContainerForGroupsPage } from "@/components/shared/basePageContainer";
-import {fetchHoursPerPerson} from "/Users/mayamarkusmalone/Desktop/KVille/common/src/db/hours.js";
-import { useGroupCode } from "/Users/mayamarkusmalone/Desktop/KVille/web/lib/shared/useGroupCode";
-import { KvilleLoadingContainer } from "/Users/mayamarkusmalone/Desktop/KVille/web/components/shared/utils/loading";
-import { getGroupMembersByGroupCode } from "/Users/mayamarkusmalone/Desktop/KVille/common/src/db/groupExistenceAndMembership/groupMembership.js";
+import { fetchHoursPerPerson, HOURS_ERROR_CODES } from "../../../../common/src/db/hours";
+import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { Typography, Grid, Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+import { Typography, Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+import { Container } from "@mui/material";
 
-let rows: { member: string; daytime: number; nighttime: number; total: number; }[] = [];
 
 
 const GroupHomePage : React.FC = () => {
@@ -16,51 +15,30 @@ const GroupHomePage : React.FC = () => {
     const groupCode = useGroupCode();
     const {data, isLoading} = useQuery('fetchingHours' +groupCode, () => fetchHoursPerPerson(groupCode));
     
-    function handleRows(member:string, daytime:number, nighttime:number, total:number, ){
-        return { member, daytime, nighttime, total};
-    }
-
-    async function createRows(){
-        if(rows.length ==0){
-            let allMembers = await getGroupMembersByGroupCode(groupCode).catch((error) => {throw new Error("HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST")});
-            let allMembersArr = [];
-            allMembersArr = allMembers.map((member) => member.username);
-    
-             if(isLoading == false && data){
-    
-                for(let i=0;i<allMembersArr.length;i++){
-                    const dayHours = data ? data.dayHoursPerPerson[allMembersArr[i]] : null;
-                    const nightHours = data ? data.dayHoursPerPerson[allMembersArr[i]] : null;
-                    
-                    if (typeof dayHours === 'number' && typeof nightHours === 'number') {
-                        rows.push(handleRows(allMembersArr[i],dayHours, nightHours, dayHours+nightHours ));
-                      }
-    
-                }
-    
-            }
-
-        }
-
-    }
-
-    const [isCreateRowsComplete, setIsCreateRowsComplete] = useState(false);
-    useEffect(() => {
-        async function fetchData() {
-            await createRows();
-            setIsCreateRowsComplete(true);
-          }
-      
-          fetchData();
-      }, [data, isLoading, groupCode]);
-
     return (
         <BasePageContainerForGroupsPage title={groupDescription.groupName}>
             <Typography>On this page I want to add content for group, including members and their respective hours. I also want the group creator to have the option to remove members. We also need to make the group code visible here</Typography>
             {isLoading ? (
                 // Display the loading container while data is being loaded
                 <KvilleLoadingContainer />
-                ) : (
+                ) : <HoursTable hoursPerPerson={data}/>}
+        </BasePageContainerForGroupsPage>
+    )
+}
+
+interface HoursTableProps {
+    hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}} | undefined
+}
+const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) => {
+    if (typeof props.hoursPerPerson === 'undefined'){
+        return null;
+    }
+    
+    let allMembersArr = getAllMembers(props.hoursPerPerson);
+    let rows = getRowsForTable(allMembersArr, props.hoursPerPerson);
+    
+    return (
+        <Container maxWidth="sm">
             <TableContainer>
                 <Table>
                     <TableHead>
@@ -72,23 +50,58 @@ const GroupHomePage : React.FC = () => {
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {isCreateRowsComplete && rows.map((row) => (
+                    {rows.map((row) => (
                         <TableRow
                         key={row.member}
                         >
                         <TableCell component="th" scope="row">
                             {row.member}
                         </TableCell>
-                        <TableCell align="right">{row.daytime}</TableCell>
-                        <TableCell align="right">{row.nighttime}</TableCell>
-                        <TableCell align="right">{row.total}</TableCell>
+                        <TableCell >{row.daytime}</TableCell>
+                        <TableCell >{row.nighttime}</TableCell>
+                        <TableCell >{row.total}</TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
                 </Table>
-                </TableContainer>)}
-        </BasePageContainerForGroupsPage>
-    )
+            </TableContainer>
+        </Container>
+    );
+
+}
+
+const getAllMembers = (hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}) : string[] =>  {
+    let allMembersArr : string[] = [];
+    for (let member in hoursPerPerson.dayHoursPerPerson){
+        allMembersArr.push(member);
+    }
+    for (let member in hoursPerPerson.nightHoursPerPerson){
+        if (!allMembersArr.includes(member)){
+            allMembersArr.push(member);
+        }
+    }
+    return allMembersArr;
+}
+
+interface DataForTableRow {
+    member : string,
+    daytime : number,
+    nighttime : number,
+    total : number
+}
+const getRowsForTable = (allMembersArr : string[], hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}) : DataForTableRow[] => {
+    let rows = [];
+    for(let i=0;i<allMembersArr.length;i++){
+        const dayHours = hoursPerPerson.dayHoursPerPerson[allMembersArr[i]];
+        const nightHours = hoursPerPerson.nightHoursPerPerson[allMembersArr[i]];
+        const totalHours = dayHours + nightHours;
+        
+        if (typeof dayHours === 'number' && typeof nightHours === 'number') {
+            rows.push({member : allMembersArr[i], daytime : dayHours, nighttime : nightHours, total : totalHours});
+          }
+
+    }
+    return rows;
 }
 
 export default GroupHomePage;
