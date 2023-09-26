@@ -57,6 +57,8 @@ describe("schedule", () => {
         }
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
+
+        
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);

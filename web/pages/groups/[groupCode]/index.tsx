@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { BasePageContainerForGroupsPage } from "@/components/shared/basePageContainer";
+import { BasePageContainerForGroupsPage } from '@/components/shared/pageContainers/groupsPageContainer';
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { Typography } from "@material-ui/core";
 

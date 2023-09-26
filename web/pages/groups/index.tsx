@@ -1,5 +1,5 @@
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
 import { UserContext } from "@/lib/shared/context/userContext";
 import { Container, Typography } from "@material-ui/core";
 import { Component, useContext } from "react";

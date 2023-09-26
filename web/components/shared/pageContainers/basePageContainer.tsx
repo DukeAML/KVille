@@ -7,10 +7,9 @@ import {
 } from '@material-ui/core';
 
 
-import { KvilleLoggedInNavBar } from './navBars/loggedInNavBar';
-import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
-import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
-import { auth } from '../../../common/src/db/firebase_config';
+import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
+import { KvilleLoggedOutNavBar } from '../navBars/loggedOutNavBar';
+import { auth } from '../../../../common/src/db/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
 
 
@@ -21,7 +20,7 @@ interface BasePageContainerProps {
 };
 
 
-const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
+export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
 	const {setUserID, setIsLoggedIn} = useContext(UserContext);
 
 	useEffect(() => {
@@ -66,22 +65,4 @@ export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWith
 	);
 }
 
-interface BasePageContainerForGroupsPageProps {
-	children : ReactNode;
-	title : string;
-}
-
-export const BasePageContainerForGroupsPage: React.FC<BasePageContainerForGroupsPageProps> = (props:BasePageContainerForGroupsPageProps) => {
-	return (
-		<BasePageContainer>
-				
-				<KvilleLoggedInNavBar/>
-				<KvilleGroupsNavBar/>
-				<Typography style={{marginBottom : 24, marginTop : 24}} variant="h4" align="center">{props.title}</Typography>
-				{props.children}
-
-			
-		</BasePageContainer>
-	);
-}
 

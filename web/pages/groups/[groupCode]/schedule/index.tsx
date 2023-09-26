@@ -1,5 +1,6 @@
 import React, {useContext, useState, useRef, useEffect} from "react";
-import { BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
+import { BasePageContainerForGroupsPage } from '@/components/shared/pageContainers/groupsPageContainer';
 import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
 import {getDefaultDisplayDateRangeStartDate} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
 import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';

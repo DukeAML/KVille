@@ -3,7 +3,8 @@ import { AvailabilityCalendarDatesContext } from "../../../../lib/pageSpecific/a
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
-import {  BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import {  BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
+import { BasePageContainerForGroupsPage } from '@/components/shared/pageContainers/groupsPageContainer';
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
