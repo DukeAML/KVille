@@ -1,8 +1,8 @@
-import { KvilleNavBarGivenButtonDescriptions, ButtonDescription } from "./navBar";
+import { KvilleNavBarGivenOptionDescriptions, OptionDescription } from "./navBar";
 
 export const KvilleLoggedInNavBar : React.FC = () => {
-    let buttonDescriptions : ButtonDescription[] = [
+    let buttonDescriptions : OptionDescription[] = [
         {text : "My Groups", route : "/groups"},
     ]
-    return <KvilleNavBarGivenButtonDescriptions buttonDescriptions={buttonDescriptions}/>;
+    return <KvilleNavBarGivenOptionDescriptions optionDescriptions={buttonDescriptions}/>;
 }
