@@ -1,6 +1,5 @@
 import React, {useContext, useState, useRef, useEffect} from "react";
-import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
-import { BasePageContainerForGroupsPage } from '@/components/shared/pageContainers/groupsPageContainer';
+import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
 import {getDefaultDisplayDateRangeStartDate} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
 import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';
@@ -37,7 +36,7 @@ export default function Schedule() {
         body = (
             <DateBeingShownContext.Provider value={{dateBeingShown : dateBeingShown, setDateBeingShown : setDateBeingShown}}>
                 <CellColorsContext.Provider value={{cellColorsCoordinator : cellColorCoordinator}}>
-                <Typography align="center">This shows who is supposed to be in the tent at all times. Click the "Assign Tenters" option below to get started with using our algorithm to auto-fill the schedule</Typography>
+                <Typography align="center">This shows who is supposed to be in the tent at all times. Click the Assign Tenters option below to get started with using our algorithm to auto-fill the schedule</Typography>
             
                     <ScheduleOptions/>
                     
@@ -49,9 +48,9 @@ export default function Schedule() {
     
     //console.log(scheduleAndStartDate);
     return (
-        <BasePageContainerForGroupsPage title="Schedule">
+        <PermissionRequiredPageContainer title="Schedule" groupSpecificPage={true}>
            {body}
-        </BasePageContainerForGroupsPage>
+        </PermissionRequiredPageContainer>
     )
 }
 

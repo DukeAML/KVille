@@ -3,8 +3,7 @@ import { AvailabilityCalendarDatesContext } from "../../../../lib/pageSpecific/a
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
-import {  BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
-import { BasePageContainerForGroupsPage } from '@/components/shared/pageContainers/groupsPageContainer';
+import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
@@ -28,11 +27,11 @@ export default function Availability(){
     let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
     let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
     return (
-        <BasePageContainerForGroupsPage title="Availability">
+        <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
-                    <Typography align="center">Fill in your availability here - the grid below works just like a when2meet. Go to the "Change Dates Visible" dropdown to change which dates you can fill in. </Typography>
+                    <Typography align="center">Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
                     <AvailabilityCalendarDatesContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate}}>
                         <AvailabilityOptions/>
                         <AvailabilityTable 
@@ -42,7 +41,7 @@ export default function Availability(){
                 </Container>
             }
     
-        </BasePageContainerForGroupsPage>
+        </PermissionRequiredPageContainer>
     )
 }
 
