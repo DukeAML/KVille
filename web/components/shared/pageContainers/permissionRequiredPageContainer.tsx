@@ -3,17 +3,17 @@ import React, { ReactNode } from 'react';
 import { BasePageContainerWithNavBarAndTitle } from './basePageContainer';
 import { BasePageContainerForGroupsPage } from './groupsPageContainer';
 
-interface LoginRequiredPageContainerProps {
+interface PermissionRequiredPageContainerProps {
 	children: ReactNode;
 	title: string;
-    groupsPage : boolean
+    groupSpecificPage : boolean
 }
 
 
 
-export const LoginRequiredPageContainer: React.FC<LoginRequiredPageContainerProps> = (props: LoginRequiredPageContainerProps) => {
+export const PermissionRequiredPageContainer: React.FC<PermissionRequiredPageContainerProps> = (props: PermissionRequiredPageContainerProps) => {
 
-	if (props.groupsPage){
+	if (props.groupSpecificPage){
         return (
             <BasePageContainerForGroupsPage title={props.title}>
                 {props.children}
