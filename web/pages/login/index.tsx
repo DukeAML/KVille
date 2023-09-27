@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import { loginValidationSchema } from '../../../common/src/db/auth/login';
-import { BasePageContainerWithNavBarAndTitle } from '@/components/shared/basePageContainer';
+import { BasePageContainerWithNavBarAndTitle } from '@/components/shared/pageContainers/basePageContainer';
 import { useContext } from 'react';
 import { UserContext } from '@/lib/shared/context/userContext';
 import {useRouter} from 'next/router';

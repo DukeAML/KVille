@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
 import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
 import { useRouter, NextRouter } from 'next/router';
+import { getWindowProperties } from '@/lib/shared/windowProperties';
 
 
 
@@ -53,6 +54,7 @@ KvilleNavBarGivenOptionDescriptions.defaultProps = {
 }
 
 export const descriptionsToOptions = (optionDescriptions : OptionDescription[], router : NextRouter) : ReactNode => {
+    const {isNarrow} = getWindowProperties()
     return (
         <div>
             {optionDescriptions.map((description, index) => {

@@ -1,8 +1,7 @@
-import {KvilleAccordion} from "@/components/shared/utils/accordion";
-import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { UserContext } from "@/lib/shared/context/userContext";
 import { Container, Typography } from "@mui/material";
-import { Component, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
@@ -44,7 +43,7 @@ export default function JoinGroupPage() {
 
 
     return (
-        <BasePageContainerWithNavBarAndTitle title="Join a Group">
+        <PermissionRequiredPageContainer title="Join a Group" groupSpecificPage={false}>
 
                 <Container maxWidth="sm">
                     <Typography variant="h5">Ask a Group member for the group code to join</Typography>
@@ -61,6 +60,6 @@ export default function JoinGroupPage() {
                 
                 </Container>
 
-        </BasePageContainerWithNavBarAndTitle>
+        </PermissionRequiredPageContainer>
     );
 }

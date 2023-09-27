@@ -23,7 +23,8 @@ import { isBrowser } from "../lib/shared/windowProperties";
 export default function App({ Component, pageProps }: AppProps) {
   const [userID, setUserID] = useState(INVALID_USER_ID);
   const [groupDescription, setGroupDescription] = useState<GroupDescription>(new GroupDescription(INVALID_GROUP_CODE, "", ""));
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [triedToLogIn, setTriedToLogIn] = useState<boolean>(false);
   const queryClient = new QueryClient();
 
   // make sure we're not using IndexedDB when SSR
@@ -38,7 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={{userID, isLoggedIn, setUserID, setIsLoggedIn}}>
+      <UserContext.Provider value={{userID, isLoggedIn, triedToLogIn, setUserID, setIsLoggedIn, setTriedToLogIn}}>
         <GroupContext.Provider value={{groupDescription, setGroupDescription}}>
           <ThemeProvider theme={theme}>
             <Component {...pageProps} />
