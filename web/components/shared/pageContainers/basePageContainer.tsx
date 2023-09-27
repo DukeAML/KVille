@@ -11,6 +11,7 @@ import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
 import { KvilleLoggedOutNavBar } from '../navBars/loggedOutNavBar';
 import { auth } from '../../../../common/src/db/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { INVALID_USER_ID } from '../../../../common/src/db/auth/login';
 
 
 
@@ -21,7 +22,7 @@ interface BasePageContainerProps {
 
 
 export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
-	const {setUserID, setIsLoggedIn} = useContext(UserContext);
+	const {setUserID, setIsLoggedIn, setTriedToLogIn} = useContext(UserContext);
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -30,7 +31,11 @@ export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePa
 				setUserID(id);
 				setIsLoggedIn(true);
 				console.log("I logged them in from the useEffect with " + id);
+			} else {
+				setUserID(INVALID_USER_ID);
+				setIsLoggedIn(false);
 			}
+			setTriedToLogIn(true);
 			
 		})
 
