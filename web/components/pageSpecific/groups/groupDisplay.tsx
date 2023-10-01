@@ -1,7 +1,7 @@
-import React, { useState, ReactNode, ComponentType } from 'react';
+import React, { useState, ReactNode, ComponentType } from "react";
 
-import {GroupDescription} from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { useContext } from 'react';
+import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
+import { useContext } from "react";
 import {
   Container,
   Typography,
@@ -9,40 +9,32 @@ import {
   Button,
   makeStyles,
   Input,
-} from '@material-ui/core';
-import { UserContext } from '@/lib/shared/context/userContext';
-import { GroupContext } from '@/lib/shared/context/groupContext';
-import { KvilleButton } from '@/components/shared/utils/button';
-import { useRouter } from 'next/router';
-
-
-
+} from "@material-ui/core";
+import { UserContext } from "@/lib/shared/context/userContext";
+import { GroupContext } from "@/lib/shared/context/groupContext";
+import { KvilleButton } from "@/components/shared/utils/button";
+import { useRouter } from "next/router";
 
 interface GroupDisplayInputInterface {
-    group: GroupDescription;
-    
+  group: GroupDescription;
 }
 
-export const GroupDisplay: React.FC<GroupDisplayInputInterface> = (props:GroupDisplayInputInterface) => {
-    const {groupDescription, setGroupDescription} = useContext(GroupContext);
-    const userContext = useContext(UserContext);
-    const router = useRouter();
+export const GroupDisplay: React.FC<GroupDisplayInputInterface> = (
+  props: GroupDisplayInputInterface
+) => {
+  const { groupDescription, setGroupDescription } = useContext(GroupContext);
+  const userContext = useContext(UserContext);
+  const router = useRouter();
 
+  const handleClick = () => {
+    console.log("trying to set group description");
+    setGroupDescription(props.group);
+    router.push("/groups/" + props.group.groupCode);
+  };
 
-    const handleClick = () => {
-        console.log("trying to set group description");
-        setGroupDescription(props.group);
-        router.push("groups/" + props.group.groupCode);
-
-    }
-
-    return (
-        
-        <Container maxWidth="xs">
-            <KvilleButton onClick={handleClick} text={props.group.groupName}/>
-        </Container>
-    
-    );
+  return (
+    <Container maxWidth="xs">
+      <KvilleButton onClick={handleClick} text={props.group.groupName} />
+    </Container>
+  );
 };
-
-
