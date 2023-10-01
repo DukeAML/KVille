@@ -22,7 +22,7 @@ const initialValues: LoginFormValues = {
 
 const LoginPage: React.FC = () => {
 
-	const {setIsLoggedIn, setUserID}= useContext(UserContext)
+	const {setIsLoggedIn, setUserID, setTriedToLogIn}= useContext(UserContext)
 	const [errorMessage, setErrorMessage] = useState<string>("");
 	const router = useRouter();
 	const handleSubmit = (values: LoginFormValues) => {
@@ -33,6 +33,7 @@ const LoginPage: React.FC = () => {
 			localStorage.setItem("isLoggedIn", "true");
 			setUserID(id);
 			setIsLoggedIn(true);
+			setTriedToLogIn(true);
 			router.push("/groups/");
 		})
 		.catch((error) => {
