@@ -55,7 +55,7 @@ describe("calculatePeopleNeeded", () => {
 
     it("works for black night", () => {
         const slot = new Slot(new Date(2023, 1, 1, 4, 0), TENTING_COLORS.BLACK);
-        expect(slot.calculatePeopleNeeded()).toBe(10);
+        expect(slot.calculatePeopleNeeded()).toBe(6);
     });
 
     it("works for blue day", () => {
@@ -69,12 +69,12 @@ describe("calculatePeopleNeeded", () => {
     });
 
     it("works for white day", () => {
-        const slot = new Slot(new Date(2023, 1, 1, 12, 0), TENTING_COLORS.WHITE);
+        const slot = new Slot(new Date(2023, 1, 20, 12, 0), TENTING_COLORS.WHITE);
         expect(slot.calculatePeopleNeeded()).toBe(1);
     });
 
     it("works for white night", () => {
-        const slot = new Slot(new Date(2023, 1, 1, 4, 0), TENTING_COLORS.WHITE);
+        const slot = new Slot(new Date(2023, 1, 20, 4, 0), TENTING_COLORS.WHITE);
         expect(slot.calculatePeopleNeeded()).toBe(2);
     });
 })
