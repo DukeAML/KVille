@@ -1,6 +1,7 @@
 import {nightData} from "../../../data/nightData.js" 
 import {graceData} from "../../../data/gracePeriods.js"
 import { phaseData, TENTING_COLORS } from "../../../data/phaseData.js";
+import { scheduleDates } from "../../../data/scheduleDates.js";
 
 
 export class Slot{
@@ -8,15 +9,32 @@ export class Slot{
     /**
      * Generic slot object
      * @param {Date} startDate a JS Date Object
-     * @param {String} phase 
+     * @param {String} tentType 
      */
-    constructor(startDate, phase){
+    constructor(startDate, tentType){
 		this.startDate = startDate;
 		this.endDate = new Date(startDate.getTime() + 30*60000);
-		this.phase = phase;
+		this.tentType = tentType;
+		this.phase = Slot.getPhase(startDate);
 		this.isNight = Slot.checkNight(startDate);
 		this.isGrace = Slot.checkGrace(startDate);
     }
+
+	/**
+	 * 
+	 * @param {Date} startDate 
+	 */
+	static getPhase(startDate){
+		if (startDate < scheduleDates.startOfBlack){
+			return TENTING_COLORS.BLACK;
+		} else if (startDate < scheduleDates.startOfBlue){
+			return TENTING_COLORS.BLACK;
+		} else if (startDate < scheduleDates.startOfWhite){
+			return TENTING_COLORS.BLUE;
+		} else {
+			return TENTING_COLORS.WHITE;
+		}
+	}
   
 
     /**
