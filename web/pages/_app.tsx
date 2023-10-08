@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { ThemeProvider } from '@material-ui/core'
 import  theme  from '@/styles/theme';
-import { useState, useContext } from 'react';
+import { useState, } from 'react';
 import { UserContext } from '@/lib/shared/context/userContext';
 import { GroupContext } from '@/lib/shared/context/groupContext';
 import { QueryClient } from 'react-query';
@@ -12,22 +12,19 @@ import { INVALID_USER_ID } from '../../common/src/db/auth/login';
 import { INVALID_GROUP_CODE } from '../../common/src/db/groupExistenceAndMembership/GroupCode';
  
 import {
-  initializeAuth,
   indexedDBLocalPersistence,
-  connectAuthEmulator,
   inMemoryPersistence,
-  setPersistence,
-  getAuth
 } from 'firebase/auth';
  
  
-import { firebase_app, auth } from '../../common/src/db/firebase_config';
-import { isBrowser } from "../lib/shared/isBrowser";
+import {  auth } from '../../common/src/db/firebase_config';
+import { isBrowser } from "../lib/shared/windowProperties";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [userID, setUserID] = useState(INVALID_USER_ID);
   const [groupDescription, setGroupDescription] = useState<GroupDescription>(new GroupDescription(INVALID_GROUP_CODE, "", ""));
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [triedToLogIn, setTriedToLogIn] = useState<boolean>(false);
   const queryClient = new QueryClient();
 
   // make sure we're not using IndexedDB when SSR
@@ -42,7 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={{userID, isLoggedIn, setUserID, setIsLoggedIn}}>
+      <UserContext.Provider value={{userID, isLoggedIn, triedToLogIn, setUserID, setIsLoggedIn, setTriedToLogIn}}>
         <GroupContext.Provider value={{groupDescription, setGroupDescription}}>
           <ThemeProvider theme={theme}>
             <Component {...pageProps} />

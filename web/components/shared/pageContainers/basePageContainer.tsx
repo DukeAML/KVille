@@ -7,11 +7,11 @@ import {
 } from '@material-ui/core';
 
 
-import { KvilleLoggedInNavBar } from './navBars/loggedInNavBar';
-import { KvilleLoggedOutNavBar } from './navBars/loggedOutNavBar';
-import { KvilleGroupsNavBar } from './navBars/groupsNavBar';
-import { auth } from '../../../common/src/db/firebase_config';
+import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
+import { KvilleLoggedOutNavBar } from '../navBars/loggedOutNavBar';
+import { auth } from '../../../../common/src/db/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { INVALID_USER_ID } from '../../../../common/src/db/auth/login';
 
 
 
@@ -21,15 +21,22 @@ interface BasePageContainerProps {
 };
 
 
-const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
-	const {setUserID, setIsLoggedIn} = useContext(UserContext);
+export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
+	const {setUserID, setIsLoggedIn, setTriedToLogIn} = useContext(UserContext);
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			const id = auth.currentUser?.uid;
-			setUserID(id ? id : "");
-			setIsLoggedIn(true);
-			console.log("I logged them in from the useEffect with " + id);
+			if (auth.currentUser){
+				const id = auth.currentUser.uid;
+				setUserID(id);
+				setIsLoggedIn(true);
+				console.log("I logged them in from the useEffect with " + id);
+			} else {
+				setUserID(INVALID_USER_ID);
+				setIsLoggedIn(false);
+			}
+			setTriedToLogIn(true);
+			
 		})
 
 		return () => unsubscribe();
@@ -63,22 +70,4 @@ export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWith
 	);
 }
 
-interface BasePageContainerForGroupsPageProps {
-	children : ReactNode;
-	title : string;
-}
-
-export const BasePageContainerForGroupsPage: React.FC<BasePageContainerForGroupsPageProps> = (props:BasePageContainerForGroupsPageProps) => {
-	return (
-		<BasePageContainer>
-				
-				<KvilleLoggedInNavBar/>
-				<KvilleGroupsNavBar/>
-				<Typography style={{marginBottom : 24, marginTop : 24}} variant="h4" align="center">{props.title}</Typography>
-				{props.children}
-
-			
-		</BasePageContainer>
-	);
-}
 

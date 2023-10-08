@@ -79,8 +79,8 @@ export const ScheduleOptions : React.FC = () => {
     }
     
     return (
-        <Container maxWidth="md">
-            <KvilleAccordion elements={[assignTentersOption]}/>
+        <Container maxWidth="md" style={{marginTop: 12}}>
+            <KvilleAccordion elements={[assignTentersOption]} />
             <DatesRow/>
         </Container>
     );

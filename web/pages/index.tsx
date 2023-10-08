@@ -1,4 +1,4 @@
-import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer"
+import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { Container, Typography } from "@mui/material";
 import React from "react"
 

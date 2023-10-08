@@ -4,8 +4,8 @@
  * @param {Array<import("../slots/tenterSlot").TenterSlot>} slots has 1 entry for each time slot for each person
  */
 export function prioritizeFairness(people, slots){
-    for (var i = 0; i < slots.length; i++){
-        var currentSlot = slots[i];
+    for (var slotIndex = 0; slotIndex < slots.length; slotIndex++){
+        var currentSlot = slots[slotIndex];
 
         // Establish variables.
         var currentPersonID = currentSlot.col
@@ -33,3 +33,4 @@ export function prioritizeFairness(people, slots){
 
     }
 }
+

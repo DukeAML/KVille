@@ -1,10 +1,10 @@
-import { ButtonDescription, KvilleNavBarGivenButtonDescriptions } from "./navBar";
+import { OptionDescription, KvilleNavBarGivenOptionDescriptions } from "./navBar";
 
 export const KvilleLoggedOutNavBar : React.FC = () => {
-    let buttonDescriptions : ButtonDescription[] = [
+    let buttonDescriptions : OptionDescription[] = [
         {text : "Home", route : "/"},
         {text : "Register", route : "/register"},
         {text : "Login", route : "/login"}
     ]
-    return <KvilleNavBarGivenButtonDescriptions buttonDescriptions={buttonDescriptions}/>;
+    return <KvilleNavBarGivenOptionDescriptions optionDescriptions={buttonDescriptions}/>;
 }

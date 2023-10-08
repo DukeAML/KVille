@@ -3,7 +3,7 @@ import { AvailabilityCalendarDatesContext } from "../../../../lib/pageSpecific/a
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
-import {  BasePageContainerForGroupsPage, BasePageContainerWithNavBarAndTitle } from "@/components/shared/basePageContainer";
+import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
@@ -13,6 +13,7 @@ import { AvailabilityOptions } from "../../../../components/pageSpecific/groups/
 import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
 import { TENTING_COLORS } from "../../../../../common/data/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { Typography } from "@mui/material";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
@@ -26,10 +27,11 @@ export default function Availability(){
     let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
     let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
     return (
-        <BasePageContainerForGroupsPage title="Availability">
+        <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
+                    <Typography align="center">Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
                     <AvailabilityCalendarDatesContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate}}>
                         <AvailabilityOptions/>
                         <AvailabilityTable 
@@ -39,7 +41,7 @@ export default function Availability(){
                 </Container>
             }
     
-        </BasePageContainerForGroupsPage>
+        </PermissionRequiredPageContainer>
     )
 }
 

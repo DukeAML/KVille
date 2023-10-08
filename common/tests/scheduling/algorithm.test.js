@@ -15,7 +15,7 @@ describe("schedule", () => {
         for (let i = 0; i < 48; i+=1){
             tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
             tenterSlotsGrid[1][i] = new TenterSlot("p2", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 1);
-        };
+        }
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         for (let i = 0; i < schedule.length; i+=1){
@@ -57,6 +57,8 @@ describe("schedule", () => {
         }
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
+
+        
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);
