@@ -31,12 +31,12 @@ export function dayNightFree(availabilities, availabilitiesStartDate){
  * @param {String} personID is the id of the user whose availabilities are passed in as an argument
  * @param {Array} availabilities an array of booleans, 336 booleans if it is for one week
  * @param {Date} availabilitiesStartDate the date at which the availabilities array begins
- * @param {String} phase a string, either TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, or TENTING_COLORS.WHITE
+ * @param {String} tentType a string, either TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, or TENTING_COLORS.WHITE
  * @param {int} userCount an integer. When you're calling this method on the ith member of the group, 
  *      userCount should be i. 0 for the first member, 1 for the second, etc...
  * @returns {Array<TenterSlot>} an array of TenterSlot objects corresponding to each slot given in the availabilities argument
  */
-export function availabilitiesToSlots(personID, availabilities, availabilitiesStartDate, phase, userCount){
+export function availabilitiesToSlots(personID, availabilities, availabilitiesStartDate, tentType, userCount){
     var slots = [];
     for (var index = 0; index < availabilities.length; index++){
         var status = TENTER_STATUS_CODES.AVAILABLE;
@@ -44,7 +44,7 @@ export function availabilitiesToSlots(personID, availabilities, availabilitiesSt
             status = TENTER_STATUS_CODES.UNAVAILABLE;
         }
         var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
-        var slot = new TenterSlot(personID, date, phase, status, index, userCount, 1);
+        var slot = new TenterSlot(personID, date, tentType, status, index, userCount, 1);
         
         slots.push(slot);
     }
