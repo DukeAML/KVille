@@ -5,19 +5,39 @@ import { group } from "console";
 import { generateGroupCode } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { useQueryClient, useQuery } from "react-query";
 import { useContext } from "react";
-
+import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
+import { TENTING_COLORS } from "../../../../common/data/phaseData";
 
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
 import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
 
 
+interface useMutationToRunAlgorithmAndUpdateScheduleType  {
+    groupCode : string;
+    tentType : string;
+    startDate : Date;
+    endDate : Date;
+    data : ScheduleAndStartDate;
+
+}
 
 
-export const useMutationToUpdateSchedule = (groupCode : string, onSuccess : (newSchedule : string[]) => void) => {
+
+export const useMutationToUpdateSchedule = (groupCode : string) => {
+    const queryClient = useQueryClient();
     return useMutation(
         {
             mutationFn : (newSchedule : string[]) => setGroupScheduleInDB(groupCode, newSchedule),
-            onSuccess : (newSchedule : string[]) => onSuccess(newSchedule)
+            onSuccess : (newSchedule : string[]) => {
+                let queryKeyName = getQueryKeyNameForGroupCode(groupCode);
+                let oldData : ScheduleAndStartDate | undefined = queryClient.getQueryData(queryKeyName);
+                if (oldData === undefined) {
+                    queryClient.invalidateQueries(queryKeyName);
+                } else {
+                    let newData = new ScheduleAndStartDate(newSchedule, oldData.startDate);
+                    queryClient.setQueryData(queryKeyName, newData);
+                }
+            }
         }
     );
 
