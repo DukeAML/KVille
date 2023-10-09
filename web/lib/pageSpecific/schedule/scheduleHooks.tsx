@@ -1,25 +1,11 @@
 import { useMutation,  UseMutationResult, UseQueryResult } from "react-query";
-import { QueryClient } from "react-query";
 import { setGroupScheduleInDB } from "../../../../common/src/db/schedule/schedule";
-import { group } from "console";
-import { generateGroupCode } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { useQueryClient, useQuery } from "react-query";
-import { useContext } from "react";
-import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
-import { TENTING_COLORS } from "../../../../common/data/phaseData";
-
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
 import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
+import { getGroupMembersByGroupCode } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 
 
-interface useMutationToRunAlgorithmAndUpdateScheduleType  {
-    groupCode : string;
-    tentType : string;
-    startDate : Date;
-    endDate : Date;
-    data : ScheduleAndStartDate;
-
-}
 
 
 
@@ -43,6 +29,8 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
 
 }
 
+
+
 export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
     return useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForGroupCode(groupCode), 
@@ -60,6 +48,18 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
 export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {
     let queryClient = useQueryClient();
     return queryClient.getQueryData(getQueryKeyNameForGroupCode(groupCode));
+}
+
+interface GroupMemberType {
+    userID : string;
+    username : string
+}
+export const useQueryToFetchGroupMembers = (groupCode : string) : UseQueryResult<GroupMemberType[]> => {
+    return useQuery<GroupMemberType[], Error>(
+        ["fetching group members", groupCode],
+        () => getGroupMembersByGroupCode(groupCode)
+
+    )
 }
 
 export const getQueryKeyNameForGroupCode = (groupCode : string) : string =>  {
