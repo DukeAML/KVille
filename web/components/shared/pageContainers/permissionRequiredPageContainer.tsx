@@ -1,9 +1,12 @@
 import React, { ReactNode } from 'react';
 import { UserContext } from "@/lib/shared/context/userContext";
 import { useContext } from "react";
+import { useQuery } from "react-query";
 import { BasePageContainerWithNavBarAndTitle } from './basePageContainer';
 import { BasePageContainerForGroupsPage } from './groupsPageContainer';
 import { KvilleLoadingContainer } from '../utils/loading';
+import { getGroupMembersByGroupCode } from '../../../../common/src/db/groupExistenceAndMembership/groupMembership';
+import { useGroupCode } from '@/lib/shared/useGroupCode';
 
 interface PermissionRequiredPageContainerProps {
 	children: ReactNode;
@@ -16,42 +19,66 @@ interface PermissionRequiredPageContainerProps {
 export const PermissionRequiredPageContainer: React.FC<PermissionRequiredPageContainerProps> = (props: PermissionRequiredPageContainerProps) => {
 
     const {userID, isLoggedIn, triedToLogIn} = useContext(UserContext);
+    let groupCode = useGroupCode();
+    const {data: members, isLoading, isError} = useQuery('fetchGroupMembers' + groupCode, () => getGroupMembersByGroupCode(groupCode));
 
-	if (props.groupSpecificPage){
-        if (isLoggedIn) {
-            // need to add code to check if groups match
-            return (
-                <BasePageContainerForGroupsPage title={props.title}>
-                    {props.children}
-                </BasePageContainerForGroupsPage>
-            )
-        }
-        else {
-            return (
-                <BasePageContainerWithNavBarAndTitle title={"You must be logged in to view this page."}>
-                </BasePageContainerWithNavBarAndTitle>
-            )
-        }
-    } else {
-        if (!triedToLogIn) {
+    if (!triedToLogIn) {
+        return (
+            <BasePageContainerWithNavBarAndTitle title={"Loading"}>
+                <KvilleLoadingContainer/>
+            </BasePageContainerWithNavBarAndTitle>
+        )
+    }
+    else if (triedToLogIn && !isLoggedIn) {
+        return (
+            <BasePageContainerWithNavBarAndTitle title={"You must be logged in to view this page."}>
+            </BasePageContainerWithNavBarAndTitle>
+        )
+    }
+
+	if (props.groupSpecificPage) {
+        let userInGroup = false;
+
+        if (isLoading) {
             return (
                 <BasePageContainerWithNavBarAndTitle title={"Loading"}>
                     <KvilleLoadingContainer/>
                 </BasePageContainerWithNavBarAndTitle>
             )
         }
-        else if (triedToLogIn && !isLoggedIn) {
+
+        if (isError) {
             return (
-                <BasePageContainerWithNavBarAndTitle title={"You must be logged in to view this page."}>
+                <BasePageContainerWithNavBarAndTitle title={"Something went wrong with the page you tried to access."}>
                 </BasePageContainerWithNavBarAndTitle>
             )
         }
-        else {
-            return (
-                <BasePageContainerWithNavBarAndTitle title={props.title}>
-                    {props.children}
+
+        if (members && !isLoading) {
+            members.forEach(member => {
+                if (member.userID === userID) {
+                    userInGroup = true;
+                }
+            });
+            if (userInGroup) {
+                return (
+                    <BasePageContainerForGroupsPage title={props.title}>
+                        {props.children}
+                    </BasePageContainerForGroupsPage>
+                )
+            }
+            else {
+                return (
+                <BasePageContainerWithNavBarAndTitle title={"You cannot access another group's page."}>
                 </BasePageContainerWithNavBarAndTitle>
-            )
+                )
+            }
         }
+    } else {
+        return (
+            <BasePageContainerWithNavBarAndTitle title={props.title}>
+                {props.children}
+            </BasePageContainerWithNavBarAndTitle>
+        )
     }
 };
