@@ -12,7 +12,7 @@ import { getQueryKeyNameForGroupCode, useQueryToFetchSchedule } from "../../../.
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
-import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/TenterSwapper";
+import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
 
 
 export default function Schedule() {
