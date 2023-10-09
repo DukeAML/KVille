@@ -1,4 +1,4 @@
-import { useGetQueryDataForSchedule, useMutationToUpdateSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useGetQueryDataForSchedule, useMutationToUpdateSchedule, useQueryToFetchGroupMembers } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext"
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography, Container, Button } from "@mui/material";
@@ -9,6 +9,7 @@ export const TenterSwapper : React.FC = () => {
     const groupCode = useGroupCode();
     const {mutate : updateSchedule, isLoading : isLoadingNewSchedule, isError} = useMutationToUpdateSchedule(groupCode);
     let schedule = useGetQueryDataForSchedule(groupCode); 
+    const {data : groupMembers, isLoading : isLoadingGroupMembers, isError : isErrorLoadingGroupMembers} = useQueryToFetchGroupMembers(groupCode);
 
     
     if (!isSwappingTenter){
