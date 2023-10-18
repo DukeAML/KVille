@@ -42,7 +42,7 @@ handleVerticalDrag() {
     let startRow = Math.min(this.previousRow, this.currentRow) + 1; // +1 to make it exclusive
     let endRow = this.currentRow;
 
-    for (let r = startRow; r <= endRow; r++) {
+    for (let r = Math.min(startRow, endRow); r <= Math.max(startRow, endRow); r++) {
         for (let i = Math.min(this.startCol, this.currentCol); i <= Math.max(this.startCol, this.currentCol); i++) {
             rowsAndCols.push({ row: r, col: i });
         }
@@ -67,7 +67,7 @@ handleHorizontalDrag() {
     let startCol = Math.min(this.previousCol, this.currentCol) + 1; // +1 to make it exclusive
     let endCol = this.currentCol;
 
-    for (let c = startCol; c <= endCol; c++) {
+    for (let c = Math.min(startCol, endCol); c <= Math.max(startCol, endCol); c++) {
         for (let i = Math.min(this.startRow, this.currentRow); i <= Math.max(this.startRow, this.currentRow); i++) {
             rowsAndCols.push({ row: i, col: c });
         }
