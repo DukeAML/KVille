@@ -9,9 +9,9 @@ import { Typography } from "@material-ui/core";
 import { HoursTable } from "@/components/pageSpecific/groups/groupCode/hoursTable";
 
 
-
 const GroupHomePage : React.FC = () => {
     const {groupDescription} = useContext(GroupContext);
+
     const groupCode = useGroupCode();
     const {data, isLoading} = useQuery('fetchingHours' +groupCode, () => fetchHoursPerPerson(groupCode));
     

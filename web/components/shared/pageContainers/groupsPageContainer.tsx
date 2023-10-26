@@ -3,6 +3,8 @@ import { Typography } from '@material-ui/core';
 import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
 import { KvilleGroupsNavBar } from '../navBars/groupsNavBar';
 import { BasePageContainer } from './basePageContainer';
+import { useQueryToFetchGroupData } from '@/lib/shared/fetchGroupData';
+import { useGroupCode } from '@/lib/shared/useGroupCode';
 
 interface BasePageContainerForGroupsPageProps {
 	children: ReactNode;
@@ -10,6 +12,8 @@ interface BasePageContainerForGroupsPageProps {
 }
 
 export const BasePageContainerForGroupsPage: React.FC<BasePageContainerForGroupsPageProps> = (props: BasePageContainerForGroupsPageProps) => {
+	const groupCode = useGroupCode();
+	const {data, isLoading} = useQueryToFetchGroupData(groupCode); // this line just forces the site to load the group's data if it doesn't have it cached already
 	return (
 		<BasePageContainer>
 

@@ -52,13 +52,15 @@ export function getDefaultSchedule(tentType){
  * 
  * @param {String} groupName 
  * @param {String} tentType 
+ * @param {String} creator
  */
-function getDefaultNewGroupData(groupName, tentType){
+function getDefaultNewGroupData(groupName, tentType, creator){
     return {
         name : groupName,
         tentType : tentType,
         groupSchedule : getDefaultSchedule(tentType),
-        groupScheduleStartDate : getTentingStartDate(tentType)
+        groupScheduleStartDate : getTentingStartDate(tentType),
+        creator : creator
     }
 }
 
@@ -83,7 +85,7 @@ export async function tryToCreateGroup(groupName, tentType, userID) {
     try {
         await firestore.runTransaction(async (transaction) => {
             let groupRef = firestore.collection('groups').doc(groupCode);
-            transaction.set(groupRef, getDefaultNewGroupData(groupName, tentType));
+            transaction.set(groupRef, getDefaultNewGroupData(groupName, tentType, userID));
             let groupMembersRef = groupRef.collection('members');
             let myGroupMemberRef = groupMembersRef.doc(userID);
             transaction.set(myGroupMemberRef, getDefaultGroupMemberData(username, tentType, CREATOR_ROLE));

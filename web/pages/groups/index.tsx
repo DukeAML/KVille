@@ -25,6 +25,7 @@ export default function GroupPage() {
 	} = useQuery<GroupDescription[], Error>(["fetchAllGroups" + userID], () =>
 		fetchGroups(userID)
 	);
+	console.log(groups);
 	const router = useRouter();
 
 	let body = null;
