@@ -26,6 +26,7 @@ export class TenterSlot extends Slot{
         super(startDate, tentType);
         this.personID = personID;
         this.status = status;
+        this.ogStatus = status;
         this.row = row;
         this.col = col;
         this.weight = weight;

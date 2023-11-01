@@ -4,12 +4,13 @@ import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../src/scheduling/slo
 
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
 import { TENTING_COLORS} from "../../data/phaseData";
+import { scheduleDates } from "../../data/scheduleDates";
 describe("schedule", () => {
     it("fills out schedule in basic case", () => {
         const p1 = new Person("p1", "p1", 38, 10, 0, 0);
         const p2 = new Person("p2", "p2", 38, 10, 0, 0);
         let people = [p1, p2];
-        let startDate = new Date(2023, 0, 15, 0, 0);
+        let startDate = scheduleDates.startOfBlack;
         let PHASE = TENTING_COLORS.BLUE;
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
@@ -23,14 +24,14 @@ describe("schedule", () => {
             expect(schedule[i].ids.includes(EMPTY)).toBe(false);
         }
     });
-    /*
+    
 
     it("does not assign slots to people who are unavailable", () => {
         const p1 = new Person("p1", "p1", 0, 0, 0, 0);  
         const p2 = new Person("p2", "p2", 0, 0, 40, 0); 
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
-        let startDate = new Date(2023, 0, 16, 12, 0);
+        let startDate = scheduleDates.startOfBlack;
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
             tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 0);
@@ -51,7 +52,7 @@ describe("schedule", () => {
         const p2 = new Person("p2", "p2", 4, 0, 40, 0); //p2 has already been scheduled for 40 slots
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
-        let startDate = new Date(2023, 0, 16, 12, 0);
+        let startDate = getDatePlusNumShifts(scheduleDates.endOfTenting, -10);
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
             tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
@@ -60,7 +61,7 @@ describe("schedule", () => {
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
 
-        
+        console.log(schedule.map((slot) => slot.ids));
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);
@@ -71,7 +72,7 @@ describe("schedule", () => {
         const people = [];
         const tenterSlotsGrid = [];
         const PHASE = TENTING_COLORS.WHITE;
-        let startDate = new Date(2023, 0, 17, 0, 0);
+        let startDate = getDatePlusNumShifts(scheduleDates.endOfTenting, -10);
         for (let i = 0; i < 12; i += 1){
             let id = "p" + i.toFixed(0);
             people.push(new Person(id, id, 266, 70, 0, 0 ));
@@ -89,5 +90,5 @@ describe("schedule", () => {
 
 
     })
-    */
+
 })
