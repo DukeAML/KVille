@@ -7,6 +7,7 @@ export const TENTER_STATUS_CODES = {
   AVAILABLE : "Available",
   UNAVAILABLE : "Unavailable",
   SCHEDULED : "Scheduled",
+  PREFERRED : "Preferred"
 }
 
 export class TenterSlot extends Slot{

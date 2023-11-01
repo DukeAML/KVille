@@ -1,4 +1,4 @@
-import { TENTER_STATUS_CODES} from "./slots/tenterSlot";
+import { TENTER_STATUS_CODES, TenterSlot} from "./slots/tenterSlot";
 /**
  * Update people, spreadsheet, and remove slots.
  * @param {Array<import("./person").Person>} people 
@@ -8,7 +8,7 @@ import { TENTER_STATUS_CODES} from "./slots/tenterSlot";
  * 
  */
 export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid){
-    var chosenTenterSlot = slots.shift(); //remove first element and remove it
+    var chosenTenterSlot = slots.shift(); //remove first element and return it
 
     updateChosenPerson(chosenTenterSlot, people);
 
@@ -20,9 +20,12 @@ export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterS
 
     var peopleNeeded = chosenTenterSlot.calculatePeopleNeeded();
     let remainingSlots = slots;
+  
     if (numberScheduledAtChosenTime >= peopleNeeded){
         remainingSlots = slots.filter((s) => (s.row != chosenTimeIndex));
     }
+
+
     return remainingSlots;
 
 
@@ -39,8 +42,10 @@ function getNumberScheduledAtChosenTime(tenterSlotsGrid, chosenTimeIndex) {
     var personIndex = 0;
     var numberScheduledAtChosenTime = 0;
     while (personIndex < tenterSlotsGrid.length) {
-        if (tenterSlotsGrid[personIndex][chosenTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED);
-        numberScheduledAtChosenTime = numberScheduledAtChosenTime + 1;
+        if (tenterSlotsGrid[personIndex][chosenTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED){
+            numberScheduledAtChosenTime = numberScheduledAtChosenTime + 1;
+        }
+        
         personIndex += 1;
     }
     return numberScheduledAtChosenTime;
