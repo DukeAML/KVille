@@ -37,12 +37,13 @@ export default function GroupPageFromLogin() {
     if (groups.length == 1) {
       setGroupDescription(groups[0]);
       router.push("/groups/" + groups[0].groupCode);
+      return (
+        <BasePageContainerWithNavBarAndTitle title="">
+          <KvilleLoadingContainer />;
+        </BasePageContainerWithNavBarAndTitle>
+      );
     }
-    return (
-      <BasePageContainerWithNavBarAndTitle title="">
-        <KvilleLoadingContainer />;
-      </BasePageContainerWithNavBarAndTitle>
-    );
+    
   }
   return <GroupPage />;
 }

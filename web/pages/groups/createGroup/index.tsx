@@ -34,7 +34,7 @@ export default function CreateGroupPage() {
         tryToCreateGroup(values.groupName, values.tentType, userID).
             then((groupCode) => {
                 queryClient.invalidateQueries({queryKey : ['fetchAllGroups']})
-                setGroupDescription(new GroupDescription(groupCode, values.groupName, values.tentType));
+                setGroupDescription(new GroupDescription(groupCode, values.groupName, values.tentType, userID));
                 router.push("/groups");
             }).
             catch((error) => {

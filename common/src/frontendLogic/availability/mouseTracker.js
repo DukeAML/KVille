@@ -30,38 +30,52 @@ export class MouseTracker {
     /**
      * @returns {void}
      */
-    handleVerticalDrag() {
-		let rowMovedCloser = Math.abs(this.currentRow - this.startRow) < Math.abs(this.previousRow - this.startRow);
-		let newValue = this.valueChangedToOnDragStart;
-		let rowToChange = this.currentRow;
-		if (rowMovedCloser){
-			newValue = !this.valueChangedToOnDragStart;
-			rowToChange = this.previousRow;
-		}
-		let rowsAndCols = [];
-		for (let i = Math.min(this.startCol, this.currentCol); i <= Math.max(this.startCol, this.currentCol); i += 1){  
-			rowsAndCols.push({row : rowToChange, col : i});             
-		}
-		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+handleVerticalDrag() {
+    let rowMovedCloser = Math.abs(this.currentRow - this.startRow) < Math.abs(this.previousRow - this.startRow);
+    let newValue = this.valueChangedToOnDragStart;
+
+    if (rowMovedCloser) {
+        newValue = !this.valueChangedToOnDragStart;
     }
+
+    let rowsAndCols = [];
+    let startRow = Math.min(this.previousRow, this.currentRow) + 1; // +1 to make it exclusive
+    let endRow = this.currentRow;
+
+    for (let r = Math.min(startRow, endRow); r <= Math.max(startRow, endRow); r++) {
+        for (let i = Math.min(this.startCol, this.currentCol); i <= Math.max(this.startCol, this.currentCol); i++) {
+            rowsAndCols.push({ row: r, col: i });
+        }
+    }
+
+    this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+}
+
   
     /**
      * @returns {void}
      */
-    handleHorizontalDrag() {
-		let colMovedCloser = Math.abs(this.currentCol - this.startCol) < Math.abs(this.previousCol - this.startCol);
-		let newValue = this.valueChangedToOnDragStart
-		let colToChange = this.currentCol;
-		if (colMovedCloser){
-			newValue = !this.valueChangedToOnDragStart;
-			colToChange = this.previousCol;
-		}
-		let rowsAndCols  = [];
-		for (let i = Math.min(this.startRow, this.currentRow); i <= Math.max(this.startRow, this.currentRow); i += 1){  
-			rowsAndCols.push({row : i, col : colToChange});              
-		}
-		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+handleHorizontalDrag() {
+    let colMovedCloser = Math.abs(this.currentCol - this.startCol) < Math.abs(this.previousCol - this.startCol);
+    let newValue = this.valueChangedToOnDragStart;
+
+    if (colMovedCloser) {
+        newValue = !this.valueChangedToOnDragStart;
     }
+
+    let rowsAndCols = [];
+    let startCol = Math.min(this.previousCol, this.currentCol) + 1; // +1 to make it exclusive
+    let endCol = this.currentCol;
+
+    for (let c = Math.min(startCol, endCol); c <= Math.max(startCol, endCol); c++) {
+        for (let i = Math.min(this.startRow, this.currentRow); i <= Math.max(this.startRow, this.currentRow); i++) {
+            rowsAndCols.push({ row: i, col: c });
+        }
+    }
+
+    this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+}
+
   
     /**
      * 

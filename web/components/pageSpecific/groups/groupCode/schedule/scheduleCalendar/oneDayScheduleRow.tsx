@@ -83,7 +83,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
 
             {names.map((name, index) => {
                 return (
-                    <ScheduleCell name={name} key={index}/>
+                    <ScheduleCell name={name} startDate={props.rowStartDate} key={index}/>
                 );
             })}
         </Grid>

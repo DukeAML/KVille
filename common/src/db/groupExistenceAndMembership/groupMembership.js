@@ -6,11 +6,13 @@ export class GroupDescription {
    * @param {String} groupCode
    * @param {String} groupName
    * @param {String} tentType
+   * @param {String} creator
    */
-  constructor(groupCode, groupName, tentType) {
+  constructor(groupCode, groupName, tentType, creator="") {
     this.groupCode = groupCode;
     this.groupName = groupName;
     this.tentType = tentType;
+    this.creator = creator;
   }
 }
 
@@ -52,21 +54,41 @@ export async function fetchGroups(userID) {
 
   for (let i = 0; i < allGroupCodes.length; i += 1) {
     let groupCode = allGroupCodes[i];
-    await firestore
+    try{
+      const groupData = await fetchGroupData(groupCode);
+      if (groupData === undefined){
+        continue;
+      } else {
+        allGroups.push(groupData);
+      }
+    } catch {
+      
+    }
+  }
+  return allGroups;
+}
+
+/**
+ * 
+ * @param {String} groupCode
+ * @returns {Promise<GroupDescription>} 
+ */
+export async function fetchGroupData(groupCode){
+
+  const description = await firestore
       .collection("groups")
       .doc(groupCode)
       .get()
       .then((groupSnapshot) => {
         let groupData = groupSnapshot.data();
-        allGroups.push(
-          new GroupDescription(groupCode, groupData.name, groupData.tentType)
-        );
+        return new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator)
+    
       })
       .catch((error) => {
         console.error(error);
       });
-  }
-  return allGroups;
+  return description;
+
 }
 
 /**

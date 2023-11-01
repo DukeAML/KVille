@@ -84,16 +84,18 @@ async function checkIfItIsPossibleToJoinGroup(groupCode, groupRef, userRef, user
 /**
  * 
  * @param {*} groupRef 
- * @returns {Promise<{groupName : string, tentType : string}>}
+ * @returns {Promise<{groupName : string, tentType : string, creator : string}>}
  */
 async function getGroupNameAndTypeForGroupRef(groupRef) {
     let groupName = '';
     let tentType = '';
+    let creator = '';
     await groupRef.get().then((groupSnapshot) => {
         groupName = groupSnapshot.data().name;
         tentType = groupSnapshot.data().tentType;
+        creator = groupSnapshot.data().creator;
     })
-    return {groupName, tentType};
+    return {groupName, tentType, creator};
 }
 
 export async function getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode){
@@ -125,7 +127,7 @@ export async function tryToJoinGroup(groupCode, userID) {
     if (!canJoinGroup){
         throw new Error(errorMessage);
     }
-    let {groupName, tentType} = await getGroupNameAndTypeForGroupRef(groupRef);
+    let {groupName, tentType, creator} = await getGroupNameAndTypeForGroupRef(groupRef);
     let newUserData = await getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode);
     let myUsername = newUserData.username;
     try {
@@ -140,6 +142,6 @@ export async function tryToJoinGroup(groupCode, userID) {
         console.log("error from transaction : " + error.message);
         throw new Error(error.message);
     } 
-    return new GroupDescription(groupCode, groupName, tentType);
+    return new GroupDescription(groupCode, groupName, tentType, creator);
 
 }

@@ -45,7 +45,6 @@ function getNumberScheduledAtChosenTime(tenterSlotsGrid, chosenTimeIndex) {
         if (tenterSlotsGrid[personIndex][chosenTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED){
             numberScheduledAtChosenTime = numberScheduledAtChosenTime + 1;
         }
-        
         personIndex += 1;
     }
     return numberScheduledAtChosenTime;

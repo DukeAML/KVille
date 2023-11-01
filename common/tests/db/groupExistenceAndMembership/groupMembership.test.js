@@ -1,4 +1,4 @@
-import { FETCH_GROUPS_ERRORS, fetchGroups, getGroupMembersByGroupCode, removeUserFromGroup, REMOVE_USER_ERRORS, GET_GROUP_MEMBERS_ERRORS } from "../../../src/db/groupExistenceAndMembership/groupMembership";
+import { FETCH_GROUPS_ERRORS, fetchGroups, getGroupMembersByGroupCode, removeUserFromGroup, REMOVE_USER_ERRORS, GET_GROUP_MEMBERS_ERRORS, fetchGroupData } from "../../../src/db/groupExistenceAndMembership/groupMembership";
 import { tryToJoinGroup } from "../../../src/db/groupExistenceAndMembership/joinGroup";
 import { KTEST1_UID, KTEST5_UID, KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "../testUserCredentials";
 
@@ -9,7 +9,19 @@ describe("fetchGroups", () => {
                 expect(data.length).toBeGreaterThanOrEqual(1);
             })
             .catch((error) => {
-                expect(true).toBe(false);;
+                expect(true).toBe(false);
+            });
+    } );
+});
+
+describe("fetchGroupData", () => {
+    it("success case", () => {
+        fetchGroupData(KTEST_GROUP_CODE)
+            .then((data) => {
+                expect(data.creator).toEqual(KTEST1_UID);
+            })
+            .catch((error) => {
+                expect(true).toBe(false);
             });
     } );
 });
