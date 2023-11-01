@@ -2,23 +2,27 @@ import { ScheduledSlot } from "../../../src/scheduling/slots/scheduledSlot";
 import { TENTER_STATUS_CODES } from "../../../src/scheduling/slots/tenterSlot";
 import { Person } from "../../../src/scheduling/person";
 import { TenterSlot } from "../../../src/scheduling/slots/tenterSlot";
-export class ScheduleHoursAnalysis {
+export class DistributionAnalysis {
 
 	/**
-	 * @param {number} minHr is the minimum
-	 * @param {number} maxHr is the maximum... profound
-	 * @param {number} meanHr 
-	 * @param {number} stdDevHr 
+	 * @param {number} min is the minimum
+	 * @param {number} max is the maximum... profound
+	 * @param {number} mean 
+	 * @param {number} stdDev 
 	 */
-	constructor(minHr, maxHr, meanHr, stdDevHr){
-        this.minHr = minHr;
-        this.maxHr = maxHr;
-        this.meanHr = meanHr;
-        this.stdDevHr = stdDevHr;
+	constructor(min, max, mean, stdDev){
+        this.min = min;
+        this.max = max;
+        this.mean = mean;
+        this.stdDev = stdDev;
 	}
 
-	printAnalysis(){
-		console.log("Minimum hours: "+this.minHr+", Maximum hours: "+this.maxHr+", Average hours: "+this.meanHr.toString()+", Standard Deviation: "+this.stdDevHr.toString())
+    /**
+     * @param {String} caption
+     * @returns {String} analysis
+     */
+	printAnalysis(caption){
+		return caption + "\n" + "Minimum: "+this.min+", Maximum: "+this.max+", Mean: "+this.mean.toFixed(2)+", Standard Deviation: "+this.stdDev.toFixed((2)) + "\n";
 	}
 
 
@@ -35,9 +39,9 @@ export class AlgoAnalysis {
 	 * @param {number} runtimeMS 
 	 */
 	constructor(people, scheduledSlots, tenterSlotsGrid, runtimeMS){
-		this.dayHoursAnalysis = getHoursDistributionAnalysis(people, (person) => person.dayScheduled / 2);
-        this.nightHoursAnalysis = getHoursDistributionAnalysis(people, (person) => person.nightScheduled / 2);
-        this.totalHoursAnalysis = getHoursDistributionAnalysis(people, (person) => (person.dayScheduled + person.nightScheduled) / 2);
+		this.dayHoursAnalysis = getDistributionAnalysis(people.map((person) => person.dayScheduled / 2));
+        this.nightHoursAnalysis = getDistributionAnalysis(people.map((person) => person.nightScheduled / 2));
+        this.totalHoursAnalysis = getDistributionAnalysis(people.map((person) => (person.dayScheduled + person.nightScheduled) / 2));
 		this.runtimeMS = runtimeMS;
 		this.aoutwPerPerson = [];
 		this.woutaPerPerson = [];
@@ -46,53 +50,55 @@ export class AlgoAnalysis {
 			this.aoutwPerPerson.push(aoutw);
 			this.woutaPerPerson.push(wouta);
 		})
+        this.woutaAnalysis = getDistributionAnalysis(this.woutaPerPerson);
+        this.aoutwAnalysis = getDistributionAnalysis(this.aoutwPerPerson);
 
 
 
 	}
 
-	printAnalysis(){
-		console.log("runtime in ms: " + this.runtimeMS);
-		/*
-		console.log("day time hours:");
-		this.dayHoursAnalysis.printAnalysis();
-		console.log("night time hours:");
-		this.nightHoursAnalysis.printAnalysis();
-		*/
-		console.log("total hours analysis");
-		this.totalHoursAnalysis.printAnalysis();
-		console.log("assigned out of wanted per person:");
-		console.log(this.aoutwPerPerson.map((val) => val.toFixed(2)));
-		console.log("wanted out of assigned per person:");
-		console.log(this.woutaPerPerson.map((val) => val.toFixed(2)))
+    /**
+     *  @param {string} caption
+     *  @returns {string} analysis
+     */
+	printAnalysis(caption){
+        let analysis = caption + "\n";
+        analysis += "runtime in ms: " + this.runtimeMS + "\n";
+
+		analysis += this.totalHoursAnalysis.printAnalysis("total hours analysis");
+		analysis += this.aoutwAnalysis.printAnalysis("assigned out of wanted analysis");
+		analysis += this.woutaAnalysis.printAnalysis("wanted out of assigned analysis");
+        return analysis;
 
 	}
 }
 
+
+
 /**
  * 
- * @param {Array<Person>} people 
- * @param {(person : Person) => number} getHoursFromPerson
+ * @param {Array<number>} data 
+ * @returns {DistributionAnalysis} analysis
  */
-function getHoursDistributionAnalysis(people, getHoursFromPerson){
-    let info = people.map((person) => getHoursFromPerson(person))
-    let meanHours = 0;
-    let minHours = info[0];
-    let maxHours = info[0];
-    let stdDevHours = 0;
+function getDistributionAnalysis(data) {
+    let mean = 0;
+    let min = data[0];
+    let max = data[0];
+    let stdDev = 0;
     
-    for (let ind = 0; ind < info.length; ind++) {
-        meanHours += info[ind];
-        minHours = Math.min(minHours, info[ind]);
-        maxHours = Math.max(maxHours, info[ind]);
+    
+    for (let ind = 0; ind < data.length; ind++) {
+        mean += data[ind];
+        min = Math.min(min, data[ind]);
+        max = Math.max(max, data[ind]);
     }
-    meanHours = meanHours/info.length;
-    for(let ind = 0; ind<info.length; ind++){
-        stdDevHours += Math.pow((info[ind]-meanHours),2);
+    mean = mean/data.length;
+    for(let ind = 0; ind<data.length; ind++){
+        stdDev += Math.pow((data[ind]-mean),2);
     }
-    stdDevHours /= info.length;
-    stdDevHours = Math.sqrt(stdDevHours);
-    return new ScheduleHoursAnalysis(minHours, maxHours, meanHours, stdDevHours);
+    stdDev /= data.length;
+    stdDev = Math.sqrt(stdDev);
+    return new DistributionAnalysis(min, max, mean, stdDev);
 }
 
 
