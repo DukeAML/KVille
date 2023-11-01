@@ -5,17 +5,25 @@ import { generateInput } from "./generateInputs.js";
 import { scheduleDates } from "../../../data/scheduleDates.js";
 describe("result tests", () => {
     it("", () => {
-        [TENTING_COLORS.WHITE].forEach((tentType) => {
-            let {people, tenterSlotsGrid} = generateInput(scheduleDates.startOfTenting, 3, tentType, 0.5, 0.2);
+        let analysis = "";
+        [TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, TENTING_COLORS.WHITE].forEach((tentType) => {
+            let startDate = scheduleDates.startOfBlack;
+            if (tentType == TENTING_COLORS.BLUE){
+                startDate = scheduleDates.startOfBlue;
+            } else if (tentType == TENTING_COLORS.WHITE){
+                startDate = scheduleDates.startOfWhite;
+            }
+            let {people, tenterSlotsGrid} = generateInput(startDate, 3, tentType, 0.5, 0.2);
             let beforeTime = Date.now();
             let scheduledSlots = scheduleAlgorithm(people, tenterSlotsGrid);
-            console.log(scheduledSlots.length);
             let afterTime = Date.now();
             let runtimeMS = afterTime - beforeTime;
             let algoAnalysis = new AlgoAnalysis(people, scheduledSlots, tenterSlotsGrid, runtimeMS);
-            console.log("analysis for algo with " + tentType + " tent type");
-            algoAnalysis.printAnalysis();
+            analysis += algoAnalysis.printAnalysis("analysis for algo with " + tentType + " tent type") + "\n";
+
+
         })
+        console.log(analysis);
         
         
 
