@@ -9,3 +9,4 @@ export const KTEST_GROUP_NAME = "KeithTest";
 export const KTEST1_EMAIL = "kTest1@gmail.com";
 export const KTEST1_USERNAME = "kTest1";
 export const KTEST1_PWD = "kTest1";
+export const UPDATE_TEST_GROUP_CODE = "28r6A3Gz";
