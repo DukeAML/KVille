@@ -60,14 +60,14 @@ export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterS
             }
         }
         for(let i=stuStart; i<=Math.min(stuStart+3, apEnd);i++){
-            tenterSlotsGrid[chosenPersonIndex][chosenTimeIndex].status = TENTER_STATUS_CODES.SCHEDULED;
+            tenterSlotsGrid[chosenPersonIndex][i].status = TENTER_STATUS_CODES.SCHEDULED;
         }
     }
     let remainingSlots = slots;
     for(let i = stuStart; i<=Math.min(stuStart+3, apEnd); i++){//i is the timeIndex of each of the newly filled slots
         //any other variables to be changed specific to each time interval?
         var numberScheduledAtChosenTime = getNumberScheduledAtChosenTime(tenterSlotsGrid, i);
-        var peopleNeeded = chosenTenterSlot.calculatePeopleNeeded();
+        var peopleNeeded = workHere[i].calculatePeopleNeeded();
         if (numberScheduledAtChosenTime >= peopleNeeded){
             remainingSlots = remainingSlots.filter((s) => (s.timeIndex != i));
         }
