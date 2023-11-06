@@ -1,4 +1,4 @@
-import { TENTER_STATUS_CODES, TenterSlot} from "./slots/tenterSlot";
+import { TENTER_STATUS_CODES} from "./slots/tenterSlot";
 /**
  * Update people, spreadsheet, and remove slots.
  * @param {Array<import("./person").Person>} people 
@@ -69,7 +69,7 @@ export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterS
         var numberScheduledAtChosenTime = getNumberScheduledAtChosenTime(tenterSlotsGrid, i);
         var peopleNeeded = chosenTenterSlot.calculatePeopleNeeded();
         if (numberScheduledAtChosenTime >= peopleNeeded){
-            remainingSlots = slots.filter((s) => (s.timeIndex != i));
+            remainingSlots = remainingSlots.filter((s) => (s.timeIndex != i));
         }
     }
     return remainingSlots;

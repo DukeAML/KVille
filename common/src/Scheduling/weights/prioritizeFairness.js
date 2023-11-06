@@ -8,9 +8,9 @@ export function prioritizeFairness(people, slots){
         var currentSlot = slots[slotIndex];
 
         // Establish variables.
-        var currentPersonID = currentSlot.col
-        var dayScheduled = people[currentPersonID].dayScheduled
-        var nightScheduled = people[currentPersonID].nightScheduled
+        var currentPersonIndex = currentSlot.personIndex;
+        var dayScheduled = people[currentPersonIndex].dayScheduled
+        var nightScheduled = people[currentPersonIndex].nightScheduled
         var night = currentSlot.isNight;
 
         var nightMulti = 1;
