@@ -40,6 +40,16 @@ export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterS
     if(apEnd-apStart+1 <= 4){//bc apEnd is up to and including
         for(let i=apStart;i<=apEnd;i++){
             tenterSlotsGrid[chosenPersonIndex][i].status = TENTER_STATUS_CODES.SCHEDULED;
+            //call updatechosenperson and remove tenterSlotsGrid[chosenPersonIndex][i] from slots
+            updateChosenPerson(tenterSlotsGrid[chosenPersonIndex][i], people);
+            //no better way to remove the chosen person from slots, iterate
+            for(let j=0;j<slots.length;j++){
+                if(slots[j]==tenterSlotsGrid[chosenPersonIndex][i]){
+                    slots.splice(j,1);
+                    break;
+                }
+            }
+
         }
     }
     //else get weights of each time slot in the consecutive block > 4 to figure out which to use
