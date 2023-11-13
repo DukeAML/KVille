@@ -61,7 +61,6 @@ describe("schedule", () => {
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
 
-        console.log(schedule.map((slot) => slot.ids));
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);
@@ -83,10 +82,13 @@ describe("schedule", () => {
             tenterSlotsGrid.push(availability);
         }
 
-        scheduleAlgorithm(people, tenterSlotsGrid);
+        let schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         people.sort((a, b) => a.dayScheduled < b.dayScheduled);
         const dayHoursMinMaxDiffRatio = (people[11].dayScheduled - people[0].dayScheduled) / people[11].dayScheduled;
         expect(dayHoursMinMaxDiffRatio < 0.5).toBe(true);
+        for (let i = 0; i < schedule.length; i+=1){
+            expect(schedule[i].ids.length).toBe(schedule[i].calculatePeopleNeeded());
+        }
 
 
     })

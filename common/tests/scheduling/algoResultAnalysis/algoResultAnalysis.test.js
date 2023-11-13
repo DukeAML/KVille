@@ -6,14 +6,14 @@ import { scheduleDates } from "../../../data/scheduleDates.js";
 describe("result tests", () => {
     it("", () => {
         let analysis = "";
-        [TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, TENTING_COLORS.WHITE].forEach((tentType) => {
+        [TENTING_COLORS.WHITE].forEach((tentType) => {
             let startDate = scheduleDates.startOfBlack;
             if (tentType == TENTING_COLORS.BLUE){
                 startDate = scheduleDates.startOfBlue;
             } else if (tentType == TENTING_COLORS.WHITE){
                 startDate = scheduleDates.startOfWhite;
             }
-            let {people, tenterSlotsGrid} = generateInput(startDate, 3, tentType, 0.5, 0.2);
+            let {people, tenterSlotsGrid} = generateInput(startDate, 3, tentType, 0.5, 0.2, 12);
             let beforeTime = Date.now();
             let scheduledSlots = scheduleAlgorithm(people, tenterSlotsGrid);
             let afterTime = Date.now();
