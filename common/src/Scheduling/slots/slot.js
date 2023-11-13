@@ -2,6 +2,7 @@ import {nightData} from "../../../data/nightData.js"
 import {graceData} from "../../../data/gracePeriods.js"
 import { phaseData, TENTING_COLORS } from "../../../data/phaseData.js";
 import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getDatePlusNumShifts } from "../../calendarAndDates/datesUtils.js";
 
 
 export class Slot{
@@ -13,7 +14,7 @@ export class Slot{
      */
     constructor(startDate, tentType){
 		this.startDate = startDate;
-		this.endDate = new Date(startDate.getTime() + 30*60000);
+		this.endDate = getDatePlusNumShifts(startDate, 1);
 		this.tentType = tentType;
 		this.phase = Slot.getPhase(startDate);
 		this.isNight = Slot.checkNight(startDate);
@@ -71,11 +72,9 @@ export class Slot{
 		var gracePeriods = graceData.gracePeriods;
 		for (var gracePeriodIndex = 0; gracePeriodIndex < gracePeriods.length; gracePeriodIndex += 1){
 			var gracePeriod = gracePeriods[gracePeriodIndex];
-			var start = gracePeriod.startDate;
-			var end = gracePeriod.endDate;
+			var graceStartDate = gracePeriod.startDate;
+			var graceEndDate = gracePeriod.endDate;
 	
-			var graceStartDate = new Date(start.year, start.monthIndex, start.day, start.hours, start.minutes);
-			var graceEndDate = new Date(end.year, end.monthIndex, end.day, end.hours, end.minutes);
 			
 			if ((startDate >= graceStartDate) && (startDate < graceEndDate)){
 				return true;
