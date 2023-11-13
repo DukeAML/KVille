@@ -13,7 +13,7 @@ describe("result tests", () => {
             } else if (tentType == TENTING_COLORS.WHITE){
                 startDate = scheduleDates.startOfWhite;
             }
-            let {people, tenterSlotsGrid} = generateInput(startDate, 3, tentType, 0.5, 0.2);
+            let {people, tenterSlotsGrid} = generateInput(startDate, 7, tentType, 0.5, 0.2, 12);
             let beforeTime = Date.now();
             let scheduledSlots = scheduleAlgorithm(people, tenterSlotsGrid);
             let afterTime = Date.now();

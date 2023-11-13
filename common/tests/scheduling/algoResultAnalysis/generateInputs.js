@@ -22,6 +22,7 @@ export function generateInput(startDate, numDays, tentType, pct_avail, pct_pref,
         people.push(person);
         tenterSlotsGrid.push(slots);
     }
+
     
     return {people, tenterSlotsGrid};
 }

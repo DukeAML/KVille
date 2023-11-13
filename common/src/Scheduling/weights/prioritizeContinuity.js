@@ -205,8 +205,8 @@ function getStatusAtAdjacentTimes(skipAboveRow, allSlotsForThisPeson, priorTimeI
  * @returns {{currentPersonIndex : number, currentTimeIndex : number, priorTimeIndex : number, nextTimeIndex : number}}
  */
 function getRelevantTimeAndPersonIndices(allRemainingTenterSlots, i) {
-    var currentTimeIndex = allRemainingTenterSlots[i].row;
-    var currentPersonIndex = allRemainingTenterSlots[i].col;
+    var currentTimeIndex = allRemainingTenterSlots[i].timeIndex;
+    var currentPersonIndex = allRemainingTenterSlots[i].personIndex;
 
     var priorTimeIndex = currentTimeIndex - 1;
     var nextTimeIndex = currentTimeIndex + 1;

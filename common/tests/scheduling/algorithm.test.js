@@ -61,32 +61,39 @@ describe("schedule", () => {
 
         const schedule = scheduleAlgorithm(people, tenterSlotsGrid);
 
-        console.log(schedule.map((slot) => slot.ids));
         for (let i = 0; i < schedule.length; i += 1){
             expect(schedule[i].ids.includes("p1")).toBe(true);
             expect(schedule[i].ids.includes("p2")).toBe(false);
         }
     });
 
-    it("shows more advanced fairness", () => {
+    it("shows more advanced fairness and assigns correct number of people at each time", () => {
         const people = [];
         const tenterSlotsGrid = [];
-        const PHASE = TENTING_COLORS.WHITE;
-        let startDate = getDatePlusNumShifts(scheduleDates.endOfTenting, -10);
+        const TENT_TYPE = TENTING_COLORS.WHITE;
+        let startDate = getDatePlusNumShifts(scheduleDates.startOfTenting, 0);
         for (let i = 0; i < 12; i += 1){
             let id = "p" + i.toFixed(0);
             people.push(new Person(id, id, 266, 70, 0, 0 ));
             let availability = [];
             for (let j = 0; j < 336; j += 1){
-                availability.push(new TenterSlot(id, getDatePlusNumShifts(startDate, j), PHASE, TENTER_STATUS_CODES.AVAILABLE, j, i));
+                availability.push(new TenterSlot(id, getDatePlusNumShifts(startDate, j), TENT_TYPE, TENTER_STATUS_CODES.AVAILABLE, j, i));
             }
             tenterSlotsGrid.push(availability);
         }
 
-        scheduleAlgorithm(people, tenterSlotsGrid);
+        let schedule = scheduleAlgorithm(people, tenterSlotsGrid);
         people.sort((a, b) => a.dayScheduled < b.dayScheduled);
         const dayHoursMinMaxDiffRatio = (people[11].dayScheduled - people[0].dayScheduled) / people[11].dayScheduled;
         expect(dayHoursMinMaxDiffRatio < 0.5).toBe(true);
+        for (let i = 0; i < schedule.length; i+=1){
+            if (schedule[i].isGrace){
+                expect(schedule[i].ids.length).toBe(1);
+            } else {
+                expect(schedule[i].ids.length).toBe(schedule[i].calculatePeopleNeeded());
+            }
+
+        }
 
 
     })
