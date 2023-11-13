@@ -67,7 +67,7 @@ describe("schedule", () => {
         }
     });
 
-    it("shows more advanced fairness", () => {
+    it("shows more advanced fairness and assigns correct number of people at each time", () => {
         const people = [];
         const tenterSlotsGrid = [];
         const PHASE = TENTING_COLORS.WHITE;
