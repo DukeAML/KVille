@@ -9,7 +9,7 @@ export interface windowProperties {
     isBrowser : boolean;
     isNarrow : boolean;
 }
-export function getWindowProperties() {
+function getWindowProperties() {
     if (typeof window === "undefined"){
         return {
             width : 1,
