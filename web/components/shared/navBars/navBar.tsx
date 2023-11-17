@@ -1,7 +1,8 @@
 import React, {ReactNode} from 'react';
 import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
 import { useRouter, NextRouter } from 'next/router';
-import { getWindowProperties } from '@/lib/shared/windowProperties';
+import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { MobileNavBarDrawerAndMenuIcon } from './mobileNavBar';
 
 
 
@@ -43,7 +44,7 @@ interface KvilleNavBarGivenOptionDescriptionsProps {
 
 export const KvilleNavBarGivenOptionDescriptions : React.FC<KvilleNavBarGivenOptionDescriptionsProps> = (props : KvilleNavBarGivenOptionDescriptionsProps) => {
     const router = useRouter();
-    return <KvilleNavBarGivenOptions options={descriptionsToOptions(props.optionDescriptions, router)} colorIsPrimary={props.colorIsPrimary}/>
+    return <KvilleNavBarGivenOptions options={DescriptionsToOptions(props.optionDescriptions, router)} colorIsPrimary={props.colorIsPrimary}/>
 }
 
 
@@ -53,17 +54,24 @@ KvilleNavBarGivenOptionDescriptions.defaultProps = {
     colorIsPrimary : true, 
 }
 
-export const descriptionsToOptions = (optionDescriptions : OptionDescription[], router : NextRouter) : ReactNode => {
-    const {isNarrow} = getWindowProperties()
-    return (
-        <div>
-            {optionDescriptions.map((description, index) => {
-                return (
-                    <Button color="inherit" onClick={() => router.push(description.route)} key={index}>{description.text}</Button>
-                )
-            })}
-        </div>
-    );
+export const DescriptionsToOptions = (optionDescriptions : OptionDescription[], router : NextRouter) : ReactNode => {
+    const {isNarrow, checkingIfNarrow} = useCheckIfScreenIsNarrow();
+    if (checkingIfNarrow){
+        return null;
+    } else if (isNarrow){
+        return <MobileNavBarDrawerAndMenuIcon optionDescriptions={optionDescriptions}/>
+    } else {
+        return (
+            <div>
+                {optionDescriptions.map((description, index) => {
+                    return (
+                        <Button color="inherit" onClick={() => router.push(description.route)} key={description.route}>{description.text}</Button>
+                    )
+                })}
+            </div>
+        );
+    }
+    
 }
 
 
