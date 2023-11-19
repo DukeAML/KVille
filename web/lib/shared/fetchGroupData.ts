@@ -10,6 +10,7 @@ export const useQueryToFetchGroupData = (groupCode : string) : UseQueryResult<Gr
     return useQuery<GroupDescription, Error>(
         "fetchingGroupDataFor"+groupCode, 
         ()=> {
+            console.log("fetching group data");
             if (groupDescription.groupCode === INVALID_GROUP_CODE){
                 return fetchGroupData(groupCode);
             } else {
@@ -18,6 +19,8 @@ export const useQueryToFetchGroupData = (groupCode : string) : UseQueryResult<Gr
         },
         {
             onSuccess: (data) => {
+                console.log("setting group description with the following");
+                console.log(data);
                 setGroupDescription(data);
             }
         }
