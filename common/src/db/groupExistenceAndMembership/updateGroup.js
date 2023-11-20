@@ -11,7 +11,7 @@ const GROUP_CODE_LENGTH = 8;
 const CREATOR_ROLE = "Creator";
 
 export const UPDATE_GROUP_ERROR_CODES = {
-    UPDATE_GROUP_FAILURE : "Update to Create Group",
+    UPDATE_GROUP_FAILURE : "Unknown Error",
     GROUP_NAME_TAKEN : "Group Name is Already Taken"
 }
 
@@ -40,18 +40,19 @@ async function checkIfGroupExistsByGroupName(groupName) {
  * @param {String} newGroupName 
  * @param {String} groupCode 
  * @param {String} userID
- * @returns null
+ * @returns {Promise<string>} newGroupName
  */
 export async function updateName(newGroupName, groupCode) {
     //check if there is already a group with this name!
     if (await checkIfGroupExistsByGroupName(newGroupName)){
-        throw new Error(CREATE_GROUP_ERROR_CODES.GROUP_NAME_TAKEN);
+        throw new Error(UPDATE_GROUP_ERROR_CODES.GROUP_NAME_TAKEN);
     }
     try {
         await firestore.runTransaction(async (transaction) => {
             let groupRef = firestore.collection('groups').doc(groupCode);
             transaction.update(groupRef, {name: newGroupName});
         })
+        return newGroupName;
     } catch (error) {
         console.log("error from transaction : " + error.message);
         throw new Error(UPDATE_GROUP_ERROR_CODES.UPDATE_GROUP_ERROR_CODES);

@@ -30,7 +30,6 @@ export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePa
 				const id = auth.currentUser.uid;
 				setUserID(id);
 				setIsLoggedIn(true);
-				console.log("I logged them in from the useEffect with " + id);
 			} else {
 				setUserID(INVALID_USER_ID);
 				setIsLoggedIn(false);
