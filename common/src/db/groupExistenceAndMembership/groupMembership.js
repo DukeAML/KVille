@@ -132,7 +132,6 @@ export async function removeUserFromGroup(userID, groupCode) {
  * @returns {Promise<{userID : String, username : String}[]>} userIDs
  */
 export async function getGroupMembersByGroupCode(groupCode) {
-  console.log("Fetching for group code " + groupCode);
   const groupRef = firestore
     .collection("groups")
     .doc(groupCode)

@@ -5,8 +5,8 @@ import { fetchHoursPerPerson } from "../../../../common/src/db/hours";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { Typography } from '@material-ui/core';
-import { HoursTable } from "@/components/pageSpecific/groups/groupCode/hoursTable";
-import { EditableGroupName } from "@/components/shared/utils/editableGroupName";
+import { HoursTable } from "@/components/pageSpecific/groups/groupCode/groupOverview/hoursTable";
+import { EditableGroupName } from "@/components/pageSpecific/groups/groupCode/groupOverview/editableGroupName";
 
 const GroupHomePage : React.FC = () => {    
 
