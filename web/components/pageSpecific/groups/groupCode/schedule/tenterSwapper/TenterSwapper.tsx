@@ -1,27 +1,62 @@
-import { useGetQueryDataForSchedule, useMutationToUpdateSchedule, useQueryToFetchGroupMembers } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext"
+import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
-import { Typography, Container, Button } from "@mui/material";
-import React, {useContext} from "react"
+import { Typography, Container, Button} from "@mui/material";
+import React, { useContext,  useState } from "react";
+import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { SwapTentersTimeRangePickers } from "./timeRangePickers";
+import { NewTenterPicker } from "./newTenterPicker";
+import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
 
-export const TenterSwapper : React.FC = () => {
-    const {isSwappingTenter, setIsSwappingTenter, tenterToReplace, timeSlotClickedOn} = useContext(TenterSwapContext);
-    const groupCode = useGroupCode();
-    const {mutate : updateSchedule, isLoading : isLoadingNewSchedule, isError} = useMutationToUpdateSchedule(groupCode);
-    let schedule = useGetQueryDataForSchedule(groupCode); 
-    const {data : groupMembers, isLoading : isLoadingGroupMembers, isError : isErrorLoadingGroupMembers} = useQueryToFetchGroupMembers(groupCode);
 
-    
-    if (!isSwappingTenter){
-        return null;
-    }
-    return (
-        <Container maxWidth="xs">
-            <Typography variant="h4">Swap Tenters</Typography>
-            <Typography>{tenterToReplace}</Typography>
-            <Typography>{timeSlotClickedOn.toISOString()}</Typography>
-            <Button onClick={() => setIsSwappingTenter(false)} color="error" variant="contained" >Cancel</Button>
-        </Container>
-        
-    )
+export const TenterSwapper: React.FC = () => {
+  const { isSwappingTenter, setIsSwappingTenter, tenterToReplace, newTenter, startReplacementDate,  endReplacementDate, setTenterToReplace} = useContext(TenterSwapContext);
+  const groupCode = useGroupCode();
+  const { mutate: updateSchedule, isLoading : isLoadingUpdate, isError : isErrorUpdating} = useMutationToUpdateSchedule(groupCode);
+  const { data : schedule} = useQueryToFetchSchedule(groupCode);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+
+  const submit = () => {
+    if (schedule){
+      if (endReplacementDate <= startReplacementDate){
+        setErrorMsg("End Date Must Come After Start Date");
+        return;
+      }
+      setErrorMsg("");
+      let newSchedule = new ScheduleAndStartDate({...schedule}.schedule, {...schedule}.startDate);
+      const startdate = schedule?.startDate as Date;
+      const startIndex = getNumSlotsBetweenDates(startdate, startReplacementDate);
+      const endIndex = getNumSlotsBetweenDates(startdate, endReplacementDate);
+      for (let timeIndex = startIndex; timeIndex < endIndex; timeIndex += 1){
+        newSchedule.swapTenterAtIndex(timeIndex, tenterToReplace, newTenter);
+      }
+      updateSchedule(newSchedule.schedule);
+      setIsSwappingTenter(false);
+    } 
+  };
+
+  if (!isSwappingTenter) {
+    return null;
+  } else {
+      return (
+      <Container maxWidth="xs">
+        <Typography variant="h4">Swap Tenters</Typography>
+        <Typography>Replace {tenterToReplace}</Typography>
+        <NewTenterPicker/>
+        <SwapTentersTimeRangePickers/>
+        <Button onClick={() => submit()} color="error" variant="contained">
+          Submit
+        </Button>
+        <Button onClick={() => setIsSwappingTenter(false)} color="error" variant="contained">
+          Cancel
+        </Button>
+        {isLoadingUpdate ? <KvilleLoadingCircle/> : null}
+        {errorMsg.length > 0 ? <Typography color="red">{errorMsg}</Typography> : null}
+        {isErrorUpdating ? <Typography color="red">An Unknown Error Occurred</Typography> : null}
+      </Container>
+    );
+  };
 }
+

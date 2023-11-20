@@ -7,10 +7,11 @@ import { UserContext } from '@/lib/shared/context/userContext';
 import { GroupContext } from '@/lib/shared/context/groupContext';
 import { QueryClient } from 'react-query';
 import { QueryClientProvider } from 'react-query';
+import {ReactQueryDevtools} from 'react-query/devtools';
 import { GroupDescription } from '../../common/src/db/groupExistenceAndMembership/groupMembership';
 import { INVALID_USER_ID } from '../../common/src/db/auth/login';
 import { INVALID_GROUP_CODE } from '../../common/src/db/groupExistenceAndMembership/GroupCode';
- 
+
 import {
   indexedDBLocalPersistence,
   inMemoryPersistence,
@@ -46,6 +47,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </ThemeProvider>
         </GroupContext.Provider>
       </UserContext.Provider>
+      <ReactQueryDevtools/>
     </QueryClientProvider>
   );
 }

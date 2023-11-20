@@ -4,6 +4,8 @@ import { useQueryClient, useQuery } from "react-query";
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
 import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
 import { getGroupMembersByGroupCode } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
+import {useRouter} from "next/router";
+import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 
 
 
@@ -22,6 +24,8 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
                 } else {
                     let newData = new ScheduleAndStartDate(newSchedule, oldData.startDate);
                     queryClient.setQueryData(queryKeyName, newData);
+                    //queryClient.refetchQueries(queryKeyName);
+                    queryClient.invalidateQueries(queryKeyName);
                 }
             }
         }
@@ -32,17 +36,28 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
 
 
 export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
+    const router = useRouter();
+
     return useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForGroupCode(groupCode), 
-        ()=> fetchGroupSchedule(groupCode),
+        ()=> {
+            if (groupCode === INVALID_GROUP_CODE){
+                throw new Error("");
+            }
+            return fetchGroupSchedule(groupCode);
+        },
         {
-            onSuccess: () => {
+            onSuccess: (data) => {
                 console.log("I fetched the schedule" );
-                //setDateBeingShown(getDefaultDisplayDateRangeStartDate(scheduleAndStartDate ? scheduleAndStartDate : defaultData));
-        
             }
         }
     );
+}
+
+
+
+export const getQueryKeyNameForGroupCode = (groupCode : string) : string =>  {
+    return "getGroupSchedule";
 }
 
 export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {
@@ -57,11 +72,11 @@ interface GroupMemberType {
 export const useQueryToFetchGroupMembers = (groupCode : string) : UseQueryResult<GroupMemberType[]> => {
     return useQuery<GroupMemberType[], Error>(
         ["fetching group members", groupCode],
-        () => getGroupMembersByGroupCode(groupCode)
+        () => getGroupMembersByGroupCode(groupCode),
+        {
+            initialData : []
+        }
 
     )
 }
 
-export const getQueryKeyNameForGroupCode = (groupCode : string) : string =>  {
-    return "getGroupSchedule"+groupCode;
-}
