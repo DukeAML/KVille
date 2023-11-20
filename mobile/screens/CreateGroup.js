@@ -35,7 +35,7 @@ import { useTheme } from '../context/ThemeProvider';
 import coachKLogo from '../assets/coachKLogo.png';
 import { ActionSheetModal } from '../components/ActionSheetModal';
 import { setSnackMessage, toggleSnackBar } from '../redux/reducers/snackbarSlice';
-const Helpers = require("../../common/Scheduling/helpers");
+const Helpers = require("../../common/scheduling/helpers");
 
 //length of the group code
 const GROUP_CODE_LENGTH = 8;

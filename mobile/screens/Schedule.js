@@ -42,7 +42,7 @@ import { DropdownHeaderBar } from '../components/DropdownHeaderBar/DropdownHeade
 import { EMPTY, GRACE } from '../../common/src/scheduling/tenterSlot';
 import { scheduleDates } from '../../common/data/scheduleDates';
 import { getTentingStartDate } from '../../common/src/calendarAndDates/tentingDates';
-const Helpers = require ('../../common/Scheduling/helpers');
+const Helpers = require ('../../common/scheduling/helpers');
 
 
 

@@ -9,7 +9,7 @@ import { resetWeights } from "./weights/resetWeights.js";
 import { prioritizeFairness } from "./weights/prioritizeFairness.js";
 import { prioritizeContinuity } from "./weights/prioritizeContinuity.js";
 import { prioritizeToughTimes } from "./weights/prioritizeToughTimes.js";
-import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSlot.js";
+import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSlots/pickTenterAndFillSlot.js";
 
 
 
@@ -26,7 +26,6 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
     var slots = getAllTenterSlots(tenterSlotsGrid);
     
     while (slots.length > 0){
-
         resetWeights(slots);
         prioritizeFairness(people, slots);
         prioritizeContinuity(slots, tenterSlotsGrid);
@@ -58,7 +57,7 @@ function getAllTenterSlots(tenterSlotsGrid){
     for (let personIndex =0; personIndex < tenterSlotsGrid.length; personIndex += 1){
         for (let timeIndex = 0; timeIndex < tenterSlotsGrid[0].length; timeIndex += 1){
             let slot = tenterSlotsGrid[personIndex][timeIndex];
-            if (slot.status === TENTER_STATUS_CODES.AVAILABLE){
+            if ((slot.status === TENTER_STATUS_CODES.AVAILABLE || slot.status === TENTER_STATUS_CODES.PREFERRED) && !slot.isGrace){
                 allSlots.push(slot);
             }
         }

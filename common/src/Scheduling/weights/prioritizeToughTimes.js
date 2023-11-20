@@ -10,7 +10,7 @@ export function prioritizeToughTimes(slots, scheduleLength){
 
     for(var i = 0; i < slots.length; i++){
         var currentSlot = slots[i];
-        var currentTimeIndex = currentSlot.row;
+        var currentTimeIndex = currentSlot.timeIndex;
         availableTentersAtEachTime[currentTimeIndex] = availableTentersAtEachTime[currentTimeIndex] + 1;
     }
     
@@ -27,7 +27,7 @@ export function prioritizeToughTimes(slots, scheduleLength){
 function updateWeightsForEachSlot(slots, availableTentersAtEachTime) {
     for (var j = 0; j < slots.length; j++) {
         var currentSlot = slots[j];
-        var currentTimeIndex = currentSlot.row;
+        var currentTimeIndex = currentSlot.timeIndex;
         var peopleNeeded = currentSlot.calculatePeopleNeeded();
 
         var numFreePeople = availableTentersAtEachTime[currentTimeIndex];

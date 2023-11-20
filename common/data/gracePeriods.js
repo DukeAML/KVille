@@ -1,34 +1,12 @@
 export const graceData = {
     gracePeriods: [{
-        startDate:{
-            year:2023,
-            monthIndex:0,
-            day:17,
-            hours:16,
-            minutes:0
-        }, endDate:{
-            year:2023,
-            monthIndex:0,
-            day:17,
-            hours:18,
-            minutes:0           
-        }
+        startDate: new Date(2023, 0, 17, 16, 0),
+        endDate: new Date(2023, 0, 17, 18, 0),
 
     }, 
     {
-        startDate:{
-            year:2023,
-            monthIndex:1,
-            day:3,
-            hours:15,
-            minutes:30
-        }, endDate:{
-            year:2023,
-            monthIndex:1,
-            day:3,
-            hours:18,
-            minutes:30
-        }
+        startDate: new Date(2023, 1, 3, 15, 30),
+        endDate: new Date(2023, 1, 3, 18, 30)
     }
 
     ]
