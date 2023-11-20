@@ -1,164 +1,62 @@
-import {
-  useGetQueryDataForSchedule,
-  useMutationToUpdateSchedule,
-  useQueryToFetchGroupMembers,
-} from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
-import {
-  Typography,
-  Container,
-  Button,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-} from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { FormControl, InputLabel } from "@mui/material";
-import {
-  getDatePlusNumShifts,
-  getNumSlotsBetweenDates,
-} from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { Typography, Container, Button} from "@mui/material";
+import React, { useContext,  useState } from "react";
+import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { SwapTentersTimeRangePickers } from "./timeRangePickers";
+import { NewTenterPicker } from "./newTenterPicker";
+import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
+
+
 export const TenterSwapper: React.FC = () => {
-  const {
-    isSwappingTenter,
-    setIsSwappingTenter,
-    tenterToReplace,
-    timeSlotClickedOn,
-  } = useContext(TenterSwapContext);
+  const { isSwappingTenter, setIsSwappingTenter, tenterToReplace, newTenter, startReplacementDate,  endReplacementDate, setTenterToReplace} = useContext(TenterSwapContext);
   const groupCode = useGroupCode();
-  const {
-    mutate: updateSchedule,
-    isLoading: isLoadingNewSchedule,
-    isError,
-  } = useMutationToUpdateSchedule(groupCode);
-  let schedule = useGetQueryDataForSchedule(groupCode);
-  const [eligibleTimeslots, setEligibleTimeslots] = useState<Date[]>();
+  const { mutate: updateSchedule, isLoading : isLoadingUpdate, isError : isErrorUpdating} = useMutationToUpdateSchedule(groupCode);
+  const { data : schedule} = useQueryToFetchSchedule(groupCode);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const {
-    data: groupMembers,
-    isLoading: isLoadingGroupMembers,
-    isError: isErrorLoadingGroupMembers,
-  } = useQueryToFetchGroupMembers(groupCode);
-  const [changeVal, setChangeVal] = React.useState("");
-  const handleChange = (event: SelectChangeEvent) => {
-    setChangeVal(event.target.value as string);
-  };
-  const [startReplace, setStartReplace] = useState("");
-  const startChange = (event: SelectChangeEvent) => {
-    setStartReplace(event.target.value as string);
-  };
-  const [endReplace, setEndReplace] = useState("");
-  const endChange = (event: SelectChangeEvent) => {
-    setEndReplace(event.target.value as string);
-  };
-  useEffect(() => {
-    if (isSwappingTenter) {
-      let currentSchedule = schedule ? [...schedule.schedule] : [];
+
+  const submit = () => {
+    if (schedule){
+      if (endReplacementDate <= startReplacementDate){
+        setErrorMsg("End Date Must Come After Start Date");
+        return;
+      }
+      setErrorMsg("");
+      let newSchedule = new ScheduleAndStartDate({...schedule}.schedule, {...schedule}.startDate);
       const startdate = schedule?.startDate as Date;
-      const originalDate = getNumSlotsBetweenDates(
-        startdate,
-        timeSlotClickedOn
-      );
-      let startIndex = originalDate;
-      while (
-        startIndex > 0 &&
-        currentSchedule[startIndex - 1].includes(tenterToReplace)
-      ) {
-        startIndex -= 1;
+      const startIndex = getNumSlotsBetweenDates(startdate, startReplacementDate);
+      const endIndex = getNumSlotsBetweenDates(startdate, endReplacementDate);
+      for (let timeIndex = startIndex; timeIndex < endIndex; timeIndex += 1){
+        newSchedule.swapTenterAtIndex(timeIndex, tenterToReplace, newTenter);
       }
-      let lastIndex = originalDate;
-      while (
-        lastIndex < currentSchedule.length - 1 &&
-        currentSchedule[lastIndex + 1].includes(tenterToReplace)
-      ) {
-        lastIndex += 1;
-      }
-
-      let slots = [];
-      for (let i = startIndex; i <= lastIndex; i++) {
-        slots.push(getDatePlusNumShifts(timeSlotClickedOn, i - originalDate));
-      }
-      setEligibleTimeslots(slots);
-    }
-  }, [changeVal]);
+      updateSchedule(newSchedule.schedule);
+      setIsSwappingTenter(false);
+    } 
+  };
 
   if (!isSwappingTenter) {
     return null;
-  }
-  const menuItems = groupMembers?.map((item) => (
-    <MenuItem value={item.username}>{item.username}</MenuItem>
-  ));
-  const dateItems = eligibleTimeslots?.map((item) => (
-    <MenuItem value={item.toString()}>{item.toString()}</MenuItem>
-  ));
-  const submit = () => {
-    console.log(changeVal);
-    let newSchedule = schedule ? [...schedule.schedule] : [];
-    const startdate = schedule?.startDate as Date;
-    const startIndex = getNumSlotsBetweenDates(
-      startdate,
-      new Date(startReplace)
+  } else {
+      return (
+      <Container maxWidth="xs">
+        <Typography variant="h4">Swap Tenters</Typography>
+        <Typography>Replace {tenterToReplace}</Typography>
+        <NewTenterPicker/>
+        <SwapTentersTimeRangePickers/>
+        <Button onClick={() => submit()} color="error" variant="contained">
+          Submit
+        </Button>
+        <Button onClick={() => setIsSwappingTenter(false)} color="error" variant="contained">
+          Cancel
+        </Button>
+        {isLoadingUpdate ? <KvilleLoadingCircle/> : null}
+        {errorMsg.length > 0 ? <Typography color="red">{errorMsg}</Typography> : null}
+        {isErrorUpdating ? <Typography color="red">An Unknown Error Occurred</Typography> : null}
+      </Container>
     );
-    const endIndex = getNumSlotsBetweenDates(startdate, new Date(endReplace));
-    for (let i = startIndex; i <= endIndex; i++) {
-      newSchedule[i] = newSchedule[i].replace(tenterToReplace, changeVal);
-    }
-    updateSchedule(newSchedule);
   };
+}
 
-  return (
-    <Container maxWidth="xs">
-      <Typography variant="h4">Swap Tenters</Typography>
-      <Typography>{tenterToReplace}</Typography>
-      <Typography>{timeSlotClickedOn.getHours()}</Typography>
-
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={changeVal}
-          label="New Tenter"
-          onChange={handleChange}
-        >
-          {menuItems}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Start Time</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={startReplace}
-          label="Select Start Time"
-          onChange={startChange}
-        >
-          {dateItems}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">End Time</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={endReplace}
-          label="New Tenter"
-          onChange={endChange}
-        >
-          {dateItems}
-        </Select>
-      </FormControl>
-      <Button onClick={() => submit()} color="error" variant="contained">
-        Submit
-      </Button>
-      <Button
-        onClick={() => setIsSwappingTenter(false)}
-        color="error"
-        variant="contained"
-      >
-        Cancel
-      </Button>
-    </Container>
-  );
-};

@@ -24,7 +24,12 @@ export const DateChanger : React.FC<DateChangerProps> = (props : DateChangerProp
                     value={dayjs(props.date)}
                     onChange={(newDate) => {
                         if (newDate != null){
-                            props.setDate(newDate.toDate());
+                            let date = newDate.toDate();
+                            date.setHours(0);
+                            date.setMinutes(0);
+                            date.setSeconds(0);
+                            date.setMilliseconds(0);
+                            props.setDate(date);
                         }
                     }}
                 />

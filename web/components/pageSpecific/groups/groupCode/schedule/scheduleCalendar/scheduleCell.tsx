@@ -15,7 +15,6 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
         setIsSwappingTenter(true);
         setTenterToReplace(props.name);
         setTimeSlotClickedOn(props.startDate);
-        
     }
     return (
         <Grid item xs>
