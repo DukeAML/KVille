@@ -1,7 +1,7 @@
 import { firestore } from '../../db/firebase_config.js';
 import {Person} from '../person.js';
 
-
+import { ScheduleAndStartDate } from '../../db/schedule/scheduleAndStartDate.js';
 import { getNumSlotsBetweenDates } from '../../calendarAndDates/datesUtils.js';
 import { fetchHoursPerPersonInDateRange } from "../../db/hours.js";
 import {scheduleAlgorithm} from '../algorithm.js';
@@ -81,6 +81,10 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
  * @returns {Promise<string[]>}
  */
 export async function assignTentersAndGetNewFullSchedule(groupCode, tentType, dateRangeStart , dateRangeEnd, oldSchedule ){
+	console.log("date Range start is " );
+	console.log(dateRangeStart);
+	console.log("old schedule start date is " );
+	console.log(oldSchedule.startDate);
     let newScheduleInRange = await createGroupSchedule(groupCode, tentType, dateRangeStart, dateRangeEnd);
     console.log("new schedule in range is " );
     console.log(newScheduleInRange);

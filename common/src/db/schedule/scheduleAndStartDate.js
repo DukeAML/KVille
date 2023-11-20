@@ -4,9 +4,6 @@ import { Slot } from "../../scheduling/slots/slot.js";
 
 
 export class ScheduleAndStartDate{
-
-
-
     /**
      * Generic slot object
      * @param {Array<String>} schedule should be an array of names
@@ -27,7 +24,6 @@ export class ScheduleAndStartDate{
         }
 
     }
-
 
 
     /**
@@ -70,6 +66,43 @@ export class ScheduleAndStartDate{
      */
     getHoursPerPersonWholeSchedule(allMembers) {
         return this.getHoursPerPersonInDateRange(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length), allMembers);
+
+    }
+
+    /**
+     * 
+     * @param {number} arrIndex 
+     * @param {string} tenterToReplace 
+     * @param {string} newTenter 
+     */
+    swapTenterAtIndex(arrIndex, tenterToReplace, newTenter){
+        let slotIDs = this.schedule[arrIndex].split(" ");
+        let newSlotIDs = [];
+        for (let assignedTenterIndex = 0; assignedTenterIndex < slotIDs.length; assignedTenterIndex += 1){
+            if (slotIDs[assignedTenterIndex] === tenterToReplace && !(newSlotIDs.includes(newTenter))){
+                newSlotIDs.push(newTenter);
+            } else {
+                newSlotIDs.push(slotIDs[assignedTenterIndex]);
+            }
+        }
+        this.schedule[arrIndex] = newSlotIDs.join(" ")
+
+    }
+    
+    /**
+     * 
+     * @param {number} timeIndex 
+     * @param {string} memberUsername 
+     * @returns {boolean}
+     */
+    containsMemberAtTimeIndex(timeIndex, memberUsername) {
+        let slotIDs = this.schedule[timeIndex].split(" ");
+        for (let personIndex = 0; personIndex < slotIDs.length; personIndex +=1 ){
+            if (slotIDs[personIndex] === memberUsername){
+                return true;
+            }
+        }
+        return false;
 
     }
 

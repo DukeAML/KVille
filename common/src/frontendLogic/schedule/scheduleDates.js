@@ -1,4 +1,5 @@
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDates/datesUtils";
+import { scheduleDates } from "../../../data/scheduleDates";
 
 /**
  * 
@@ -14,4 +15,19 @@ export const getDefaultDisplayDateRangeStartDate = (groupScheduleAndStartDate) =
     } else {
       return currentDate;
     }
+}
+
+export const getDefaultDisplayDateRangeStartDateWithoutSchedule = () => {
+  let currentDate = getCurrentDate();
+  if (currentDate < scheduleDates.startOfTenting){
+    return scheduleDates.startOfTenting;
+  } else if (currentDate > scheduleDates.endOfTenting){
+    return scheduleDates.startOfTenting;
+  } else {
+    currentDate.setHours(0);
+    currentDate.setMinutes(0);
+    currentDate.setSeconds(0);
+    currentDate.setMilliseconds(0);
+    return currentDate;
   }
+}
