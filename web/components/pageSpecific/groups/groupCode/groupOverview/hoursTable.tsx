@@ -1,12 +1,15 @@
 import React from "react";
 
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverviewHooks";
 import { Container } from "@mui/material";
 
 interface HoursTableProps {
     hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}} | undefined
 }
 export const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) => {
+    const {mutate : removeMember} = useMutationToRemoveMember();
+    
     if (typeof props.hoursPerPerson === 'undefined'){
         return null;
     }

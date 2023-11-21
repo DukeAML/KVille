@@ -2,6 +2,7 @@
 
 export const KTEST1_UID = "hWMs9HK5qROXWdUaEmzyFjhBKVo1";
 export const KTEST5_UID = "ApNTnEhyFwSrqOOxvwW10uc2lvX2";
+export const KTEST5_USERNAME = "kTest5";
 export const KTEST13_UID = "JAU3bBvC9Odu6rHZFbBVIDjelof1";
 export const KTEST_GROUP_CODE = "xgVV5gyv"; 
 export const SMALLER_KTEST_GROUP_CODE = "UGitK7RZ";

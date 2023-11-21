@@ -1,7 +1,8 @@
 import { KTEST1_UID, KTEST5_UID, KTEST13_UID, KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "../testUserCredentials";
 import { tryToJoinGroup, JOIN_GROUP_ERROR_CODES } from "../../../src/db/groupExistenceAndMembership/joinGroup";
 import { getGroupMembersByGroupCode } from "../../../src/db/groupExistenceAndMembership/groupMembership";
-import { fetchGroups, removeUserFromGroup } from "../../../src/db/groupExistenceAndMembership/groupMembership";
+import { fetchGroups } from "../../../src/db/groupExistenceAndMembership/groupMembership";
+import { removeMemberFromGroupByID } from "../../../src/db/groupExistenceAndMembership/removeMemberFromGroup";
 
 describe("tryToJoinGroup", () => {
     it("succeeds in normal case", async () => {
@@ -13,7 +14,7 @@ describe("tryToJoinGroup", () => {
         groupMembers = groupMembers.map((member) => member.userID);
         expect(groupMembers.includes(KTEST5_UID)).toBe(true);
         expect(newGroupAddedToUser).toBe(true);
-        removeUserFromGroup(KTEST5_UID, SMALLER_KTEST_GROUP_CODE); //clean up
+        removeMemberFromGroupByID(KTEST5_UID, SMALLER_KTEST_GROUP_CODE); //clean up
 
     });
     
