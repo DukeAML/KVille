@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef, useEffect} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
 import {getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
@@ -14,7 +14,6 @@ import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
 import { scheduleDates } from "../../../../../common/data/scheduleDates";
-import { GroupContext } from "@/lib/shared/context/groupContext";
 import { EMPTY } from "../../../../../common/src/scheduling/slots/tenterSlot";
 import { getDatePlusNumShifts } from "../../../../../common/src/calendarAndDates/datesUtils";
 
@@ -26,7 +25,6 @@ export default function Schedule() {
 
     const DEFAULT_DATE_BEING_SHOWN = scheduleDates.startOfBlue;
     const [dateBeingShown, setDateBeingShown] = useState<Date>(DEFAULT_DATE_BEING_SHOWN);
-    const {groupDescription} = useContext(GroupContext);
     const groupCode = useGroupCode();
     
     const [isSwappingTenter, setIsSwappingTenter] = useState<boolean>(false);
@@ -40,11 +38,6 @@ export default function Schedule() {
     useEffect(() => {
         setDateBeingShown(getDefaultDisplayDateRangeStartDateWithoutSchedule());
     }, []);
-
-    console.log(scheduleAndStartDate);
-
-    
-    
 
 
 
