@@ -1,5 +1,5 @@
 import { UserContext } from "@/lib/shared/context/userContext";
-import { AvailabilityCalendarDatesContext } from "../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext";
+import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { useContext, useState } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
@@ -24,20 +24,21 @@ export default function Availability(){
         );
 
 
-    let [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
-    let [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
+    const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
+    const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
+    const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
     return (
         <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
                     <Typography align="center">Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
-                    <AvailabilityCalendarDatesContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate}}>
+                    <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred}}>
                         <AvailabilityOptions/>
                         <AvailabilityTable 
                             originalAvailabilityArr={data ? data : defaultAvailabilitySlotsData}
                         />
-                    </AvailabilityCalendarDatesContext.Provider>
+                    </AvailabilityPageContext.Provider>
                 </Container>
             }
     

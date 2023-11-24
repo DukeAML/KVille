@@ -1,7 +1,5 @@
 import React from "react";
-import { useQuery } from "react-query";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { fetchHoursPerPerson } from "../../../../common/src/db/hours";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { Typography } from '@material-ui/core';
@@ -23,7 +21,7 @@ const GroupHomePage : React.FC = () => {
                 <KvilleLoadingContainer />
             ) : <HoursTable hoursPerPerson={data}/>}
         </PermissionRequiredPageContainer>
-        )
+    );
 }
 
 

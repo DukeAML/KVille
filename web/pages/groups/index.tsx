@@ -37,7 +37,6 @@ export default function GroupPage() {
 			<Typography variant="h6" align="center">
 			Select your Group or Join/Create one to Continue.
 			</Typography>
-			<Typography align="center">My Group</Typography>
 			{groups?.map((group, index) => {
 			return <GroupDisplay group={group} key={index} />;
 			})}

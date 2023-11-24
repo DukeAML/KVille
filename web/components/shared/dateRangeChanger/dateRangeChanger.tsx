@@ -1,9 +1,7 @@
-import React, {useContext, useState} from "react";
-import { Container, Typography } from "@material-ui/core";
-import { DatePicker } from "@mui/x-date-pickers";
+import React, { useState } from "react";
+import { Container } from "@material-ui/core";
 import {Grid} from "@material-ui/core";
 import { DateChanger } from "./dateChanger";
-import { AvailabilityCalendarDatesContext } from "@/lib/pageSpecific/availability/availabilityCalendarDatesContext";
 import { KvilleButton } from "../utils/button";
 interface DateRangeChangerProps {
     includeHours : boolean;

@@ -5,7 +5,7 @@ import { Grid, Paper, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
 import {MouseTracker} from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
-import { AvailabilityCalendarDatesContext } from '../../../../../lib/pageSpecific/availability/availabilityCalendarDatesContext';
+import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { UserContext } from '@/lib/shared/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
@@ -22,14 +22,11 @@ interface AvailabilityTableProps{
 }
 
 
-
 export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:AvailabilityTableProps) => {
-    console.log("rendering availability table");
-    //const [availabilitySlotWrappers, setAvailabilitySlotWrappers] = useState<AvailabilitySlotWrapper[]>([new AvailabilitySlotWrapper(new AvailabilitySlot(new Date(Date.now()), false), false, 0, 0)]);
     const [availability, setAvailability] = useState<AvailabilitySlot[]>(props.originalAvailabilityArr);
     
     const [mouseTracker, setMouseTracker] = useState<MouseTracker>(new MouseTracker());
-    const {calendarStartDate, calendarEndDate} = useContext(AvailabilityCalendarDatesContext);
+    const {calendarStartDate, calendarEndDate, settingPreferred, setSettingPreferred} = useContext(AvailabilityPageContext);
     const queryClient = useQueryClient();
     useEffect(() => {
         setAvailability(props.originalAvailabilityArr);
@@ -41,7 +38,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
     const updateAvailabilityInDB = () => {
         let newAvailabilitySlots = availability.map((slot, index) => {
-            return new AvailabilitySlot(slot.startDate, slot.available);
+            return new AvailabilitySlot(slot.startDate, slot.available, slot.preferred);
         });
         queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
         setDBAvailability(groupCode, userID, newAvailabilitySlots);
@@ -49,21 +46,59 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
 
 
-    const changeAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
-      let newAvailability = [...availability];
-      for (let i = 0; i < rowsAndCols.length; i += 1){
-          let row = rowsAndCols[i].row;
-          let col = rowsAndCols[i].col;
-          let index = rowColToIndex(row, col);
-          if (index >= 0 && index < newAvailability.length){
-              newAvailability[index].available = newValue;
-          }
-          
-      }
-      setAvailability(newAvailability);
+    const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+        let newAvailability = [...availability];
+        for (let i = 0; i < rowsAndCols.length; i += 1){
+            let row = rowsAndCols[i].row;
+            let col = rowsAndCols[i].col;
+            let index = rowColToIndex(row, col);
+            if (index >= 0 && index < newAvailability.length){
+                if (newValue == false){
+                    newAvailability[index].available = false;
+                    newAvailability[index].preferred = false;
+                } else {
+                    newAvailability[index].available = true;
+                }
+                
+            }
+        }
+        console.log("in changeStand, setting preferred : " + settingPreferred + " newValue is " + newValue);
+        console.log(newAvailability[0]);
+        setAvailability(newAvailability);
     }
 
-    mouseTracker.setChangeAvailabilityAtRowsAndCols(changeAvailabilityAtRowsAndCols);
+    const changePreferredAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+        let newAvailability = [...availability];
+        for (let i = 0; i < rowsAndCols.length; i += 1){
+            let row = rowsAndCols[i].row;
+            let col = rowsAndCols[i].col;
+            let index = rowColToIndex(row, col);
+            if (index >= 0 && index < newAvailability.length){
+                if (newValue == false){
+                    newAvailability[index].preferred = false;
+                } else {
+                    newAvailability[index].available = true;
+                    newAvailability[index].preferred = true;
+                }
+                
+            }
+            
+        }
+        console.log("in changePref, setting preferred : " + settingPreferred + " newValue is " + newValue);
+        console.log(newAvailability[0]);
+        setAvailability(newAvailability);
+    }
+
+    useEffect(() => {
+        console.log("setting preferred has changed to " + settingPreferred);
+        if (settingPreferred){
+            mouseTracker.setChangeAvailabilityAtRowsAndCols(changePreferredAvailabilityAtRowsAndCols);
+        } else {
+            mouseTracker.setChangeAvailabilityAtRowsAndCols(changeBasicAvailabilityAtRowsAndCols);
+        }
+
+    }, [settingPreferred]);
+
 
 
     const columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate);
@@ -88,8 +123,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
 
     return (
-        <Paper >
-          
+        <Paper style={{marginTop : "20px"}}>
             <Grid container spacing={0} direction="column">
 				{/* Empty cell at the top-left corner */}
 				<Grid item/>
@@ -100,7 +134,9 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 					{columnLabels.map((column, index) => (
 					
 					<Grid item xs key={index}>
-						<Paper onMouseUp={() => {console.log("entering column " + index)}}>{column}</Paper>
+						<Paper  onMouseUp={() => {console.log("entering column " + index)}}>
+                            <Typography align="center" fontWeight={"bold"}>{column}</Typography>
+                        </Paper>
 					</Grid>
 					))}
 				</Grid>
@@ -114,7 +150,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
 					<Grid item xs={1} key={row}>
 						{}
-						<Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "2px"}}>{row}</Typography>
+						<Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px"}}>{row}</Typography>
 					</Grid>
 					
 

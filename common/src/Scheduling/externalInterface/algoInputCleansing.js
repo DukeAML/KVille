@@ -4,47 +4,48 @@ import { TenterSlot, TENTER_STATUS_CODES } from "../slots/tenterSlot";
 
 /**
  * Finds number of slots for which this person is free during day and night each 
- * @param {Array} availabilities an array of booleans, 336 of them if it is for one week 
+ * @param {Array<{available : boolean, preferred : boolean}} availabilities an array of booleans, 336 of them if it is for one week 
  * @param {Date} availabilitiesStartDate the date at which the availabilities array begins
- * @returns {Array<int>} an array of length 2, whose first element is the number of day slots they are free,
- *    and the second element is the number of night slots where they are free. 
+ * @returns {{numFreeDaySlots : number, numFreeNightSlots : number}} 
  */
 export function dayNightFree(availabilities, availabilitiesStartDate){
-    var dayFree = 0;
-    var nightFree = 0;
-    for (var index = 0; index < availabilities.length; index++){
-        if (availabilities[index] == true){
-            var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
+    var numFreeDaySlots = 0;
+    var numFreeNightSlots = 0;
+    for (var timeIndex = 0; timeIndex < availabilities.length; timeIndex++){
+        if (availabilities[timeIndex].available == true){
+            var date = new Date(availabilitiesStartDate.getTime() + 30*timeIndex*60000);
             if (Slot.checkNight(date)){
-                nightFree += 1;
+                numFreeNightSlots += 1;
             } else{
-                dayFree += 1;
+                numFreeDaySlots += 1;
             }
         }
     }
-    return [dayFree, nightFree];
+    return {numFreeDaySlots, numFreeNightSlots};
 }
 
 /**
  * Take in an array of booleans (availabilities over a time span) and return a corresponding array
  *    of slot objects
  * @param {String} personID is the id of the user whose availabilities are passed in as an argument
- * @param {Array} availabilities an array of booleans, 336 booleans if it is for one week
+ * @param {Array<{available : boolean, preferred : boolean}>} availabilities 
  * @param {Date} availabilitiesStartDate the date at which the availabilities array begins
  * @param {String} tentType a string, either TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, or TENTING_COLORS.WHITE
- * @param {int} userCount an integer. When you're calling this method on the ith member of the group, 
+ * @param {number} userCount an integer. When you're calling this method on the ith member of the group, 
  *      userCount should be i. 0 for the first member, 1 for the second, etc...
  * @returns {Array<TenterSlot>} an array of TenterSlot objects corresponding to each slot given in the availabilities argument
  */
 export function availabilitiesToSlots(personID, availabilities, availabilitiesStartDate, tentType, userCount){
     var slots = [];
-    for (var index = 0; index < availabilities.length; index++){
+    for (var timeIndex = 0; timeIndex < availabilities.length; timeIndex++){
         var status = TENTER_STATUS_CODES.AVAILABLE;
-        if (availabilities[index] == false){
+        if (availabilities[timeIndex].available == false){
             status = TENTER_STATUS_CODES.UNAVAILABLE;
+        } else if (availabilities[timeIndex].available == true && availabilities[timeIndex].preferred == true){
+            status = TENTER_STATUS_CODES.PREFERRED;
         }
-        var date = new Date(availabilitiesStartDate.getTime() + 30*index*60000);
-        var slot = new TenterSlot(personID, date, tentType, status, index, userCount, 1);
+        var date = new Date(availabilitiesStartDate.getTime() + 30*timeIndex*60000);
+        var slot = new TenterSlot(personID, date, tentType, status, timeIndex, userCount, 1);
         
         slots.push(slot);
     }

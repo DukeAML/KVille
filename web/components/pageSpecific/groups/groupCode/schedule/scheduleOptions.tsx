@@ -6,19 +6,20 @@ import { DatesRow } from "./datesRow";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
 import { ScheduleAndStartDate } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
-import { useGetQueryDataForSchedule, useMutationToUpdateSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { useGetQueryDataForSchedule, useMutationToUpdateSchedule, useQueryToFetchSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
 import { assignTentersAndGetNewFullSchedule } from "../../../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 import { useRouter } from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { TENTING_COLORS } from "../../../../../../common/data/phaseData";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
+import { scheduleDates } from "../../../../../../common/data/scheduleDates";
 
 
 
 export const ScheduleOptions : React.FC = () => {
     const router = useRouter();
     const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
-    const scheduleAndStartDate = useGetQueryDataForSchedule(groupCode);
+    const {data : scheduleAndStartDate, isLoading} = useQueryToFetchSchedule(groupCode);
     const [isLoadingNewSchedule, setIsLoadingNewSchedule] = useState<boolean>(false);
 
     const {mutate : updateScheduleInDB, error, isError, isLoading : isUpdatingDB } = useMutationToUpdateSchedule(groupCode);
@@ -27,7 +28,7 @@ export const ScheduleOptions : React.FC = () => {
         if (scheduleAndStartDate){
             return scheduleAndStartDate;
         } else {
-            return new ScheduleAndStartDate([], new Date(Date.now()));
+            return new ScheduleAndStartDate([], scheduleDates.startOfBlack);
         }
     }
 
