@@ -13,10 +13,12 @@ export class AvailabilitySlot {
      * 
      * @param {Date} startDate 
      * @param {boolean} available 
+     * @param {boolean} preferred
      */
-    constructor(startDate, available){
+    constructor(startDate, available, preferred=false){
         this.startDate = startDate;
         this.available = available;
+        this.preferred = preferred;
     }
 }
 
@@ -27,7 +29,6 @@ export class AvailabilitySlot {
  * @returns {Array<AvailabilitySlot>}
  */
 export async function fetchAvailability(groupCode, userId) {
-    console.log("fetching availability for group" + groupCode);
     const db = firestore;
     const userRef = db.collection('groups').doc(groupCode).collection('members').doc(userId);
     const user = await userRef.get();
@@ -39,8 +40,8 @@ export async function fetchAvailability(groupCode, userId) {
     let availabilityDB = user.data().availability;
     let startDate = getDateRoundedTo30MinSlot( user.data().availabilityStartDate.toDate());
 
-    for (let i = 0; i < availabilityDB.length; i += 1){
-        data.push(new AvailabilitySlot(new Date(startDate.getTime() + i * 30 * 60000), availabilityDB[i]));
+    for (let timeIndex = 0; timeIndex < availabilityDB.length; timeIndex += 1){
+        data.push(new AvailabilitySlot(new Date(startDate.getTime() + timeIndex * 30 * 60000), availabilityDB[timeIndex].available, availabilityDB[timeIndex].preferred));
     }
     return data;
 
@@ -54,14 +55,15 @@ export async function fetchAvailability(groupCode, userId) {
  * @param {Array<AvailabilitySlot>} newAvailability must be same length as the array in the db
  */
 export const setDBAvailability = async (groupCode, userId, newAvailability) => {
-    console.log("setting availability in db for " + userId + ", " + groupCode);
     const db = firestore;
     let availabilityDB = [];
-    for (let i = 0; i < newAvailability.length; i += 1){
-        availabilityDB.push(newAvailability[i].available);
+    for (let timeIndex = 0; timeIndex < newAvailability.length; timeIndex += 1){
+        availabilityDB.push({
+            available : newAvailability[timeIndex].available,
+            preferred : newAvailability[timeIndex].preferred
+        });
     }
 
-    console.log(availabilityDB);
 
 
     const userRef = db.collection('groups').doc(groupCode).collection('members').doc(userId);

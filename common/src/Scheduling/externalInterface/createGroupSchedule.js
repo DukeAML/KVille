@@ -34,7 +34,7 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 
 
 	let {dayHoursPerPersonInRange, nightHoursPerPersonInRange, dayHoursPerPersonEntire, nightHoursPerPersonEntire} = await fetchHoursPerPersonInDateRange(groupCode, startDate, endDate);
-
+	console.log(dayHoursPerPersonEntire);
 	await firestore
 		.collection('groups') 
 		.doc(groupCode)
@@ -42,10 +42,12 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 		.get()
 		.then((groupMembers) => {
 			groupMembers.forEach((tenterInGroup) => {
+				console.log(tenterInGroup.id);
 				var name = tenterInGroup.data().name;
 				var id = tenterInGroup.id;
 				idToName[id] = name;
-				var fullAvailability = tenterInGroup.data().availability; //array of boolean values indicating availability
+				var fullAvailability = tenterInGroup.data().availability;
+				console.log(fullAvailability[0]);
 				var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
 				var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
 				var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
@@ -54,18 +56,23 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 
 
 				var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
+				console.log(user_slots[0]);
 				tenterSlotsGrid.push(user_slots); 
 
 
-				var [numFreeDaySlots, numFreeNightSlots] = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
+				var {numFreeDaySlots, numFreeNightSlots} = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
+				console.log(numFreeDaySlots);
 				var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
 					dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
 				people.push(person);
 			});
 		});
-
+	
+	console.log(people);
+	console.log(tenterSlotsGrid);
 
 	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
+	console.log(newScheduleInRange);
 
 	return slotsArrToStringArr(newScheduleInRange, idToName);
 }
