@@ -17,7 +17,7 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
         {
             mutationFn : (newSchedule : string[]) => setGroupScheduleInDB(groupCode, newSchedule),
             onSuccess : (newSchedule : string[]) => {
-                let queryKeyName = getQueryKeyNameForGroupCode(groupCode);
+                let queryKeyName = getQueryKeyNameForScheduleFetch(groupCode);
                 let oldData : ScheduleAndStartDate | undefined = queryClient.getQueryData(queryKeyName);
                 if (oldData === undefined) {
                     queryClient.invalidateQueries(queryKeyName);
@@ -39,7 +39,7 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
     const router = useRouter();
 
     return useQuery<ScheduleAndStartDate, Error>(
-        getQueryKeyNameForGroupCode(groupCode), 
+        getQueryKeyNameForScheduleFetch(groupCode), 
         ()=> {
             if (groupCode === INVALID_GROUP_CODE){
                 throw new Error("");
@@ -56,13 +56,13 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
 
 
 
-export const getQueryKeyNameForGroupCode = (groupCode : string) : string =>  {
+export const getQueryKeyNameForScheduleFetch = (groupCode : string) : string =>  {
     return "getGroupSchedule";
 }
 
 export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {
     let queryClient = useQueryClient();
-    return queryClient.getQueryData(getQueryKeyNameForGroupCode(groupCode));
+    return queryClient.getQueryData(getQueryKeyNameForScheduleFetch(groupCode));
 }
 
 interface GroupMemberType {

@@ -7,11 +7,12 @@ import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { Typography } from '@material-ui/core';
 import { HoursTable } from "@/components/pageSpecific/groups/groupCode/groupOverview/hoursTable";
 import { EditableGroupName } from "@/components/pageSpecific/groups/groupCode/groupOverview/editableGroupName";
+import { useQueryToFetchHoursTableData } from "@/lib/pageSpecific/groupOverviewHooks";
 
 const GroupHomePage : React.FC = () => {    
 
     const groupCode = useGroupCode();
-    const {data, isLoading} = useQuery('fetchingHours' +groupCode, () => fetchHoursPerPerson(groupCode));
+    const {data, isLoading} = useQueryToFetchHoursTableData(groupCode);
     
     return (
         <PermissionRequiredPageContainer title={"Group Overview"} groupSpecificPage={true}>

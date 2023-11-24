@@ -18,12 +18,6 @@ export class GroupDescription {
 
 export const FETCH_GROUPS_ERRORS = {};
 
-export const REMOVE_USER_ERRORS = {
-  USER_DOES_NOT_EXIST: "User does not exist",
-  USER_NOT_IN_GROUP: "User is not in group",
-  GROUP_DOES_NOT_EXIST: "Group does not exist",
-  DEFAULT: "Error removing user",
-};
 
 export const GET_GROUP_MEMBERS_ERRORS = {
   GROUP_DOES_NOT_EXIST: "Group does not exist",
@@ -84,47 +78,12 @@ export async function fetchGroupData(groupCode){
         return new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator)
     
       })
-      .catch((error) => {
-        console.error(error);
-      });
+
   return description;
 
 }
 
-/**
- *
- * @param {String} userID
- * @param {String} groupCode
- */
-export async function removeUserFromGroup(userID, groupCode) {
-  const userRef = firestore.collection("users").doc(userID);
-  const userDoc = await userRef.get();
-  if (!userDoc.exists) {
-    throw new Error(REMOVE_USER_ERRORS.USER_DOES_NOT_EXIST);
-  }
-  let newUserData = { ...userDoc.data() };
-  newUserData.groups = newUserData.groups.filter(
-    (group) => group.groupCode !== groupCode
-  );
-  const userInGroupRef = firestore
-    .collection("groups")
-    .doc(groupCode)
-    .collection("members")
-    .doc(userID);
-  const userInGroupDoc = await userInGroupRef.get();
-  if (!userInGroupDoc.exists) {
-    throw new Error(REMOVE_USER_ERRORS.USER_NOT_IN_GROUP);
-  }
 
-  try {
-    await firestore.runTransaction(async (transaction) => {
-      transaction.delete(userInGroupRef);
-      transaction.update(userRef, newUserData);
-    });
-  } catch (error) {
-    throw new Error(REMOVE_USER_ERRORS.DEFAULT);
-  }
-}
 
 /**
  *
