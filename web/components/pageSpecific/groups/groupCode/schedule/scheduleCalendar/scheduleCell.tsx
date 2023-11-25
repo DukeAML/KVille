@@ -2,6 +2,7 @@ import React, {useContext} from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { CellColorsContext } from "../../../../../../lib/pageSpecific/schedule/cellColorsContext";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
+import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
 
 interface ScheduleCellProps {
     name : string;
@@ -16,11 +17,19 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
         setTenterToReplace(props.name);
         setTimeSlotClickedOn(props.startDate);
     }
+
+    
     return (
-        <Grid item xs>
-            <Paper style={{backgroundColor : cellColorsCoordinator.getColorForName(props.name), cursor : "grab"}} onClick={handleClick}>
-                <Typography align="center" >{props.name}</Typography>
-            </Paper>
-        </Grid>
+        <TableCell style={{
+            height : "100%", 
+            backgroundColor : cellColorsCoordinator.getColorForName(props.name), 
+            cursor : "grab",
+            borderLeft : "1px solid black",
+            borderRight : "1px solid black",
+            borderTop : (props.startDate.getMinutes() == 0) ? "2px solid black " : "2px dashed black"
+        }} onClick={handleClick}>
+            <Typography align="center" >{props.name}</Typography>
+            
+        </TableCell>
     )
 }

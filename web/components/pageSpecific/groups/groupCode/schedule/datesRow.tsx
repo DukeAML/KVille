@@ -17,17 +17,7 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
     const {isNarrow} = useCheckIfScreenIsNarrow();
 
     if (isNarrow){
-        return (
-            <div style={{textAlign : "center", marginTop : 20, marginBottom : 20}}>
-                 <Stack direction={"row"} alignItems={"center"} spacing={2} >
-                <ArrowLeft onClick={() => setDateBeingShown(getDatePlusNumShifts(dateBeingShown, -48))}/>
-                <DateChanger text="Date Shown" date={dateBeingShown} setDate={setDateBeingShown} includeHours={false}/>
-                <ArrowRight onClick={() => setDateBeingShown(getDatePlusNumShifts(dateBeingShown, 48))}/>
-            </Stack>
-            </div>
-           
-
-        );
+        return <NarrowDatesRow/>
     } else {
         return (
             <div style={{display : "flex", marginTop: 20}}>
@@ -48,3 +38,18 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
     }
 }
 
+const NarrowDatesRow : React.FC = () => {
+    const {dateBeingShown, setDateBeingShown} = useContext(DateBeingShownContext);
+    return (
+        <div style={{textAlign : "center", marginTop : 20, marginBottom : 20}}>
+             <Stack direction={"row"} alignItems={"center"} spacing={2} >
+                <ArrowLeft onClick={() => setDateBeingShown(getDatePlusNumShifts(dateBeingShown, -48))}/>
+                <DateChanger text="Date Shown" date={dateBeingShown} setDate={setDateBeingShown} includeHours={false}/>
+                <ArrowRight onClick={() => setDateBeingShown(getDatePlusNumShifts(dateBeingShown, 48))}/>
+            </Stack>
+        </div>
+       
+
+    );
+
+}
