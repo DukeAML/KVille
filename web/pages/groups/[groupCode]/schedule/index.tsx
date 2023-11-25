@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
-import {getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
+import {getDefaultDisplayDateGivenTentType, getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
 import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';
 import { OneDaySchedule } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
 import { Typography, Stack } from "@mui/material";
@@ -16,6 +16,7 @@ import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedu
 import { scheduleDates } from "../../../../../common/data/scheduleDates";
 import { EMPTY } from "../../../../../common/src/scheduling/slots/tenterSlot";
 import { getDatePlusNumShifts } from "../../../../../common/src/calendarAndDates/datesUtils";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 
 
 
@@ -25,6 +26,7 @@ export default function Schedule() {
 
     const DEFAULT_DATE_BEING_SHOWN = scheduleDates.startOfBlue;
     const [dateBeingShown, setDateBeingShown] = useState<Date>(DEFAULT_DATE_BEING_SHOWN);
+    const {groupDescription} = useContext(GroupContext);
     const groupCode = useGroupCode();
     
     const [isSwappingTenter, setIsSwappingTenter] = useState<boolean>(false);
@@ -36,8 +38,8 @@ export default function Schedule() {
 
     const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
     useEffect(() => {
-        setDateBeingShown(getDefaultDisplayDateRangeStartDateWithoutSchedule());
-    }, []);
+        setDateBeingShown(getDefaultDisplayDateGivenTentType(groupDescription.tentType));
+    }, [groupDescription.tentType]);
 
 
 

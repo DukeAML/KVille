@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container } from "@material-ui/core";
 import {Grid} from "@material-ui/core";
 import { DateChanger } from "./dateChanger";
@@ -14,6 +14,11 @@ export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateR
 
     const [newStartDate, setNewStartDate] = useState<Date>(props.externalStartDate);
     const [newEndDate, setNewEndDate] = useState<Date>(props.externalEndDate);
+
+    useEffect(() => {
+        setNewStartDate(props.externalStartDate);
+        setNewEndDate(props.externalEndDate);
+    }, [props.externalStartDate, props.externalEndDate]);
     return (
         <Container>
             <Grid container spacing={2} alignItems="center" direction="row">

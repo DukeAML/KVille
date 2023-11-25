@@ -7,7 +7,8 @@ import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/Availab
 
 export const AvailabilityOptions : React.FC = () => {
     const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred} = useContext(AvailabilityPageContext);
-
+    console.log("start Date is " );
+    console.log(calendarStartDate);
     let changeTimesOption = {
         summaryText : "Change Dates Visible",
         detail : 
@@ -46,6 +47,9 @@ export const AvailabilityOptions : React.FC = () => {
                 </ListItem>
                 <ListItem sx={{ display: 'list-item' }}>
                     Gold is for the timeslots you most want to be in. Our scheduling algorithm will make it a priority to assign you to these times when possible. 
+                </ListItem>
+                <ListItem sx={{display : 'list-item'}}>
+                    Grey is for timeslots which fall outside of the time period where your group has to be in the tent
                 </ListItem>
             </List>
         </Container>

@@ -25,14 +25,13 @@ export const joinGroupValidationSchema = Yup.object({
  * @param {String} groupRole 
  * @returns {{availability : boolean[], availabilityStartDate : Date, name : string, groupRole : string, inTent: boolean}}
  */
-export function getDefaultGroupMemberData(name, tentType, groupRole) {
+export function getDefaultGroupMemberData(name, tentType, groupRole="Member") {
     let availabilityStartDate = getTentingStartDate(tentType);
     
     let endDate = scheduleDates.endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
-    let availability = new Array(numSlots).fill(false);
-    let inTent = false;
-    return {availability, availabilityStartDate, name, groupRole, inTent};
+    let availability = new Array(numSlots).fill({available : false, preferred : false});
+    return {availability, availabilityStartDate, name};
 }
 
 
