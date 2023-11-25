@@ -120,6 +120,10 @@ handleHorizontalDrag() {
 		this.valueChangedToOnDragStart = valueChangedToOnDragStart;
 		this.changeAvailabilityAtRowsAndCols([{row : row, col : col}], valueChangedToOnDragStart);
     }
+
+    alertMouseUpOutOfBounds(){
+      this.mouseIsDown = false;
+    }
   
     /**
      * 

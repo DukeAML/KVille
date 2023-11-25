@@ -13,6 +13,7 @@ import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 import { TENTING_COLORS } from "../../../../common/data/phaseData";
+import { SelectTentType } from "@/components/pageSpecific/groups/createGroup/selectTentType";
 
 interface CreateGroupFormValues {
     groupName : string;
@@ -24,25 +25,27 @@ const initialValues : CreateGroupFormValues = {
     tentType : TENTING_COLORS.BLUE
 }
 
+
+
 export default function CreateGroupPage() {
     const router = useRouter();
     const queryClient = useQueryClient();
     const {userID, isLoggedIn} = useContext(UserContext);
+    const [tentType, setTentType] = useState<string>(TENTING_COLORS.BLACK);
     const {groupDescription, setGroupDescription} = useContext(GroupContext);
     const [errorMessage, setErrorMessage] = useState<string>(NO_ERROR_MESSAGE);
     const handleSubmit = (values : CreateGroupFormValues) => {
-        tryToCreateGroup(values.groupName, values.tentType, userID).
+        
+        tryToCreateGroup(values.groupName, tentType, userID).
             then((groupCode) => {
                 queryClient.invalidateQueries({queryKey : ['fetchAllGroups']})
-                setGroupDescription(new GroupDescription(groupCode, values.groupName, values.tentType, userID));
-                router.push("/groups");
+                setGroupDescription(new GroupDescription(groupCode, values.groupName, tentType, userID));
+                router.push("/groups/" + groupCode);
             }).
             catch((error) => {
                 setErrorMessage(error.message);
             })
     }
-
-
 
     return (
         <PermissionRequiredPageContainer title="Create a Group" groupSpecificPage={false}>
@@ -53,7 +56,7 @@ export default function CreateGroupPage() {
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}
                         textFields={[{name : "groupName", type : "string"}]}
-                        selectFields={[{name : "tentType", options : [TENTING_COLORS.BLACK, TENTING_COLORS.BLUE, TENTING_COLORS.WHITE]}]}
+                        extraStuff={<SelectTentType tentType={tentType} setTentType={setTentType}/>}
                         errorMessage={errorMessage}
                         handleSubmit={handleSubmit}
                     />

@@ -22,7 +22,7 @@ export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : One
      const {data : scheduleAndStartDate, isLoading, isError} = useQueryToFetchSchedule(groupCode);
 
     if (scheduleAndStartDate){   
-        return <RowGivenData scheduleAndStartDate={scheduleAndStartDate ? scheduleAndStartDate : new ScheduleAndStartDate([""], new Date(Date.now()))} rowStartDate={props.rowStartDate}/>
+        return <RowGivenData scheduleAndStartDate={scheduleAndStartDate} rowStartDate={props.rowStartDate}/>
     } else {
         return <div>what hte heck</div>
     }  
@@ -79,7 +79,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
 
 
         <TableRow >
-            <TableCell>
+            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white"}}>
                 <Typography style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit"}}>
                     {dateToTextLabel(props.rowStartDate)}
                 </Typography>

@@ -1,5 +1,6 @@
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDates/datesUtils";
 import { scheduleDates } from "../../../data/scheduleDates";
+import { TENTING_COLORS } from "../../../data/phaseData";
 
 /**
  * 
@@ -30,4 +31,33 @@ export const getDefaultDisplayDateRangeStartDateWithoutSchedule = () => {
     currentDate.setMilliseconds(0);
     return currentDate;
   }
+}
+
+
+/**
+ * 
+ * @param {string} tentType 
+ * @returns {Date} displayDate
+ */
+export const getDefaultDisplayDateGivenTentType = (tentType) => {
+  let startOfTenting = scheduleDates.startOfBlack
+  if (tentType === TENTING_COLORS.BLUE){
+    startOfTenting = scheduleDates.startOfBlue;
+  } else if (tentType === TENTING_COLORS.WHITE){
+    startOfTenting = scheduleDates.startOfWhite;
+  }
+  let currentDate = getCurrentDate();
+  if (currentDate < startOfTenting){
+    return startOfTenting;
+  } else if (currentDate > scheduleDates.endOfTenting){
+    return startOfTenting;
+  } else {
+    currentDate.setHours(0);
+    currentDate.setMinutes(0);
+    currentDate.setSeconds(0);
+    currentDate.setMilliseconds(0);
+    return currentDate;
+  }
+
+
 }
