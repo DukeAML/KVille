@@ -35,7 +35,7 @@ export const ScheduleOptions : React.FC = () => {
 
 
     let assignTentersOption = {
-        summary : <Typography>Assign Tenters</Typography>,
+        summaryText : "Assign Tenters",
         detail : 
             <Container>
                 <DateRangeChanger 
@@ -67,7 +67,9 @@ export const ScheduleOptions : React.FC = () => {
     
     return (
         <Container maxWidth="md" style={{marginTop: 12}}>
-            <KvilleAccordion elements={[assignTentersOption]} />
+            <Container maxWidth="sm">
+                <KvilleAccordion elements={[assignTentersOption]} />
+            </Container>
             <DatesRow/>
         </Container>
     );

@@ -58,8 +58,8 @@ export default function Schedule() {
                 
                         <ScheduleOptions/>
                         <Stack direction="row">
-                            <OneDaySchedule/>
                             {isSwappingTenter ? <TenterSwapper/> : null}
+                            <OneDaySchedule/>
                         </Stack>
                     </TenterSwapContext.Provider>
                 </CellColorsContext.Provider>

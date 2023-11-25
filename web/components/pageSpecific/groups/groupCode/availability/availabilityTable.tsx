@@ -1,7 +1,7 @@
 import { AvailabilitySlot, setDBAvailability } from '../../../../../../common/src/db/availability';
 import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../common/src/calendarAndDates/calendarUtils';
 import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Paper, Stack, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
 import {MouseTracker} from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
@@ -11,6 +11,8 @@ import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { INVALID_GROUP_CODE } from '../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
 import { getQueryKeyNameForFetchAvailability } from '../../../../../lib/pageSpecific/availability/availabilityHooks';
+import { TimeColumn } from '@/components/shared/utils/timeColumn';
+import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
 
 interface RowAndCol {
     row : number;
@@ -23,6 +25,7 @@ interface AvailabilityTableProps{
 
 
 export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:AvailabilityTableProps) => {
+    const {isNarrow, checkingIfNarrow} = useCheckIfScreenIsNarrow();
     const [availability, setAvailability] = useState<AvailabilitySlot[]>(props.originalAvailabilityArr);
     
     const [mouseTracker, setMouseTracker] = useState<MouseTracker>(new MouseTracker());
@@ -62,8 +65,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                 
             }
         }
-        console.log("in changeStand, setting preferred : " + settingPreferred + " newValue is " + newValue);
-        console.log(newAvailability[0]);
         setAvailability(newAvailability);
     }
 
@@ -84,8 +85,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             }
             
         }
-        console.log("in changePref, setting preferred : " + settingPreferred + " newValue is " + newValue);
-        console.log(newAvailability[0]);
         setAvailability(newAvailability);
     }
 
@@ -97,11 +96,11 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             mouseTracker.setChangeAvailabilityAtRowsAndCols(changeBasicAvailabilityAtRowsAndCols);
         }
 
-    }, [settingPreferred]);
+    });
 
 
+    let columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate, isNarrow);
 
-    const columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate);
     const rowLabels = get48TimeLabels();
 
     const rowColToIndex = (row : number, col: number) : number => {
@@ -123,50 +122,46 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
 
     return (
-        <Paper style={{marginTop : "20px"}}>
-            <Grid container spacing={0} direction="column">
-				{/* Empty cell at the top-left corner */}
-				<Grid item/>
+        <Grid container spacing={0} direction="column" style={{marginTop : "20px"}}>
 
-				{/* Column labels */}
-				<Grid item container spacing={0}>
-					<Grid item xs={1} /> {/* Empty cell at the top-left corner */}
-					{columnLabels.map((column, index) => (
-					
-					<Grid item xs key={index}>
-						<Paper  onMouseUp={() => {console.log("entering column " + index)}}>
+            {/* Column labels */}
+            <Grid item container spacing={0}>
+                <Grid item xs={2.5} sm={1} /> {/* Empty cell at the top-left corner */}
+                {columnLabels.map((column, index) => (
+                
+                    <Grid item xs key={index}>
+                        
                             <Typography align="center" fontWeight={"bold"}>{column}</Typography>
-                        </Paper>
-					</Grid>
-					))}
-				</Grid>
-
-					
-				{/* Row labels and data cells */}
-				{rowLabels.map((row, rowIndex) => (
-					<Grid item container spacing={0} key={row}>
-					{/* Row label */}
-					
-
-					<Grid item xs={1} key={row}>
-						{}
-						<Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px"}}>{row}</Typography>
-					</Grid>
-					
-
-					{/* Data cells */}
-					{columnLabels.map((column, columnIndex) => {
-						const correspondingIndex = rowColToIndex(rowIndex, columnIndex);
-						const isInBounds = cellIsInBounds(correspondingIndex);
-						const correspondingSlot = isInBounds ? availability[correspondingIndex] : new AvailabilitySlot(new Date(Date.now()), false);
-						return (
-							<AvailabilityCell mouseTracker={mouseTracker} slot={correspondingSlot} row={rowIndex} col={columnIndex} inBounds={isInBounds} updateAvailabilityInDB={updateAvailabilityInDB} key={correspondingIndex}/>
-						);
-					})}
-					</Grid>
-				))}
+                        
+                    </Grid>
+                ))}
 
             </Grid>
-        </Paper>
+
+                
+            {/* Row labels and data cells */}
+            {rowLabels.map((row, rowIndex) => (
+                <Grid item container spacing={0} key={row}>
+                    {/* Row label */}
+                    <Grid item xs={2.5 } sm={1} key={row}>
+                        <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px", userSelect: "none"}}>{row}</Typography>
+                    </Grid>
+                    
+
+                    {/* Data cells */}
+                    {columnLabels.map((column, columnIndex) => {
+                        const correspondingIndex = rowColToIndex(rowIndex, columnIndex);
+                        const isInBounds = cellIsInBounds(correspondingIndex);
+                        const correspondingSlot = isInBounds ? availability[correspondingIndex] : new AvailabilitySlot(new Date(Date.now()), false);
+                        return (
+                            <AvailabilityCell mouseTracker={mouseTracker} slot={correspondingSlot} row={rowIndex} col={columnIndex} inBounds={isInBounds} updateAvailabilityInDB={updateAvailabilityInDB} key={correspondingIndex}/>
+                        );
+                    })}
+
+                   
+                </Grid>
+            ))}
+
+        </Grid>
     );
 }
