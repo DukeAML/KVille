@@ -1,10 +1,12 @@
 // LoginForm.tsx
 
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { MenuItem, Select, TextField, Typography } from '@mui/material';
+import React, {ReactNode} from 'react';
+import { Formik, Form, Field, ErrorMessage} from 'formik';
+import {  TextField, Typography, Container } from '@mui/material';
+import {Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import {Button} from '@mui/material';
-import { Container } from '@material-ui/core';
+
+
 
 
 
@@ -15,7 +17,7 @@ interface KvilleFormProps<FormValuesInterface> {
     initialValues : FormValuesInterface;
     validationSchema : any;
     textFields? : TextFieldProps[];
-    selectFields? : SelectFieldProps[];
+    extraStuff? : ReactNode;
     errorMessage : string;
     
 
@@ -52,7 +54,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                     <Form>
                         {props.textFields?.map((fieldProps, index) => {
                             return (
-                                <div key={index} style={{marginBottom : 4}}>
+                                <div key={index} style={{marginBottom : 8}}>
                                     <Field
                                         as={TextField}
                                         type={fieldProps.type}
@@ -67,33 +69,8 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                             );
                         })}
 
-                        {props.selectFields?.map((fieldProps, index) => {
-                            return (
-                                <div key={index}>
-                                    <Field
-                                        as={Select}
-                                        id={fieldProps.name}
-                                        name={fieldProps.name}
-                                        label={fieldProps.name}
-                                        variant="outlined"
-                                        fullWidth
-                                        required
-                                    >
-                                        {fieldProps.options.map((option, index) => {
-                                            return (
-                                                <MenuItem key={option} value={option}>
-                                                    {option}
-                                                </MenuItem>
-                                            );
-                                        })}
-
-
-                                    </Field>
-                                </div>
-                            )
-                        })
-
-                        }
+                        {props.extraStuff ? props.extraStuff : null}
+                        
                         {props.errorMessage.length > 0 ? <div>{props.errorMessage}</div> : null}
 
                         <Button type="submit" color="primary" variant='contained' >

@@ -1,6 +1,6 @@
 import { UserContext } from "@/lib/shared/context/userContext";
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {useQuery} from 'react-query';
 import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
@@ -14,10 +14,12 @@ import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecifi
 import { TENTING_COLORS } from "../../../../../common/data/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography } from "@mui/material";
+import { GroupContext } from "@/lib/shared/context/groupContext";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
     const groupCode = useGroupCode();
+    const {groupDescription} = useContext(GroupContext);
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
         ()=> fetchAvailability(groupCode, userID),
@@ -26,6 +28,14 @@ export default function Availability(){
 
     const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
     const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
+
+    useEffect(() => {
+        if (groupDescription){
+            setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType));
+            setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType));
+        }
+    }, [groupDescription]);
+    
     const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
     return (
         <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
