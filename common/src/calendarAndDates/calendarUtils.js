@@ -7,15 +7,16 @@ import { getNumDaysBetweenDates } from "./datesUtils.js";
  * Get the day abbreviations for each day in the schedule
  * @param {Date} startDate
  * @param {Date} endDate
+ * @param {boolean} narrow
  * @returns {string[]} something like ["Mon. 1/15", "Tue. 1/16", "Wed. 1/17"]
  */
-export const getCalendarColumnTitles = (startDate, endDate) =>{
+export const getCalendarColumnTitles = (startDate, endDate, narrow = false) =>{
     let numDays = getNumDaysBetweenDates(startDate, endDate);
 
     let titles= [];
     for (let i = 0; i < numDays; i++){
         let newDate = new Date(startDate.getTime() + i*24*60*60*1000);
-        titles.push(getDayAbbreviation(newDate));
+        titles.push(getDayAbbreviation(newDate, narrow));
     }
     return titles;
 }
