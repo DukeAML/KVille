@@ -15,6 +15,10 @@ const useStyles = makeStyles((theme:Theme) => ({
         borderTop: 'none', // Remove the top border
         padding: `${theme.spacing(1)}px 0`, // Top padding to align row labels
     },
+    outOfBoundsCell : {
+        backgroundColor : 'gray',
+        cursor : 'not-allowed',
+    },
     unavailableCell: {
         backgroundColor: 'red',
     },
@@ -49,7 +53,9 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
 
 
     const getCellColor = (available : boolean, preferred : boolean ) : string => {
-        if (available && !preferred){
+        if (!props.inBounds){
+            return classes.outOfBoundsCell;
+        } if (available && !preferred){
             return classes.availableCell;
         } else if (available && preferred) {
             return classes.preferredCell;
@@ -59,18 +65,28 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
     }
     const handleTouchStartOrMouseDown = () => {
         console.log("mouse down at " + props.row + ", " + props.col)
-        if (settingPreferred){
-            props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.preferred);
-        } else {
-            props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.available);
+        if (props.inBounds){
+            if (settingPreferred){
+                props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.preferred);
+            } else {
+                props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.available);
+            }
         }
     }
     const handleTouchMoveOrMouseEnter = () => {
         console.log("mouse enter at " + props.row + props.col)
-        props.mouseTracker.alertMovementToRowCol(props.row, props.col);
+        if (props.inBounds){
+            props.mouseTracker.alertMovementToRowCol(props.row, props.col);
+        } 
     }
     const handleTouchEndOrMouseUp = () => {
         console.log("mouse up at " + props.row + ", " + props.col)
+        if (props.inBounds){
+            props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
+        } else {
+            props.mouseTracker.alertMouseUpOutOfBounds();
+        }
+        props.updateAvailabilityInDB();
         props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
 		props.updateAvailabilityInDB();
     }
