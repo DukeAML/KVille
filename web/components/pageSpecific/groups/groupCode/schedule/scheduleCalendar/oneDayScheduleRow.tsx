@@ -8,6 +8,8 @@ import { useRouter } from "next/dist/client/router";
 import { INVALID_GROUP_CODE } from "../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
 import { Typography } from "@material-ui/core";
+import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
@@ -40,7 +42,11 @@ const dateToTextLabel = (date : Date) : string => {
     if (hours % 12 === 0){
         hours = 12;
     }
-    let text : string = hours + ":00";
+    let minutes = ":00";
+    if (date.getMinutes() == 30){
+        minutes = ":30";
+    }
+    let text : string = hours + minutes;
     if (am){
         text += "am";
     } else {
@@ -64,17 +70,26 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
     if (names.length == 0){
         names = [EMPTY];
     }
+
+    let timeLabelTopMargin = "-40px";
+    if (props.rowStartDate.getHours() == 0){
+        timeLabelTopMargin = "-33px";
+    }
     return (
-        <Grid item container spacing={0}>
-            <Typography style={{marginTop: '-10px', textAlign : "right", color : (props.rowStartDate.getMinutes() == 0 ? "inherit" : "transparent")}}>
-                {dateToTextLabel(props.rowStartDate)}
-            </Typography>
+
+
+        <TableRow >
+            <TableCell>
+                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit"}}>
+                    {dateToTextLabel(props.rowStartDate)}
+                </Typography>
+            </TableCell>
 
             {names.map((name, index) => {
                 return (
                     <ScheduleCell name={name} startDate={props.rowStartDate} key={index}/>
                 );
             })}
-        </Grid>
+        </TableRow>
     )
 }

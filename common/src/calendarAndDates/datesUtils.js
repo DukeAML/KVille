@@ -63,14 +63,18 @@ export const getDateRoundedTo30MinSlot = (date) => {
 
 /**
  * Get an abbreviated name for a date, like "Mon. 1/15"
+ * @param {boolean} narrow
  * @param {Date} date just needs to be the correct year, month, day. Hour and minutes don't matter
  * @returns {String} something like "Mon. 1/15"
  */
-export const getDayAbbreviation = (date) => {
+export const getDayAbbreviation = (date, narrow = false) => {
     let dayNum = date.getDay();
     let dayStr = weekdayAbbreviations[dayNum];
     let month = date.getMonth() + 1;
     let monthDay = date.getDate();
+    if (narrow){
+        return month.toString() + "/\n" + monthDay.toString();
+    }
     return (dayStr + " " + month.toString() + "/" + monthDay.toString());
   }
 

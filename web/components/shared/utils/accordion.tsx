@@ -1,9 +1,10 @@
 import React, {ReactNode} from 'react';
 
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
-
+import { Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@material-ui/core';
+import { ExpandMore } from '@mui/icons-material';
 interface AccordionSummaryAndDetail{
-	summary : ReactNode;
+	summaryText : string;
 	detail : ReactNode;
 }
 
@@ -17,9 +18,11 @@ export const KvilleAccordion: React.FC<AccordionProps> = (props:AccordionProps) 
 		<div>
 			{props.elements.map((element, index) => {
 				return (
-				<Accordion key={index}>
-					<AccordionSummary>
-					{element.summary}
+				<Accordion key={index} >
+					<AccordionSummary expandIcon={<ExpandMore/>}>
+						<Typography style={{fontWeight : "bold"}}>
+							{element.summaryText}
+						</Typography>
 					</AccordionSummary>
 					<AccordionDetails>
 					{element.detail}
