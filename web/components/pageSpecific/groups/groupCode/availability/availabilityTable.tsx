@@ -96,7 +96,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             mouseTracker.setChangeAvailabilityAtRowsAndCols(changeBasicAvailabilityAtRowsAndCols);
         }
 
-    }, [settingPreferred]);
+    });
 
 
     let columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate, isNarrow);
@@ -130,9 +130,9 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                 {columnLabels.map((column, index) => (
                 
                     <Grid item xs key={index}>
-                        <Paper  onMouseUp={() => {console.log("entering column " + index)}}>
+                        
                             <Typography align="center" fontWeight={"bold"}>{column}</Typography>
-                        </Paper>
+                        
                     </Grid>
                 ))}
 
@@ -144,7 +144,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                 <Grid item container spacing={0} key={row}>
                     {/* Row label */}
                     <Grid item xs={2.5 } sm={1} key={row}>
-                        <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px"}}>{row}</Typography>
+                        <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px", userSelect: "none"}}>{row}</Typography>
                     </Grid>
                     
 

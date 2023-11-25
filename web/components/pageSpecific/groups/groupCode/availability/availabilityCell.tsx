@@ -58,6 +58,7 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
         }
     }
     const handleTouchStartOrMouseDown = () => {
+        console.log("mouse down at " + props.row + ", " + props.col)
         if (settingPreferred){
             props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.preferred);
         } else {
@@ -65,9 +66,11 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
         }
     }
     const handleTouchMoveOrMouseEnter = () => {
+        console.log("mouse enter at " + props.row + props.col)
         props.mouseTracker.alertMovementToRowCol(props.row, props.col);
     }
     const handleTouchEndOrMouseUp = () => {
+        console.log("mouse up at " + props.row + ", " + props.col)
         props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
 		props.updateAvailabilityInDB();
     }

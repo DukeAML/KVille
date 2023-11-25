@@ -35,7 +35,7 @@ export const AvailabilityOptions : React.FC = () => {
     }
 
     let colorCodesOption = {
-        summaryText : "Color Codes Visible",
+        summaryText : "Color Codes",
         detail : <Container>
             <List sx={{ listStyleType: 'disc' }}>
                 <ListItem sx={{ display: 'list-item' }}>
