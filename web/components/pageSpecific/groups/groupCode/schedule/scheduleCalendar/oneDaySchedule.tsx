@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import { OneDayScheduleRow } from "./oneDayScheduleRow";
 import { getDatePlusNumShifts } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { useContext } from "react";
@@ -14,6 +14,7 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
     const {dateBeingShown} = useContext(DateBeingShownContext);
     return (
         <Container maxWidth="md">
+
             <TableContainer>
                 <Table>
                     <TableBody>
@@ -21,6 +22,7 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
                     </TableBody>
                 </Table>
             </TableContainer>
+            
             
         </Container>
     )
