@@ -5,8 +5,9 @@ import {generateGroupCode} from "./GroupCode.js";
 import { TENTING_COLORS } from "../../../data/phaseData.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 import { scheduleDates } from "../../../data/scheduleDates.js";
-import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
-import { EMPTY } from "../../scheduling/slots/tenterSlot.js";
+import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
+import { EMPTY, TenterSlot } from "../../scheduling/slots/tenterSlot.js";
+import { Slot } from "../../scheduling/slots/slot.js";
 const GROUP_CODE_LENGTH = 8;
 const CREATOR_ROLE = "Creator";
 
@@ -45,7 +46,14 @@ export function getDefaultSchedule(tentType){
     let startDate = getTentingStartDate(tentType);
     let endDate = scheduleDates.endOfTenting;
     let numSlots = getNumSlotsBetweenDates(startDate, endDate);
-    return new Array(numSlots).fill(EMPTY);
+    let sched = [];
+    for (let i = 0; i < numSlots; i += 1){
+        let slot = new Slot(getDatePlusNumShifts(startDate, i), tentType);
+        let numPpl = slot.calculatePeopleNeeded();
+        sched.push(new Array(numPpl).fill(EMPTY).join(" "));
+    }
+    return sched;
+    
 }
 
 /**
