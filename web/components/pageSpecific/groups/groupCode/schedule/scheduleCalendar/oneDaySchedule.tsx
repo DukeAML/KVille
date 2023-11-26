@@ -13,9 +13,9 @@ interface OneDayScheduleProps {
 export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDayScheduleProps) => {
     const {dateBeingShown} = useContext(DateBeingShownContext);
     return (
-        <Container maxWidth="md">
+        <Container maxWidth="md" style={{alignContent : "left", justifyContent:"left"}}>
 
-            <TableContainer>
+            <TableContainer >
                 <Table>
                     <TableBody>
                         {new Array(48).fill("").map((_, index) => <OneDayScheduleRow rowStartDate={getDatePlusNumShifts(dateBeingShown, index)} key={"row" + index.toString()}/>)}

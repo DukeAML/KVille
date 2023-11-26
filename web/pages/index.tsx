@@ -34,13 +34,11 @@ const HomePage : React.FC = () => {
 				{
 					summaryText : "6) Finally, run our algorithm to assign people to their shifts",
 					detail : <Typography>On the Schedule page, press the Assign Tenters dropdown. Before submitting, make sure everyone has filled in their availability! You can run the algorithm as many times as you want, for whatever time ranges you want. Once completed, you can also swap who is assigned to individual time slots. </Typography>
-				},
-				{
-					summaryText : "7) Done! Refer to the Schedule page to check when you should be in the tent. Repeat Steps 4-6 throughout the tenting season to fill in your schedule as needed",
-					detail : <Typography></Typography>
 				}
 				]}/>
-
+				<Typography variant="h6" align="center" style={{marginTop : 20}}>
+					Done! Repeat Steps 4-6 as needed throughout the tenting season to fill in your schedule
+				</Typography>
 			</Container>
 		</BasePageContainerWithNavBarAndTitle>
 	);
