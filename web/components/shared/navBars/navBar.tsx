@@ -6,6 +6,7 @@ import { MobileNavBarDrawerAndMenuIcon } from './mobileNavBar';
 
 
 
+
 interface KvilleNavBarGivenOptionsProps {
     options : ReactNode;
     colorIsPrimary? : boolean;
@@ -13,11 +14,11 @@ interface KvilleNavBarGivenOptionsProps {
 
 const KvilleNavBarGivenOptions : React.FC<KvilleNavBarGivenOptionsProps> = (props : KvilleNavBarGivenOptionsProps) => {
     let position : "sticky" | "fixed" = props.colorIsPrimary ? "sticky" : "fixed";
-
+    const router = useRouter();
     return (
         <AppBar position={position} color={props.colorIsPrimary ? "primary" : "secondary"} >
             <Toolbar>
-                <Typography variant="h5" style={{ flexGrow: 1 }}>
+                <Typography variant="h5" style={{ flexGrow: 1, cursor : "pointer" }} onClick={() => router.push("/")}>
                     KVille
                 </Typography>
                 {props.options}
