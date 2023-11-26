@@ -72,15 +72,15 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
     }
 
     let timeLabelTopMargin = "-40px";
-    if (props.rowStartDate.getHours() == 0){
+    if (props.rowStartDate.getHours() == 0 && props.rowStartDate.getMinutes() == 0){
         timeLabelTopMargin = "-33px";
     }
     return (
 
 
         <TableRow >
-            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white"}}>
-                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit"}}>
+            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content"}}>
+                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "left", color : "inherit"}}>
                     {dateToTextLabel(props.rowStartDate)}
                 </Typography>
             </TableCell>
