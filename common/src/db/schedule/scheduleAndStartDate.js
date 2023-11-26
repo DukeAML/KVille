@@ -106,6 +106,32 @@ export class ScheduleAndStartDate{
 
     }
 
+    /**
+     * 
+     * @param {Date} date 
+     * @returns {number} maxPpl
+     */
+    getMaxNumPplOnDay(date){
+        date.setHours(0);
+        date.setMinutes(0);
+        let startIndex = getNumSlotsBetweenDates(this.startDate, date);
+        if (startIndex < 0 || startIndex >= this.schedule.length){
+            return 0;
+        } else {
+            let maxPpl = 0;
+            let timeIndex = startIndex;
+            while (timeIndex < this.schedule.length && timeIndex < (startIndex + 48)){
+                let len = this.schedule[timeIndex].split(" ").length;
+                if (len > maxPpl){
+                    maxPpl = len;
+                }
+                timeIndex += 1;
+            }
+            return maxPpl;
+        }
+        
+    }
+
   
     
   
