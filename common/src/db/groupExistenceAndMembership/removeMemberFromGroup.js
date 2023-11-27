@@ -101,6 +101,15 @@ export async function removeMemberFromGroupByID(userID, groupCode) {
     As an example of how this should work, suppose originalSchedule is ["Bob Joe", "Bob Joe", "Mike Steve Jim", "Mike Steve Jim"]
     and tenterToRemove is "Bob". Then, the function should return ["empty Joe", "empty Joe", "Mike Steve Jim", "Mike Steve Jim"] where EMPTY = "empty"
     */
+    const names = entry.split(' ');
+
+    // Replace tenterToRemove with "empty"
+    const updatedNames = names.map(name => (name === tenterToRemove ? EMPTY : name));
+
+    // Join the names back into an entry
+    return updatedNames.join(' ');
+
+
     return originalSchedule;
   
   }
