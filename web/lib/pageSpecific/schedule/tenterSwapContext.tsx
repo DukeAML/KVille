@@ -19,6 +19,7 @@ interface tenterSwapContextType {
     
 };
 
+export const INVALID_NEW_TENTER = "";
 export const TenterSwapContext : Context<tenterSwapContextType> = createContext<tenterSwapContextType>({
     isSwappingTenter : false,
     setIsSwappingTenter : (b : boolean ) => {},

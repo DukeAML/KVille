@@ -1,5 +1,5 @@
 import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
+import { INVALID_NEW_TENTER, TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography, Container, Button} from "@mui/material";
 import React, { useContext,  useState } from "react";
@@ -22,6 +22,10 @@ export const TenterSwapper: React.FC = () => {
     if (schedule){
       if (endReplacementDate <= startReplacementDate){
         setErrorMsg("End Date Must Come After Start Date");
+        return;
+      }
+      if (newTenter === INVALID_NEW_TENTER){
+        setErrorMsg("Must pick a new tenter!");
         return;
       }
       setErrorMsg("");

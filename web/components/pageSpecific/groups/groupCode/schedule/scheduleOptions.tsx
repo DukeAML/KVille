@@ -35,9 +35,12 @@ export const ScheduleOptions : React.FC = () => {
 
 
     let assignTentersOption = {
-        summaryText : "Assign Tenters",
+        summaryText : "Fill In Schedule",
         detail : 
             <Container>
+                <Typography align="left" style={{marginBottom: 16}}>
+                    Our algorithm will fill in your schedule between these times. Make sure everyone in your group has filled in their availability for the dates selected below!
+                </Typography>
                 <DateRangeChanger 
                     includeHours={true}
                     externalStartDate={getDefaultAssignDateRangeStartDate(getDefinedScheduleAndStartDate().schedule, getDefinedScheduleAndStartDate().startDate)}

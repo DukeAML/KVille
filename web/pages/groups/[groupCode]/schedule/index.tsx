@@ -4,7 +4,7 @@ import { ScheduleOptions } from "../../../../components/pageSpecific/groups/grou
 import {getDefaultDisplayDateGivenTentType, getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
 import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';
 import { OneDaySchedule } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
-import { Typography, Stack } from "@mui/material";
+import { Typography, Stack, Container } from "@mui/material";
 import { CellColorsCoordinator } from "../../../../components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
 import { CellColorsContext } from "../../../../lib/pageSpecific/schedule/cellColorsContext";
 import { DateBeingShownContext } from "../../../../lib/pageSpecific/schedule/dateBeingShownContext";
@@ -52,11 +52,14 @@ export default function Schedule() {
                 <CellColorsContext.Provider value={{cellColorsCoordinator : cellColorCoordinator}}>
                     <TenterSwapContext.Provider value={{isSwappingTenter, setIsSwappingTenter, timeSlotClickedOn, setTimeSlotClickedOn, tenterToReplace, setTenterToReplace,
                                                         newTenter, setNewTenter, startReplacementDate, setStartReplacementDate, endReplacementDate, setEndReplacementDate}}>
-                        <Typography align="center">
-                            This shows who is supposed to be in the tent at all times. 
-                            Click the Assign Tenters option below to get started with using our algorithm to auto-fill the schedule.
-                            To swap who is assigned at a specific time slot, click on their name in the grid
-                        </Typography>
+                        
+                        <Container maxWidth="md">
+                            <Typography align="left">
+                            Here is your schedule. It shows who is supposed to be in the tent at each time. 
+                            Click the "Fill in Schedule" dropdown below to get started with using our algorithm to auto-fill the schedule.
+                            To manually change who is assigned at a specific time slot, click on the corresponding box in the grid to replace them with someone else at that time. 
+                            </Typography>
+                        </Container>
                 
                         <ScheduleOptions/>
                         <Stack direction="row">
