@@ -25,6 +25,7 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
     var scheduleLength = tenterSlotsGrid[0].length;
     var slots = getAllTenterSlots(tenterSlotsGrid);
     
+    //setBaseWeights
     while (slots.length > 0){
         resetWeights(slots);
         prioritizeFairness(people, slots);
