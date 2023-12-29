@@ -8,7 +8,9 @@ const useStyles = makeStyles((theme:Theme) => ({
         padding: theme.spacing(1),
         cursor: 'crosshair',
         borderRight : '1px solid black',
-        borderLeft : '1px solid black'
+        borderLeft : '1px solid black',
+        userDrag: 'none',
+        userSelect: 'none'
     },
     rowLabelCell: {
         border: '1px solid black',

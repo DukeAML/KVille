@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { CellColorsContext } from "../../../../../../lib/pageSpecific/schedule/cellColorsContext";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
@@ -12,17 +12,22 @@ interface ScheduleCellProps {
 export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellProps) => {
     const {cellColorsCoordinator} = useContext(CellColorsContext);
     const {isSwappingTenter, setIsSwappingTenter, setTenterToReplace, setTimeSlotClickedOn} = useContext(TenterSwapContext)
+    const [color, setColor] = useState<string>("white")
     const handleClick = () => {
         setIsSwappingTenter(true);
         setTenterToReplace(props.name);
         setTimeSlotClickedOn(props.startDate);
     }
 
+    useEffect(() => {
+        setColor(cellColorsCoordinator.getColorForName(props.name));
+    }, [props.name]);
+
     
     return (
         <TableCell style={{
             height : "100%", 
-            backgroundColor : cellColorsCoordinator.getColorForName(props.name), 
+            backgroundColor : color, 
             cursor : "grab",
             borderLeft : "1px solid black",
             borderRight : "1px solid black",

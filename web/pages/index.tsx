@@ -7,7 +7,7 @@ const HomePage : React.FC = () => {
 	return (
 		<BasePageContainerWithNavBarAndTitle title="Welcome to the Shift Scheduling Helper!">
 			<Container maxWidth="md">
-				<Typography variant="h5" align="center">
+				<Typography variant="h5" align="center" style={{marginBottom : 16}}>
 					To use our tool, follow the instructions below.
 				</Typography>
 				<KvilleAccordion elements={[
@@ -17,11 +17,11 @@ const HomePage : React.FC = () => {
 				},
 				{
 					summaryText : "2) Someone from the group will need to create a group on this site",
-					detail : <Typography>Once logged in, go to the My Groups page, and then the Create Group page</Typography>
+					detail : <Typography>Once logged in, go to the Create Group page (a link to it will appear in the Nav bar once you're logged in)</Typography>
 				},
 				{
 					summaryText : "3) Everyone else can then join the group",
-					detail : <Typography>Once logged in, go to the My Groups page, and then the Join Group page. You'll need the group code from whoever created the group</Typography>
+					detail : <Typography>Once logged in, go to the Join Group page (a link to it will appear in the Nav bar once you're logged in). You will need the group code from whoever created the group</Typography>
 				},
 				{
 					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts.",
