@@ -33,7 +33,7 @@ export default function JoinGroupPage() {
                 
                 queryClient.invalidateQueries({queryKey : ['fetchAllGroups']})
                 setGroupDescription(groupDescription);
-                router.push("/groups");
+                router.push("/groups/" + values.groupCode);
             }).catch((error) => {
                 console.log(error.message);
                 setErrorMessage(error.message);
@@ -46,7 +46,7 @@ export default function JoinGroupPage() {
         <PermissionRequiredPageContainer title="Join a Group" groupSpecificPage={false}>
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">Ask a Group member for the group code to join</Typography>
+                    <Typography variant="h5" style={{marginBottom : 16, marginTop : 16}}>Ask a Group member for the group code to join</Typography>
                     <KvilleForm 
                         validationSchema={joinGroupValidationSchema} 
                         initialValues={initialValues}

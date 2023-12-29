@@ -19,7 +19,7 @@ const KvilleNavBarGivenOptions : React.FC<KvilleNavBarGivenOptionsProps> = (prop
         <AppBar position={position} color={props.colorIsPrimary ? "primary" : "secondary"} >
             <Toolbar>
                 <Typography variant="h5" style={{ flexGrow: 1, cursor : "pointer" }} onClick={() => router.push("/")}>
-                    KVille
+                    Shift Scheduler
                 </Typography>
                 {props.options}
             </Toolbar>

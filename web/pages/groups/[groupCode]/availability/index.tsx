@@ -42,7 +42,7 @@ export default function Availability(){
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
-                    <Typography align="center">Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
+                    <Typography align="center" style={{marginBottom : 16}}>Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
                     <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred}}>
                         <AvailabilityOptions/>
                         <AvailabilityTable 

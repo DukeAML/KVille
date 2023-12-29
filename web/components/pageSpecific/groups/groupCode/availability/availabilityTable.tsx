@@ -122,7 +122,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
 
     return (
-        <Grid container spacing={0} direction="column" style={{marginTop : "20px"}}>
+        <Grid container spacing={0} direction="column" style={{marginTop : "20px", marginBottom : 20}}>
 
             {/* Column labels */}
             <Grid item container spacing={0}>
