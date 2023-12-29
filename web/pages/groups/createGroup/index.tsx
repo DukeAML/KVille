@@ -51,7 +51,7 @@ export default function CreateGroupPage() {
         <PermissionRequiredPageContainer title="Create a Group" groupSpecificPage={false}>
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5">If someone has already created your group, ask them for the group code and go to the join group pae. Also, we need to make this page look better</Typography>
+                    <Typography variant="h5" style={{marginBottom : 16, marginTop : 16}}>If someone has already created your group, ask them for the group code and go to the join group page.</Typography>
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}

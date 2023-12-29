@@ -119,6 +119,9 @@ handleHorizontalDrag() {
 		this.mouseIsDown = true;
 		this.valueChangedToOnDragStart = valueChangedToOnDragStart;
 		this.changeAvailabilityAtRowsAndCols([{row : row, col : col}], valueChangedToOnDragStart);
+    setTimeout(() => {
+      this.mouseIsDown = false;
+    }, 1000);
     }
 
     alertMouseUpOutOfBounds(){

@@ -2,7 +2,8 @@ import React from "react";
 
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
 import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverviewHooks";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import { EMPTY } from "../../../../../../common/src/scheduling/slots/tenterSlot";
 
 interface HoursTableProps {
     hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}} | undefined
@@ -23,10 +24,10 @@ export const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) 
                 <Table>
                     <TableHead>
                     <TableRow>
-                        <TableCell>Member Name</TableCell>
-                        <TableCell>Daytime Hours</TableCell>
-                        <TableCell>Nighttime Hours</TableCell>
-                        <TableCell>Total Hours</TableCell>
+                        <TableCell><Typography style={{fontWeight : 'bold'}}>Member Name</Typography></TableCell>
+                        <TableCell><Typography style={{fontWeight : 'bold'}}>Daytime Hours</Typography></TableCell>
+                        <TableCell><Typography style={{fontWeight : 'bold'}}>Nighttime Hours</Typography></TableCell>
+                        <TableCell><Typography style={{fontWeight : 'bold'}}>Total</Typography></TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
@@ -72,6 +73,9 @@ interface DataForTableRow {
 const getRowsForTable = (allMembersArr : string[], hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}) : DataForTableRow[] => {
     let rows = [];
     for(let i=0;i<allMembersArr.length;i++){
+        if (allMembersArr[i] === EMPTY){
+            continue;
+        }
         const dayHours = hoursPerPerson.dayHoursPerPerson[allMembersArr[i]];
         const nightHours = hoursPerPerson.nightHoursPerPerson[allMembersArr[i]];
         const totalHours = dayHours + nightHours;
