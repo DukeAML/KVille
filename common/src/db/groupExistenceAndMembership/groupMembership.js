@@ -37,7 +37,7 @@ export async function fetchGroups(userID) {
     .then((doc) => {
       let groupsInDB = doc.data().groups;
       //console.log("Current user's groups", currGroup);
-      groupsInDB.forEach((group, index) => {
+      groupsInDB.forEach((group) => {
         allGroupCodes.push(group.groupCode);
       });
     })
@@ -56,7 +56,7 @@ export async function fetchGroups(userID) {
         allGroups.push(groupData);
       }
     } catch {
-      
+      console.log("this code block shoudl not be possible!!");
     }
   }
   return allGroups;
@@ -99,7 +99,7 @@ export async function getGroupMembersByGroupCode(groupCode) {
   if (memberDocs.empty) {
     throw new Error(GET_GROUP_MEMBERS_ERRORS.GROUP_DOES_NOT_EXIST);
   }
-  return memberDocs.docs.map((doc, index) => {
+  return memberDocs.docs.map((doc) => {
     return { userID: doc.id, username: doc.data().name };
   });
 }

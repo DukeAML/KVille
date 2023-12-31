@@ -1,5 +1,4 @@
-import { useQuery, useQueryClient, UseQueryResult, useMutationResult, useMutation} from "react-query";
-import { fetchHoursPerPerson } from "../../../common/src/db/hours";
+import { useQueryClient, useMutation} from "react-query";
 import { removeMemberFromGroupByUsername } from "../../../common/src/db/groupExistenceAndMembership/removeMemberFromGroup";
 
 interface HoursPerPersonInterface {
@@ -10,9 +9,7 @@ interface HoursPerPersonInterface {
         [key : string] : number
     }
 }
-export const useQueryToFetchHoursTableData = (groupCode : string) : UseQueryResult<HoursPerPersonInterface> => {
-    return useQuery(getQueryNameForFetchHoursTableData(groupCode), () => fetchHoursPerPerson(groupCode));
-}
+
 
 const removeMemberMutationFn = async (groupCode : string, usernameOfMemberToRemove : string) => {
     await removeMemberFromGroupByUsername(groupCode, usernameOfMemberToRemove);

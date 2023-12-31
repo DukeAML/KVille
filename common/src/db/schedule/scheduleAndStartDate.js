@@ -2,17 +2,17 @@
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { Slot } from "../../scheduling/slots/slot.js";
 
-
 export class ScheduleAndStartDate{
     /**
      * Generic slot object
-     * @param {Array<String>} schedule should be an array of names
-     * @param {Date} startDate a JS Date Object, denoting the start time of this schedule. 
+     * @param {Array<Array<String>>} schedule should be an array of arrays of names
+     * @param {Date} startDate a JS Date Object, denoting the start time of this schedule.
+     * @param {Map} IDToNameMap a map which maps names to usernames
      */
-    constructor(schedule, startDate){
+    constructor(schedule, startDate, IDToNameMap=new Map()){
       this.schedule = schedule;
       this.startDate = startDate;
-      
+      this.IDToNameMap = IDToNameMap;
     }
 
     //helper method
@@ -25,26 +25,53 @@ export class ScheduleAndStartDate{
 
     }
 
+    /**
+     * 
+     * @param {number} timeIndex 
+     * @returns {Array<String>} an array of the usernames of the people at this time
+     */
+    getNamesAtTimeIndex(timeIndex){
+        const ids = this.schedule[timeIndex];
+        let names = [];
+        ids.forEach((id) => {
+            if (this.IDToNameMap.has(id)){
+                names.push(this.IDToNameMap.get(id));
+            } else {
+                names.push(id);
+            }
+        })
+        return names;
+    }
+
+    /**
+     * 
+     * @param {number} timeIndex 
+     * @returns {Array<string>}
+     */
+    getIDsAtTimeIndex(timeIndex){
+        return this.schedule[timeIndex];
+    }
+
 
     /**
      * 
      * @param {Date} dateRangeStart 
      * @param {Date} dateRangeEnd 
-     * @param {Array<String>} allMembers an array of the identifiers (i.e. name) for each person relevant
-     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}}an object containing day_hours_per_person, and night_hours_per_person, where each is an object that maps a person's identifier to their number of hours
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}} each object here maps usernames to hours, not ids to hours
      */
-    getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd, allMembers){
+    getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd){
         let dayHoursPerPerson = {};
         let nightHoursPerPerson = {};
-        allMembers.forEach((member) => {
-            dayHoursPerPerson[member] = 0;
-            nightHoursPerPerson[member] = 0;
-        })
+        this.IDToNameMap.forEach((username, id) => {
+            dayHoursPerPerson[username] = 0;
+            nightHoursPerPerson[username] = 0;
+        });
+        
         let startDateIndex = Math.max(0, getNumSlotsBetweenDates(this.startDate, dateRangeStart));
         let endDateIndex = Math.min(this.schedule.length, getNumSlotsBetweenDates(this.startDate, dateRangeEnd));
-        for (let i = startDateIndex; i < endDateIndex; i += 1){
-            let peopleInSlot = this.schedule[i].split(' ');
-            let currDate = getDatePlusNumShifts(this.startDate, i);
+        for (let timeIndex = startDateIndex; timeIndex < endDateIndex; timeIndex += 1){
+            let peopleInSlot = this.getNamesAtTimeIndex(timeIndex);
+            let currDate = getDatePlusNumShifts(this.startDate, timeIndex);
             peopleInSlot.forEach((person) => {
                 if (Slot.checkNight(currDate)){
                     
@@ -57,36 +84,48 @@ export class ScheduleAndStartDate{
         }
 
         return {dayHoursPerPerson, nightHoursPerPerson};
-
     }
 
     /**
-     * @param {Array<String>} allMembers an array of the identifiers (i.e. name) for each person relevant
      * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}}
      */
-    getHoursPerPersonWholeSchedule(allMembers) {
-        return this.getHoursPerPersonInDateRange(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length), allMembers);
+    getHoursPerPersonWholeSchedule() {
+        return this.getHoursPerPersonInDateRange(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length));
+
+    }
+
+    swapTenterAtIndexByNames(timeIndex, tenterToReplaceName, newTenterName){
+        let tenterToReplaceID = tenterToReplaceName;
+        let newTenterID = newTenterName;
+        this.IDToNameMap.forEach((username, id) => {
+            if (username === tenterToReplaceName){
+                tenterToReplaceID = id;
+            } 
+            if (username === newTenterName){
+                newTenterID = id;
+            }
+        })
+        this.swapTenterAtIndexByIDs(timeIndex, tenterToReplaceID, newTenterID);
 
     }
 
     /**
      * 
-     * @param {number} arrIndex 
-     * @param {string} tenterToReplace 
-     * @param {string} newTenter 
+     * @param {number} timeIndex 
+     * @param {string} tenterToReplaceID 
+     * @param {string} newTenterID 
      */
-    swapTenterAtIndex(arrIndex, tenterToReplace, newTenter){
-        let slotIDs = this.schedule[arrIndex].split(" ");
-        let newSlotIDs = [];
-        for (let assignedTenterIndex = 0; assignedTenterIndex < slotIDs.length; assignedTenterIndex += 1){
-            if (slotIDs[assignedTenterIndex] === tenterToReplace && !(newSlotIDs.includes(newTenter))){
-                newSlotIDs.push(newTenter);
+    swapTenterAtIndexByIDs(timeIndex, tenterToReplaceID, newTenterID){
+        let IDsAtThisTime = this.getIDsAtTimeIndex(timeIndex);
+        let newIDsAtThisTime = [];
+        for (let assignedTenterIndex = 0; assignedTenterIndex < IDsAtThisTime.length; assignedTenterIndex += 1){
+            if (IDsAtThisTime[assignedTenterIndex] === tenterToReplaceID && !(newIDsAtThisTime.includes(newTenterID))){
+                newIDsAtThisTime.push(newTenterID);
             } else {
-                newSlotIDs.push(slotIDs[assignedTenterIndex]);
+                newIDsAtThisTime.push(IDsAtThisTime[assignedTenterIndex]);
             }
         }
-        this.schedule[arrIndex] = newSlotIDs.join(" ")
-
+        this.schedule[timeIndex] = newIDsAtThisTime;
     }
     
     /**
@@ -95,10 +134,10 @@ export class ScheduleAndStartDate{
      * @param {string} memberUsername 
      * @returns {boolean}
      */
-    containsMemberAtTimeIndex(timeIndex, memberUsername) {
-        let slotIDs = this.schedule[timeIndex].split(" ");
-        for (let personIndex = 0; personIndex < slotIDs.length; personIndex +=1 ){
-            if (slotIDs[personIndex] === memberUsername){
+    containsMemberAtTimeIndexByUsername(timeIndex, memberUsername) {
+        let namesAtThisTime = this.getNamesAtTimeIndex(timeIndex);
+        for (let personIndex = 0; personIndex < namesAtThisTime.length; personIndex +=1 ){
+            if (namesAtThisTime[personIndex] === memberUsername){
                 return true;
             }
         }
@@ -121,7 +160,7 @@ export class ScheduleAndStartDate{
             let maxPpl = 0;
             let timeIndex = startIndex;
             while (timeIndex < this.schedule.length && timeIndex < (startIndex + 48)){
-                let len = this.schedule[timeIndex].split(" ").length;
+                let len = this.getIDsAtTimeIndex(timeIndex).length;
                 if (len > maxPpl){
                     maxPpl = len;
                 }

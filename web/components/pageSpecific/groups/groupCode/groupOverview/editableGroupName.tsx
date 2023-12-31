@@ -20,8 +20,6 @@ const divStyle = {
 export const EditableGroupName: React.FC<ButtonInputInterface> = (props:ButtonInputInterface) => {
 
     const groupCode = useGroupCode();
-    //const {data : groupDescription, isLoading : isLoadingGroupDescription, isError : isErrorWithGroupDescription, refetch} = useQueryToFetchGroupData(groupCode);
-    //const {data, isLoading} = useQuery('fetchingHours' +groupCode, () => fetchHoursPerPerson(groupCode));
 	const {groupDescription } = useContext(GroupContext);
 
 	

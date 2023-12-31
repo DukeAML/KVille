@@ -21,7 +21,6 @@ import { GroupContext } from "@/lib/shared/context/groupContext";
 
 
 export default function Schedule() {
-    const defaultData = new ScheduleAndStartDate([], scheduleDates.startOfBlack);
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
 
     const DEFAULT_DATE_BEING_SHOWN = scheduleDates.startOfBlue;

@@ -28,7 +28,7 @@ export const ScheduleOptions : React.FC = () => {
         if (scheduleAndStartDate){
             return scheduleAndStartDate;
         } else {
-            return new ScheduleAndStartDate([], scheduleDates.startOfBlack);
+            return new ScheduleAndStartDate([], scheduleDates.startOfBlack, new Map());
         }
     }
 
@@ -43,8 +43,8 @@ export const ScheduleOptions : React.FC = () => {
                 </Typography>
                 <DateRangeChanger 
                     includeHours={true}
-                    externalStartDate={getDefaultAssignDateRangeStartDate(getDefinedScheduleAndStartDate().schedule, getDefinedScheduleAndStartDate().startDate)}
-                    externalEndDate={getDefaultAssignDateRangeEndDate(getDefinedScheduleAndStartDate().schedule, getDefinedScheduleAndStartDate().startDate)}
+                    externalStartDate={getDefaultAssignDateRangeStartDate(getDefinedScheduleAndStartDate())}
+                    externalEndDate={getDefaultAssignDateRangeEndDate(getDefinedScheduleAndStartDate())}
                     submitNewDateRange={(startDate : Date, endDate : Date) => {
                         let {successful, message} = validateAssignTentersDateRange(startDate, endDate, getDefinedScheduleAndStartDate().startDate);
                         if (successful) {

@@ -1,26 +1,27 @@
 import { getDatePlusNumShifts, getCurrentDate } from "../../calendarAndDates/datesUtils";
 import { EMPTY } from "../../scheduling/slots/tenterSlot";
 import { scheduleDates } from "../../../data/scheduleDates";
+import { ScheduleAndStartDate } from "../../db/schedule/scheduleAndStartDate";
 /**
  * 
- * @param {String[]} groupSchedule 
+ * @param {ScheduleAndStartDate} schedule 
  * @param {Date} groupScheduleStartDate 
  * @returns {Date}
  */
-export const getDefaultAssignDateRangeStartDate = (groupSchedule, groupScheduleStartDate) => {
-    for (let i = 0; i < groupSchedule.length; i += 1){
-        let names = groupSchedule[i].split(' ');
-        for (let j = 0; j < names.length; j+= 1){
-            if (names[j] == EMPTY)
-                return getDatePlusNumShifts(groupScheduleStartDate, i);
+export const getDefaultAssignDateRangeStartDate = (schedule) => {
+    for (let timeIndex = 0; timeIndex < schedule.schedule.length; timeIndex += 1){
+        let names = schedule.getNamesAtTimeIndex(timeIndex);
+        for (let namesIndex = 0; namesIndex < names.length; namesIndex+= 1){
+            if (names[namesIndex] == EMPTY)
+                return getDatePlusNumShifts(schedule.startDate, timeIndex);
       }
     }
 
     let currentDate = getCurrentDate();
-    if (currentDate < groupScheduleStartDate){
-        return groupScheduleStartDate;
-    } else if (currentDate >= getDatePlusNumShifts(groupScheduleStartDate, groupSchedule.length)){
-        return groupScheduleStartDate;
+    if (currentDate < schedule.startDate){
+        return schedule.startDate;
+    } else if (currentDate >= getDatePlusNumShifts(schedule.startDate, schedule.length)){
+        return schedule.startDate;
     } else {
         return currentDate;
     }
@@ -29,12 +30,11 @@ export const getDefaultAssignDateRangeStartDate = (groupSchedule, groupScheduleS
 
 /**
  * 
- * @param {string[]} groupSchedule 
- * @param {Date} groupScheduleStartDate 
+ * @param {ScheduleAndStartDate} schedule 
  * @returns {Date}
  */
-export const getDefaultAssignDateRangeEndDate = (groupSchedule, groupScheduleStartDate) => {
-    let correspondingStartDate = getDefaultAssignDateRangeStartDate(groupSchedule, groupScheduleStartDate);
+export const getDefaultAssignDateRangeEndDate = (schedule) => {
+    let correspondingStartDate = getDefaultAssignDateRangeStartDate(schedule);
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
     let endOfTenting = scheduleDates.endOfTenting;
    
