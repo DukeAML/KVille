@@ -10,13 +10,12 @@ export const NewTenterPicker : React.FC = () => {
     const {tenterToReplace, timeSlotClickedOn, newTenter, setNewTenter} = useContext(TenterSwapContext);
     const groupCode = useGroupCode();
     const { data : schedule} = useQueryToFetchSchedule(groupCode);
-    const {data: groupMembers} = useQueryToFetchGroupMembers(groupCode);
     const checkIfMemberIsAValidReplacement = (memberUsername : string) : boolean => {
         if (schedule){
             let timeIndex = getNumSlotsBetweenDates(schedule.startDate, timeSlotClickedOn);
             if (memberUsername === tenterToReplace){
                 return false;
-            } else if (memberUsername !== EMPTY && schedule.containsMemberAtTimeIndex(timeIndex, memberUsername)){
+            } else if (memberUsername !== EMPTY && schedule.containsMemberAtTimeIndexByUsername(timeIndex, memberUsername)){
                 return false;
             } else {
                 return true;
@@ -25,7 +24,13 @@ export const NewTenterPicker : React.FC = () => {
         return false;
     
     }
-    const menuItems = groupMembers?.concat({username : EMPTY, userID : EMPTY}).filter((member) => checkIfMemberIsAValidReplacement(member.username)).map((item) => (
+    const groupMembers = [{username : EMPTY, userID : EMPTY}];
+    if (schedule){
+        schedule.IDToNameMap.forEach((username, id) => {
+            groupMembers.push({username : username, userID : id})
+        })
+    }
+    const menuItems = groupMembers.filter((member) => checkIfMemberIsAValidReplacement(member.username)).map((item) => (
         <MenuItem value={item.username} key={item.userID}>{item.username}</MenuItem>
     ));
     return (

@@ -5,12 +5,13 @@ import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { Typography, Container } from '@mui/material'
 import { HoursTable } from "@/components/pageSpecific/groups/groupCode/groupOverview/hoursTable";
 import { EditableGroupName } from "@/components/pageSpecific/groups/groupCode/groupOverview/editableGroupName";
-import { useQueryToFetchHoursTableData } from "@/lib/pageSpecific/groupOverviewHooks";
+import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 
 const GroupHomePage : React.FC = () => {    
 
     const groupCode = useGroupCode();
-    const {data, isLoading} = useQueryToFetchHoursTableData(groupCode);
+    const {data : schedule, isLoading} = useQueryToFetchSchedule(groupCode);
+    console.log(schedule);
     
     return (
         <PermissionRequiredPageContainer title={"Group Overview"} groupSpecificPage={true}>
@@ -20,10 +21,10 @@ const GroupHomePage : React.FC = () => {
                     Here are your group members, along with how many hours they are scheduled for. Other people can join your group through the Join Group page, with group Code {groupCode}
                 </Typography>
             </Container>
-            {isLoading ? (
+            {(isLoading || !schedule) ? (
                 // Display the loading container while data is being loaded
                 <KvilleLoadingContainer />
-            ) : <HoursTable hoursPerPerson={data}/>}
+            ) : <HoursTable hoursPerPerson={schedule.getHoursPerPersonWholeSchedule()}/>}
         </PermissionRequiredPageContainer>
     );
 }

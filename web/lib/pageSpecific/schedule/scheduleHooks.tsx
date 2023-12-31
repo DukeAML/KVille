@@ -9,8 +9,7 @@ import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndM
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 
 
-
-const onSuccessfulDBScheduleUpdate = (newSchedule : string[], groupCode : string, queryClient : QueryClient) => {
+const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
     console.log("updating queries and what not with " );
     console.log(newSchedule);
     let queryKeyName = getQueryKeyNameForScheduleFetch(groupCode);
@@ -18,8 +17,7 @@ const onSuccessfulDBScheduleUpdate = (newSchedule : string[], groupCode : string
     if (oldData === undefined) {
         queryClient.invalidateQueries(queryKeyName);
     } else {
-        let newData = new ScheduleAndStartDate(newSchedule, oldData.startDate);
-        queryClient.setQueryData(queryKeyName, newData);
+        queryClient.setQueryData(queryKeyName, newSchedule);
         //queryClient.refetchQueries(queryKeyName);
         queryClient.invalidateQueries(queryKeyName);
     }
@@ -30,8 +28,8 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
     const queryClient = useQueryClient();
     return useMutation(
         {
-            mutationFn : (newSchedule : string[]) => setGroupScheduleInDB(groupCode, newSchedule),
-            onSuccess : (newSchedule : string[]) => {
+            mutationFn : (newSchedule : ScheduleAndStartDate) => setGroupScheduleInDB(groupCode, newSchedule),
+            onSuccess : (newSchedule : ScheduleAndStartDate) => {
                 onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient);
             }
         }
@@ -42,7 +40,8 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
 
 const assignAndUpdateMutationFn = async (groupCode : string, startDate : Date, endDate : Date, tentType : string, oldSchedule : ScheduleAndStartDate) => {
     const newSchedule = await assignTentersAndGetNewFullSchedule(groupCode, tentType, startDate, endDate, oldSchedule);
-    return await setGroupScheduleInDB(groupCode, newSchedule);
+    let newSchedObj = new ScheduleAndStartDate(newSchedule, oldSchedule.startDate, oldSchedule.IDToNameMap);
+    return await setGroupScheduleInDB(groupCode, newSchedObj);
 
 }
 
@@ -51,15 +50,14 @@ interface useMutationToAssignTentersAndUpdateScheduleData {
     endDate : Date;
     oldSchedule : ScheduleAndStartDate;
     tentType : string;
+
 }
 export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) => {
     const queryClient = useQueryClient();
     return useMutation (
         {
             mutationFn : (mutationData : useMutationToAssignTentersAndUpdateScheduleData) => assignAndUpdateMutationFn(groupCode, mutationData.startDate, mutationData.endDate, mutationData.tentType, mutationData.oldSchedule),
-            onSuccess : (newSchedule : string[]) => {
-                console.log("successfully ran the mutation, got back the following");
-                console.log(newSchedule);
+            onSuccess : (newSchedule : ScheduleAndStartDate) => {
                 onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient)
             },
             onError : () => {console.log("what the heck")}

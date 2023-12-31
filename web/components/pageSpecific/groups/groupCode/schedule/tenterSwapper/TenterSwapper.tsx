@@ -29,14 +29,14 @@ export const TenterSwapper: React.FC = () => {
         return;
       }
       setErrorMsg("");
-      let newSchedule = new ScheduleAndStartDate({...schedule}.schedule, {...schedule}.startDate);
+      let newSchedule = new ScheduleAndStartDate({...schedule}.schedule, {...schedule}.startDate, {...schedule}.IDToNameMap);
       const startdate = schedule?.startDate as Date;
       const startIndex = getNumSlotsBetweenDates(startdate, startReplacementDate);
       const endIndex = getNumSlotsBetweenDates(startdate, endReplacementDate);
       for (let timeIndex = startIndex; timeIndex < endIndex; timeIndex += 1){
-        newSchedule.swapTenterAtIndex(timeIndex, tenterToReplace, newTenter);
+        newSchedule.swapTenterAtIndexByNames(timeIndex, tenterToReplace, newTenter);
       }
-      updateSchedule(newSchedule.schedule);
+      updateSchedule(newSchedule);
       setIsSwappingTenter(false);
     } 
   };

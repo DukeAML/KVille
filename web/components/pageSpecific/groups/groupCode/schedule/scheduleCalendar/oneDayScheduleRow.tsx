@@ -65,7 +65,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
     if ((scheduleIndex < 0) || (scheduleIndex >= props.scheduleAndStartDate.schedule.length)){
         names = ["Not Part of the Schedule"];        
     } else {
-        names = props.scheduleAndStartDate.schedule[scheduleIndex].split(" ");
+        names = props.scheduleAndStartDate.getNamesAtTimeIndex(scheduleIndex);
     }
     if (names.length == 0){
         names = [EMPTY];

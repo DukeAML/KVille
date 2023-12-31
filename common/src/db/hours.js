@@ -1,6 +1,4 @@
-import { firestore } from "./firebase_config.js";
-import { ScheduleAndStartDate } from "./schedule/scheduleAndStartDate.js";
-import { getGroupMembersByGroupCode } from "./groupExistenceAndMembership/groupMembership.js";
+import { fetchGroupSchedule } from "./schedule/schedule.js";
 
 export const HOURS_ERROR_CODES = {
     GROUP_DOES_NOT_EXIST : "Group Does not Exist"
@@ -14,30 +12,14 @@ export const HOURS_ERROR_CODES = {
  * @returns {Promise<{dayHoursPerPersonInRange : {[key : string] : number}, nightHoursPerPersonInRange : {[key : string] : number}, dayHoursPerPersonEntire : {[key : string] : number}, nightHoursPerPersonEntire : {[key : string] : number}}>}
  */
 export async function fetchHoursPerPersonInDateRange(groupCode, dateRangeStart, dateRangeEnd) {
-    let allMembers = await getGroupMembersByGroupCode(groupCode).catch((error) => {throw new Error(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST)});
-    allMembers = allMembers.map((member) => member.username);
-    let groupRef = firestore.collection('groups').doc(groupCode);
-    let dayHoursPerPersonInRange = {};
-    let nightHoursPerPersonInRange = {};
-    let dayHoursPerPersonEntire = {};
-    let nightHoursPerPersonEntire = {};
-    const group = await groupRef.get();
-    if (group.exists){
-        let prevSchedule = group.data().groupSchedule;
-        let groupScheduleStartDate = group.data().groupScheduleStartDate.toDate();
-        let scheduleAndDateObj = new ScheduleAndStartDate(prevSchedule, groupScheduleStartDate)
-        let rangeResult = scheduleAndDateObj.getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd, allMembers);
-        dayHoursPerPersonInRange = rangeResult.dayHoursPerPerson;
-        nightHoursPerPersonInRange = rangeResult.nightHoursPerPerson;
-    
-        let fullResult = scheduleAndDateObj.getHoursPerPersonWholeSchedule(allMembers);
-        dayHoursPerPersonEntire = fullResult.dayHoursPerPerson;
-        nightHoursPerPersonEntire = fullResult.nightHoursPerPerson;
+    const schedule = await fetchGroupSchedule(groupCode);
+    let rangeResult = schedule.getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd);
+    const dayHoursPerPersonInRange = rangeResult.dayHoursPerPerson;
+    const nightHoursPerPersonInRange = rangeResult.nightHoursPerPerson;
 
-    } else {
-        throw new Error(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST);
-    }
-    
+    let fullResult = schedule.getHoursPerPersonWholeSchedule();
+    const dayHoursPerPersonEntire = fullResult.dayHoursPerPerson;
+    const nightHoursPerPersonEntire = fullResult.nightHoursPerPerson;
 
     return {dayHoursPerPersonInRange, nightHoursPerPersonInRange, dayHoursPerPersonEntire, nightHoursPerPersonEntire}
 }
@@ -48,25 +30,7 @@ export async function fetchHoursPerPersonInDateRange(groupCode, dateRangeStart, 
  * @returns {Promise<{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}>}
  */
 export async function fetchHoursPerPerson(groupCode){
-    let allMembers = await getGroupMembersByGroupCode(groupCode).catch((error) => {throw new Error(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST)});
-    allMembers = allMembers.map((member) => member.username);
-    let groupRef = firestore.collection('groups').doc(groupCode);
-    let dayHoursPerPerson = {};
-    let nightHoursPerPerson = {};
-    const group = await groupRef.get();
-    if (group.exists){
-        let prevSchedule = group.data().groupSchedule;
-        let groupScheduleStartDate = group.data().groupScheduleStartDate.toDate();
-        let scheduleAndDateObj = new ScheduleAndStartDate(prevSchedule, groupScheduleStartDate)
-    
-        let fullResult = scheduleAndDateObj.getHoursPerPersonWholeSchedule(allMembers);
-        dayHoursPerPerson = fullResult.dayHoursPerPerson;
-        nightHoursPerPerson = fullResult.nightHoursPerPerson;
-        return {dayHoursPerPerson, nightHoursPerPerson};
-    } else {
-        throw new Error(HOURS_ERROR_CODES.GROUP_DOES_NOT_EXIST);
-    }
-   
-
+    const schedule = await fetchGroupSchedule(groupCode);
+    return schedule.getHoursPerPersonWholeSchedule();
 }
 
