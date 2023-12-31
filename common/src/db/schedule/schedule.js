@@ -24,27 +24,16 @@ export async function fetchGroupSchedule(groupCode) {
     const group = await groupRef.get();
     const groupMembers = await getGroupMembersByGroupCode(groupCode);
     const IDToNameMap = new Map();
-    const NameToIDMap = new Map();
     groupMembers.forEach((member) => IDToNameMap.set(member.userID, member.username));
-    groupMembers.forEach((member) => NameToIDMap.set(member.username, member.userID));
     if (group.exists){
         let origDate = group.data().groupScheduleStartDate.toDate();
         let roundedDate = getDateRoundedTo30MinSlot(origDate);
         let schedule = [];
-        group.data().groupSchedule.map((namesAtIndex) => {
-            let ids = [];
-            let names = namesAtIndex.split(" ");
-            if (names[0] === "Grace" && names[1] === "Period"){
-                names = [GRACE];
+        group.data().groupSchedule.map((idsAtIndex) => {
+            let ids = idsAtIndex.split(" ");
+            if (ids[0] === "Grace" && ids[1] === "Period"){
+                ids = [GRACE];
             }
-            names.forEach((name) => {
-                if (NameToIDMap.has(name)){
-                    ids.push(NameToIDMap.get(name))
-                } else {
-                    ids.push(name)
-                }
-                
-            });
             schedule.push(ids);
         })
         return new ScheduleAndStartDate(schedule, roundedDate, IDToNameMap);

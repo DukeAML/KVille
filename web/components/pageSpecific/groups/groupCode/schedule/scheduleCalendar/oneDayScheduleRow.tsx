@@ -79,8 +79,8 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
 
 
         <TableRow >
-            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content"}}>
-                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "left", color : "inherit"}}>
+            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content", opacity : "100%"}}>
+                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "left", color : "inherit", opacity : "100%", backgroundColor : "inherit"}}>
                     {dateToTextLabel(props.rowStartDate)}
                 </Typography>
             </TableCell>
