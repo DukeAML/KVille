@@ -1,5 +1,6 @@
 import { Slot } from "../slots/slot";
 import { TenterSlot, TENTER_STATUS_CODES } from "../slots/tenterSlot";
+import { isNight } from "../../../data/nightData";
 
 
 /**
@@ -14,7 +15,7 @@ export function dayNightFree(availabilities, availabilitiesStartDate){
     for (var timeIndex = 0; timeIndex < availabilities.length; timeIndex++){
         if (availabilities[timeIndex].available == true){
             var date = new Date(availabilitiesStartDate.getTime() + 30*timeIndex*60000);
-            if (Slot.checkNight(date)){
+            if (isNight(date)){
                 numFreeNightSlots += 1;
             } else{
                 numFreeDaySlots += 1;

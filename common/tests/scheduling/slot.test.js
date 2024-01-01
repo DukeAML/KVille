@@ -3,8 +3,9 @@ import { TENTING_COLORS } from "../../data/phaseData";
 import { graceData } from "../../data/gracePeriods";
 import { scheduleDates } from "../../data/scheduleDates";
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
+import { isNight } from "../../data/nightData";
 
-describe("checkNight", () => {
+describe("isNight", () => {
     /**
      * 
      * @param {Date} date 
@@ -12,7 +13,7 @@ describe("checkNight", () => {
      */
     const runNightTest = (date, expected) => {
         const slot = new Slot(date, TENTING_COLORS.BLACK);
-        expect(slot.checkNight()).toBe(expected);
+        expect(isNight(date)).toBe(expected);
         expect(slot.isNight).toBe(expected);
 
     }

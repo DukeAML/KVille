@@ -1,4 +1,4 @@
-import {nightData} from "../../../data/nightData.js" 
+import {nightData, isNight as checkIfNight} from "../../../data/nightData.js" 
 import {graceData} from "../../../data/gracePeriods.js"
 import { phaseData, TENTING_COLORS } from "../../../data/phaseData.js";
 import { scheduleDates } from "../../../data/scheduleDates.js";
@@ -17,7 +17,7 @@ export class Slot{
 		this.endDate = getDatePlusNumShifts(startDate, 1);
 		this.tentType = tentType;
 		this.phase = Slot.getPhase(startDate);
-		this.isNight = Slot.checkNight(startDate);
+		this.isNight = checkIfNight(startDate);
 		this.isGrace = Slot.checkGrace(startDate);
     }
 
@@ -37,31 +37,6 @@ export class Slot{
 		}
 	}
   
-
-    /**
-     * Check if this corresponds to a night slot
-     * @param {Date} slotDate is the start date of the slot, as a JS Date object
-     * @returns {boolean} true iff this is a night slot, false otherwise
-     */
-    static checkNight(slotDate){
-		var startHour = slotDate.getHours();
-		var minutes = slotDate.getMinutes();
-		startHour += minutes / 60;
-
-		if ((startHour >= nightData.nightStartHour) && (startHour < nightData.nightEndHour)){
-			return true;
-		} else {
-			return false;
-		}
-    }
-
-    /**
-     * 
-     * @returns {boolean}
-     */
-    checkNight(){
-		return Slot.checkNight(this.startDate);
-    }
 
     /**
      * Determine if this slot is in a grace period
