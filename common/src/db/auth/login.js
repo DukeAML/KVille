@@ -1,5 +1,6 @@
 import { auth } from "../firebase_config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { EMAIL_SUFFIX } from "./register.js";
 import * as Yup from 'yup';
 
 export const LOGIN_ERROR_CODES = {
@@ -8,13 +9,15 @@ export const LOGIN_ERROR_CODES = {
 
 export const INVALID_USER_ID = "";
 
+
 /**
  * @param {String} password
- * @param {String} email
+ * @param {String} username
  * @returns {Promise<string>} userID
  */
-export async function tryToLogin(email, password){
+export async function tryToLogin(username, password){
     let signedInID = undefined;
+	let email = username + EMAIL_SUFFIX;
     await signInWithEmailAndPassword(auth, email, password)
 		.then((user) => {
 			const id = user?.user?.uid;
@@ -32,9 +35,3 @@ export async function tryToLogin(email, password){
     return signedInID;
 
 }
-
-
-export const loginValidationSchema = Yup.object({
-	email: Yup.string().email('Invalid email address').required('Required'),
-	password: Yup.string().required('Required'),
-});
