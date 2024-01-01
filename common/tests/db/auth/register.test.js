@@ -5,11 +5,11 @@ import { KTEST1_USERNAME } from "../testUserCredentials.js";
 
 describe("tryToRegister", () => {
     it("throws error if username is taken", async () => {
-        await expect(tryToRegister("kTest14@gmail.com", KTEST1_USERNAME, "qqweraspdfu")).rejects.toThrow(REGISTER_ERROR_CODES.USERNAME_TAKEN);
+        await expect(tryToRegister(KTEST1_USERNAME, "qqweraspdfu")).rejects.toThrow(REGISTER_ERROR_CODES.USERNAME_TAKEN);
     });
 
     it("creates user in users collection upon success", async () => {
-        const id = await tryToRegister("kTest15@gmail.com", "kTest15", "kTest15");
+        const id = await tryToRegister( "kTest15", "kTest15");
         const userData = await firestore.collection('users').doc(id).get();
         expect(userData.data().groups.length).toBe(0);
         deleteLoggedInUser();

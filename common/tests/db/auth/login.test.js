@@ -7,12 +7,12 @@ import { KTEST1_UID } from "../testUserCredentials.js";
 describe("tryToLogin", () => {
     beforeAll(async () => await signOut(auth));
 
-    it("fails when given bad email", async () => {
-        await expect(tryToLogin("qweroiuqwpoerui", "a")).rejects.toThrow(LOGIN_ERROR_CODES.FAILURE);
+    it("fails when given bad email prefix", async () => {
+        await expect(tryToLogin("weroiuqw poerui", "a")).rejects.toThrow(LOGIN_ERROR_CODES.FAILURE);
     });
 
     it("logs me in given right username and password", async () => {
-        const id = await tryToLogin("kTest1@gmail.com", "kTest1");
+        const id = await tryToLogin("kTest1", "kTest1");
         expect(id).toEqual(KTEST1_UID);
 
     })

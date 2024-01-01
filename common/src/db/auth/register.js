@@ -7,15 +7,18 @@ export const REGISTER_ERROR_CODES = {
     DEFAULT : "An error occurred"
 }
 
+export const EMAIL_SUFFIX = "@gmail.com";
+
 /**
- * @param {String} email
  * @param {String} username
  * @param {String} password
  * @returns {Promise<string>} newUserID
  */
-export async function tryToRegister(email, username, password){
+export async function tryToRegister(username, password){
+    let email = username + EMAIL_SUFFIX;
     let DEFAULT_USER_ID = '';
     let newUserID = DEFAULT_USER_ID;
+    console.log("trying to regsiter with " + username + " , " + email + ", " + password);
     try {
         await firestore.runTransaction(async (transaction) => { //TODO: make sure both operations either succeed or fail, this is insufficient currently
             
@@ -86,7 +89,20 @@ const defaultRegisterFailureHandler = (errorMessage) => {
   
 }
 
-export const loginValidationSchema = Yup.object({
-  email: Yup.string().email('Invalid email address').required('Required'),
-  password: Yup.string().required('Required'),
+export const authValidationSchema = Yup.object({
+    username: Yup.string()
+        .matches(/^[a-zA-Z0-9._%+-]+$/, 'Invalid username format') // Allow alphanumeric characters, dots, underscores, percent signs, plus signs, and hyphens
+        .required('Required')
+        .max(20)
+        .test(
+        'is-gmail-username',
+        'Username must be a valid email prefix',
+        (value) => validateEmail(value + EMAIL_SUFFIX)
+        ), 
+    password: Yup.string().required('Required').min(6),
 });
+
+function validateEmail(email) {
+    const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    return emailRegex.test(email);
+}
