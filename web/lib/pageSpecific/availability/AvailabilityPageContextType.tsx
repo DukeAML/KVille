@@ -7,6 +7,8 @@ interface AvailabilityPageContextType {
 	setCalendarEndDate: (d: Date) => void;
 	settingPreferred: boolean;
 	setSettingPreferred: (b: boolean) => void;
+	colorblindModeIsOn : boolean;
+	setColorblindModeIsOn : (b : boolean) => void;
 
 }
 
@@ -16,5 +18,7 @@ export const AvailabilityPageContext = createContext<AvailabilityPageContextType
 	setCalendarStartDate: (d: Date) => { },
 	setCalendarEndDate: (d: Date) => { },
 	settingPreferred: false,
-	setSettingPreferred: (b: boolean) => { }
+	setSettingPreferred: (b: boolean) => { },
+	colorblindModeIsOn : false,
+	setColorblindModeIsOn : (b : boolean) => {}
 });

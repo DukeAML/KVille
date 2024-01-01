@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Grid, Paper, makeStyles, Theme } from '@material-ui/core';
+import { Grid, Paper, makeStyles, Theme, Typography } from '@material-ui/core';
 import { MouseTracker } from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { AvailabilitySlot } from '../../../../../../common/src/db/availability';
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme:Theme) => ({
     preferredCell : {
         backgroundColor : 'gold'
     },
+    colorblindCell : {
+        backgroundColor : 'white'
+    },
     evenRowBorder : {
         borderTop : '2px solid black',
     },
@@ -39,6 +42,20 @@ const useStyles = makeStyles((theme:Theme) => ({
     }
 }));
 
+const getCellText = (available : boolean, preferred : boolean, inBounds : boolean) : string => {
+    if (inBounds){
+        if (available && preferred){
+            return "p";
+        } else if (available && !preferred){
+            return "a";
+        } else {
+            return "u";
+        }
+    } else {
+        return "x";
+    }
+
+}
 
 interface AvailabilityCellProps{
     slot : AvailabilitySlot;
@@ -49,13 +66,17 @@ interface AvailabilityCellProps{
     updateAvailabilityInDB : () => void;
 }
 
+
+
 export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:AvailabilityCellProps) => {
-    const {settingPreferred} = useContext(AvailabilityPageContext);
+    const {settingPreferred, colorblindModeIsOn} = useContext(AvailabilityPageContext);
     const classes = useStyles();
 
 
     const getCellColor = (available : boolean, preferred : boolean ) : string => {
-        if (!props.inBounds){
+        if (colorblindModeIsOn){
+            return classes.colorblindCell
+        } else if (!props.inBounds){
             return classes.outOfBoundsCell;
         } if (available && !preferred){
             return classes.availableCell;
@@ -65,46 +86,37 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
             return classes.unavailableCell;
         }
     }
-    const handleTouchStartOrMouseDown = () => {
+
+     
+    const handleMouseDown = () => {
         console.log("mouse down at " + props.row + ", " + props.col)
         if (props.inBounds){
+            let newVal = !props.slot.available;
             if (settingPreferred){
-                props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.preferred);
-            } else {
-                props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, !props.slot.available);
+                newVal = !props.slot.preferred;
+            }
+            props.mouseTracker.alertMouseDownAtRowColWithValueChangedTo(props.row, props.col, newVal);
+            if (!props.mouseTracker.isDragging){
+                props.updateAvailabilityInDB();
             }
         }
     }
-    const handleTouchMoveOrMouseEnter = () => {
+    const handleMouseEnter = () => {
         console.log("mouse enter at " + props.row + props.col)
         if (props.inBounds){
             props.mouseTracker.alertMovementToRowCol(props.row, props.col);
         } 
     }
-    const handleTouchEndOrMouseUp = () => {
-        console.log("mouse up at " + props.row + ", " + props.col)
-        if (props.inBounds){
-            props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
-        } else {
-            props.mouseTracker.alertMouseUpOutOfBounds();
-        }
-        props.updateAvailabilityInDB();
-        props.mouseTracker.alertMouseUpAtRowCol(props.row, props.col);
-		props.updateAvailabilityInDB();
-    }
+
 
     return (
         <Grid item xs className={`${classes.gridCell} ${getCellColor(props.slot.available, props.slot.preferred)} ${props.row %2 == 0 ? classes.evenRowBorder : classes.oddRowBorder}`}
-        	onMouseDown={handleTouchStartOrMouseDown}
-            //onTouchStart={handleTouchStartOrMouseDown}
-          	onMouseEnter={handleTouchMoveOrMouseEnter}
-            //onTouchMove={handleTouchMoveOrMouseEnter}
-			onMouseUp={handleTouchEndOrMouseUp}
-            //onTouchEnd={handleTouchEndOrMouseUp}
-            
-            
+        	onMouseDown={handleMouseDown}
+          	onMouseEnter={handleMouseEnter}                   
         >
-          	<Paper></Paper>
+         
+                {colorblindModeIsOn ? <Typography>{getCellText(props.slot.available, props.slot.preferred, props.inBounds)}</Typography> : null}
+           
         </Grid>
     )
 
