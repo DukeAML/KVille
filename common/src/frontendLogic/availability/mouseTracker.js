@@ -1,19 +1,5 @@
 export class MouseTracker {
-    #currentRow;
-    #currentCol;
-    #startRow;
-    #startCol;
-    #previousRow;
-    #previousCol;
-  
-    #valueChangedToOnDragStart;
-    #mouseIsDown;
 
-    #updateAvailabilityInDB;
-    #changeAvailabilityAtRowsAndCols;
-  
-  
-  
     constructor () {
 		this.currentRow = 0; 
 		this.currentCol = 0;
@@ -21,7 +7,7 @@ export class MouseTracker {
 		this.startCol = 0;
 		this.previousRow = 0; 
 		this.previousCol = 0;
-		this.mouseIsDown = false;
+		this.isDragging = false;
 		this.valueChangedToOnDragStart = false;
 		this.changeAvailabilityAtRowsAndCols = (rowsAndCols, available) => {};
 		this.updateAvailabilityInDB = () => {};
@@ -30,51 +16,51 @@ export class MouseTracker {
     /**
      * @returns {void}
      */
-handleVerticalDrag() {
-    let rowMovedCloser = Math.abs(this.currentRow - this.startRow) < Math.abs(this.previousRow - this.startRow);
-    let newValue = this.valueChangedToOnDragStart;
+	handleVerticalDrag() {
+		let rowMovedCloser = Math.abs(this.currentRow - this.startRow) < Math.abs(this.previousRow - this.startRow);
+		let newValue = this.valueChangedToOnDragStart;
 
-    if (rowMovedCloser) {
-        newValue = !this.valueChangedToOnDragStart;
-    }
+		if (rowMovedCloser) {
+			newValue = !this.valueChangedToOnDragStart;
+		}
 
-    let rowsAndCols = [];
-    let startRow = Math.min(this.previousRow, this.currentRow) + 1; // +1 to make it exclusive
-    let endRow = this.currentRow;
+		let rowsAndCols = [];
+		let startRow = Math.min(this.previousRow, this.currentRow) + 1; // +1 to make it exclusive
+		let endRow = this.currentRow;
 
-    for (let r = Math.min(startRow, endRow); r <= Math.max(startRow, endRow); r++) {
-        for (let i = Math.min(this.startCol, this.currentCol); i <= Math.max(this.startCol, this.currentCol); i++) {
-            rowsAndCols.push({ row: r, col: i });
-        }
-    }
+		for (let r = Math.min(startRow, endRow); r <= Math.max(startRow, endRow); r++) {
+			for (let i = Math.min(this.startCol, this.currentCol); i <= Math.max(this.startCol, this.currentCol); i++) {
+				rowsAndCols.push({ row: r, col: i });
+			}
+		}
 
-    this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
-}
+		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+	}
 
   
     /**
      * @returns {void}
      */
-handleHorizontalDrag() {
-    let colMovedCloser = Math.abs(this.currentCol - this.startCol) < Math.abs(this.previousCol - this.startCol);
-    let newValue = this.valueChangedToOnDragStart;
+	handleHorizontalDrag() {
+		let colMovedCloser = Math.abs(this.currentCol - this.startCol) < Math.abs(this.previousCol - this.startCol);
+		let newValue = this.valueChangedToOnDragStart;
 
-    if (colMovedCloser) {
-        newValue = !this.valueChangedToOnDragStart;
-    }
+		if (colMovedCloser) {
+			newValue = !this.valueChangedToOnDragStart;
+		}
 
-    let rowsAndCols = [];
-    let startCol = Math.min(this.previousCol, this.currentCol) + 1; // +1 to make it exclusive
-    let endCol = this.currentCol;
+		let rowsAndCols = [];
+		let startCol = Math.min(this.previousCol, this.currentCol) + 1; // +1 to make it exclusive
+		let endCol = this.currentCol;
 
-    for (let c = Math.min(startCol, endCol); c <= Math.max(startCol, endCol); c++) {
-        for (let i = Math.min(this.startRow, this.currentRow); i <= Math.max(this.startRow, this.currentRow); i++) {
-            rowsAndCols.push({ row: i, col: c });
-        }
-    }
+		for (let c = Math.min(startCol, endCol); c <= Math.max(startCol, endCol); c++) {
+			for (let i = Math.min(this.startRow, this.currentRow); i <= Math.max(this.startRow, this.currentRow); i++) {
+				rowsAndCols.push({ row: i, col: c });
+			}
+		}
 
-    this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
-}
+		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+	}
 
   
     /**
@@ -84,7 +70,7 @@ handleHorizontalDrag() {
      * @returns {void}
      */
     alertMovementToRowCol(row, col)  {
-		if (!this.mouseIsDown){
+		if (!this.isDragging){
 			return;
 		}
 	
@@ -108,7 +94,7 @@ handleHorizontalDrag() {
      * @param {boolean} valueChangedToOnDragStart 
      * @returns {void}
      */
-    alertMouseDownAtRowColWithValueChangedTo(row, col, valueChangedToOnDragStart ) {
+    alertStartOfDragAtRowColWithValueChangedTo(row, col, valueChangedToOnDragStart ) {
   
 		this.startRow = row;
 		this.startCol = col;
@@ -116,16 +102,14 @@ handleHorizontalDrag() {
 		this.previousCol = col;
 		this.currentRow = row;
 		this.currentCol = col;
-		this.mouseIsDown = true;
+		this.isDragging = true;
 		this.valueChangedToOnDragStart = valueChangedToOnDragStart;
 		this.changeAvailabilityAtRowsAndCols([{row : row, col : col}], valueChangedToOnDragStart);
-    setTimeout(() => {
-      this.mouseIsDown = false;
-    }, 1000);
+
     }
 
     alertMouseUpOutOfBounds(){
-      this.mouseIsDown = false;
+		this.isDragging = false;
     }
   
     /**
@@ -134,9 +118,26 @@ handleHorizontalDrag() {
      * @param {number} col 
      * @returns {void}
      */
-    alertMouseUpAtRowCol(row, col ){
-		this.mouseIsDown = false;
+    alertEndOfDragAtRowCol(row, col ){
+		this.alertMovementToRowCol(row, col);
+		this.isDragging = false;
     }
+
+	/**
+     * 
+     * @param {number} row 
+     * @param {number} col 
+     * @param {boolean} valueChangedToOnDragStart 
+     * @returns {void}
+     */
+    alertMouseDownAtRowColWithValueChangedTo(row, col, valueChangedToOnDragStart ) {
+		if (this.isDragging){
+			this.alertEndOfDragAtRowCol(row, col);
+		} else {
+			this.alertStartOfDragAtRowColWithValueChangedTo(row, col, valueChangedToOnDragStart);
+		}
+
+	}
   
 
   
