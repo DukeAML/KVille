@@ -62,7 +62,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
 
                         {props.extraStuff ? props.extraStuff : null}
                         
-                        {props.errorMessage.length > 0 ? <div>{props.errorMessage}</div> : null}
+                        {props.errorMessage.length > 0 ? <Typography color="error">{props.errorMessage}</Typography> : null}
 
                         <Button type="submit" color="primary" variant="contained">
                             Submit
