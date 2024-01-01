@@ -1,10 +1,10 @@
 import { auth } from "../firebase_config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { EMAIL_SUFFIX } from "./register.js";
-import * as Yup from 'yup';
+
 
 export const LOGIN_ERROR_CODES = {
-	FAILURE : "Incorrect email/password"
+	FAILURE : "Incorrect username/password"
 }
 
 export const INVALID_USER_ID = "";

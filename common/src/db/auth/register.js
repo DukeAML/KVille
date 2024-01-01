@@ -67,27 +67,6 @@ async function checkUsernameIsTaken(username) {
 
 }
 
-/**
- * 
- * @param {String} errorMessage 
- * @returns {void}
- */
-const defaultRegisterFailureHandler = (errorMessage) => {
-    console.log(error);
-    let message = 'Register unsuccessful';
-    if (errorMessage.includes('The email address is badly formatted')) {
-      message = 'Not a valid email';
-    }
-    if (errorMessage.includes('There is no user record')) {
-      message = 'Account does not exist';
-    }
-    if (errorMessage.includes('The password is invalid')) {
-      message = 'Incorrect password';
-    }
-    
-    return;
-  
-}
 
 export const authValidationSchema = Yup.object({
     username: Yup.string()
