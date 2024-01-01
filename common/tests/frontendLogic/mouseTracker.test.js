@@ -13,7 +13,7 @@ describe("mouse Tracker Tests", () => {
         let tracker = new MouseTracker();
         tracker.setChangeAvailabilityAtRowsAndCols(changeAvailabilityAtRowsAndCols);
         expect(cells[0][0]).toBe(false);
-        tracker.alertMouseDownAtRowColWithValueChangedTo(0, 0, true);
+        tracker.alertStartOfDragAtRowColWithValueChangedTo(0, 0, true);
         expect(cells[0][0]).toBe(true);
         expect(cells[0][1]).toBe(false);
     })

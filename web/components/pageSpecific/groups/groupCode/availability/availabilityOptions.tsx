@@ -8,8 +8,6 @@ import { KvilleButton } from "@/components/shared/utils/button";
 
 export const AvailabilityOptions : React.FC = () => {
     const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred, colorblindModeIsOn, setColorblindModeIsOn } = useContext(AvailabilityPageContext);
-    console.log("start Date is " );
-    console.log(calendarStartDate);
     let changeTimesOption = {
         summaryText : "Change Dates Visible",
         detail : 

@@ -42,8 +42,8 @@ export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePa
 	});
 	
 	return (
-		<Container component="main" maxWidth={false} >
-		{props.children? props.children : <></>}
+		<Container component="main" maxWidth={false} style={{marginBottom : 8}} >
+			{props.children? props.children : <></>}
 		</Container>
 	);
 };
