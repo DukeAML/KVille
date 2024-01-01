@@ -37,13 +37,19 @@ export default function Availability(){
     }, [groupDescription]);
     
     const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
+    const [colorblindModeIsOn, setColorblindModeIsOn] = useState<boolean>(false);
     return (
         <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
-                    <Typography align="center" style={{marginBottom : 16}}>Fill in your availability here - the grid below works just like a when2meet. Go to the Change Dates Visible dropdown to change which dates you can fill in. </Typography>
-                    <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred}}>
+                    <Typography align="center" style={{marginBottom : 16}}>
+                        Fill in your availability here - the grid below works kind of like a when2meet. 
+                        Click on a cell to begin toggling your status - click on any cell to finish toggling. 
+                        All cells in between the two will be switched to the new status. 
+                        Go to the Change Dates Visible dropdown to change which dates you can fill in.
+                    </Typography>
+                    <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred, colorblindModeIsOn, setColorblindModeIsOn}}>
                         <AvailabilityOptions/>
                         <AvailabilityTable 
                             originalAvailabilityArr={data ? data : defaultAvailabilitySlotsData}
