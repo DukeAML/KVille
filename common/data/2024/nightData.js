@@ -1,5 +1,5 @@
 export const SATURDAY = 6;
-export const SUNDAY = 1;
+export const SUNDAY = 0;
 
 /**
  * @param {Date} date
@@ -18,8 +18,10 @@ export const isNight2024 = (date) => {
             return false;
         }
     } else {
-        if (hour >= 0.99 && hour < 6.99){
+        if (hour > 0.99 && hour < 6.99){
             return true;
+        } else {
+            return false;
         }
     }
 

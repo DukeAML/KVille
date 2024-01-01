@@ -18,20 +18,48 @@ describe("isNight", () => {
 
     }
 
-    it("checks night correctly during day", () => {
+    it("checks night correctly during day 2023", () => {
         runNightTest(new Date(2023, 0, 15, 0, 0), false);
     });
 
-    it("checks night correctly in middle of night", () => {
+    it("checks night correctly in middle of night 2023", () => {
         runNightTest(new Date(2023, 0, 15, 4, 0), true);
     })
 
-    it("checks night correctly at 2am", () => {
+    it("checks night correctly at 2am 2023", () => {
         runNightTest(new Date(2023, 0, 15, 2, 0), true);
     })
 
-    it("checks night correctly at 7am", () => {
+    it("checks night correctly at 7am 2023", () => {
         runNightTest(new Date(2023, 0, 15, 7, 0), false);
+    });
+
+    it("checks night correctly during day 2024", () => {
+        runNightTest(new Date(2024, 0, 28, 0, 0), false);
+    });
+
+    it("checks night correctly in middle of night 2024", () => {
+        runNightTest(new Date(2024, 0, 28, 4, 0), true);
+    })
+
+    it("checks night correctly at 1am Monday 2024", () => {
+        runNightTest(new Date(2024, 0, 29, 1, 0), true);
+    })
+
+    it("checks night correctly at 2am Saturday 2024", () => {
+        runNightTest(new Date(2024, 0, 27, 2, 0), false);
+    })
+
+    it("checks night correctly at 2am Sunday 2024", () => {
+        runNightTest(new Date(2024, 0, 28, 2, 0), false);
+    })
+
+    it("checks night correctly at 2:30am Saturday 2024", () => {
+        runNightTest(new Date(2024, 0, 27, 2, 30), true);
+    })
+
+    it("checks night correctly at 7am 2024", () => {
+        runNightTest(new Date(2024, 0, 27, 7, 0), false);
     });
 });
 
