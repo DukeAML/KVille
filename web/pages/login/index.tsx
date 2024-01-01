@@ -1,7 +1,7 @@
 // LoginForm.tsx
 
 import React, { useState } from "react";
-import { loginValidationSchema } from "../../../common/src/db/auth/login";
+import { authValidationSchema } from "../../../common/src/db/auth/register";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
 import { useContext } from "react";
 import { UserContext } from "@/lib/shared/context/userContext";
@@ -10,12 +10,12 @@ import { tryToLogin } from "../../../common/src/db/auth/login";
 import { KvilleForm } from "@/components/shared/utils/form";
 
 interface LoginFormValues {
-  email: string;
+  username: string;
   password: string;
 }
 
 const initialValues: LoginFormValues = {
-  email: "",
+  username: "",
   password: "",
 };
 
@@ -25,10 +25,8 @@ const LoginPage: React.FC = () => {
   const router = useRouter();
   const handleSubmit = (values: LoginFormValues) => {
     // Handle login logic here (e.g., API call to authenticate the user)
-    tryToLogin(values.email, values.password)
+    tryToLogin(values.username, values.password)
       .then((id) => {
-        localStorage.setItem("userID", id);
-        localStorage.setItem("isLoggedIn", "true");
         setUserID(id);
         setIsLoggedIn(true);
         setTriedToLogIn(true);
@@ -44,9 +42,9 @@ const LoginPage: React.FC = () => {
       <KvilleForm
         handleSubmit={handleSubmit}
         initialValues={initialValues}
-        validationSchema={loginValidationSchema}
+        validationSchema={authValidationSchema}
         textFields={[
-          { name: "email", type: "email" },
+          { name: "username", type: "username" },
           { name: "password", type: "password" },
         ]}
         errorMessage={errorMessage}

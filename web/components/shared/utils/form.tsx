@@ -6,12 +6,6 @@ import {  TextField, Typography, Container } from '@mui/material';
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import {Button} from '@material-ui/core';
 
-
-
-
-
-
-
 interface KvilleFormProps<FormValuesInterface> {
     handleSubmit : (values : FormValuesInterface ) => void;
     initialValues : FormValuesInterface;
@@ -19,8 +13,6 @@ interface KvilleFormProps<FormValuesInterface> {
     textFields? : TextFieldProps[];
     extraStuff? : ReactNode;
     errorMessage : string;
-    
-
 }
 
 interface TextFieldProps {
