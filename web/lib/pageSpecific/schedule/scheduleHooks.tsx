@@ -117,7 +117,7 @@ export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType :
 
 
 export const getQueryKeyNameForScheduleFetch = (groupCode : string)  =>  {
-    return ["getGroupSchedule", groupCode];
+    return "getGroupSchedule" + groupCode;
 }
 
 export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {

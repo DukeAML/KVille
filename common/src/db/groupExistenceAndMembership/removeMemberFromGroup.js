@@ -5,6 +5,7 @@ export const REMOVE_USER_ERRORS = {
     USER_DOES_NOT_EXIST: "User does not exist",
     USER_NOT_IN_GROUP: "User is not in group",
     GROUP_DOES_NOT_EXIST: "Group does not exist",
+    CANNOT_REMOVE_CREATOR : "Cannot remove group creator",
     DEFAULT: "Error removing user",
   };
 
@@ -75,8 +76,12 @@ export async function removeMemberFromGroupByID(userID, groupCode) {
   
     const groupRef = firestore.collection("groups").doc(groupCode);
     const groupDoc = await groupRef.get();
+
+    if (groupDoc.data().creator === userID){
+      throw new Error (REMOVE_USER_ERRORS.CANNOT_REMOVE_CREATOR);
+    }
     let newGroupData = {...groupDoc.data()};
-    newGroupData.groupSchedule = replaceUserWithEmptyInGroupSchedule(newGroupData.groupSchedule, newUserData.username);
+    newGroupData.groupSchedule = replaceUserWithEmptyInGroupSchedule(newGroupData.groupSchedule, userID);
   
     try {
       await firestore.runTransaction(async (transaction) => {
@@ -91,16 +96,27 @@ export async function removeMemberFromGroupByID(userID, groupCode) {
   
   /**
    * 
-   * @param {Array<string>} originalSchedule looks like ["Bob Joe", "Bob Joe", "Mike Steve Jim", "Mike Steve Jim", ...]
-   * @param {string} tenterToRemove 
+   * @param {Array<string>} originalSchedule looks like ["qewrqwe asdjfkas", "qrqwe asdfas", ...] i.e. space delimited user ids
+   * @param {string} tenterIDToRemove 
    * @returns {Array<string>} updatedSchedule
    */
-  function replaceUserWithEmptyInGroupSchedule (originalSchedule, tenterToRemove){
+  function replaceUserWithEmptyInGroupSchedule (originalSchedule, tenterIDToRemove){
     //TODO: fill in this method, using the EMPTY variable imported at the top of this file
     /* 
     As an example of how this should work, suppose originalSchedule is ["Bob Joe", "Bob Joe", "Mike Steve Jim", "Mike Steve Jim"]
     and tenterToRemove is "Bob". Then, the function should return ["empty Joe", "empty Joe", "Mike Steve Jim", "Mike Steve Jim"] where EMPTY = "empty"
     */
-    return originalSchedule;
+
+
+    return originalSchedule.map((ids) => {
+      let originalIDs = ids.split(" ");
+      return originalIDs.map((originalID) => {
+        if (originalID === tenterIDToRemove) {
+          return EMPTY;
+        } else {
+          return originalID;
+        }
+      }).join(" ");
+    })
   
   }

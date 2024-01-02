@@ -66,6 +66,8 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 			});
 		});
 
+	console.log(people);
+	console.log(tenterSlotsGrid);
 	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
 	console.log(newScheduleInRange);
 	return scheduledSlotsArrToStringArrArr(newScheduleInRange, idToName);

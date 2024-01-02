@@ -29,7 +29,7 @@ export default function GroupPageFromLogin() {
   if (isLoading) {
     return (
       <BasePageContainerWithNavBarAndTitle title="">
-        <KvilleLoadingContainer />;
+        <KvilleLoadingContainer />
       </BasePageContainerWithNavBarAndTitle>
     );
   }
