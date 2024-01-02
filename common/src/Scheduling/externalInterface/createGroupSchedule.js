@@ -5,7 +5,7 @@ import { ScheduleAndStartDate } from '../../db/schedule/scheduleAndStartDate.js'
 import { getNumSlotsBetweenDates } from '../../calendarAndDates/datesUtils.js';
 import {scheduleAlgorithm} from '../algorithm.js';
 import { EMPTY, GRACE } from '../slots/tenterSlot.js';
-import { TENTING_COLORS } from '../../../data/phaseData.js';
+import { TENTING_COLORS } from '../rules/phaseData.js';
 
 import {availabilitiesToSlots, dayNightFree} from "./algoInputCleansing.js";
 import { scheduledSlotsArrToStringArrArr } from './algoOutputCleansing.js';

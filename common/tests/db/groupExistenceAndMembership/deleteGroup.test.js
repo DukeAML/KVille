@@ -1,4 +1,4 @@
-import { TENTING_COLORS} from "../../../data/phaseData";
+import { TENTING_COLORS } from "../../../src/scheduling/rules/phaseData";
 import { tryToCreateGroup } from "../../../src/db/groupExistenceAndMembership/createGroup";
 import { DELETE_GROUPS_ERROR_CODES, deleteGroup } from "../../../src/db/groupExistenceAndMembership/deleteGroup";
 import { fetchGroups } from "../../../src/db/groupExistenceAndMembership/groupMembership";

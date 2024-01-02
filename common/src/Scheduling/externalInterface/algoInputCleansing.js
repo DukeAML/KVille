@@ -1,6 +1,6 @@
 import { Slot } from "../slots/slot";
 import { TenterSlot, TENTER_STATUS_CODES } from "../slots/tenterSlot";
-import { isNight } from "../../../data/nightData";
+import { isNight } from "../rules/nightData";
 
 
 /**

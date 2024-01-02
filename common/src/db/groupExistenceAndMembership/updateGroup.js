@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { firestore} from "../firebase_config.js";
 
-import { TENTING_COLORS } from "../../../data/phaseData.js";
+import { TENTING_COLORS } from "../../scheduling/rules/phaseData.js";
 
 
 export const UPDATE_GROUP_ERROR_CODES = {

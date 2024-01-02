@@ -3,8 +3,8 @@ import { Person } from "../../src/scheduling/person";
 import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../src/scheduling/slots/tenterSlot";
 
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
-import { TENTING_COLORS} from "../../data/phaseData";
-import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
+import { TENTING_COLORS } from "../../src/scheduling/rules/phaseData";
+import { getScheduleDates, CURRENT_YEAR } from "../../src/scheduling/rules/scheduleDates";
 describe("schedule", () => {
     it("fills out schedule in basic case", () => {
         const p1 = new Person("p1", "p1", 38, 10, 0, 0);

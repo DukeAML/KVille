@@ -1,6 +1,6 @@
 import { getDatePlusNumShifts, getCurrentDate } from "../../calendarAndDates/datesUtils";
 import { EMPTY } from "../../scheduling/slots/tenterSlot";
-import { getScheduleDates } from "../../../data/scheduleDates";
+import { getScheduleDates } from "../../scheduling/rules/scheduleDates";
 import { ScheduleAndStartDate } from "../../db/schedule/scheduleAndStartDate";
 /**
  * 

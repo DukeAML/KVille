@@ -11,11 +11,11 @@ import { AvailabilityTable } from "../../../../components/pageSpecific/groups/gr
 import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
 import { AvailabilityOptions } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityOptions";
 import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
-import { TENTING_COLORS } from "../../../../../common/data/phaseData";
+import { TENTING_COLORS } from "../../../../../common/src/scheduling/rules/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography } from "@mui/material";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { CURRENT_YEAR } from "../../../../../common/data/scheduleDates";
+import { CURRENT_YEAR } from "../../../../../common/src/scheduling/rules/scheduleDates";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 

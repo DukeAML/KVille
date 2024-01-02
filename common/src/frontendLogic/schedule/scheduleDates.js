@@ -1,6 +1,6 @@
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDates/datesUtils";
-import { getScheduleDates, CURRENT_YEAR } from "../../../data/scheduleDates";
-import { TENTING_COLORS } from "../../../data/phaseData";
+import { getScheduleDates, CURRENT_YEAR } from "../../scheduling/rules/scheduleDates";
+import { TENTING_COLORS } from "../../scheduling/rules/phaseData";
 
 /**
  * 

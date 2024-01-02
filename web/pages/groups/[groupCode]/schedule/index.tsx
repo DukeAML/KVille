@@ -13,7 +13,7 @@ import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
-import { CURRENT_YEAR, getScheduleDates } from "../../../../../common/data/scheduleDates";
+import { CURRENT_YEAR, getScheduleDates } from "../../../../../common/src/scheduling/rules/scheduleDates";
 import { EMPTY } from "../../../../../common/src/scheduling/slots/tenterSlot";
 import { getDatePlusNumShifts } from "../../../../../common/src/calendarAndDates/datesUtils";
 import { GroupContext } from "@/lib/shared/context/groupContext";

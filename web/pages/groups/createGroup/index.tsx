@@ -12,7 +12,7 @@ import { createGroupValidationSchema, tryToCreateGroup } from "../../../../commo
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { TENTING_COLORS } from "../../../../common/data/phaseData";
+import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
 import { SelectTentType } from "@/components/pageSpecific/groups/createGroup/selectTentType";
 
 interface CreateGroupFormValues {

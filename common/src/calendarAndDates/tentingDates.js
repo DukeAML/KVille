@@ -1,5 +1,5 @@
-import { TENTING_COLORS } from "../../data/phaseData";
-import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
+import { TENTING_COLORS } from "../scheduling/rules/phaseData";
+import { getScheduleDates, CURRENT_YEAR } from "../scheduling/rules/scheduleDates";
 /**
  * 
  * @param {String} tentType denote which type of tent this is
