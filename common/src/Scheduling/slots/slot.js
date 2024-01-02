@@ -1,8 +1,9 @@
-import {nightData, isNight as checkIfNight} from "../../../data/nightData.js" 
-import {isGrace} from "../../../data/gracePeriods.js"
+import { isNight as checkIfNight } from "../../../data/nightData.js" 
+import { isGrace } from "../../../data/gracePeriods.js"
 import { getPhaseData, TENTING_COLORS } from "../../../data/phaseData.js";
-import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getScheduleDates } from "../../../data/scheduleDates.js";
 import { getDatePlusNumShifts } from "../../calendarAndDates/datesUtils.js";
+
 
 
 export class Slot{
@@ -16,26 +17,11 @@ export class Slot{
 		this.startDate = startDate;
 		this.endDate = getDatePlusNumShifts(startDate, 1);
 		this.tentType = tentType;
-		this.phase = Slot.getPhase(startDate);
+		this.phase = getPhaseForSlot(startDate);
 		this.isNight = checkIfNight(startDate);
 		this.isGrace = isGrace(startDate, false).isGrace;
     }
 
-	/**
-	 * 
-	 * @param {Date} startDate 
-	 */
-	static getPhase(startDate){
-		if (startDate < scheduleDates.startOfBlack){
-			return TENTING_COLORS.BLACK;
-		} else if (startDate < scheduleDates.startOfBlue){
-			return TENTING_COLORS.BLACK;
-		} else if (startDate < scheduleDates.startOfWhite){
-			return TENTING_COLORS.BLUE;
-		} else {
-			return TENTING_COLORS.WHITE;
-		}
-	}
 
     /**
      * Calculate how many people are needed during this shift
@@ -70,3 +56,20 @@ export class Slot{
   
 }
 
+/**
+ * 
+ * @param {Date} startDate 
+ * @returns {string} phase
+ */
+const getPhaseForSlot = (startDate) => {
+	let scheduleDates = getScheduleDates(startDate.getFullYear());
+	if (startDate < scheduleDates.startOfBlack){
+		return TENTING_COLORS.BLACK;
+	} else if (startDate < scheduleDates.startOfBlue){
+		return TENTING_COLORS.BLACK;
+	} else if (startDate < scheduleDates.startOfWhite){
+		return TENTING_COLORS.BLUE;
+	} else {
+		return TENTING_COLORS.WHITE;
+	}
+}

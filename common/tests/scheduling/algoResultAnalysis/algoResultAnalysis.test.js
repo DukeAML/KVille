@@ -2,7 +2,10 @@ import { scheduleAlgorithm} from "../../../src/scheduling/algorithm.js";
 import { TENTING_COLORS} from "../../../data/phaseData.js";
 import { AlgoAnalysis} from "./analysis.js";
 import { generateInput } from "./generateInputs.js";
-import { scheduleDates } from "../../../data/scheduleDates.js";
+import { getScheduleDates, CURRENT_YEAR } from "../../../data/scheduleDates.js";
+
+let scheduleDates = getScheduleDates(CURRENT_YEAR);
+
 describe("result tests", () => {
     it("", () => {
         let analysis = "";

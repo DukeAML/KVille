@@ -4,13 +4,13 @@ import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../src/scheduling/slo
 
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
 import { TENTING_COLORS} from "../../data/phaseData";
-import { scheduleDates } from "../../data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
 describe("schedule", () => {
     it("fills out schedule in basic case", () => {
         const p1 = new Person("p1", "p1", 38, 10, 0, 0);
         const p2 = new Person("p2", "p2", 38, 10, 0, 0);
         let people = [p1, p2];
-        let startDate = scheduleDates.startOfBlack;
+        let startDate = getScheduleDates(CURRENT_YEAR).startOfBlack;
         let PHASE = TENTING_COLORS.BLUE;
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
@@ -31,7 +31,7 @@ describe("schedule", () => {
         const p2 = new Person("p2", "p2", 0, 0, 40, 0); 
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
-        let startDate = scheduleDates.startOfBlack;
+        let startDate = getScheduleDates(CURRENT_YEAR).startOfBlack;
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
             tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.UNAVAILABLE, i, 0);
@@ -52,7 +52,7 @@ describe("schedule", () => {
         const p2 = new Person("p2", "p2", 4, 0, 40, 0); //p2 has already been scheduled for 40 slots
         const PHASE = TENTING_COLORS.WHITE;
         let people = [p1, p2];
-        let startDate = getDatePlusNumShifts(scheduleDates.endOfTenting, -10);
+        let startDate = getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).endOfTenting, -10);
         const tenterSlotsGrid = [[], []];
         for (let i = 0; i < 4; i+=1){
             tenterSlotsGrid[0][i] = new TenterSlot("p1", getDatePlusNumShifts(startDate, i), PHASE, TENTER_STATUS_CODES.AVAILABLE, i, 0);
@@ -71,7 +71,7 @@ describe("schedule", () => {
         const people = [];
         const tenterSlotsGrid = [];
         const TENT_TYPE = TENTING_COLORS.WHITE;
-        let startDate = getDatePlusNumShifts(scheduleDates.startOfTenting, 0);
+        let startDate = getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).startOfTenting, 0);
         for (let i = 0; i < 12; i += 1){
             let id = "p" + i.toFixed(0);
             people.push(new Person(id, id, 266, 70, 0, 0 ));

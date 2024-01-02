@@ -1,5 +1,5 @@
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDates/datesUtils";
-import { scheduleDates } from "../../../data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../../data/scheduleDates";
 import { TENTING_COLORS } from "../../../data/phaseData";
 
 /**
@@ -20,6 +20,7 @@ export const getDefaultDisplayDateRangeStartDate = (groupScheduleAndStartDate) =
 
 export const getDefaultDisplayDateRangeStartDateWithoutSchedule = () => {
   let currentDate = getCurrentDate();
+  let scheduleDates = getScheduleDates(CURRENT_YEAR);
   if (currentDate < scheduleDates.startOfTenting){
     return scheduleDates.startOfTenting;
   } else if (currentDate > scheduleDates.endOfTenting){
@@ -36,10 +37,12 @@ export const getDefaultDisplayDateRangeStartDateWithoutSchedule = () => {
 
 /**
  * 
- * @param {string} tentType 
+ * @param {string} tentType
+ * @param {number} year 
  * @returns {Date} displayDate
  */
-export const getDefaultDisplayDateGivenTentType = (tentType) => {
+export const getDefaultDisplayDateGivenTentType = (tentType, year=CURRENT_YEAR) => {
+  let scheduleDates = getScheduleDates(year);
   let startOfTenting = scheduleDates.startOfBlack
   if (tentType === TENTING_COLORS.BLUE){
     startOfTenting = scheduleDates.startOfBlue;

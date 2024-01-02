@@ -10,7 +10,7 @@ import { useMutationToAssignTentersAndUpdateSchedule, useQueryToFetchSchedule } 
 import { useRouter } from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
-import { scheduleDates } from "../../../../../../common/data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../../../../../common/data/scheduleDates";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 
 
@@ -28,7 +28,7 @@ export const ScheduleOptions : React.FC = () => {
         if (scheduleAndStartDate){
             return scheduleAndStartDate;
         } else {
-            return new ScheduleAndStartDate([], scheduleDates.startOfBlack, new Map());
+            return new ScheduleAndStartDate([], getScheduleDates(CURRENT_YEAR).startOfBlack, new Map());
         }
     }
 

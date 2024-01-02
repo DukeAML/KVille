@@ -3,10 +3,11 @@ import { TENTING_COLORS } from "../../data/phaseData";
 import { isGrace } from "../../data/gracePeriods";
 import { getGracePeriods2023 } from "../../data/2023/gracePeriods";
 import { getGracePeriods2024 } from "../../data/2024/gracePeriods";
-import { scheduleDates } from "../../data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
 import { isNight } from "../../data/nightData";
 
+let scheduleDates = getScheduleDates(CURRENT_YEAR);
 describe("isNight", () => {
     /**
      * 
@@ -107,7 +108,7 @@ describe("calculatePeopleNeeded", () => {
 
     it("works for blue day", () => {
         const slot = new Slot(scheduleDates.startOfBlue, TENTING_COLORS.BLUE);
-        expect(slot.calculatePeopleNeeded()).toBe(2);
+        expect(slot.calculatePeopleNeeded()).toBe(1);
     });
 
     it("works for blue night", () => {

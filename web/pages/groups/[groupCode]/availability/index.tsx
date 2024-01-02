@@ -15,6 +15,7 @@ import { TENTING_COLORS } from "../../../../../common/data/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography } from "@mui/material";
 import { GroupContext } from "@/lib/shared/context/groupContext";
+import { CURRENT_YEAR } from "../../../../../common/data/scheduleDates";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
@@ -23,18 +24,20 @@ export default function Availability(){
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
         ()=> fetchAvailability(groupCode, userID),
-        );
+    );
+    let year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
 
 
-    const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
-    const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
+    const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK, year));
+    const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK, year));
 
     useEffect(() => {
         if (groupDescription){
-            setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType));
-            setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType));
+            year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
+            setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType, year));
+            setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType, year));
         }
-    }, [groupDescription]);
+    }, [groupDescription, data]);
     
     const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
     const [colorblindModeIsOn, setColorblindModeIsOn] = useState<boolean>(false);
