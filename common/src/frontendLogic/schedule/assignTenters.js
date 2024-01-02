@@ -1,6 +1,6 @@
 import { getDatePlusNumShifts, getCurrentDate } from "../../calendarAndDates/datesUtils";
 import { EMPTY } from "../../scheduling/slots/tenterSlot";
-import { scheduleDates } from "../../../data/scheduleDates";
+import { getScheduleDates } from "../../../data/scheduleDates";
 import { ScheduleAndStartDate } from "../../db/schedule/scheduleAndStartDate";
 /**
  * 
@@ -36,7 +36,7 @@ export const getDefaultAssignDateRangeStartDate = (schedule) => {
 export const getDefaultAssignDateRangeEndDate = (schedule) => {
     let correspondingStartDate = getDefaultAssignDateRangeStartDate(schedule);
     let startDatePlusWeek = getDatePlusNumShifts(correspondingStartDate, 336);
-    let endOfTenting = scheduleDates.endOfTenting;
+    let endOfTenting = getScheduleDates(schedule.startDate.getFullYear()).endOfTenting;
    
     if (startDatePlusWeek <= endOfTenting) {
         return startDatePlusWeek;
@@ -55,7 +55,7 @@ export const getDefaultAssignDateRangeEndDate = (schedule) => {
 export const validateAssignTentersDateRange = (newStartDate, newEndDate, groupScheduleStartDate) => {
     if (newStartDate < groupScheduleStartDate){
         return {successful: false, message: "Start date of " + newStartDate.getTime() + " must be at least " + groupScheduleStartDate.getTime()};
-    } else if (newEndDate > scheduleDates.endOfTenting){
+    } else if (newEndDate > getScheduleDates(groupScheduleStartDate.getFullYear()).endOfTenting){
         return {succesful: false, message: "End date cannot occur after the end of tenting"};
     } else if (newEndDate <= newStartDate){
         return {succesful: false, message: "End date must be later than the start date"};

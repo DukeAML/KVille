@@ -1,11 +1,13 @@
 import { TENTING_COLORS } from "../../data/phaseData";
-import { scheduleDates } from "../../data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
 /**
  * 
  * @param {String} tentType denote which type of tent this is
+ * @param {number} year which year are we in
  * @returns {Date} the Date (year, month, day, hour, minutes) on which tenting begings
  */
-export function getTentingStartDate(tentType){
+export function getTentingStartDate(tentType, year=CURRENT_YEAR){
+    let scheduleDates = getScheduleDates(year);
     if (tentType == TENTING_COLORS.BLACK){
         return scheduleDates.startOfBlack;
     } else if (tentType == TENTING_COLORS.BLUE){

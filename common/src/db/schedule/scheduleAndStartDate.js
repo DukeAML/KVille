@@ -1,6 +1,7 @@
 
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { Slot } from "../../scheduling/slots/slot.js";
+import { isNight } from "../../../data/nightData.js";
 
 export class ScheduleAndStartDate{
     /**
@@ -73,8 +74,7 @@ export class ScheduleAndStartDate{
             let peopleInSlot = this.getNamesAtTimeIndex(timeIndex);
             let currDate = getDatePlusNumShifts(this.startDate, timeIndex);
             peopleInSlot.forEach((person) => {
-                if (Slot.checkNight(currDate)){
-                    
+                if (isNight(currDate)){
                     this.incrementVal(nightHoursPerPerson, person);
                 } else {
                     this.incrementVal(dayHoursPerPerson, person);

@@ -3,7 +3,7 @@ import { firestore} from "../firebase_config.js";
 import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { GroupDescription } from "./groupMembership.js";
 import { getGroupMembersByGroupCode } from "./groupMembership.js";
-import { scheduleDates } from "../../../data/scheduleDates.js";
+import { CURRENT_YEAR, getScheduleDates } from "../../../data/scheduleDates.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 
 export const JOIN_GROUP_ERROR_CODES = {
@@ -26,9 +26,9 @@ export const joinGroupValidationSchema = Yup.object({
  * @returns {{availability : boolean[], availabilityStartDate : Date, name : string, groupRole : string, inTent: boolean}}
  */
 export function getDefaultGroupMemberData(name, tentType, groupRole="Member") {
-    let availabilityStartDate = getTentingStartDate(tentType);
+    let availabilityStartDate = getTentingStartDate(tentType, CURRENT_YEAR);
     
-    let endDate = scheduleDates.endOfTenting;
+    let endDate = getScheduleDates(CURRENT_YEAR).endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
     let availability = new Array(numSlots).fill({available : false, preferred : false});
     return {availability, availabilityStartDate, name};

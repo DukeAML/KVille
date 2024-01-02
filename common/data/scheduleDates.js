@@ -1,41 +1,19 @@
-export const scheduleDates = {
-    startOfTenting: new Date(
-        2023,
-        0,
-        15,
-        0,
-        0
-    ),
-    endOfTenting: new Date(
-        2023,
-        1,
-        24,
-        23,
-        0           
-    ),
-    startOfBlack: new Date(
-        2023,
-        0,
-        15,
-        0,
-        0
-    ), 
-    startOfBlue: new Date(
-        2023,
-        0,
-        29,
-        0,
-        0
-    ),
-    startOfWhite: new Date(
-        2023,
-        1,
-        19,
-        0,
-        0
-    ),
+import {scheduleDates2023} from "./2023/scheduleDates";
+import {scheduleDates2024} from "./2024/scheduleDates";
 
-    times : ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", 
-    "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm",
-    "10pm", "11pm"]
+
+export const CURRENT_YEAR = 2024;
+
+/**
+ * 
+ * @param {number} year 
+ * @returns {{startOfTenting : Date, endOfTenting : Date, startOfBlack : Date, startOfBlue : Date, startOfWhite : Date}}
+ */
+export const getScheduleDates = (year=CURRENT_YEAR) => {
+    if (year < 2023.5) {
+        return scheduleDates2023;
+    } else {
+        return scheduleDates2024;
+    }
+
 }

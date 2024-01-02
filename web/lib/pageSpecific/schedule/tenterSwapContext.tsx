@@ -1,5 +1,5 @@
 import { createContext, Context } from 'react';
-import { scheduleDates } from '../../../../common/data/scheduleDates';
+import { getScheduleDates, CURRENT_YEAR } from '../../../../common/data/scheduleDates';
 import { getDatePlusNumShifts } from '../../../../common/src/calendarAndDates/datesUtils';
 import { EMPTY } from '../../../../common/src/scheduling/slots/tenterSlot';
 
@@ -23,15 +23,15 @@ export const INVALID_NEW_TENTER = "";
 export const TenterSwapContext : Context<tenterSwapContextType> = createContext<tenterSwapContextType>({
     isSwappingTenter : false,
     setIsSwappingTenter : (b : boolean ) => {},
-    timeSlotClickedOn : new Date(scheduleDates.startOfBlack),
+    timeSlotClickedOn : new Date(getScheduleDates(CURRENT_YEAR).startOfBlack),
     setTimeSlotClickedOn : (d : Date) => {},
     tenterToReplace : "",
     setTenterToReplace : (s : string) => {},
     newTenter : EMPTY,
     setNewTenter : (s : string) => {},
-    startReplacementDate : new Date(scheduleDates.startOfBlack),
+    startReplacementDate : new Date(getScheduleDates(CURRENT_YEAR).startOfBlack),
     setStartReplacementDate : (d : Date) => {},
-    endReplacementDate : new Date(getDatePlusNumShifts(scheduleDates.startOfBlack, 1)),
+    endReplacementDate : new Date(getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).startOfBlack, 1)),
     setEndReplacementDate : (d : Date) => {}
 
 });

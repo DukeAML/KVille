@@ -13,7 +13,7 @@ import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
-import { scheduleDates } from "../../../../../common/data/scheduleDates";
+import { CURRENT_YEAR, getScheduleDates } from "../../../../../common/data/scheduleDates";
 import { EMPTY } from "../../../../../common/src/scheduling/slots/tenterSlot";
 import { getDatePlusNumShifts } from "../../../../../common/src/calendarAndDates/datesUtils";
 import { GroupContext } from "@/lib/shared/context/groupContext";
@@ -22,23 +22,22 @@ import { GroupContext } from "@/lib/shared/context/groupContext";
 
 export default function Schedule() {
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
-
-    const DEFAULT_DATE_BEING_SHOWN = scheduleDates.startOfBlue;
-    const [dateBeingShown, setDateBeingShown] = useState<Date>(DEFAULT_DATE_BEING_SHOWN);
+    const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const {groupDescription} = useContext(GroupContext);
     const groupCode = useGroupCode();
     
     const [isSwappingTenter, setIsSwappingTenter] = useState<boolean>(false);
-    const [timeSlotClickedOn, setTimeSlotClickedOn] = useState<Date>(scheduleDates.startOfBlack);
+    const [timeSlotClickedOn, setTimeSlotClickedOn] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const [tenterToReplace, setTenterToReplace] = useState<string>("");
     const [newTenter, setNewTenter] = useState<string>(EMPTY);
-    const [startReplacementDate, setStartReplacementDate] = useState<Date>(scheduleDates.startOfBlack);
-    const [endReplacementDate, setEndReplacementDate] = useState<Date>(getDatePlusNumShifts(scheduleDates.startOfBlack, 1));
+    const [startReplacementDate, setStartReplacementDate] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
+    const [endReplacementDate, setEndReplacementDate] = useState<Date>(getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).startOfBlack, 1));
 
     const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
     useEffect(() => {
-        setDateBeingShown(getDefaultDisplayDateGivenTentType(groupDescription.tentType));
-    }, [groupDescription.tentType]);
+        let year = scheduleAndStartDate ? scheduleAndStartDate.startDate.getFullYear() : CURRENT_YEAR;
+        setDateBeingShown(getDefaultDisplayDateGivenTentType(groupDescription.tentType, year));
+    }, [groupDescription.tentType, scheduleAndStartDate]);
 
 
 

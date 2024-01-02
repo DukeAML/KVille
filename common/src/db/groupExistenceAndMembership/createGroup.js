@@ -4,10 +4,11 @@ import { getDefaultGroupMemberData, getNewUserDataAfterJoiningGroup } from "./jo
 import {generateGroupCode} from "./GroupCode.js";
 import { TENTING_COLORS } from "../../../data/phaseData.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
-import { scheduleDates } from "../../../data/scheduleDates.js";
+import { CURRENT_YEAR, getScheduleDates } from "../../../data/scheduleDates.js";
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
-import { EMPTY, TenterSlot } from "../../scheduling/slots/tenterSlot.js";
+import { EMPTY } from "../../scheduling/slots/tenterSlot.js";
 import { Slot } from "../../scheduling/slots/slot.js";
+
 const GROUP_CODE_LENGTH = 8;
 const CREATOR_ROLE = "Creator";
 
@@ -40,11 +41,12 @@ async function checkIfGroupExistsByGroupName(groupName) {
 /**
  * 
  * @param {String} tentType 
+ * @param {number} year 
  * @returns {Array<String>} an array with an entry for each timeslot, autofilled with "empty"
  */
-export function getDefaultSchedule(tentType){
-    let startDate = getTentingStartDate(tentType);
-    let endDate = scheduleDates.endOfTenting;
+export function getDefaultSchedule(tentType, year){
+    let startDate = getTentingStartDate(tentType, year);
+    let endDate = getScheduleDates(year).endOfTenting;
     let numSlots = getNumSlotsBetweenDates(startDate, endDate);
     let sched = [];
     for (let i = 0; i < numSlots; i += 1){
@@ -66,8 +68,8 @@ function getDefaultNewGroupData(groupName, tentType, creator){
     return {
         name : groupName,
         tentType : tentType,
-        groupSchedule : getDefaultSchedule(tentType),
-        groupScheduleStartDate : getTentingStartDate(tentType),
+        groupSchedule : getDefaultSchedule(tentType, CURRENT_YEAR),
+        groupScheduleStartDate : getTentingStartDate(tentType, CURRENT_YEAR),
         creator : creator
     }
 }

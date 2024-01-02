@@ -15,6 +15,7 @@ import { TENTING_COLORS } from "../../../../../common/data/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography } from "@mui/material";
 import { GroupContext } from "@/lib/shared/context/groupContext";
+import { CURRENT_YEAR } from "../../../../../common/data/scheduleDates";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
@@ -23,18 +24,20 @@ export default function Availability(){
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
         ()=> fetchAvailability(groupCode, userID),
-        );
+    );
+    let year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
 
 
-    const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK));
-    const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK));
+    const [calendarStartDate, setCalendarStartDate] = useState<Date>(getInitialAvailabilityDisplayStartDate(TENTING_COLORS.BLACK, year));
+    const [calendarEndDate, setCalendarEndDate] = useState<Date>(getInitialAvailabilityDisplayEndDate(TENTING_COLORS.BLACK, year));
 
     useEffect(() => {
         if (groupDescription){
-            setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType));
-            setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType));
+            year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
+            setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType, year));
+            setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType, year));
         }
-    }, [groupDescription]);
+    }, [groupDescription, data]);
     
     const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
     const [colorblindModeIsOn, setColorblindModeIsOn] = useState<boolean>(false);
@@ -47,7 +50,7 @@ export default function Availability(){
                         Fill in your availability here - the grid below works kind of like a when2meet. 
                         Click on a cell to begin toggling your status - click on any cell to finish toggling. 
                         All cells in between the two will be switched to the new status. 
-                        Go to the Change Dates Visible dropdown to change which dates you can fill in.
+                        Check the dropdowns below for more options.
                     </Typography>
                     <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred, colorblindModeIsOn, setColorblindModeIsOn}}>
                         <AvailabilityOptions/>
