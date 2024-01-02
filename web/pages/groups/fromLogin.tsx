@@ -39,7 +39,7 @@ export default function GroupPageFromLogin() {
       router.push("/groups/" + groups[0].groupCode);
       return (
         <BasePageContainerWithNavBarAndTitle title="">
-          <KvilleLoadingContainer />;
+          <KvilleLoadingContainer />
         </BasePageContainerWithNavBarAndTitle>
       );
     }

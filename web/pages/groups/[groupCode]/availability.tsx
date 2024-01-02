@@ -2,20 +2,20 @@ import { UserContext } from "@/lib/shared/context/userContext";
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { useContext, useState, useEffect } from "react";
 import {useQuery} from 'react-query';
-import {fetchAvailability, AvailabilitySlot} from "../../../../../common/src/db/availability";
+import {fetchAvailability, AvailabilitySlot} from "../../../../common/src/db/availability";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
-import { AvailabilityTable } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityTable";
+import { AvailabilityTable } from "@/components/pageSpecific/groups/groupCode/availability/availabilityTable";
 import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
-import { AvailabilityOptions } from "../../../../components/pageSpecific/groups/groupCode/availability/availabilityOptions";
-import { getQueryKeyNameForFetchAvailability } from "../../../../lib/pageSpecific/availability/availabilityHooks";
-import { TENTING_COLORS } from "../../../../../common/src/scheduling/rules/phaseData";
+import { AvailabilityOptions } from "@/components/pageSpecific/groups/groupCode/availability/availabilityOptions";
+import { getQueryKeyNameForFetchAvailability } from "@/lib/pageSpecific/availability/availabilityHooks";
+import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography } from "@mui/material";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { CURRENT_YEAR } from "../../../../../common/src/scheduling/rules/scheduleDates";
+import { CURRENT_YEAR } from "../../../../common/src/scheduling/rules/scheduleDates";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 

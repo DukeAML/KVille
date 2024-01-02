@@ -6,13 +6,13 @@ import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { createGroupValidationSchema, tryToCreateGroup } from "../../../../common/src/db/groupExistenceAndMembership/createGroup";
+import { createGroupValidationSchema, tryToCreateGroup } from "../../../common/src/db/groupExistenceAndMembership/createGroup";
 
 
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
-import { GroupDescription } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
+import { GroupDescription } from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+import { TENTING_COLORS } from "../../../common/src/scheduling/rules/phaseData";
 import { SelectTentType } from "@/components/pageSpecific/groups/createGroup/selectTentType";
 
 interface CreateGroupFormValues {

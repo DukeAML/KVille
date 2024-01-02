@@ -24,7 +24,7 @@ export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : One
     if (scheduleAndStartDate){   
         return <RowGivenData scheduleAndStartDate={scheduleAndStartDate} rowStartDate={props.rowStartDate}/>
     } else {
-        return <div>what hte heck</div>
+        return null
     }  
 }
 
@@ -62,8 +62,10 @@ const dateToTextLabel = (date : Date) : string => {
 const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) => {
     let scheduleIndex = getNumSlotsBetweenDates(props.scheduleAndStartDate.startDate, props.rowStartDate);
     let names : string[] = [];
+    let inBounds = true;
     if ((scheduleIndex < 0) || (scheduleIndex >= props.scheduleAndStartDate.schedule.length)){
-        names = ["Not Part of the Schedule"];        
+        names = ["Not Part of the Schedule"]; 
+        inBounds = false;       
     } else {
         names = props.scheduleAndStartDate.getNamesAtTimeIndex(scheduleIndex);
     }
@@ -87,7 +89,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
 
             {names.map((name, index) => {
                 return (
-                    <ScheduleCell name={name} startDate={props.rowStartDate} key={index}/>
+                    <ScheduleCell name={name} startDate={props.rowStartDate} inBounds={inBounds} key={index}/>
                 );
             })}
         </TableRow>

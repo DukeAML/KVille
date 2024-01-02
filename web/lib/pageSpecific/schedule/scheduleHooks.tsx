@@ -7,6 +7,9 @@ import { getGroupMembersByGroupCode } from "../../../../common/src/db/groupExist
 import {useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
+import { useState } from "react";
+import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
+import { getDefaultDisplayDateGivenTentType } from "../../../../common/src/frontendLogic/schedule/scheduleDates";
 
 
 const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
@@ -88,9 +91,33 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
 }
 
 
+export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType : string) => {
+    const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
+    const {data, isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(
+        getQueryKeyNameForScheduleFetch(groupCode),
+        () => {
+            if (groupCode === INVALID_GROUP_CODE){
+                throw new Error("");
+            }
+            return fetchGroupSchedule(groupCode);
+        },
+        {
+            onSuccess: (data) => {
+                setDateBeingShown(getDefaultDisplayDateGivenTentType(tentType, data.startDate.getFullYear()))
+            },
+            onError : (error) => {
+                console.log(error.message);
+            }
+        }
+    )
 
-export const getQueryKeyNameForScheduleFetch = (groupCode : string) : string =>  {
-    return "getGroupSchedule";
+    return {dateBeingShown, setDateBeingShown, data, isLoading, isError}
+}
+
+
+
+export const getQueryKeyNameForScheduleFetch = (groupCode : string)  =>  {
+    return ["getGroupSchedule", groupCode];
 }
 
 export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {
