@@ -25,10 +25,10 @@ export const joinGroupValidationSchema = Yup.object({
  * @param {String} groupRole 
  * @returns {{availability : boolean[], availabilityStartDate : Date, name : string, groupRole : string, inTent: boolean}}
  */
-export function getDefaultGroupMemberData(name, tentType, groupRole="Member") {
-    let availabilityStartDate = getTentingStartDate(tentType, CURRENT_YEAR);
+export function getDefaultGroupMemberData(name, tentType, groupRole="Member", year=CURRENT_YEAR) {
+    let availabilityStartDate = getTentingStartDate(tentType, year);
     
-    let endDate = getScheduleDates(CURRENT_YEAR).endOfTenting;
+    let endDate = getScheduleDates(year).endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
     let availability = new Array(numSlots).fill({available : false, preferred : false});
     return {availability, availabilityStartDate, name};
@@ -83,18 +83,20 @@ async function checkIfItIsPossibleToJoinGroup(groupCode, groupRef, userRef, user
 /**
  * 
  * @param {*} groupRef 
- * @returns {Promise<{groupName : string, tentType : string, creator : string}>}
+ * @returns {Promise<{groupName : string, tentType : string, creator : string, groupScheduleStartDate : Date }>}
  */
 async function getGroupNameAndTypeForGroupRef(groupRef) {
     let groupName = '';
     let tentType = '';
     let creator = '';
+    let groupScheduleStartDate = new Date(getScheduleDates(CURRENT_YEAR).startOfBlack);
     await groupRef.get().then((groupSnapshot) => {
         groupName = groupSnapshot.data().name;
         tentType = groupSnapshot.data().tentType;
         creator = groupSnapshot.data().creator;
+        groupScheduleStartDate = groupSnapshot.data().groupScheduleStartDate.toDate();
     })
-    return {groupName, tentType, creator};
+    return {groupName, tentType, creator, groupScheduleStartDate};
 }
 
 export async function getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode){
@@ -126,7 +128,7 @@ export async function tryToJoinGroup(groupCode, userID) {
     if (!canJoinGroup){
         throw new Error(errorMessage);
     }
-    let {groupName, tentType, creator} = await getGroupNameAndTypeForGroupRef(groupRef);
+    let {groupName, tentType, creator, groupScheduleStartDate} = await getGroupNameAndTypeForGroupRef(groupRef);
     let newUserData = await getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode);
     let myUsername = newUserData.username;
     try {
@@ -135,7 +137,7 @@ export async function tryToJoinGroup(groupCode, userID) {
             transaction.set(userRef, newUserData);
             let newMemberRef = groupRef.collection('members').doc(userID)
 
-            transaction.set(newMemberRef,  getDefaultGroupMemberData(myUsername, tentType, "Member"));
+            transaction.set(newMemberRef,  getDefaultGroupMemberData(myUsername, tentType, "Member", groupScheduleStartDate.getFullYear()));
         })
     } catch (error) {
         console.log("error from transaction : " + error.message);

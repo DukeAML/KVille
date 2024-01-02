@@ -1,5 +1,7 @@
 import { useQueryClient, useMutation} from "react-query";
-import { removeMemberFromGroupByUsername } from "../../../common/src/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { useState } from "react";
+import { removeMemberFromGroupByUsername, REMOVE_USER_ERRORS } from "../../../common/src/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { getQueryKeyNameForScheduleFetch, useQueryToFetchSchedule } from "./schedule/scheduleHooks";
 
 interface HoursPerPersonInterface {
     dayHoursPerPerson : {
@@ -11,26 +13,42 @@ interface HoursPerPersonInterface {
 }
 
 
-const removeMemberMutationFn = async (groupCode : string, usernameOfMemberToRemove : string) => {
-    await removeMemberFromGroupByUsername(groupCode, usernameOfMemberToRemove);
+const removeMemberMutationFn = async (usernameOfMemberToRemove : string, groupCode : string) => {
+    await removeMemberFromGroupByUsername(usernameOfMemberToRemove, groupCode);
     return groupCode;
-
 }
-export const useMutationToRemoveMember = () => {
+
+interface GroupCodeAndUsername{
+    groupCode : string;
+    usernameOfMemberToRemove : string;
+}
+interface UseMutationToRemoveMemberType {
+    confirmationOpened : boolean;
+    setConfirmationOpened : (b : boolean) => void; 
+    mutate : (groupCodeAndUsername : GroupCodeAndUsername) => void;
+    isLoading : boolean;
+    isError : boolean;
+    removed : boolean;
+}
+export const useMutationToRemoveMember = () : UseMutationToRemoveMemberType => {
     const queryClient = useQueryClient();
-    return useMutation(
+    const [confirmationOpened, setConfirmationOpened] = useState<boolean>(false);
+    const [removed, setRemoved] = useState<boolean>(false);
+    const {mutate, isLoading, isError} = useMutation(
         {
-            mutationFn : (groupCodeAndUsername : {groupCode : string, usernameOfMemberToRemove : string}) => 
+            mutationFn : (groupCodeAndUsername : GroupCodeAndUsername) => 
                 removeMemberMutationFn(groupCodeAndUsername.usernameOfMemberToRemove, groupCodeAndUsername.groupCode),   
             onSuccess : (groupCode) => {
-                queryClient.invalidateQueries(getQueryNameForFetchHoursTableData(groupCode));
+                console.log("trying to invalidate " );
+                console.log(getQueryKeyNameForScheduleFetch(groupCode));
+                queryClient.invalidateQueries(getQueryKeyNameForScheduleFetch(groupCode));
+                setConfirmationOpened(false);
+                setRemoved(true);
             }
 
         }
         
     )
+    return {confirmationOpened, setConfirmationOpened, mutate, isLoading, isError, removed};
 }
 
-const getQueryNameForFetchHoursTableData = (groupCode : string) : string => {
-    return 'fetchingHours' + groupCode;
-}

@@ -2,47 +2,75 @@ import React from "react";
 
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
 import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverviewHooks";
-import { Container, Typography } from "@mui/material";
+import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { EMPTY } from "../../../../../../common/src/scheduling/slots/tenterSlot";
+import { Container, Dialog, DialogActions, DialogTitle, Typography} from "@mui/material";
+import {Button} from "@material-ui/core";
+import {useContext} from 'react';
+import {GroupContext} from '@/lib/shared/context/groupContext';
+import {UserContext} from '@/lib/shared/context/userContext';
+import { RemoveMemberPrompt } from "./removeMemberPrompt";
+import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { ScheduleAndStartDate } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
 
 interface HoursTableProps {
-    hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}} | undefined
+    schedule : ScheduleAndStartDate;
 }
 export const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) => {
-    const {mutate : removeMember} = useMutationToRemoveMember();
+    const groupCode = useGroupCode();
+    const {data : schedule} = useQueryToFetchSchedule(groupCode);
+    const {groupDescription} = useContext(GroupContext);
+    const {userID} = useContext(UserContext);
+    const currentUserIsCreator = groupDescription.creator == userID;
+
     
-    if (typeof props.hoursPerPerson === 'undefined'){
+    if (typeof props.schedule === 'undefined'){
         return null;
     }
     
-    let allMembersArr = getAllMembers(props.hoursPerPerson);
-    let rows = getRowsForTable(allMembersArr, props.hoursPerPerson);
+    let allMembersArr = getAllMembers(props.schedule.getHoursPerPersonWholeSchedule());
+
+    let rows = getRowsForTable(allMembersArr, props.schedule.getHoursPerPersonWholeSchedule());
     
     return (
         <Container maxWidth="sm">
             <TableContainer>
                 <Table>
                     <TableHead>
-                    <TableRow>
-                        <TableCell><Typography style={{fontWeight : 'bold'}}>Member Name</Typography></TableCell>
-                        <TableCell><Typography style={{fontWeight : 'bold'}}>Daytime Hours</Typography></TableCell>
-                        <TableCell><Typography style={{fontWeight : 'bold'}}>Nighttime Hours</Typography></TableCell>
-                        <TableCell><Typography style={{fontWeight : 'bold'}}>Total</Typography></TableCell>
-                    </TableRow>
+                        <TableRow>
+                            <TableCell><Typography style={{fontWeight : 'bold'}}>Member Name</Typography></TableCell>
+                            <TableCell><Typography style={{fontWeight : 'bold'}}>Daytime Hours</Typography></TableCell>
+                            <TableCell><Typography style={{fontWeight : 'bold'}}>Nighttime Hours</Typography></TableCell>
+                            <TableCell><Typography style={{fontWeight : 'bold'}}>Total</Typography></TableCell>
+                            { currentUserIsCreator ? 
+                                <TableCell style={{width : 200}}><Typography style={{fontWeight : 'bold'}}>Remove</Typography></TableCell>
+                                : 
+                                null
+                            }
+                            
+                        </TableRow>
                     </TableHead>
                     <TableBody>
-                    {rows.map((row) => (
-                        <TableRow
-                        key={row.member}
-                        >
-                        <TableCell component="th" scope="row">
-                            {row.member}
-                        </TableCell>
-                        <TableCell >{row.daytime}</TableCell>
-                        <TableCell >{row.nighttime}</TableCell>
-                        <TableCell >{row.total}</TableCell>
-                        </TableRow>
-                    ))}
+                        {rows.map((row) => (
+                            <TableRow
+                            key={row.member}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {row.member}
+                                </TableCell>
+                                <TableCell >{row.daytime}</TableCell>
+                                <TableCell >{row.nighttime}</TableCell>
+                                <TableCell >{row.total}</TableCell>
+                                {(currentUserIsCreator && schedule && (schedule.IDToNameMap.get(userID) !== row.member)) ?
+                                    <TableCell >
+                                        <RemoveMemberPrompt memberUsername={row.member}/>
+                                    </TableCell> 
+                                    : 
+                                    null
+                                }
+                                
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

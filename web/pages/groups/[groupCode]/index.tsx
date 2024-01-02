@@ -24,7 +24,7 @@ const GroupHomePage : React.FC = () => {
             {(isLoading || !schedule) ? (
                 // Display the loading container while data is being loaded
                 <KvilleLoadingContainer />
-            ) : <HoursTable hoursPerPerson={schedule.getHoursPerPersonWholeSchedule()}/>}
+            ) : <HoursTable schedule={schedule}/>}
         </PermissionRequiredPageContainer>
     );
 }

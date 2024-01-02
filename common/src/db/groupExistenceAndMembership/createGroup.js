@@ -98,7 +98,7 @@ export async function tryToCreateGroup(groupName, tentType, userID) {
             transaction.set(groupRef, getDefaultNewGroupData(groupName, tentType, userID));
             let groupMembersRef = groupRef.collection('members');
             let myGroupMemberRef = groupMembersRef.doc(userID);
-            transaction.set(myGroupMemberRef, getDefaultGroupMemberData(username, tentType, CREATOR_ROLE));
+            transaction.set(myGroupMemberRef, getDefaultGroupMemberData(username, tentType, CREATOR_ROLE, CURRENT_YEAR));
             transaction.set(userRef, newUserData);
             
         })
