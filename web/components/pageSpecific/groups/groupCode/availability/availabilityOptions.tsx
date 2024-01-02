@@ -26,9 +26,9 @@ export const AvailabilityOptions : React.FC = () => {
         summaryText : "Set Preferred Timeslots",
         detail : <Container>
             {settingPreferred ? 
-                <Typography>You are now setting your preferred availability slots. Our algorithm will specifically try to put you in the slots you mark as preferred.</Typography> 
+                <Typography style={{marginBottom : 8}}>You are now setting your preferred availability slots. Our algorithm will specifically try to put you in the slots you mark as preferred.</Typography> 
                 : 
-                <Typography>You are now setting basic availability slots. Our algorithm could assign you to any slot you mark as available. </Typography>
+                <Typography style={{marginBottom : 8}}>You are now setting basic availability slots. Our algorithm could assign you to any slot you mark as available, but you can press the button below to mark your preferred timeslots. Our algorithm will prioritize assigning you to your preferred slots moreso than your standard available slots </Typography>
             }
             <Button disabled={settingPreferred} variant="contained" onClick={() => setSettingPreferred(true)}>
                 Set Preferred Times
@@ -57,7 +57,7 @@ export const AvailabilityOptions : React.FC = () => {
 
             <List sx={{ listStyleType: 'disc' }}>
                 <ListItem sx={{ display: 'list-item' }}>
-                    {colorblindModeIsOn ? "\"a\" (for \"available\")" : "Green"} represents when you are available. Our scheduling algorithm can assign you to any timeslot shown here as green or gold
+                    {colorblindModeIsOn ? "\"a\" (for \"available\")" : "Green"} represents when you are available. Our scheduling algorithm can assign you to any timeslot shown here as {colorblindModeIsOn ? "\"a\" or \"p\"" : "green or gold"}
                 </ListItem>
                 <ListItem sx={{ display: 'list-item' }}>
                     {colorblindModeIsOn ? "\"u\" (\"for \"unavailable\")" : "Red"} represents when you are unavailable. Our scheduling algorithm will not assign to you a time when you are unavailable

@@ -50,7 +50,7 @@ export default function Availability(){
                         Fill in your availability here - the grid below works kind of like a when2meet. 
                         Click on a cell to begin toggling your status - click on any cell to finish toggling. 
                         All cells in between the two will be switched to the new status. 
-                        Go to the Change Dates Visible dropdown to change which dates you can fill in.
+                        Check the dropdowns below for more options.
                     </Typography>
                     <AvailabilityPageContext.Provider value={{calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred, colorblindModeIsOn, setColorblindModeIsOn}}>
                         <AvailabilityOptions/>
