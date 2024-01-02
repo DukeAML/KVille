@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Container } from "@material-ui/core";
 import {Select, MenuItem, FormControl, InputLabel} from "@material-ui/core";
-import { TENTING_COLORS } from "../../../../common/data/phaseData";
+import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
 import { get48TimeLabels } from "../../../../common/src/calendarAndDates/calendarUtils";
 
 

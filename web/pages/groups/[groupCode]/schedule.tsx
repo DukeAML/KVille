@@ -1,28 +1,27 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { ScheduleOptions } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
-import {getDefaultDisplayDateGivenTentType, getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../../common/src/frontendLogic/schedule/scheduleDates";
-import {ScheduleAndStartDate} from '../../../../../common/src/db/schedule/scheduleAndStartDate';
-import { OneDaySchedule } from "../../../../components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
+import { ScheduleOptions } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
+import {getDefaultDisplayDateGivenTentType, getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../common/src/frontendLogic/schedule/scheduleDates";
+import { OneDaySchedule } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
 import { Typography, Stack, Container } from "@mui/material";
-import { CellColorsCoordinator } from "../../../../components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
-import { CellColorsContext } from "../../../../lib/pageSpecific/schedule/cellColorsContext";
-import { DateBeingShownContext } from "../../../../lib/pageSpecific/schedule/dateBeingShownContext";
-import { useQueryToFetchSchedule } from "../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { CellColorsCoordinator } from "@/components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
+import { CellColorsContext } from "@/lib/pageSpecific/schedule/cellColorsContext";
+import { DateBeingShownContext } from "@/lib/pageSpecific/schedule/dateBeingShownContext";
+import { useFetchScheduleAndSetDisplayDate, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
-import { CURRENT_YEAR, getScheduleDates } from "../../../../../common/data/scheduleDates";
-import { EMPTY } from "../../../../../common/src/scheduling/slots/tenterSlot";
-import { getDatePlusNumShifts } from "../../../../../common/src/calendarAndDates/datesUtils";
+import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
+import { EMPTY } from "../../../../common/src/scheduling/slots/tenterSlot";
+import { getDatePlusNumShifts } from "../../../../common/src/calendarAndDates/datesUtils";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 
 
 
 export default function Schedule() {
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
-    const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
+    //const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const {groupDescription} = useContext(GroupContext);
     const groupCode = useGroupCode();
     
@@ -33,13 +32,13 @@ export default function Schedule() {
     const [startReplacementDate, setStartReplacementDate] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const [endReplacementDate, setEndReplacementDate] = useState<Date>(getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).startOfBlack, 1));
 
-    const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
+    //const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
+    const {dateBeingShown, setDateBeingShown, data : scheduleAndStartDate, isLoading, isError} = useFetchScheduleAndSetDisplayDate(groupCode, groupDescription.tentType);
+
     useEffect(() => {
         let year = scheduleAndStartDate ? scheduleAndStartDate.startDate.getFullYear() : CURRENT_YEAR;
         setDateBeingShown(getDefaultDisplayDateGivenTentType(groupDescription.tentType, year));
     }, [groupDescription.tentType, scheduleAndStartDate]);
-
-
 
     let body = null;
     if (isLoading){

@@ -1,5 +1,5 @@
 import { createContext, Context } from 'react';
-import { getScheduleDates, CURRENT_YEAR } from '../../../../common/data/scheduleDates';
+import { getScheduleDates, CURRENT_YEAR } from '../../../../common/src/scheduling/rules/scheduleDates';
 import { getDatePlusNumShifts } from '../../../../common/src/calendarAndDates/datesUtils';
 import { EMPTY } from '../../../../common/src/scheduling/slots/tenterSlot';
 

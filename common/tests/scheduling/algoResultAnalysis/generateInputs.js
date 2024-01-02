@@ -1,7 +1,7 @@
 import { Person } from "../../../src/scheduling/person.js";
 import { TenterSlot, TENTER_STATUS_CODES } from "../../../src/scheduling/slots/tenterSlot.js";
 import { getDatePlusNumShifts } from "../../../src/calendarAndDates/datesUtils.js";
-import { TENTING_COLORS } from "../../../data/phaseData.js";
+import { TENTING_COLORS } from "../../../src/scheduling/rules/phaseData.js";
 import { examples } from "./exampleAvailability.js";
 
 

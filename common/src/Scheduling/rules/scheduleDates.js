@@ -1,5 +1,5 @@
-import {scheduleDates2023} from "./2023/scheduleDates";
-import {scheduleDates2024} from "./2024/scheduleDates";
+import {scheduleDates2023} from "../../../data/2023/scheduleDates";
+import {scheduleDates2024} from "../../../data/2024/scheduleDates";
 
 
 export const CURRENT_YEAR = 2024;

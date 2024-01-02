@@ -10,7 +10,7 @@ import { useMutationToAssignTentersAndUpdateSchedule, useQueryToFetchSchedule } 
 import { useRouter } from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
-import { getScheduleDates, CURRENT_YEAR } from "../../../../../../common/data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../../../../../common/src/scheduling/rules/scheduleDates";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 
 

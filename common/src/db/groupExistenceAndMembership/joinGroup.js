@@ -3,7 +3,7 @@ import { firestore} from "../firebase_config.js";
 import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { GroupDescription } from "./groupMembership.js";
 import { getGroupMembersByGroupCode } from "./groupMembership.js";
-import { CURRENT_YEAR, getScheduleDates } from "../../../data/scheduleDates.js";
+import { CURRENT_YEAR, getScheduleDates } from "../../scheduling/rules/scheduleDates.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 
 export const JOIN_GROUP_ERROR_CODES = {

@@ -1,11 +1,11 @@
 import {Slot} from "../../src/scheduling/slots/slot";
-import { TENTING_COLORS } from "../../data/phaseData";
-import { isGrace } from "../../data/gracePeriods";
+import { TENTING_COLORS } from "../../src/scheduling/rules/phaseData";
+import { isGrace } from "../../src/scheduling/rules/gracePeriods";
 import { getGracePeriods2023 } from "../../data/2023/gracePeriods";
 import { getGracePeriods2024 } from "../../data/2024/gracePeriods";
-import { getScheduleDates, CURRENT_YEAR } from "../../data/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../src/scheduling/rules/scheduleDates";
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
-import { isNight } from "../../data/nightData";
+import { isNight } from "../../src/scheduling/rules/nightData";
 
 let scheduleDates = getScheduleDates(CURRENT_YEAR);
 describe("isNight", () => {

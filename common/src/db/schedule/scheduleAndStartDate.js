@@ -1,7 +1,7 @@
 
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { Slot } from "../../scheduling/slots/slot.js";
-import { isNight } from "../../../data/nightData.js";
+import { isNight } from "../../scheduling/rules/nightData.js";
 
 export class ScheduleAndStartDate{
     /**

@@ -1,4 +1,4 @@
-import { TENTING_COLORS } from "../../data/phaseData";
+import { TENTING_COLORS } from "../../src/scheduling/rules/phaseData";
 import { createGroupSchedule } from "../../src/scheduling/externalInterface/CreateGroupSchedule";
 import {KTEST_GROUP_CODE} from "../db/testUserCredentials";
 describe("createGroupSchedule", () => {

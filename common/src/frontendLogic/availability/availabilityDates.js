@@ -1,5 +1,5 @@
 import { getCurrentDate } from "../../calendarAndDates/datesUtils.js";
-import { getScheduleDates } from "../../../data/scheduleDates.js";
+import { getScheduleDates } from "../../scheduling/rules/scheduleDates.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
 
 

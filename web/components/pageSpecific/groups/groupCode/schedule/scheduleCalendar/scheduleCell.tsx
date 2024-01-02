@@ -7,6 +7,7 @@ import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@m
 interface ScheduleCellProps {
     name : string;
     startDate : Date;
+    inBounds : boolean;
 }
 
 export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellProps) => {
@@ -14,9 +15,11 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
     const {isSwappingTenter, setIsSwappingTenter, setTenterToReplace, setTimeSlotClickedOn} = useContext(TenterSwapContext)
     const [color, setColor] = useState<string>("white")
     const handleClick = () => {
-        setIsSwappingTenter(true);
-        setTenterToReplace(props.name);
-        setTimeSlotClickedOn(props.startDate);
+        if (props.inBounds){
+            setIsSwappingTenter(true);
+            setTenterToReplace(props.name);
+            setTimeSlotClickedOn(props.startDate);
+        }  
     }
 
     useEffect(() => {

@@ -6,7 +6,7 @@ import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { joinGroupValidationSchema, tryToJoinGroup } from '../../../../common/src/db/groupExistenceAndMembership/joinGroup';
+import { joinGroupValidationSchema, tryToJoinGroup } from '../../../common/src/db/groupExistenceAndMembership/joinGroup';
 
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
