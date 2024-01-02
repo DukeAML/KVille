@@ -1,6 +1,6 @@
 import {nightData, isNight as checkIfNight} from "../../../data/nightData.js" 
-import {graceData} from "../../../data/gracePeriods.js"
-import { phaseData, TENTING_COLORS } from "../../../data/phaseData.js";
+import {isGrace} from "../../../data/gracePeriods.js"
+import { getPhaseData, TENTING_COLORS } from "../../../data/phaseData.js";
 import { scheduleDates } from "../../../data/scheduleDates.js";
 import { getDatePlusNumShifts } from "../../calendarAndDates/datesUtils.js";
 
@@ -18,7 +18,7 @@ export class Slot{
 		this.tentType = tentType;
 		this.phase = Slot.getPhase(startDate);
 		this.isNight = checkIfNight(startDate);
-		this.isGrace = Slot.checkGrace(startDate);
+		this.isGrace = isGrace(startDate, false).isGrace;
     }
 
 	/**
@@ -36,35 +36,6 @@ export class Slot{
 			return TENTING_COLORS.WHITE;
 		}
 	}
-  
-
-    /**
-     * Determine if this slot is in a grace period
-     * @param {Date} startDate the starting date for this time slot
-     * @returns {boolean} true iff this slot is during a grace period
-     */
-    static checkGrace(startDate){
-		var gracePeriods = graceData.gracePeriods;
-		for (var gracePeriodIndex = 0; gracePeriodIndex < gracePeriods.length; gracePeriodIndex += 1){
-			var gracePeriod = gracePeriods[gracePeriodIndex];
-			var graceStartDate = gracePeriod.startDate;
-			var graceEndDate = gracePeriod.endDate;
-	
-			
-			if ((startDate >= graceStartDate) && (startDate < graceEndDate)){
-				return true;
-			} 
-		}
-		return false;
-    }
-
-    /**
-     * 
-     * @returns {boolean}
-     */
-    checkGrace(){
-		return Slot.checkGrace(this.startDate);
-    }
 
     /**
      * Calculate how many people are needed during this shift
@@ -75,7 +46,7 @@ export class Slot{
 		if (this.isGrace){
 			return 0;
 		}
-
+		let phaseData = getPhaseData(this.startDate.getFullYear());
 		if (this.phase == TENTING_COLORS.BLACK) {
 			if (this.isNight)
 				return phaseData.Black.night

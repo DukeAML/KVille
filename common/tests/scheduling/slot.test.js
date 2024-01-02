@@ -1,6 +1,8 @@
 import {Slot} from "../../src/scheduling/slots/slot";
 import { TENTING_COLORS } from "../../data/phaseData";
-import { graceData } from "../../data/gracePeriods";
+import { isGrace } from "../../data/gracePeriods";
+import { getGracePeriods2023 } from "../../data/2023/gracePeriods";
+import { getGracePeriods2024 } from "../../data/2024/gracePeriods";
 import { scheduleDates } from "../../data/scheduleDates";
 import { getDatePlusNumShifts } from "../../src/calendarAndDates/datesUtils";
 import { isNight } from "../../data/nightData";
@@ -66,22 +68,31 @@ describe("isNight", () => {
 describe("checkGrace", () => {
     const runGraceTest = (date, expected) => {
         const slot = new Slot(date, TENTING_COLORS.BLACK);
-        expect(slot.checkGrace()).toBe(expected);
+        expect(isGrace(date, false).isGrace).toBe(expected);
         expect(slot.isGrace).toBe(expected);
     }
 
-    it("checks grace correctly at beginning of grace period", () => {
+    it("checks grace correctly at beginning of grace period 2023", () => {
 
-        runGraceTest(graceData.gracePeriods[0].startDate, true);
+        runGraceTest(getGracePeriods2023()[0].startDate, true);
     })
 
-    it("checks grace correctly at end of grace period", () => {
-        runGraceTest(graceData.gracePeriods[0].endDate, false);
+    it("checks grace correctly at end of grace period 2023", () => {
+        runGraceTest(getGracePeriods2023()[1].endDate, false);
+    })
+
+    it("checks grace correctly at beginning of grace period 2024", () => {
+
+        runGraceTest(getGracePeriods2024()[1].startDate, true);
+    })
+
+    it("checks grace correctly at end of grace period 2024", () => {
+        runGraceTest(getGracePeriods2024()[0].endDate, false);
     })
 });
 
 describe("calculatePeopleNeeded", () => {
-    it("works for black day", () => {
+    it("works for black day ", () => {
         const slot = new Slot(scheduleDates.startOfBlack, TENTING_COLORS.BLACK);
         expect(slot.calculatePeopleNeeded()).toBe(2);
     });

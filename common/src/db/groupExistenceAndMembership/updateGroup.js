@@ -1,14 +1,8 @@
 import * as Yup from "yup";
 import { firestore} from "../firebase_config.js";
-import { getDefaultGroupMemberData, getNewUserDataAfterJoiningGroup } from "./joinGroup.js";
-import {generateGroupCode} from "./GroupCode.js";
+
 import { TENTING_COLORS } from "../../../data/phaseData.js";
-import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
-import { scheduleDates } from "../../../data/scheduleDates.js";
-import { getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
-import { EMPTY } from "../../scheduling/slots/tenterSlot.js";
-const GROUP_CODE_LENGTH = 8;
-const CREATOR_ROLE = "Creator";
+
 
 export const UPDATE_GROUP_ERROR_CODES = {
     UPDATE_GROUP_FAILURE : "Unknown Error",

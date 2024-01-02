@@ -1,14 +1,28 @@
-export const graceData = {
-    gracePeriods: [{
-        startDate: new Date(2023, 0, 17, 16, 0),
-        endDate: new Date(2023, 0, 17, 18, 0),
+import { getGracePeriods2023 } from "./2023/gracePeriods";
+import { getGracePeriods2024 } from "./2024/gracePeriods";
 
-    }, 
-    {
-        startDate: new Date(2023, 1, 3, 15, 30),
-        endDate: new Date(2023, 1, 3, 18, 30)
+
+
+
+
+
+/**
+ * 
+ * @param {Date} slotStartDate 
+ * @returns {{isGrace : boolean, reason : string}}
+ */
+export const isGrace = (slotStartDate, includeDiscretionary=false) => {
+    let gracePeriods = getGracePeriods2024(includeDiscretionary);
+    if (slotStartDate.getFullYear() < 2023.5){
+        gracePeriods = getGracePeriods2023(includeDiscretionary);
     }
 
-    ]
-    
+    for (let i = 0; i < gracePeriods.length ; i += 1){
+        let gracePeriod = gracePeriods[i];
+        if (gracePeriod.includesSlotStartDate(slotStartDate)){
+            return {isGrace : true, reason : gracePeriod.reason}
+        }
+    }
+    return {isGrace : false, reason : ""}
+
 }
