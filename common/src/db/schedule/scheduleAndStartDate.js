@@ -1,7 +1,8 @@
 
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
-import { Slot } from "../../scheduling/slots/slot.js";
 import { isNight } from "../../scheduling/rules/nightData.js";
+import { GRACE } from "../../scheduling/slots/tenterSlot.js";
+import { checkIfNameIsForGracePeriod } from "../../scheduling/rules/gracePeriods.js";
 
 export class ScheduleAndStartDate{
     /**
@@ -34,6 +35,9 @@ export class ScheduleAndStartDate{
     getNamesAtTimeIndex(timeIndex){
         const ids = this.schedule[timeIndex];
         let names = [];
+        if (checkIfNameIsForGracePeriod(ids.join(" "))){
+            return [ids.join(" ")];
+        }
         ids.forEach((id) => {
             if (this.IDToNameMap.has(id)){
                 names.push(this.IDToNameMap.get(id));
@@ -169,6 +173,18 @@ export class ScheduleAndStartDate{
             return maxPpl;
         }
         
+    }
+
+    /**
+     * 
+     * @returns {{userID : string, username : string}[]} members
+     */
+    getAllMembers(){
+        let members = [];
+        this.IDToNameMap.forEach((username, userID) => {
+            members.push({userID, username})
+        })
+        return members;
     }
 
   

@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { firestore} from "../firebase_config.js";
-import { getDefaultGroupMemberData, getNewUserDataAfterJoiningGroup } from "./joinGroup.js";
+import { getDefaultGroupMemberData } from "./joinGroup.js";
 import {generateGroupCode} from "./GroupCode.js";
 import { TENTING_COLORS } from "../../scheduling/rules/phaseData.js";
 import { getTentingStartDate } from "../../calendarAndDates/tentingDates.js";
@@ -8,9 +8,9 @@ import { CURRENT_YEAR, getScheduleDates } from "../../scheduling/rules/scheduleD
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { EMPTY } from "../../scheduling/slots/tenterSlot.js";
 import { Slot } from "../../scheduling/slots/slot.js";
+import { isGrace, scheduleNameForGracePeriod } from "../../scheduling/rules/gracePeriods.js";
 
 const GROUP_CODE_LENGTH = 8;
-const CREATOR_ROLE = "Creator";
 
 export const CREATE_GROUP_ERROR_CODES = {
     CREATE_GROUP_FAILURE : "Failed to Create Group",
@@ -38,6 +38,7 @@ async function checkIfGroupExistsByGroupName(groupName) {
 
 }
 
+
 /**
  * 
  * @param {String} tentType 
@@ -52,6 +53,11 @@ export function getDefaultSchedule(tentType, year){
     for (let i = 0; i < numSlots; i += 1){
         let slot = new Slot(getDatePlusNumShifts(startDate, i), tentType);
         let numPpl = slot.calculatePeopleNeeded();
+        if (slot.isGrace){
+            let reason = isGrace(slot.startDate).reason;
+            sched.push(scheduleNameForGracePeriod(reason));
+            continue;
+        }
         sched.push(new Array(numPpl).fill(EMPTY).join(" "));
     }
     return sched;
@@ -87,19 +93,13 @@ export async function tryToCreateGroup(groupName, tentType, userID) {
         throw new Error(CREATE_GROUP_ERROR_CODES.GROUP_NAME_TAKEN);
     }
     let groupCode = await generateGroupCode(GROUP_CODE_LENGTH);
-    let userRef = firestore.collection('users').doc(userID);
-    let newUserData = await getNewUserDataAfterJoiningGroup(userRef, groupName, groupCode);
-    let username = newUserData.username;
-    //creates/adds to groups collection, adds doc with generated group code and sets name and tent type
-
     try {
         await firestore.runTransaction(async (transaction) => {
             let groupRef = firestore.collection('groups').doc(groupCode);
             transaction.set(groupRef, getDefaultNewGroupData(groupName, tentType, userID));
             let groupMembersRef = groupRef.collection('members');
             let myGroupMemberRef = groupMembersRef.doc(userID);
-            transaction.set(myGroupMemberRef, getDefaultGroupMemberData(username, tentType, CREATOR_ROLE, CURRENT_YEAR));
-            transaction.set(userRef, newUserData);
+            transaction.set(myGroupMemberRef, getDefaultGroupMemberData(tentType, CURRENT_YEAR));
             
         })
     } catch (error) {

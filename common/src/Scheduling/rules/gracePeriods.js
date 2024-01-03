@@ -1,6 +1,6 @@
 import { getGracePeriods2023 } from "../../../data/2023/gracePeriods";
 import { getGracePeriods2024 } from "../../../data/2024/gracePeriods";
-
+import { GRACE } from "../slots/tenterSlot";
 
 
 
@@ -25,4 +25,26 @@ export const isGrace = (slotStartDate, includeDiscretionary=false) => {
     }
     return {isGrace : false, reason : ""}
 
+}
+
+/**
+ * Returns a string formatted like "Grace - MBB Home Game"
+ * @param {string} reason 
+ * @returns string
+ */
+export const scheduleNameForGracePeriod = (reason) => {
+    return GRACE + " - " + reason;
+}
+
+/**
+ * 
+ * @param {string} name 
+ * @returns {boolean}
+ */
+export const checkIfNameIsForGracePeriod = (name) => {
+    if (name.startsWith(GRACE)){
+        return true;
+    } else {
+        return false;
+    }
 }

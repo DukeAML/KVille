@@ -1,4 +1,4 @@
-import { useQueryToFetchGroupMembers, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import React, { useContext} from "react";

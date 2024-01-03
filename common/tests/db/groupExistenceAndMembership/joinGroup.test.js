@@ -11,8 +11,8 @@ describe("tryToJoinGroup", () => {
         const newGroupAddedToUser = newGroups.filter((group) => group.groupCode === SMALLER_KTEST_GROUP_CODE).length > 0;
 
         let groupMembers = await getGroupMembersByGroupCode(SMALLER_KTEST_GROUP_CODE);
-        groupMembers = groupMembers.map((member) => member.userID);
-        expect(groupMembers.includes(KTEST5_UID)).toBe(true);
+        let groupMemberIDs = groupMembers.map((member) => member.userID);
+        expect(groupMemberIDs.includes(KTEST5_UID)).toBe(true);
         expect(newGroupAddedToUser).toBe(true);
         removeMemberFromGroupByID(KTEST5_UID, SMALLER_KTEST_GROUP_CODE); //clean up
 

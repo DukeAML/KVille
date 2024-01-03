@@ -1,9 +1,8 @@
-import { useMutation,  UseMutationResult, UseQueryResult } from "react-query";
+import { useMutation,  UseQueryResult } from "react-query";
 import { setGroupScheduleInDB } from "../../../../common/src/db/schedule/schedule";
 import { useQueryClient, useQuery, QueryClient } from "react-query";
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
 import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
-import { getGroupMembersByGroupCode } from "../../../../common/src/db/groupExistenceAndMembership/groupMembership";
 import {useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
@@ -93,6 +92,7 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
 
 export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType : string) => {
     const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
+    const [dateHasBeenSetAlready, setDateHasBeenSetAlready] = useState<boolean>(false);
     const {data, isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForScheduleFetch(groupCode),
         () => {
@@ -103,7 +103,11 @@ export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType :
         },
         {
             onSuccess: (data) => {
-                setDateBeingShown(getDefaultDisplayDateGivenTentType(tentType, data.startDate.getFullYear()))
+                if (!dateHasBeenSetAlready){
+                    setDateBeingShown(getDefaultDisplayDateGivenTentType(tentType, data.startDate.getFullYear()));
+                    setDateHasBeenSetAlready(true);
+                }
+                
             },
             onError : (error) => {
                 console.log(error.message);
@@ -125,18 +129,5 @@ export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndSta
     return queryClient.getQueryData(getQueryKeyNameForScheduleFetch(groupCode));
 }
 
-interface GroupMemberType {
-    userID : string;
-    username : string
-}
-export const useQueryToFetchGroupMembers = (groupCode : string) : UseQueryResult<GroupMemberType[]> => {
-    return useQuery<GroupMemberType[], Error>(
-        ["fetching group members", groupCode],
-        () => getGroupMembersByGroupCode(groupCode),
-        {
-            initialData : []
-        }
 
-    )
-}
 

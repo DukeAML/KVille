@@ -1,4 +1,5 @@
-import { GRACE } from "../slots/tenterSlot";
+import { EMPTY, GRACE } from "../slots/tenterSlot";
+import { isGrace, scheduleNameForGracePeriod } from "../rules/gracePeriods";
 
 /**
  * Adds in 'Grace Period' to scheduleArr where appropriate
@@ -8,9 +9,15 @@ import { GRACE } from "../slots/tenterSlot";
 */
 export function fillGrace(scheduleArr){
     for (var timeIndex = 0; timeIndex < scheduleArr.length; timeIndex++){
+        let startDate = scheduleArr[timeIndex].startDate;
         var peopleNeeded = scheduleArr[timeIndex].calculatePeopleNeeded();
         if (peopleNeeded == 0){
-            scheduleArr[timeIndex].ids.push(GRACE);
+            if (isGrace(startDate, false).isGrace){
+                let reason = isGrace(startDate, false).reason;
+                scheduleArr[timeIndex].ids.push(scheduleNameForGracePeriod(reason));
+            } else {
+                scheduleArr[timeIndex].ids.push(EMPTY);
+            }
         }
 
     }   

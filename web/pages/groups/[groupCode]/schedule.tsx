@@ -35,11 +35,6 @@ export default function Schedule() {
     //const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
     const {dateBeingShown, setDateBeingShown, data : scheduleAndStartDate, isLoading, isError} = useFetchScheduleAndSetDisplayDate(groupCode, groupDescription.tentType);
 
-    useEffect(() => {
-        let year = scheduleAndStartDate ? scheduleAndStartDate.startDate.getFullYear() : CURRENT_YEAR;
-        setDateBeingShown(getDefaultDisplayDateGivenTentType(groupDescription.tentType, year));
-    }, [groupDescription.tentType, scheduleAndStartDate]);
-
     let body = null;
     if (isLoading){
         body = <KvilleLoadingContainer/>

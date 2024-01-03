@@ -28,39 +28,65 @@ export const GET_GROUP_MEMBERS_ERRORS = {
  * @returns {Promise<GroupDescription[]>}
  */
 export async function fetchGroups(userID) {
-  let allGroups = [];
-  let allGroupCodes = [];
-  await firestore
-    .collection("users")
-    .doc(userID)
-    .get()
-    .then((doc) => {
-      let groupsInDB = doc.data().groups;
-      //console.log("Current user's groups", currGroup);
-      groupsInDB.forEach((group) => {
-        allGroupCodes.push(group.groupCode);
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-      throw error;
-    });
-
-  for (let i = 0; i < allGroupCodes.length; i += 1) {
-    let groupCode = allGroupCodes[i];
-    try{
-      const groupData = await fetchGroupData(groupCode);
-      if (groupData === undefined){
-        continue;
-      } else {
-        allGroups.push(groupData);
+  let allGroups = await fetchAllGroups();
+  console.log(allGroups);
+  let usersGroups = [];
+  for (let groupIndex = 0; groupIndex < allGroups.length; groupIndex +=1 ){
+    let currentGroup = allGroups[groupIndex];
+    for (let idIndex = 0; idIndex < currentGroup.memberIDs.length ; idIndex += 1){
+      if (currentGroup.memberIDs[idIndex] === userID){
+        usersGroups.push(currentGroup.groupDescription);
       }
-    } catch {
-      console.log("this code block shoudl not be possible!!");
     }
   }
-  return allGroups;
+  return usersGroups;
+  
+
 }
+
+/**
+ * @returns {Promise<{ groupDescription : GroupDescription, memberIDs: String[] }[]>}
+ */
+async function fetchAllGroups() {
+  return new Promise((resolve, reject) => {
+    firestore.collection('groups').get()
+      .then((querySnapshot) => {
+        const groupPromises = [];
+
+        querySnapshot.forEach((groupDoc) => {
+          const membersRef = groupDoc.ref.collection('members').get();
+          groupPromises.push(membersRef);
+        });
+
+        Promise.all(groupPromises)
+          .then((groupSnapshots) => {
+            const groupsData = [];
+
+            groupSnapshots.forEach((membersQuerySnapshot, index) => {
+              const groupCode = querySnapshot.docs[index].id;
+              const memberIDs = membersQuerySnapshot.docs.map((memberDoc) => memberDoc.id);
+              console.log(groupCode);
+              let groupData = querySnapshot.docs[index].data();
+              groupsData.push({ groupDescription: new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator), memberIDs });
+            });
+
+            console.log('Groups data:', groupsData);
+            resolve(groupsData); // Resolve the Promise with the array of group data
+          })
+          .catch((error) => {
+            console.error('Error fetching groups:', error);
+            reject(error); // Reject the Promise if there's an error
+          });
+      })
+      .catch((error) => {
+        console.error('Error querying groups:', error);
+        reject(error); // Reject the Promise if there's an error
+      });
+  });
+}
+
+
+
 
 /**
  * 
@@ -88,7 +114,7 @@ export async function fetchGroupData(groupCode){
 /**
  *
  * @param {String} groupCode
- * @returns {Promise<{userID : String, username : String}[]>} userIDs
+ * @returns {Promise<{userID : String}[]>} userIDs
  */
 export async function getGroupMembersByGroupCode(groupCode) {
   const groupRef = firestore
@@ -100,6 +126,6 @@ export async function getGroupMembersByGroupCode(groupCode) {
     throw new Error(GET_GROUP_MEMBERS_ERRORS.GROUP_DOES_NOT_EXIST);
   }
   return memberDocs.docs.map((doc) => {
-    return { userID: doc.id, username: doc.data().name };
+    return { userID: doc.id};
   });
 }
