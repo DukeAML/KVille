@@ -55,15 +55,6 @@ async function findUserIDForMemberInGroupWithGivenUsername(username, groupCode){
  * @returns {Promise<void>}
  */
 export async function removeMemberFromGroupByID(userID, groupCode) {
-    const userRef = firestore.collection("users").doc(userID);
-    const userDoc = await userRef.get();
-    if (!userDoc.exists) {
-      throw new Error(REMOVE_USER_ERRORS.USER_DOES_NOT_EXIST);
-    }
-    let newUserData = { ...userDoc.data() };
-    newUserData.groups = newUserData.groups.filter(
-      (group) => group.groupCode !== groupCode
-    );
     const userInGroupRef = firestore
       .collection("groups")
       .doc(groupCode)
@@ -86,7 +77,6 @@ export async function removeMemberFromGroupByID(userID, groupCode) {
     try {
       await firestore.runTransaction(async (transaction) => {
         transaction.delete(userInGroupRef);
-        transaction.update(userRef, newUserData);
         transaction.update(groupRef, newGroupData);
       });
     } catch (error) {

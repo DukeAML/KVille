@@ -3,6 +3,9 @@ import { Grid, Paper, Typography } from "@mui/material";
 import { CellColorsContext } from "../../../../../../lib/pageSpecific/schedule/cellColorsContext";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
+import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useGroupCode } from "@/lib/shared/useGroupCode";
 
 interface ScheduleCellProps {
     name : string;
@@ -16,6 +19,7 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
     const [color, setColor] = useState<string>("white")
     const handleClick = () => {
         if (props.inBounds){
+            console.log(props.startDate);
             setIsSwappingTenter(true);
             setTenterToReplace(props.name);
             setTimeSlotClickedOn(props.startDate);
@@ -23,8 +27,9 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
     }
 
     useEffect(() => {
-        setColor(cellColorsCoordinator.getColorForName(props.name));
-    }, [props.name]);
+        let newColor = cellColorsCoordinator.getColorForName(props.name);
+        setColor(newColor);
+    }, [props.name, cellColorsCoordinator]);
 
     
     return (
@@ -36,7 +41,7 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
             borderRight : "1px solid black",
             borderTop : (props.startDate.getMinutes() == 0) ? "2px solid black " : "2px dashed black",
         }} onClick={handleClick}>
-            <Typography align="center" >{props.name}</Typography>
+            <Typography noWrap align="center" >{props.name}</Typography>
             
         </TableCell>
     )

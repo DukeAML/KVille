@@ -3,6 +3,7 @@ import { firestore } from "../firebase_config.js";
 import { getDateRoundedTo30MinSlot } from "../../calendarAndDates/datesUtils.js";
 import { getGroupMembersByGroupCode } from "../groupExistenceAndMembership/groupMembership.js";
 import { GRACE } from "../../scheduling/slots/tenterSlot.js";
+import { checkIfNameIsForGracePeriod } from "../../scheduling/rules/gracePeriods.js";
 
 
 export const FETCH_SCHEDULE_ERROR_CODES = {
@@ -14,6 +15,42 @@ export const SET_SCHEDULE_ERROR_CODES = {
 };
 
 /**
+ * @param {String[]} userIDs
+ * @returns {Promise<{ userID: String, username: String }[]>}
+ */
+async function getUsernames(userIDs) {
+    return new Promise((resolve, reject) => {
+        const userPromises = [];
+    
+        userIDs.forEach((userID) => {
+            const userPromise = firestore.collection('users').doc(userID).get();
+            userPromises.push(userPromise);
+        });
+    
+        Promise.all(userPromises)
+            .then((userSnapshots) => {
+                const usernames = [];
+                userSnapshots.forEach((userSnapshot) => {
+                    if (userSnapshot.exists) {
+                        const userData = userSnapshot.data();
+                        const username = userData.username;
+                        usernames.push({ userID: userSnapshot.id, username });
+                    }
+                });
+        
+                resolve(usernames); // Resolve the Promise with the array of user data
+            })
+        .catch((error) => {
+            console.error('Error fetching usernames:', error);
+            reject(error); // Reject the Promise if there's an error
+        });
+    });
+  }
+  
+
+  
+
+/**
  * 
  * @param {string} groupCode 
  * @returns {Promise<ScheduleAndStartDate>} object containing the schedule as an array of strings, and the start Date of the schedule
@@ -22,7 +59,8 @@ export async function fetchGroupSchedule(groupCode) {
     console.log("fetching schedule for " + groupCode + " group ");
     const groupRef = firestore.collection('groups').doc(groupCode);
     const group = await groupRef.get();
-    const groupMembers = await getGroupMembersByGroupCode(groupCode);
+    const groupMemberIDs = await getGroupMembersByGroupCode(groupCode);
+    const groupMembers = await getUsernames(groupMemberIDs.map((member) => member.userID));
     const IDToNameMap = new Map();
     groupMembers.forEach((member) => IDToNameMap.set(member.userID, member.username));
     if (group.exists){
@@ -31,8 +69,8 @@ export async function fetchGroupSchedule(groupCode) {
         let schedule = [];
         group.data().groupSchedule.map((idsAtIndex) => {
             let ids = idsAtIndex.split(" ");
-            if (ids[0] === "Grace" && ids[1] === "Period"){
-                ids = [GRACE];
+            if (checkIfNameIsForGracePeriod(idsAtIndex)){
+                ids = [idsAtIndex];
             }
             schedule.push(ids);
         })

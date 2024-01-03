@@ -28,7 +28,7 @@ export const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) 
         return null;
     }
     
-    let allMembersArr = getAllMembers(props.schedule.getHoursPerPersonWholeSchedule());
+    let allMembersArr = getAllMembers(props.schedule);
 
     let rows = getRowsForTable(allMembersArr, props.schedule.getHoursPerPersonWholeSchedule());
     
@@ -79,17 +79,8 @@ export const HoursTable : React.FC<HoursTableProps> = (props : HoursTableProps) 
 
 }
 
-const getAllMembers = (hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}) : string[] =>  {
-    let allMembersArr : string[] = [];
-    for (let member in hoursPerPerson.dayHoursPerPerson){
-        allMembersArr.push(member);
-    }
-    for (let member in hoursPerPerson.nightHoursPerPerson){
-        if (!allMembersArr.includes(member)){
-            allMembersArr.push(member);
-        }
-    }
-    return allMembersArr;
+const getAllMembers = (schedule : ScheduleAndStartDate) : string[] =>  {
+    return schedule.getAllMembers().map((member) => member.username);
 }
 
 interface DataForTableRow {
@@ -100,16 +91,16 @@ interface DataForTableRow {
 }
 const getRowsForTable = (allMembersArr : string[], hoursPerPerson : {dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}) : DataForTableRow[] => {
     let rows = [];
-    for(let i=0;i<allMembersArr.length;i++){
-        if (allMembersArr[i] === EMPTY){
+    for(let memberIndex=0;memberIndex<allMembersArr.length;memberIndex++){
+        if (allMembersArr[memberIndex] === EMPTY){
             continue;
         }
-        const dayHours = hoursPerPerson.dayHoursPerPerson[allMembersArr[i]];
-        const nightHours = hoursPerPerson.nightHoursPerPerson[allMembersArr[i]];
+        const dayHours = hoursPerPerson.dayHoursPerPerson[allMembersArr[memberIndex]];
+        const nightHours = hoursPerPerson.nightHoursPerPerson[allMembersArr[memberIndex]];
         const totalHours = dayHours + nightHours;
         
         if (typeof dayHours === 'number' && typeof nightHours === 'number') {
-            rows.push({member : allMembersArr[i], daytime : dayHours, nighttime : nightHours, total : totalHours});
+            rows.push({member : allMembersArr[memberIndex], daytime : dayHours, nighttime : nightHours, total : totalHours});
           }
 
     }
