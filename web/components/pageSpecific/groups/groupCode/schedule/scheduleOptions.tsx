@@ -54,7 +54,7 @@ export const ScheduleOptions : React.FC = () => {
                             setBadDateRangeMsg(message);
                             setTimeout(() => {
                                 setBadDateRangeMsg("");
-                            }, 2000);
+                            }, 3000);
                         }
                     }}
                 />

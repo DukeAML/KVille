@@ -53,10 +53,11 @@ export const getDefaultAssignDateRangeEndDate = (schedule) => {
  * @returns {{successful : boolean, message : string}}
  */
 export const validateAssignTentersDateRange = (newStartDate, newEndDate, groupScheduleStartDate) => {
+    let endOfTenting = getScheduleDates(groupScheduleStartDate.getFullYear()).endOfTenting;
     if (newStartDate < groupScheduleStartDate){
-        return {successful: false, message: "Start date of " + newStartDate.getTime() + " must be at least " + groupScheduleStartDate.getTime()};
-    } else if (newEndDate > getScheduleDates(groupScheduleStartDate.getFullYear()).endOfTenting){
-        return {succesful: false, message: "End date cannot occur after the end of tenting"};
+        return {successful: false, message: "Start date must be at least " + groupScheduleStartDate.toLocaleString()};
+    } else if (newEndDate > endOfTenting){
+        return {succesful: false, message: "End date cannot occur after the end of tenting on " + endOfTenting.toLocaleString()};
     } else if (newEndDate <= newStartDate){
         return {succesful: false, message: "End date must be later than the start date"};
     } else {

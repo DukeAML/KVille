@@ -16,6 +16,7 @@ import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/schedulin
 import { EMPTY } from "../../../../common/src/scheduling/slots/tenterSlot";
 import { getDatePlusNumShifts } from "../../../../common/src/calendarAndDates/datesUtils";
 import { GroupContext } from "@/lib/shared/context/groupContext";
+import { DatesRow } from "@/components/pageSpecific/groups/groupCode/schedule/datesRow";
 
 
 
@@ -54,10 +55,11 @@ export default function Schedule() {
                         </Container>
                 
                         <ScheduleOptions/>
-                        <Stack direction="row">
-                            {isSwappingTenter ? <TenterSwapper/> : null}
-                            <OneDaySchedule/>
-                        </Stack>
+
+                        {isSwappingTenter ? <TenterSwapper/> : null}
+                        <OneDaySchedule/>
+                        <Container maxWidth="md"><DatesRow/></Container>
+
                     </TenterSwapContext.Provider>
                 </CellColorsContext.Provider>
             </DateBeingShownContext.Provider>

@@ -11,12 +11,12 @@ interface ScheduleCellProps {
     name : string;
     startDate : Date;
     inBounds : boolean;
+    color : string;
 }
 
 export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellProps) => {
     const {cellColorsCoordinator} = useContext(CellColorsContext);
     const {isSwappingTenter, setIsSwappingTenter, setTenterToReplace, setTimeSlotClickedOn} = useContext(TenterSwapContext)
-    const [color, setColor] = useState<string>("white")
     const handleClick = () => {
         if (props.inBounds){
             console.log(props.startDate);
@@ -26,16 +26,10 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
         }  
     }
 
-    useEffect(() => {
-        let newColor = cellColorsCoordinator.getColorForName(props.name);
-        setColor(newColor);
-    }, [props.name, cellColorsCoordinator]);
-
-    
     return (
         <TableCell style={{
             height : "100%", 
-            backgroundColor : color, 
+            backgroundColor : props.color, 
             cursor : "grab",
             borderLeft : "1px solid black",
             borderRight : "1px solid black",

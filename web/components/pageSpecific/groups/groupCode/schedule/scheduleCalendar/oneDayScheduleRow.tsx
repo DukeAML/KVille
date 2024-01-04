@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Grid } from "@mui/material";
@@ -9,17 +9,18 @@ import { INVALID_GROUP_CODE } from "../../../../../../../common/src/db/groupExis
 import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
 import { Typography } from "@material-ui/core";
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
-
+import { CellColorsCoordinator, OUT_OF_BOUNDS_NAME } from "../cellColorsCoordinator";
+import { CellColorsContext } from "@/lib/pageSpecific/schedule/cellColorsContext";
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
 
+
+
 export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : OneDayScheduleRowProps) => {
     const router = useRouter();
     const groupCode = router.query.groupCode ? router.query.groupCode.toString() : INVALID_GROUP_CODE;
-    //for some reason the custom hook with queryClient.getQueryData isn't working
-    //const scheduleAndStartDate : ScheduleAndStartDate | undefined = getQueryDataForSchedule(groupCode);
-     const {data : scheduleAndStartDate, isLoading, isError} = useQueryToFetchSchedule(groupCode);
+    const {data : scheduleAndStartDate, isLoading, isError} = useQueryToFetchSchedule(groupCode);
 
     if (scheduleAndStartDate){   
         return <RowGivenData scheduleAndStartDate={scheduleAndStartDate} rowStartDate={props.rowStartDate}/>
@@ -61,10 +62,11 @@ const dateToTextLabel = (date : Date) : string => {
 
 const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) => {
     let scheduleIndex = getNumSlotsBetweenDates(props.scheduleAndStartDate.startDate, props.rowStartDate);
+    let {cellColorsCoordinator} = useContext(CellColorsContext);
     let names : string[] = [];
     let inBounds = true;
     if ((scheduleIndex < 0) || (scheduleIndex >= props.scheduleAndStartDate.schedule.length)){
-        names = ["Not Part of the Schedule"]; 
+        names = [OUT_OF_BOUNDS_NAME]; 
         inBounds = false;       
     } else {
         names = props.scheduleAndStartDate.getNamesAtTimeIndex(scheduleIndex);
@@ -89,7 +91,12 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
 
             {names.map((name, index) => {
                 return (
-                    <ScheduleCell name={name} startDate={props.rowStartDate} inBounds={inBounds} key={index}/>
+                    <ScheduleCell 
+                    name={name} 
+                    startDate={props.rowStartDate} 
+                    inBounds={inBounds} 
+                    color={cellColorsCoordinator.getColorForNameGivenAllNames(name, props.scheduleAndStartDate.getAllMembers().map(member => member.username))} 
+                    key={index}/>
                 );
             })}
         </TableRow>

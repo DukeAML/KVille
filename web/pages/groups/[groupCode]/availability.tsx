@@ -7,9 +7,9 @@ import { PermissionRequiredPageContainer } from "@/components/shared/pageContain
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
-import { AvailabilityTable } from "@/components/pageSpecific/groups/groupCode/availability/availabilityTable";
+import { AvailabilityTable } from "@/components/pageSpecific/groups/groupCode/availability/availabilityTable/availabilityTable";
 import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
-import { AvailabilityOptions } from "@/components/pageSpecific/groups/groupCode/availability/availabilityOptions";
+import { AvailabilityOptions } from "@/components/pageSpecific/groups/groupCode/availability/availabilityOptions/availabilityOptions";
 import { getQueryKeyNameForFetchAvailability } from "@/lib/pageSpecific/availability/availabilityHooks";
 import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
