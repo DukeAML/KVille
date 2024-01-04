@@ -4,22 +4,14 @@ import { Typography, Container, Button, List, ListItem, Switch, FormControlLabel
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { KvilleButton } from "@/components/shared/utils/button";
+import { AvailabilityDatesRangeChanger } from "./availabilityDatesRangeChanger";
 
 
 export const AvailabilityOptions : React.FC = () => {
     const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate, settingPreferred, setSettingPreferred, colorblindModeIsOn, setColorblindModeIsOn } = useContext(AvailabilityPageContext);
     let changeTimesOption = {
         summaryText : "Change Dates Visible",
-        detail : 
-            <DateRangeChanger includeHours={false}
-                externalStartDate={calendarStartDate}
-                externalEndDate={calendarEndDate}
-                submitNewDateRange={(startDate : Date, endDate : Date) => {
-                    setCalendarStartDate(startDate);
-                    setCalendarEndDate(endDate);
-                }}
-   
-            />
+        detail : <AvailabilityDatesRangeChanger/>
     }
 
     let changeSettingPreferredOption = {

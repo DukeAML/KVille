@@ -1,18 +1,18 @@
-import { AvailabilitySlot, setDBAvailability } from '../../../../../../common/src/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../common/src/calendarAndDates/calendarUtils';
+import { AvailabilitySlot, setDBAvailability } from '../../../../../../../common/src/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../../common/src/calendarAndDates/calendarUtils';
 import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
-import { Grid, Paper, Stack, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
-import {MouseTracker} from '../../../../../../common/src/frontendLogic/availability/mouseTracker';
+import {MouseTracker} from '../../../../../../../common/src/frontendLogic/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { UserContext } from '@/lib/shared/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { INVALID_GROUP_CODE } from '../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
-import { getQueryKeyNameForFetchAvailability } from '../../../../../lib/pageSpecific/availability/availabilityHooks';
-import { TimeColumn } from '@/components/shared/utils/timeColumn';
+import { INVALID_GROUP_CODE } from '../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
+import { getQueryKeyNameForFetchAvailability } from '../../../../../../lib/pageSpecific/availability/availabilityHooks';
 import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { AvailabilityGridColumnTitles } from './availabilityGridColumnTitles';
 
 interface RowAndCol {
     row : number;
@@ -47,8 +47,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
         setDBAvailability(groupCode, userID, newAvailabilitySlots);
     }
 
-
-
     const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
         let newAvailability = [...availability];
         for (let i = 0; i < rowsAndCols.length; i += 1){
@@ -62,7 +60,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                 } else {
                     newAvailability[index].available = true;
                 }
-                
             }
         }
         setAvailability(newAvailability);
@@ -80,10 +77,8 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                 } else {
                     newAvailability[index].available = true;
                     newAvailability[index].preferred = true;
-                }
-                
+                }  
             }
-            
         }
         setAvailability(newAvailability);
     }
@@ -95,22 +90,16 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
         } else {
             mouseTracker.setChangeAvailabilityAtRowsAndCols(changeBasicAvailabilityAtRowsAndCols);
         }
-
     });
 
-
-    let columnLabels = getCalendarColumnTitles(calendarStartDate, calendarEndDate, isNarrow);
-
+    let columnTitles = getCalendarColumnTitles(calendarStartDate, calendarEndDate, isNarrow);
     const rowLabels = get48TimeLabels();
-
     const rowColToIndex = (row : number, col: number) : number => {
         let indexOffset = getNumSlotsBetweenDates(props.originalAvailabilityArr[0].startDate, calendarStartDate);
         let index = col * 48 + row;
         index = index + indexOffset;
         return Math.round(index);
     }
-
- 
 
     const cellIsInBounds = (index : number) : boolean => {
         if ((index < 0) ||(index >= availability.length) ) {
@@ -123,22 +112,8 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
 
     return (
         <Grid container spacing={0} direction="column" style={{marginTop : "20px", marginBottom : 20}}>
-
-            {/* Column labels */}
-            <Grid item container spacing={0}>
-                <Grid item xs={2.5} sm={1} /> {/* Empty cell at the top-left corner */}
-                {columnLabels.map((column, index) => (
-                
-                    <Grid item xs key={index}>
-                        
-                            <Typography align="center" fontWeight={"bold"}>{column}</Typography>
-                        
-                    </Grid>
-                ))}
-
-            </Grid>
-
-                
+            <AvailabilityGridColumnTitles columnTitles={columnTitles}/>
+     
             {/* Row labels and data cells */}
             {rowLabels.map((row, rowIndex) => (
                 <Grid item container spacing={0} key={row}>
@@ -146,10 +121,8 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                     <Grid item xs={2.5 } sm={1} key={row}>
                         <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px", userSelect: "none"}}>{row}</Typography>
                     </Grid>
-                    
-
                     {/* Data cells */}
-                    {columnLabels.map((column, columnIndex) => {
+                    {columnTitles.map((column, columnIndex) => {
                         const correspondingIndex = rowColToIndex(rowIndex, columnIndex);
                         const isInBounds = cellIsInBounds(correspondingIndex);
                         const correspondingSlot = isInBounds ? availability[correspondingIndex] : new AvailabilitySlot(new Date(Date.now()), false);
@@ -158,10 +131,16 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
                         );
                     })}
 
-                   
+                    {/* Right side labels, if screen is wide */}
+                    {isNarrow ? null : 
+                        <Grid item xs={2.5 } sm={1} key={row}>
+                            <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "left", marginLeft : "6px", userSelect: "none"}}>{row}</Typography>
+                        </Grid>
+                    }
                 </Grid>
             ))}
 
+            <AvailabilityGridColumnTitles columnTitles={columnTitles}/>
         </Grid>
     );
 }

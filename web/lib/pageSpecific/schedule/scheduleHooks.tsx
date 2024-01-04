@@ -6,9 +6,10 @@ import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleA
 import {useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
 import { getDefaultDisplayDateGivenTentType } from "../../../../common/src/frontendLogic/schedule/scheduleDates";
+import { CellColorsContext } from "./cellColorsContext";
 
 
 const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
@@ -72,7 +73,7 @@ export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) 
 
 export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
     const router = useRouter();
-
+    const {cellColorsCoordinator} = useContext(CellColorsContext);
     return useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForScheduleFetch(groupCode), 
         ()=> {
@@ -84,6 +85,7 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
         {
             onSuccess: (data) => {
                 console.log("I fetched the schedule" );
+                cellColorsCoordinator.establishNames(data.getAllMembers().map((member) => member.username));
             }
         }
     );

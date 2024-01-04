@@ -1,22 +1,23 @@
 import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { INVALID_NEW_TENTER, TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
-import { Typography, Container, Button} from "@mui/material";
+import { Typography, Container, Button, Modal, Dialog} from "@mui/material";
 import React, { useContext,  useState } from "react";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { SwapTentersTimeRangePickers } from "./timeRangePickers";
 import { NewTenterPicker } from "./newTenterPicker";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
+import Draggable from "react-draggable";
+import Backdrop from "@mui/material";
 
 
 export const TenterSwapper: React.FC = () => {
-  const { isSwappingTenter, setIsSwappingTenter, tenterToReplace, newTenter, startReplacementDate,  endReplacementDate, setTenterToReplace} = useContext(TenterSwapContext);
+  const { isSwappingTenter, setIsSwappingTenter, tenterToReplace, newTenter, startReplacementDate,  endReplacementDate, setTenterToReplace, timeSlotClickedOn} = useContext(TenterSwapContext);
   const groupCode = useGroupCode();
   const { mutate: updateSchedule, isLoading : isLoadingUpdate, isError : isErrorUpdating} = useMutationToUpdateSchedule(groupCode);
   const { data : schedule} = useQueryToFetchSchedule(groupCode);
   const [errorMsg, setErrorMsg] = useState<string>("");
-
 
   const submit = () => {
     if (schedule){
@@ -44,23 +45,27 @@ export const TenterSwapper: React.FC = () => {
   if (!isSwappingTenter) {
     return null;
   } else {
-      return (
-      <Container maxWidth="xs">
-        <Typography variant="h4">Swap Tenters</Typography>
-        <Typography>Replace {tenterToReplace}</Typography>
-        <NewTenterPicker/>
-        <SwapTentersTimeRangePickers/>
-        <Button onClick={() => submit()} color="error" variant="contained">
-          Submit
-        </Button>
-        <Button onClick={() => setIsSwappingTenter(false)} color="error" variant="contained">
-          Cancel
-        </Button>
-        {isLoadingUpdate ? <KvilleLoadingCircle/> : null}
-        {errorMsg.length > 0 ? <Typography color="red">{errorMsg}</Typography> : null}
-        {isErrorUpdating ? <Typography color="red">An Unknown Error Occurred</Typography> : null}
-      </Container>
-    );
+    return (
+      <Draggable>
+        <Dialog open={isSwappingTenter} hideBackdrop={true}>
+          <Container maxWidth="xs">
+            <Typography variant="h4">Swap Tenters</Typography>
+            <Typography>Replace {tenterToReplace}</Typography>
+            <NewTenterPicker/>
+            <SwapTentersTimeRangePickers/>
+            <Button onClick={() => submit()} color="primary" variant="contained">
+              Submit
+            </Button>
+            <Button style={{marginTop : 8, marginRight : 8, marginLeft : 8, marginBottom : 8}} onClick={() => setIsSwappingTenter(false)} color="error" variant="contained">
+              Cancel
+            </Button>
+            {isLoadingUpdate ? <KvilleLoadingCircle/> : null}
+            {errorMsg.length > 0 ? <Typography color="red">{errorMsg}</Typography> : null}
+            {isErrorUpdating ? <Typography color="red">An Unknown Error Occurred</Typography> : null}
+          </Container>
+        </Dialog>
+      </Draggable>
+      );
   };
 }
 
