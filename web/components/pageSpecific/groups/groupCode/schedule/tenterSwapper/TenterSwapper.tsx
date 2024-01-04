@@ -49,7 +49,7 @@ export const TenterSwapper: React.FC = () => {
       <Draggable>
         <Dialog open={isSwappingTenter} hideBackdrop={true}>
           <Container maxWidth="xs">
-            <Typography variant="h4">Swap Tenters</Typography>
+            <Typography variant="h4" style={{marginTop : 8, marginBottom : 4}}>Swap Tenters</Typography>
             <Typography>Replace {tenterToReplace}</Typography>
             <NewTenterPicker/>
             <SwapTentersTimeRangePickers/>

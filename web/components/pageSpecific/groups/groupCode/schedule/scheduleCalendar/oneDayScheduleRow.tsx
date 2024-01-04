@@ -89,7 +89,6 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
                 </Typography>
             </TableCell>
 
-        
             {names.map((name, index) => {
                 return (
                     <ScheduleCell 
