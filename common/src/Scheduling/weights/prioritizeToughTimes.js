@@ -30,8 +30,8 @@ function updateWeightsForEachSlot(slots, availableTentersAtEachTime) {
         var peopleNeeded = currentSlot.calculatePeopleNeeded();
 
         var numFreePeople = availableTentersAtEachTime[currentTimeIndex];
-        var newWeight = currentSlot.weight * (12 / (numFreePeople + 0.01)) * peopleNeeded;
 
-        currentSlot.weight = newWeight;
+        currentSlot.toughTimesScore = (1 / (numFreePeople + 0.01)) * peopleNeeded;
     }
+
 }

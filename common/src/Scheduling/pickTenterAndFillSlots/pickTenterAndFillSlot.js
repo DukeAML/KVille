@@ -6,16 +6,24 @@ import { assignTenterToDaytimeShiftAndReturnRemainingSlots } from "./fillDaytime
  * @param {Array<import("../person").Person>} people 
  * @param {Array<import("../slots/tenterSlot").TenterSlot>} slots 
  * @param {Array<Array<import("../slots/tenterSlot").TenterSlot>>} tenterSlotsGrid
- * @return {Array<import("../slots/tenterSlot").TenterSlot>} remainingSlots 
+ * @return {{remainingSlots : Array<import("../slots/tenterSlot").TenterSlot>, chosenPersonIndex : number, chosenTimeIndex : number}} remainingSlots 
  * 
  */
 export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid){
     var chosenTenterSlot = slots.shift(); //remove first element and return it
     let remainingSlots = slots;
     if (chosenTenterSlot.isNight){
-        return assignTenterToEntireNightShiftAndReturnRemainingSlots(chosenTenterSlot, people, remainingSlots, tenterSlotsGrid);
+        return {
+            remainingSlots : assignTenterToEntireNightShiftAndReturnRemainingSlots(chosenTenterSlot, people, remainingSlots, tenterSlotsGrid),
+            chosenPersonIndex : chosenTenterSlot.personIndex,
+            chosenTimeIndex : chosenTenterSlot.timeIndex
+        };
     } else {
-        return assignTenterToDaytimeShiftAndReturnRemainingSlots(chosenTenterSlot, people, remainingSlots, tenterSlotsGrid);
+        return {
+            remainingSlots : assignTenterToDaytimeShiftAndReturnRemainingSlots(chosenTenterSlot, people, remainingSlots, tenterSlotsGrid),
+            chosenPersonIndex : chosenTenterSlot.personIndex,
+            chosenTimeIndex : chosenTenterSlot.timeIndex
+        };
     }
 }
 

@@ -4,12 +4,13 @@ import {Slot} from "./slot.js";
 export const EMPTY = "empty";
 export const GRACE = "Grace Period";
 export const TENTER_STATUS_CODES = {
-  AVAILABLE : "Available",
-  UNAVAILABLE : "Unavailable",
-  SCHEDULED : "Scheduled",
-  PREFERRED : "Preferred"
+    AVAILABLE : "Available",
+    UNAVAILABLE : "Unavailable",
+    SCHEDULED : "Scheduled",
+    PREFERRED : "Preferred"
 }
 
+export const PREFERRED_WEIGHT_FACTOR = 2;
 export class TenterSlot extends Slot{
 
     /**
@@ -30,5 +31,28 @@ export class TenterSlot extends Slot{
         this.timeIndex = timeIndex;
         this.personIndex = personIndex;
         this.weight = weight;
+
+		this.preferredScore = status === TENTER_STATUS_CODES.PREFERRED ? PREFERRED_WEIGHT_FACTOR : 1;
+		this.fairnessScore = 1;
+		this.continuityScore = 1;
+		this.toughTimesScore = 1;
+		this.pickinessScore = 1;
     }
+
+	/**
+	 * return true iff the tenter is either available or preferred here, and this is not a grace period
+	 * @returns {boolean}
+	 */
+	getIsEligibleForAssignment(){
+		return (!this.isGrace && (this.status === TENTER_STATUS_CODES.AVAILABLE || this.status === TENTER_STATUS_CODES.PREFERRED));
+	}
+
+	/**
+	 * @returns {number} the weight of the slot
+	 */
+	getWeight() {
+		return this.preferredScore * this.fairnessScore * this.continuityScore * this.toughTimesScore * this.pickinessScore;
+	}
+
+
 }

@@ -14,7 +14,7 @@ export function assignTenterToEntireNightShiftAndReturnRemainingSlots(chosenTent
     while (timeIndex >= 0 && timeIndex < tenterSlotsGrid[personIndex].length && tenterSlotsGrid[personIndex][timeIndex].isNight){
         let slot = tenterSlotsGrid[personIndex][timeIndex]
         let timeIsFilled = getNumberScheduledAtChosenTime(tenterSlotsGrid, timeIndex) >= slot.calculatePeopleNeeded();
-        if (slot.status == TENTER_STATUS_CODES.SCHEDULED || slot.status == TENTER_STATUS_CODES.UNAVAILABLE || timeIsFilled){
+        if (!slot.getIsEligibleForAssignment() || timeIsFilled){
             break;
         }
         remainingSlots = assignTenterToOneSlotAndReturnRemainingSlots(tenterSlotsGrid[personIndex][timeIndex], people, remainingSlots, tenterSlotsGrid);
@@ -24,7 +24,7 @@ export function assignTenterToEntireNightShiftAndReturnRemainingSlots(chosenTent
     while (timeIndex >= 0 &&timeIndex < tenterSlotsGrid[personIndex].length && tenterSlotsGrid[personIndex][timeIndex].isNight){
         let slot = tenterSlotsGrid[personIndex][timeIndex]
         let timeIsFilled = getNumberScheduledAtChosenTime(tenterSlotsGrid, timeIndex) >= slot.calculatePeopleNeeded();
-        if (slot.status == TENTER_STATUS_CODES.SCHEDULED || slot.status == TENTER_STATUS_CODES.UNAVAILABLE || timeIsFilled){
+        if (!slot.getIsEligibleForAssignment() || timeIsFilled){
             break;
         }
         remainingSlots = assignTenterToOneSlotAndReturnRemainingSlots(tenterSlotsGrid[personIndex][timeIndex], people, remainingSlots, tenterSlotsGrid);

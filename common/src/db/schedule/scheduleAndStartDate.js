@@ -1,7 +1,7 @@
 
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { isNight } from "../../scheduling/rules/nightData.js";
-import { GRACE } from "../../scheduling/slots/tenterSlot.js";
+import { EMPTY, GRACE } from "../../scheduling/slots/tenterSlot.js";
 import { checkIfNameIsForGracePeriod } from "../../scheduling/rules/gracePeriods.js";
 
 export class ScheduleAndStartDate{
@@ -123,7 +123,7 @@ export class ScheduleAndStartDate{
         let IDsAtThisTime = this.getIDsAtTimeIndex(timeIndex);
         let newIDsAtThisTime = [];
         for (let assignedTenterIndex = 0; assignedTenterIndex < IDsAtThisTime.length; assignedTenterIndex += 1){
-            if (IDsAtThisTime[assignedTenterIndex] === tenterToReplaceID && !(newIDsAtThisTime.includes(newTenterID))){
+            if (IDsAtThisTime[assignedTenterIndex] === tenterToReplaceID && (!(newIDsAtThisTime.includes(newTenterID)) || (newTenterID === EMPTY))){
                 newIDsAtThisTime.push(newTenterID);
             } else {
                 newIDsAtThisTime.push(IDsAtThisTime[assignedTenterIndex]);

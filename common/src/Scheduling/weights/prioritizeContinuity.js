@@ -11,10 +11,52 @@ function gridLimits(row, rowLength){
 }
 
 /**
- * Weight Contiguous - prioritize people to stay in the tent more time at once.
+ *
+ * @param {Array<Array<import("../slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
+ */
+export function prioritizeContinuityForNightSlots(tenterSlotsGrid){
+    for (let tenterIndex = 0; tenterIndex < tenterSlotsGrid.length; tenterIndex += 1){
+        let slotsForThisTenter = tenterSlotsGrid[tenterIndex];
+        for (let timeIndex = 0; timeIndex < slotsForThisTenter.length; timeIndex += 1){
+            let slot = slotsForThisTenter[timeIndex];
+            if (slot.isNight){
+                let futureIndex = timeIndex;
+                while (futureIndex < slotsForThisTenter.length && slotsForThisTenter[futureIndex].isNight){
+                    let futureSlot = slotsForThisTenter[futureIndex];
+                    if (!futureSlot.getIsEligibleForAssignment()){
+                        deprioritizeAllSlotsInNightShiftForTenter(slotsForThisTenter, timeIndex);
+                        timeIndex += 30;
+                        break;
+                    }
+                    futureIndex += 1;
+                }
+                timeIndex += 40;
+
+            } else {
+                continue;
+            }
+
+        }
+    }
+}
+
+/**
+ * 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} slotsForThisTenter 
+ * @param {number} startTimeIndex 
+ */
+function deprioritizeAllSlotsInNightShiftForTenter(slotsForThisTenter, startTimeIndex){
+    let currentSlot = slotsForThisTenter[startTimeIndex];
+    let currentTimeIndex = startTimeIndex;
+    while (currentTimeIndex < slotsForThisTenter.length && currentSlot.isNight){
+        currentSlot.continuityScore = 0.0000001;
+        currentTimeIndex += 1; 
+    }
+}
+
+/**
  * @param {Array<import("../slots/tenterSlot").TenterSlot>} allRemainingTenterSlots 
  * @param {Array<Array<import("../slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
- * @returns [slot, ScheduleGrid]
  */
 export function prioritizeContinuity(allRemainingTenterSlots, tenterSlotsGrid){
     var slotIndex = 0
@@ -38,7 +80,8 @@ export function prioritizeContinuity(allRemainingTenterSlots, tenterSlotsGrid){
         if ((scheduledForPriorTime && priorIsNight ) || (scheduledForNextTime && nextIsNight && currentIsNight))
             weightMultiplier = 10000;    
     
-        allRemainingTenterSlots[slotIndex].weight = allRemainingTenterSlots[slotIndex].weight*weightMultiplier;
+        //allRemainingTenterSlots[slotIndex].weight = allRemainingTenterSlots[slotIndex].weight*weightMultiplier;
+        allRemainingTenterSlots[slotIndex].continuityScore = weightMultiplier;
         slotIndex += 1;
     }
 }
@@ -193,8 +236,8 @@ function getNumberSlotsScheduledAdjacent(currentTimeIndex, allSlotsForThisPeson)
 function getStatusAtAdjacentTimes(skipAboveRow, allSlotsForThisPeson, priorTimeIndex, skipBelowRow, nextTimeIndex) {
     var scheduledForPriorTime = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED;
     var scheduledForNextTime = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED;
-    var availableForPriorTime = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].status == TENTER_STATUS_CODES.AVAILABLE;
-    var availableForNextTime = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].status == TENTER_STATUS_CODES.AVAILABLE;
+    var availableForPriorTime = !skipAboveRow && allSlotsForThisPeson[priorTimeIndex].getIsEligibleForAssignment();
+    var availableForNextTime = !skipBelowRow && allSlotsForThisPeson[nextTimeIndex].getIsEligibleForAssignment();
     return { scheduledForPriorTime, scheduledForNextTime, availableForNextTime, availableForPriorTime };
 }
 
@@ -212,4 +255,3 @@ function getRelevantTimeAndPersonIndices(allRemainingTenterSlots, i) {
     var nextTimeIndex = currentTimeIndex + 1;
     return { currentPersonIndex, currentTimeIndex, priorTimeIndex, nextTimeIndex };
 }
-

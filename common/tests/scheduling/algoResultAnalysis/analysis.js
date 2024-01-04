@@ -64,7 +64,8 @@ export class AlgoAnalysis {
 	printAnalysis(caption){
         let analysis = caption + "\n";
         analysis += "runtime in ms: " + this.runtimeMS + "\n";
-
+        analysis += this.dayHoursAnalysis.printAnalysis("day hours analysis");
+        analysis += this.nightHoursAnalysis.printAnalysis("night hours analysis");
 		analysis += this.totalHoursAnalysis.printAnalysis("total hours analysis");
 		analysis += this.aoutwAnalysis.printAnalysis("assigned out of wanted analysis");
 		analysis += this.woutaAnalysis.printAnalysis("wanted out of assigned analysis");
