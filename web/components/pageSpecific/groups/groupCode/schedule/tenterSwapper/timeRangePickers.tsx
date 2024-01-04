@@ -4,6 +4,7 @@ import { useGroupCode } from "@/lib/shared/useGroupCode";
 import React, { useContext, useEffect, useState } from "react";
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
+import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
 
 
 export const SwapTentersTimeRangePickers : React.FC = () => {
@@ -100,7 +101,7 @@ export const SwapTentersTimeRangePickers : React.FC = () => {
 }
 
 function scheduleSlotInclusionExclusionCheck(slotNames : string[], personToInclude : string, personToExclude : string) : boolean {
-    if (slotNames.includes(personToInclude) && !slotNames.includes(personToExclude)){
+    if (slotNames.includes(personToInclude) && (!slotNames.includes(personToExclude) || (personToExclude === EMPTY))){
       	return true;
     } else {
       	return false;

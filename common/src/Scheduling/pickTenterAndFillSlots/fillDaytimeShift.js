@@ -92,7 +92,7 @@ export function getStartAndEndOfPossibleDaytimeRange(chosenTimeIndex, workHere, 
 
     for (let i = checkStart; i <= checkEnd; i++) {
         let timeIsFilled = getNumberScheduledAtChosenTime(tenterSlotsGrid, i) >= workHere[i].calculatePeopleNeeded();
-        if (workHere[i].status == TENTER_STATUS_CODES.SCHEDULED || workHere[i].status == TENTER_STATUS_CODES.UNAVAILABLE || timeIsFilled || workHere[i].isNight) {
+        if (!workHere[i].getIsEligibleForAssignment() || timeIsFilled || workHere[i].isNight) {
             //cut this part off, either from left or right(whichever side it's on)
             //making sure to include the chosen slot
             //is it to the left or to the right? which will create less harm 

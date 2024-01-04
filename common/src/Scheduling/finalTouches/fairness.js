@@ -92,7 +92,7 @@ function canScheduleSlot(recipientSlotsArr, beginning, end){
  */
 function checkIfRecipientIsFreeFromBeginningToEnd(recipientSlotsArr, beginningIndex, endIndex){
     for (var time = beginningIndex; time <= endIndex; time++){
-        if (!(recipientSlotsArr[time].status == TENTER_STATUS_CODES.AVAILABLE)){
+        if (!(recipientSlotsArr[time].getIsEligibleForAssignment())){
             return false;
         }
     }

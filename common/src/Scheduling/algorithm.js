@@ -5,10 +5,10 @@ import {cleanStraySlots} from "./finalTouches/cleanStraySlots.js";
 import {fillEmptySpots} from "./finalTouches/fillEmptySpots.js";
 import {fillGrace} from "./finalTouches/fillGrace.js";
 import {reorganizeGrid} from "./finalTouches/reorganizeGrid.js";
-import { resetWeights } from "./weights/resetWeights.js";
 import { prioritizeFairness } from "./weights/prioritizeFairness.js";
-import { prioritizeContinuity } from "./weights/prioritizeContinuity.js";
+import { prioritizeContinuity, prioritizeContinuityForNightSlots} from "./weights/prioritizeContinuity.js";
 import { prioritizeToughTimes } from "./weights/prioritizeToughTimes.js";
+import { prioritizePickiness } from "./weights/prioritizePickiness.js";
 import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSlots/pickTenterAndFillSlot.js";
 
 
@@ -22,20 +22,9 @@ import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSl
  * @returns {Array<ScheduledSlot>} 
  */
 export function scheduleAlgorithm(people, tenterSlotsGrid){
-    var scheduleLength = tenterSlotsGrid[0].length;
-    var slots = getAllTenterSlots(tenterSlotsGrid);
-    
-    //setBaseWeights
-    while (slots.length > 0){
-        resetWeights(slots);
-        prioritizeFairness(people, slots);
-        prioritizeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
-        prioritizeToughTimes(slots, scheduleLength); //only need to update the time slots that were part of the last person chosen
-        //also want to prioritize ppl who didn't put down many slots as being available
-        slots.sort( (a, b) => (b.weight - a.weight));
-        slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
-    }
-
+    prioritizePickiness(tenterSlotsGrid);
+    assignNightShifts(people, tenterSlotsGrid);
+    assignDayShifts(people, tenterSlotsGrid);
 
     var scheduleArr = formatTo1DSchedule(people, tenterSlotsGrid);
     ensureFairness(scheduleArr, people, tenterSlotsGrid);
@@ -50,22 +39,65 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
 }
 
 /**
+ * Scheduling Algo
+ * @param {Array<Person>} people 
+ * @param {Array<Array<import("./slots/tenterSlot").TenterSlot>>} tenterSlotsGrid
+ */
+function assignNightShifts(people, tenterSlotsGrid) {
+    let eligibleNightSlots = getEligibleTenterSlots(tenterSlotsGrid, ((s) => s.isNight));
+    let scheduleLength = tenterSlotsGrid[0].length;
+    prioritizeContinuityForNightSlots(tenterSlotsGrid);
+    while (eligibleNightSlots.length > 0){
+        prioritizeFairness(people, eligibleNightSlots);
+        prioritizeToughTimes(eligibleNightSlots, scheduleLength); //only need to update the time slots that were part of the last person chosen
+        //also want to prioritize ppl who didn't put down many slots as being available
+        eligibleNightSlots.sort((a, b) => (b.getWeight() - a.getWeight()));
+        let choosingResult = pickTenterFillSlotAndReturnRemainingSlots(people, eligibleNightSlots, tenterSlotsGrid);
+        eligibleNightSlots = choosingResult.remainingSlots;
+    }
+}
+
+/**
+ * Scheduling Algo
+ * @param {Array<Person>} people 
+ * @param {Array<Array<import("./slots/tenterSlot").TenterSlot>>} tenterSlotsGrid
+ */
+function assignDayShifts(people, tenterSlotsGrid){
+    let slots = getEligibleTenterSlots(tenterSlotsGrid, ((slot) => !slot.isNight));
+    let scheduleLength = tenterSlotsGrid[0].length;
+    //setBaseWeights
+    while (slots.length > 0){
+        prioritizeFairness(people, slots);
+        prioritizeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
+        prioritizeToughTimes(slots, scheduleLength); //only need to update the time slots that were part of the last person chosen
+        slots.sort( (a, b) => (b.getWeight() - a.getWeight()));
+        slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid).remainingSlots;
+    }
+
+}
+
+/**
  * 
  * @param {Array<Array<import("./slots/tenterSlot").TenterSlot>>} tenterSlotsGrid 
+ * @param {(slot : import("./slots/tenterSlot").TenterSlot) => boolean} extraSlotCondition
  * @returns {Array<import("./slots/tenterSlot").TenterSlot>}
  */
-function getAllTenterSlots(tenterSlotsGrid){
+function getEligibleTenterSlots(tenterSlotsGrid, extraSlotCondition=((slot) => true)){
     let allSlots = [];
     for (let personIndex =0; personIndex < tenterSlotsGrid.length; personIndex += 1){
         for (let timeIndex = 0; timeIndex < tenterSlotsGrid[0].length; timeIndex += 1){
             let slot = tenterSlotsGrid[personIndex][timeIndex];
-            if ((slot.status === TENTER_STATUS_CODES.AVAILABLE || slot.status === TENTER_STATUS_CODES.PREFERRED) && !slot.isGrace){
+            if (slot.getIsEligibleForAssignment() && extraSlotCondition(slot)){
                 allSlots.push(slot);
             }
         }
     }
     return allSlots;
 }
+
+
+
+
 
 
 

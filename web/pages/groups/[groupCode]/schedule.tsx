@@ -58,7 +58,6 @@ export default function Schedule() {
 
                         {isSwappingTenter ? <TenterSwapper/> : null}
                         <OneDaySchedule/>
-                        <Container maxWidth="md"><DatesRow/></Container>
 
                     </TenterSwapContext.Provider>
                 </CellColorsContext.Provider>

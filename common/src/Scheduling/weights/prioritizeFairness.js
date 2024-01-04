@@ -1,36 +1,81 @@
+import { PREFERRED_WEIGHT_FACTOR } from "../slots/tenterSlot";
+
 /**
  * Weight Balance - prioritize people with fewer scheduled shifts
  * @param {Array<import("../person").Person>} people 
  * @param {Array<import("../slots/tenterSlot").TenterSlot>} slots has 1 entry for each time slot for each person
  */
 export function prioritizeFairness(people, slots){
+
+    let {min, max, mean, std} = getDistributionAnalysis(people.map((person) => getTotalScheduled(person)));
     for (var slotIndex = 0; slotIndex < slots.length; slotIndex++){
         var currentSlot = slots[slotIndex];
-
-        // Establish variables.
-        var currentPersonIndex = currentSlot.personIndex;
-        var dayScheduled = people[currentPersonIndex].dayScheduled
-        var nightScheduled = people[currentPersonIndex].nightScheduled
-        var night = currentSlot.isNight;
-
-        var nightMulti = 1;
-        var dayMulti = 1;
-
-        // Set multipliers.
-        if (nightScheduled != 0)
-            nightMulti = 1.0 / (nightScheduled + 1);
-        
-
-        if (dayScheduled != 0)
-            dayMulti = 1.0 / (dayScheduled + 1);
-        
-
-        //Adjust weights with multipliers.
-        if (night)
-            currentSlot.weight = currentSlot.weight * nightMulti;
-        else
-            currentSlot.weight = currentSlot.weight * dayMulti;
-
+        let currentPerson = people[currentSlot.personIndex];
+        let zScore = (getTotalScheduled(currentPerson) - mean) / std;
+        let score = Math.exp(PREFERRED_WEIGHT_FACTOR, zScore);
+        if (getTotalScheduled(currentPerson) < (min + 0.01)){
+            score *= 2;
+        }
+        currentSlot.fairnessScore = score;
     }
 }
+
+/**
+ * 
+ * @param {import("../person").Person} person 
+ * @returns {number} total number of slots they are scheduled for
+ */
+const getTotalScheduled = (person ) => {
+    return person.dayScheduled + person.nightScheduled;
+}
+
+/**
+ * Weight Balance - prioritize people with fewer scheduled shifts
+ * @param {Array<import("../person").Person>} people 
+ * @param {Array<import("../slots/tenterSlot").TenterSlot>} nightSlots has 1 entry for each time slot for each person
+ */
+export function prioritizeNighttimeFairness(people, nightSlots){
+    let {min, max, mean, std} = getDistributionAnalysis(people.map((person) => person.nightScheduled));
+    for (var slotIndex = 0; slotIndex < nightSlots.length; slotIndex++){
+        var currentSlot = nightSlots[slotIndex];
+        let currentPerson = people[currentSlot.personIndex];
+        let zScore = (currentPerson.nightScheduled - mean) / std;
+        let score = Math.exp(PREFERRED_WEIGHT_FACTOR, zScore);
+        if (currentPerson.nightScheduled < (min + 0.01)){
+            score *= 2;
+        }
+        currentSlot.fairnessScore = score;
+    }
+}
+
+/**
+ * 
+ * @param {Array<number>} data 
+ * @returns {{min : number, max : number, mean : number, std : number}} analysis
+ */
+function getDistributionAnalysis(data) {
+    let mean = 0;
+    let min = data[0];
+    let max = data[0];
+    let std = 0;
+    
+    
+    for (let ind = 0; ind < data.length; ind++) {
+        mean += data[ind];
+        min = Math.min(min, data[ind]);
+        max = Math.max(max, data[ind]);
+    }
+    mean = mean/data.length;
+    for(let ind = 0; ind<data.length; ind++){
+        std += Math.pow((data[ind]-mean),2);
+    }
+    std /= data.length;
+    std = Math.sqrt(std);
+    return {min, max, mean, stdDev: std};
+}
+
+
+
+
+
 

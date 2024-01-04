@@ -41,7 +41,7 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
                 }
 
                 //if that hasn't worked, try to schedule stray tenter in the above time slot
-                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].status == TENTER_STATUS_CODES.AVAILABLE) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
+                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].getIsEligibleForAssignment()) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
                     if (findTenterAboveToEdit(tenterSlotsGrid, timeIndex) != null){
                         var indexToRemove = findTenterAboveToEdit(tenterSlotsGrid, timeIndex);
                         swapScheduledTenters(people, tenterSlotsGrid, newGrid, indexToRemove, tenterIndexInGrid, timeIndex-1);
@@ -50,7 +50,7 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
                 }
 
                 //if that doesn't work, try to schedule stray tenter in the below slot
-                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex+1].status == TENTER_STATUS_CODES.AVAILABLE) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
+                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex+1].getIsEligibleForAssignment()) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
                     if (findTenterBelowToEdit(tenterSlotsGrid, timeIndex) != null){
                         var indexToRmv = findTenterBelowToEdit(tenterSlotsGrid, timeIndex);
                         swapScheduledTenters(people, tenterSlotsGrid, newGrid, indexToRmv, tenterIndexInGrid, timeIndex+1);
@@ -127,7 +127,7 @@ function findTenterAboveToEdit(tenterSlotsGrid, timeslot){
         return null;
     }
     for (var personIndex = 0; personIndex < tenterSlotsGrid.length; personIndex++){
-        if ((tenterSlotsGrid[personIndex][timeslot-1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].status == TENTER_STATUS_CODES.AVAILABLE)){
+        if ((tenterSlotsGrid[personIndex][timeslot-1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment())){
             return personIndex;
         }
     }
@@ -148,7 +148,7 @@ function findTenterBelowToEdit(tenterSlotsGrid, timeslot){
         return null;
     }
     for (var personIndex = 0; personIndex < tenterSlotsGrid.length; personIndex++){
-        if ((tenterSlotsGrid[personIndex][timeslot+1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].status == TENTER_STATUS_CODES.AVAILABLE)){
+        if ((tenterSlotsGrid[personIndex][timeslot+1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment())){
             return personIndex;
         }
     }
