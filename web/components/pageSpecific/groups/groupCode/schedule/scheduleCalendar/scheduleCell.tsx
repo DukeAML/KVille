@@ -31,6 +31,7 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
             borderTop : (props.startDate.getMinutes() == 0) ? "2px solid black " : "2px dashed black",
         }} onClick={handleClick}>
             <Typography noWrap align="center" style={{ margin: '0', padding: '0px' }} >{props.name}</Typography>
+    
             
         </TableCell>
     )

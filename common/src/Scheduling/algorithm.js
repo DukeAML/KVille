@@ -29,8 +29,9 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
     while (slots.length > 0){
         resetWeights(slots);
         prioritizeFairness(people, slots);
-        prioritizeContinuity(slots, tenterSlotsGrid);
-        prioritizeToughTimes(slots, scheduleLength);
+        prioritizeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
+        prioritizeToughTimes(slots, scheduleLength); //only need to update the time slots that were part of the last person chosen
+        //also want to prioritize ppl who didn't put down many slots as being available
         slots.sort( (a, b) => (b.weight - a.weight));
         slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
     }

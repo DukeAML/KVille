@@ -31,14 +31,18 @@ export const NO_ERROR_MESSAGE = "";
 
 
 export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps<any>) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     return (
-    
         <Container maxWidth="sm">
             <Formik
                 initialValues={props.initialValues}
                 validationSchema={props.validationSchema}
                 onSubmit={async (values : any) => {
-                    await props.handleSubmit(values);
+                    setIsLoading(true);
+                    props.handleSubmit(values);
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 500);
                 }}
             >
                 {() => (
@@ -63,6 +67,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                         {props.extraStuff ? props.extraStuff : null}
                         
                         {props.errorMessage.length > 0 ? <Typography color="error">{props.errorMessage}</Typography> : null}
+                        {isLoading ? <Typography align="center" style={{marginBottom : 8}}><KvilleLoadingCircle/></Typography> : null}
 
                         <Button type="submit" color="primary" variant="contained">
                             Submit
