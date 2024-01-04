@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
-import { Grid } from "@mui/material";
+import { Stack } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
 import { useQueryToFetchSchedule } from "../../../../../../lib/pageSpecific/schedule/scheduleHooks";
 import { useRouter } from "next/dist/client/router";
@@ -99,6 +99,7 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
                     key={index}/>
                 );
             })}
+  
         </TableRow>
     )
 }

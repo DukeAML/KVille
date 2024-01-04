@@ -16,7 +16,6 @@ export function prioritizeToughTimes(slots, scheduleLength){
     
 
     updateWeightsForEachSlot(slots, availableTentersAtEachTime);
-
 }
 
 /**
