@@ -3,7 +3,6 @@ import { setGroupScheduleInDB } from "../../../../common/src/db/schedule/schedul
 import { useQueryClient, useQuery, QueryClient } from "react-query";
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
 import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
-import {useRouter} from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 import { useContext, useState } from "react";
@@ -13,8 +12,7 @@ import { CellColorsContext } from "./cellColorsContext";
 
 
 const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
-    console.log("updating queries and what not with " );
-    console.log(newSchedule);
+
     let queryKeyName = getQueryKeyNameForScheduleFetch(groupCode);
     let oldData : ScheduleAndStartDate | undefined = queryClient.getQueryData(queryKeyName);
     if (oldData === undefined) {
@@ -56,23 +54,27 @@ interface useMutationToAssignTentersAndUpdateScheduleData {
 
 }
 export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) => {
+    const [successMsg, setSuccessMsg] = useState<string>("");
     const queryClient = useQueryClient();
-    return useMutation (
+    const {mutate, isError, isLoading} = useMutation (
         {
             mutationFn : (mutationData : useMutationToAssignTentersAndUpdateScheduleData) => assignAndUpdateMutationFn(groupCode, mutationData.startDate, mutationData.endDate, mutationData.tentType, mutationData.oldSchedule),
             onSuccess : (newSchedule : ScheduleAndStartDate) => {
-                onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient)
-            },
-            onError : () => {console.log("what the heck")}
+                onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient);
+                setSuccessMsg("Successfully filled in the schedule!");
+                setTimeout(() => {
+                    setSuccessMsg("");
+                }, 3000);
+            }
         }
     );
+    return {mutate, isError, isLoading, successMsg};
 
 }
 
 
 
 export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
-    const router = useRouter();
     const {cellColorsCoordinator} = useContext(CellColorsContext);
     return useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForScheduleFetch(groupCode), 
@@ -84,7 +86,6 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
         },
         {
             onSuccess: (data) => {
-                console.log("I fetched the schedule" );
                 cellColorsCoordinator.establishNames(data.getAllMembers().map((member) => member.username));
             }
         }
@@ -110,9 +111,6 @@ export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType :
                     setDateHasBeenSetAlready(true);
                 }
                 
-            },
-            onError : (error) => {
-                console.log(error.message);
             }
         }
     )

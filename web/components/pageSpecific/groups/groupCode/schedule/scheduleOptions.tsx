@@ -12,6 +12,7 @@ import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExisten
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
 import { getScheduleDates, CURRENT_YEAR } from "../../../../../../common/src/scheduling/rules/scheduleDates";
 import { GroupContext } from "@/lib/shared/context/groupContext";
+import { ErrorMessage } from "@/components/shared/utils/errorMessage";
 
 
 
@@ -22,7 +23,7 @@ export const ScheduleOptions : React.FC = () => {
     const {groupDescription} = useContext(GroupContext);
     const [badDateRangeMsg, setBadDateRangeMsg] = useState<string>("");
 
-    const {mutate : updateScheduleInDB, error, isError : isErrorCreatingNewSchedule, isLoading : isCreatingNewScheduleAndUpdatingDB } = useMutationToAssignTentersAndUpdateSchedule(groupCode);
+    const {mutate : runAlgoAndUpdateScheduleInDB, isError : isErrorCreatingNewSchedule, isLoading : isCreatingNewScheduleAndUpdatingDB, successMsg } = useMutationToAssignTentersAndUpdateSchedule(groupCode);
     
     const getDefinedScheduleAndStartDate = () : ScheduleAndStartDate => {
         if (scheduleAndStartDate){
@@ -49,7 +50,7 @@ export const ScheduleOptions : React.FC = () => {
                         let {successful, message} = validateAssignTentersDateRange(startDate, endDate, getDefinedScheduleAndStartDate().startDate);
                         if (successful) {
                             let data = getDefinedScheduleAndStartDate();
-                            updateScheduleInDB({startDate, endDate, tentType : groupDescription.tentType, oldSchedule : data});
+                            runAlgoAndUpdateScheduleInDB({startDate, endDate, tentType : groupDescription.tentType, oldSchedule : data});
                         } else  {
                             setBadDateRangeMsg(message);
                             setTimeout(() => {
@@ -60,7 +61,8 @@ export const ScheduleOptions : React.FC = () => {
                 />
                 {(isCreatingNewScheduleAndUpdatingDB) ? <Typography align="center"><KvilleLoadingCircle/></Typography> : null}
                 {isErrorCreatingNewSchedule ? <Typography align="center" style={{color : "red"}}>An Error Occurred</Typography> : null}
-                {badDateRangeMsg.length > 1 ? <Typography align="center" style={{color : "red"}}>{badDateRangeMsg}</Typography> : null}
+                {badDateRangeMsg.length > 1 ? <ErrorMessage msg={badDateRangeMsg}/> : null}
+                {successMsg.length > 1 ? <Typography align="center">{successMsg}</Typography> : null}
             </Container>
     }
     

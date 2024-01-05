@@ -12,11 +12,10 @@ import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageCon
 import { GroupContext } from "@/lib/shared/context/groupContext";
 
 export default function GroupPageFromLogin() {
-  //console.log("hi");
   const router = useRouter();
-  const { groupDescription, setGroupDescription } = useContext(GroupContext);
+  const { setGroupDescription } = useContext(GroupContext);
 
-  const { userID, isLoggedIn } = useContext(UserContext);
+  const { userID } = useContext(UserContext);
 
   const {
     data: groups,

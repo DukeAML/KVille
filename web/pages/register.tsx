@@ -29,7 +29,6 @@ const RegisterForm: React.FC = () => {
 	const router = useRouter();
 	const handleSubmit = (values: RegisterFormValues) => {
 		// Handle login logic here (e.g., API call to authenticate the user)
-		console.log("trying to register with " + values.username);
 		tryToRegister(values.username, values.password)
 		.then((id) => {
 			setIsLoggedIn(true);

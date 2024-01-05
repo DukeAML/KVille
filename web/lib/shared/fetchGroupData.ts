@@ -40,8 +40,6 @@ export const useMutationToUpdateGroupData = (groupCode : string, cleanupFunction
                 
                 let newGroupDescription = {...groupDescription};
                 newGroupDescription.groupName = data;
-                console.log("setting gruop descriptoin to ");
-                console.log(newGroupDescription);
                 setGroupDescription(newGroupDescription);
                 queryClient.setQueryData("fetchingGroupDataFor"+groupCode, newGroupDescription);
                 //queryClient.invalidateQueries("fetchingGroupDataFor"+groupCode);

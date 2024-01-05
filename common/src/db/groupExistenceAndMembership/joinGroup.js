@@ -113,7 +113,6 @@ export async function tryToJoinGroup(groupCode, userID) {
             transaction.set(newMemberRef,  getDefaultGroupMemberData(tentType, groupScheduleStartDate.getFullYear()));
         })
     } catch (error) {
-        console.log("error from transaction : " + error.message);
         throw new Error(error.message);
     } 
     return new GroupDescription(groupCode, groupName, tentType, creator);

@@ -29,7 +29,6 @@ export const GET_GROUP_MEMBERS_ERRORS = {
  */
 export async function fetchGroups(userID) {
   let allGroups = await fetchAllGroups();
-  console.log(allGroups);
   let usersGroups = [];
   for (let groupIndex = 0; groupIndex < allGroups.length; groupIndex +=1 ){
     let currentGroup = allGroups[groupIndex];
@@ -65,21 +64,17 @@ async function fetchAllGroups() {
             groupSnapshots.forEach((membersQuerySnapshot, index) => {
               const groupCode = querySnapshot.docs[index].id;
               const memberIDs = membersQuerySnapshot.docs.map((memberDoc) => memberDoc.id);
-              console.log(groupCode);
               let groupData = querySnapshot.docs[index].data();
               groupsData.push({ groupDescription: new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator), memberIDs });
             });
 
-            console.log('Groups data:', groupsData);
             resolve(groupsData); // Resolve the Promise with the array of group data
           })
           .catch((error) => {
-            console.error('Error fetching groups:', error);
             reject(error); // Reject the Promise if there's an error
           });
       })
       .catch((error) => {
-        console.error('Error querying groups:', error);
         reject(error); // Reject the Promise if there's an error
       });
   });

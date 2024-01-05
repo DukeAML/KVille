@@ -20,7 +20,7 @@ export const getDefaultAssignDateRangeStartDate = (schedule) => {
     let currentDate = getCurrentDate();
     if (currentDate < schedule.startDate){
         return schedule.startDate;
-    } else if (currentDate >= getDatePlusNumShifts(schedule.startDate, schedule.length)){
+    } else if (currentDate >= getDatePlusNumShifts(schedule.startDate, schedule.schedule.length)){
         return schedule.startDate;
     } else {
         return currentDate;

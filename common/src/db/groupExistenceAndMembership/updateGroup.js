@@ -21,7 +21,6 @@ export const createGroupValidationSchema = Yup.object({
  */
 async function checkIfGroupExistsByGroupName(groupName) {
     let queryResults = await firestore.collection('groups').where('name', '==', groupName).get();
-    console.log(queryResults.empty);
     if (queryResults.empty){
         return false;
     } else {
@@ -48,7 +47,6 @@ export async function updateName(newGroupName, groupCode) {
         })
         return newGroupName;
     } catch (error) {
-        console.log("error from transaction : " + error.message);
         throw new Error(UPDATE_GROUP_ERROR_CODES.UPDATE_GROUP_ERROR_CODES);
     }
 }

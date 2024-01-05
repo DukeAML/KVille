@@ -18,14 +18,13 @@ export async function tryToRegister(username, password){
     let email = username + EMAIL_SUFFIX;
     let DEFAULT_USER_ID = '';
     let newUserID = DEFAULT_USER_ID;
-    console.log("trying to regsiter with " + username + " , " + email + ", " + password);
+
     try {
         await firestore.runTransaction(async (transaction) => { //TODO: make sure both operations either succeed or fail, this is insufficient currently
             
             const usernameIsTaken = await checkUsernameIsTaken(username).catch((error) => {
                 throw new Error(REGISTER_ERROR_CODES.DEFAULT);
             });
-            console.log("username is taken ? " + usernameIsTaken);
             if (usernameIsTaken) {
                 throw new Error(REGISTER_ERROR_CODES.USERNAME_TAKEN)
             }
@@ -42,7 +41,6 @@ export async function tryToRegister(username, password){
             transaction.set(newUserDocRef, newUserData);
         })
     } catch (error) {
-        console.log("error from transaction : " + error.message);
         let errorMessage = REGISTER_ERROR_CODES.DEFAULT;
         if (error.message === REGISTER_ERROR_CODES.USERNAME_TAKEN){
             errorMessage = REGISTER_ERROR_CODES.USERNAME_TAKEN;

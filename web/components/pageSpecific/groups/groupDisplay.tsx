@@ -27,7 +27,6 @@ export const GroupDisplay: React.FC<GroupDisplayInputInterface> = (
   const router = useRouter();
 
   const handleClick = () => {
-    console.log("trying to set group description");
     setGroupDescription(props.group);
     router.push("/groups/" + props.group.groupCode);
   };

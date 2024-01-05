@@ -12,7 +12,6 @@ dotenv.config({ path: './.env' });
  * @returns {firebase.app.App}
  */
 const initializeFirebase = () => {
-	console.log("api key 1 is " + process.env.API_KEY);
 	const firebaseConfig = {
 		apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
 		authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
@@ -25,16 +24,12 @@ const initializeFirebase = () => {
 	};
 
 	if (firebase.apps.length === 0) {
-		console.log("API key 2 is " + firebaseConfig.apiKey);
-		console.log("Trying to initialize Firebase");
 		return firebase.initializeApp(firebaseConfig);
 		// firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
 	} else {
 		return firebase.app;
 	}
-	return firebase.app;
 
-	// Export other constants here...
 };
 
 // Call the function to initialize Firebase after environment variables are loaded

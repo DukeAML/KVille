@@ -1,14 +1,12 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { UserContext } from "@/lib/shared/context/userContext";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Link } from "@mui/material";
 import { useContext, useState } from "react";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
 import { createGroupValidationSchema, tryToCreateGroup } from "../../../common/src/db/groupExistenceAndMembership/createGroup";
-
-
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/shared/context/groupContext";
 import { GroupDescription } from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
@@ -51,7 +49,7 @@ export default function CreateGroupPage() {
         <PermissionRequiredPageContainer title="Create a Group" groupSpecificPage={false}>
 
                 <Container maxWidth="sm">
-                    <Typography variant="h5" style={{marginBottom : 16, marginTop : 16}}>If someone has already created your group, ask them for the group code and go to the join group page.</Typography>
+                    <Typography variant="h5" style={{marginBottom : 16, marginTop : 16}}>If someone has already created your group, ask them for the group code and go to the <Link href="/groups/joinGroup">Join Group page</Link>.</Typography>
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}

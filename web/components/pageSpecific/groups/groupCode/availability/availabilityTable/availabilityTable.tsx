@@ -84,7 +84,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     }
 
     useEffect(() => {
-        console.log("setting preferred has changed to " + settingPreferred);
         if (settingPreferred){
             mouseTracker.setChangeAvailabilityAtRowsAndCols(changePreferredAvailabilityAtRowsAndCols);
         } else {
