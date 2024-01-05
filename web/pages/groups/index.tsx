@@ -1,6 +1,6 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { UserContext } from "@/lib/shared/context/userContext";
-import { Container, Typography } from "@material-ui/core";
+import { Container, Typography, Button } from "@mui/material";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import {
@@ -17,7 +17,6 @@ import Stack from "@mui/material/Stack";
 
 export default function GroupPage() {
 	const { userID, isLoggedIn } = useContext(UserContext);
-	console.log("rendering groups home page and my userID is " + userID);
 	const {
 		data: groups,
 		isLoading,
@@ -25,7 +24,6 @@ export default function GroupPage() {
 	} = useQuery<GroupDescription[], Error>(["fetchAllGroups" + userID], () =>
 		fetchGroups(userID)
 	);
-	console.log(groups);
 	const router = useRouter();
 
 	let body = null;
@@ -35,27 +33,27 @@ export default function GroupPage() {
 		body = (
 		<Container maxWidth="sm">
 			<Typography variant="h6" align="center">
-			Select your Group or Join/Create one to Continue.
+				Select your Group or Join/Create one to Continue.
 			</Typography>
 			{groups?.map((group, index) => {
-			return <GroupDisplay group={group} key={index} />;
+				return <GroupDisplay group={group} key={index} />;
 			})}
-			<Stack direction="row" alignItems="center" gap={1}>
-			<KvilleButton
-				onClick={() => router.push("/groups/joinGroup")}
-				text="Join Group"
-			></KvilleButton>
-			<KvilleButton
-				onClick={() => router.push("/groups/createGroup")}
-				text="Create Group"
-			></KvilleButton>
+			<Stack direction="column" alignItems="center" gap={1}>
+				<Button
+					onClick={() => router.push("/groups/joinGroup")}
+					variant="outlined"
+				>Join A Group</Button>
+				<Button
+					onClick={() => router.push("/groups/createGroup")}
+					variant="outlined"
+				>Create A Group</Button>
 			</Stack>
 		</Container>
 		);
 	}
 	return (
 		<PermissionRequiredPageContainer title="My Groups" groupSpecificPage={false}>
-		{body}
+			{body}
 		</PermissionRequiredPageContainer>
 	);
 }

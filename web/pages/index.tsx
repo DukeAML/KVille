@@ -1,6 +1,6 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Link } from "@mui/material";
 import React from "react"
 
 const HomePage : React.FC = () => {
@@ -13,15 +13,15 @@ const HomePage : React.FC = () => {
 				<KvilleAccordion elements={[
 				{
 					summaryText : "1) Everyone in your group will need to register",
-					detail : <Typography>Go to the Regsiter page in the Navbar</Typography>
+					detail : <Typography>Go to the <Link href="/register">Register page</Link> </Typography>
 				},
 				{
 					summaryText : "2) Someone from the group will need to create a group on this site",
-					detail : <Typography>Once logged in, go to the Create Group page (a link to it will appear in the Nav bar once you're logged in)</Typography>
+					detail : <Typography>Once logged in, go to the <Link href="/groups/createGroup" >Create Group page</Link></Typography>
 				},
 				{
 					summaryText : "3) Everyone else can then join the group",
-					detail : <Typography>Once logged in, go to the Join Group page (a link to it will appear in the Nav bar once you're logged in). You will need the group code from whoever created the group</Typography>
+					detail : <Typography>Once logged in, go to the <Link href="/groups/joinGroup">Join Group page</Link>. You will need the group code from whoever created the group</Typography>
 				},
 				{
 					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts.",

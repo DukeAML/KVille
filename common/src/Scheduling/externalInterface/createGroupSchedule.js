@@ -45,7 +45,6 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 		.get()
 		.then((groupMembers) => {
 			groupMembers.forEach((tenterInGroup) => {
-				console.log(tenterInGroup.id);
 				var name = tenterInGroup.data().name;
 				var id = tenterInGroup.id;
 				idToName[id] = name;
@@ -66,10 +65,7 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
 			});
 		});
 
-	console.log(people);
-	console.log(tenterSlotsGrid);
 	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
-	console.log(newScheduleInRange);
 	return scheduledSlotsArrToStringArrArr(newScheduleInRange, idToName);
 }
 

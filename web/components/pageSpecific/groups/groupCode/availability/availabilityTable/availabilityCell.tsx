@@ -89,7 +89,6 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
 
      
     const handleMouseDown = () => {
-        console.log("mouse down at " + props.row + ", " + props.col)
         if (props.inBounds){
             let newVal = !props.slot.available;
             if (settingPreferred){
@@ -102,7 +101,6 @@ export const AvailabilityCell :  React.FC<AvailabilityCellProps> = (props:Availa
         }
     }
     const handleMouseEnter = () => {
-        console.log("mouse enter at " + props.row + props.col)
         if (props.inBounds){
             props.mouseTracker.alertMovementToRowCol(props.row, props.col);
         } 

@@ -24,7 +24,6 @@ export const SwapTentersTimeRangePickers : React.FC = () => {
 			const startdate = schedule.startDate;
 			const originalDateIndex = getNumSlotsBetweenDates(startdate, timeSlotClickedOn);
 			let startIndex = originalDateIndex;
-			console.log(timeSlotClickedOn);
 	
 			while (startIndex > 0 && scheduleSlotInclusionExclusionCheck(schedule.getNamesAtTimeIndex(startIndex -1), tenterToReplace, newTenter)) {
 				startIndex -= 1;

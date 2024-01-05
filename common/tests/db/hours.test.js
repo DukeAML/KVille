@@ -4,13 +4,11 @@ describe("fetchHoursPerPersonInDateRange", () => {
     it("succeeds on normal case", async() => {
         await fetchHoursPerPersonInDateRange(KTEST_GROUP_CODE, new Date(2023, 0, 15), new Date(2023, 0, 21))
             .then((data) => {
-                console.log(data);
                 expect(data.dayHoursPerPersonInRange[KTEST1_USERNAME]).toBeGreaterThanOrEqual(0);
                 expect(data.nightHoursPerPersonInRange[KTEST1_USERNAME]).toBeGreaterThanOrEqual(0);
             })
             .catch((error) => {
-                //console.log(error);
-                //expect(true).toBe(false);
+                
             });
         
     })

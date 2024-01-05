@@ -56,7 +56,6 @@ async function getUsernames(userIDs) {
  * @returns {Promise<ScheduleAndStartDate>} object containing the schedule as an array of strings, and the start Date of the schedule
  */
 export async function fetchGroupSchedule(groupCode) {
-    console.log("fetching schedule for " + groupCode + " group ");
     const groupRef = firestore.collection('groups').doc(groupCode);
     const group = await groupRef.get();
     const groupMemberIDs = await getGroupMembersByGroupCode(groupCode);
@@ -87,9 +86,6 @@ export async function fetchGroupSchedule(groupCode) {
  * @returns {Promise<ScheduleAndStartDate>}
  */
 export async function setGroupScheduleInDB(groupCode, newSchedule) {
-    console.log("updating group schedule with ");
-    console.log(newSchedule.schedule);
-    console.log("group code is " + groupCode);
     const groupRef = firestore.collection('groups').doc(groupCode);
     const group = await groupRef.get();
     if (group.exists){
@@ -98,7 +94,6 @@ export async function setGroupScheduleInDB(groupCode, newSchedule) {
         });
         return newSchedule;
     } else {
-        console.log("group does not exist")
         throw new Error(SET_SCHEDULE_ERROR_CODES.GROUP_DOES_NOT_EXIST);
     }
 }

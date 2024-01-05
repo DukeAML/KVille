@@ -20,7 +20,6 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
     useEffect(() => {
         if (!isLoading && schedule){
             let maxPpl = schedule.getMaxNumPplOnDay(dateBeingShown);
-            console.log("max ppl is " + maxPpl);
             if (maxPpl <= 2){
                 setMaxWidth("xs");
             } else if (maxPpl <= 4){
@@ -29,7 +28,6 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
                 setMaxWidth("md")
             }
         }
-        console.log("max widht is " + maxWidth + " and max ppl is " + schedule?.getMaxNumPplOnDay(dateBeingShown));
 
     }, [dateBeingShown, schedule])
     

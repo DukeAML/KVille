@@ -16,6 +16,9 @@ export function prioritizeFairness(people, slots){
         if (getTotalScheduled(currentPerson) < (min + 0.01)){
             score *= 2;
         }
+        if (getTotalScheduled(currentPerson) > (max - 0.01)){
+            score *= 0.5;
+        }
         currentSlot.fairnessScore = score;
     }
 }
@@ -43,6 +46,9 @@ export function prioritizeNighttimeFairness(people, nightSlots){
         let score = Math.exp(PREFERRED_WEIGHT_FACTOR, zScore);
         if (currentPerson.nightScheduled < (min + 0.01)){
             score *= 2;
+        }
+        if (currentPerson.nightScheduled > (max - 0.01)){
+            score *= 0.5;
         }
         currentSlot.fairnessScore = score;
     }

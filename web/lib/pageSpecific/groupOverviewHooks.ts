@@ -39,8 +39,6 @@ export const useMutationToRemoveMember = () : UseMutationToRemoveMemberType => {
             mutationFn : (groupCodeAndUsername : GroupCodeAndUsername) => 
                 removeMemberMutationFn(groupCodeAndUsername.usernameOfMemberToRemove, groupCodeAndUsername.groupCode),   
             onSuccess : (groupCode) => {
-                console.log("trying to invalidate " );
-                console.log(getQueryKeyNameForScheduleFetch(groupCode));
                 queryClient.invalidateQueries(getQueryKeyNameForScheduleFetch(groupCode));
                 setConfirmationOpened(false);
                 setRemoved(true);

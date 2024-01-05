@@ -2,10 +2,16 @@
 import {weekdayAbbreviations} from "../../data/weekdayAbbreviations.js"; 
 
 
-export const getCurrentDate = () => {
-    return new Date(Date.now());
-
-    
+/**
+ * @param {boolean} rounded30MinSlots
+ * @returns {Date}
+ */
+export const getCurrentDate = (roundTo30MinSlots = true) => {
+    if (roundTo30MinSlots){
+        return getDateRoundedTo30MinSlot(new Date(Date.now()));
+    } else {
+        return new Date(Date.now());
+    }
 }
 
 /**

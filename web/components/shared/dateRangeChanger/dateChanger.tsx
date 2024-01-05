@@ -55,7 +55,7 @@ const HoursChooser : React.FC<HoursChooserProps> = (props : HoursChooserProps) =
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker label="Time" value={dayjs(props.date)} timeSteps={{hours : 1, minutes : 30, seconds : 0}} onChange={(e) => {
+                <TimePicker minutesStep={30} value={dayjs(props.date)} timeSteps={{hours : 1, minutes : 30, seconds : 0}} onChange={(e) => {
                     if (e){
                         if (e.$d){
                             if (typeof(e.$d.getHours()) === "number" && typeof(e.$d.getMinutes()) === "number"){

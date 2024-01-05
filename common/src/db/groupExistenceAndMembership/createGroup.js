@@ -29,7 +29,6 @@ export const createGroupValidationSchema = Yup.object({
  */
 async function checkIfGroupExistsByGroupName(groupName) {
     let queryResults = await firestore.collection('groups').where('name', '==', groupName).get();
-    console.log(queryResults.empty);
     if (queryResults.empty){
         return false;
     } else {
@@ -103,7 +102,6 @@ export async function tryToCreateGroup(groupName, tentType, userID) {
             
         })
     } catch (error) {
-        console.log("error from transaction : " + error.message);
         throw new Error(CREATE_GROUP_ERROR_CODES.CREATE_GROUP_FAILURE);
     } 
     return groupCode;

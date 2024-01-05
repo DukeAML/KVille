@@ -54,11 +54,13 @@ const dateToTextLabel = (date : Date) : string => {
         text += "pm";
     }
     if (text.length == 6){
-        text = "0" + text;
+        text = text;
     }
     return text;
 
 }
+
+export const ROW_PADDING_AND_MARGIN = 4;
 
 const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) => {
     let scheduleIndex = getNumSlotsBetweenDates(props.scheduleAndStartDate.startDate, props.rowStartDate);
@@ -75,16 +77,18 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
         names = [EMPTY];
     }
 
-    let timeLabelTopMargin = "-40px";
+    let timeLabelTopMargin = "-30px";
     if (props.rowStartDate.getHours() == 0 && props.rowStartDate.getMinutes() == 0){
-        timeLabelTopMargin = "-33px";
+        timeLabelTopMargin = "-23px";
     }
     return (
 
 
-        <TableRow >
-            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content", opacity : "100%"}}>
-                <Typography style={{marginTop: timeLabelTopMargin, textAlign : "left", color : "inherit", opacity : "100%", backgroundColor : "inherit"}}>
+        <TableRow style={{height : 20, marginTop : ROW_PADDING_AND_MARGIN, paddingTop : ROW_PADDING_AND_MARGIN, marginLeft : 0, paddingLeft : 0}}>
+            <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content", width: "1%", opacity : "100%", margin : ROW_PADDING_AND_MARGIN,
+            padding : ROW_PADDING_AND_MARGIN,
+            height : 20}}>
+                <Typography noWrap style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit", opacity : "100%", backgroundColor : "inherit", marginRight : 4, marginLeft : 4}}>
                     {dateToTextLabel(props.rowStartDate)}
                 </Typography>
             </TableCell>

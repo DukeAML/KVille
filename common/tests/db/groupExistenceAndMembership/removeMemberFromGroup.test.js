@@ -16,7 +16,6 @@ describe("removeMemberFromGroup", () => {
     it("successfully removes user", async () => {
         await removeMemberFromGroupByUsername(KTEST1_USERNAME, SMALLER_KTEST_GROUP_CODE);
         const newGroups = await fetchGroups(KTEST1_UID);
-        console.log(newGroups);
         expect(newGroups.filter(group => group.groupCode === SMALLER_KTEST_GROUP_CODE).length).toBe(0);
         const newMembers = await getGroupMembersByGroupCode(SMALLER_KTEST_GROUP_CODE);
         expect(newMembers.filter(member => member.userID === KTEST1_UID).length).toBe(0);
