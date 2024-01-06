@@ -22,8 +22,21 @@ export default function Availability(){
     const groupCode = useGroupCode();
     const {groupDescription} = useContext(GroupContext);
     const defaultAvailabilitySlotsData = [new AvailabilitySlot(new Date(Date.now()), false)];
+    const [calendarDateHasBeenSet, setCalendarDateHasBeenSet] = useState<boolean>(false);
+
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
         ()=> fetchAvailability(groupCode, userID),
+        {
+            onSuccess : (data) => {
+                if (!calendarDateHasBeenSet){
+                    year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
+                    setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType, year));
+                    setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType, year));
+                    setCalendarDateHasBeenSet(true);
+                }
+                
+            }
+        }
     );
     let year = data ? data[0].startDate.getFullYear() : CURRENT_YEAR;
 
@@ -37,7 +50,7 @@ export default function Availability(){
             setCalendarStartDate(getInitialAvailabilityDisplayStartDate(groupDescription.tentType, year));
             setCalendarEndDate(getInitialAvailabilityDisplayEndDate(groupDescription.tentType, year));
         }
-    }, [groupDescription, data]);
+    }, [groupDescription]);
     
     const [settingPreferred, setSettingPreferred] = useState<boolean>(false);
     const [colorblindModeIsOn, setColorblindModeIsOn] = useState<boolean>(false);

@@ -31,6 +31,7 @@ export class TenterSlot extends Slot{
         this.timeIndex = timeIndex;
         this.personIndex = personIndex;
         this.weight = weight;
+        this.timeslotIsFull = false;
 
 		this.preferredScore = status === TENTER_STATUS_CODES.PREFERRED ? PREFERRED_WEIGHT_FACTOR : 1;
 		this.fairnessScore = 1;
@@ -43,8 +44,13 @@ export class TenterSlot extends Slot{
 	 * return true iff the tenter is either available or preferred here, and this is not a grace period
 	 * @returns {boolean}
 	 */
-	getIsEligibleForAssignment(){
-		return (!this.isGrace && (this.status === TENTER_STATUS_CODES.AVAILABLE || this.status === TENTER_STATUS_CODES.PREFERRED));
+	getIsEligibleForAssignment(checkIfSlotIsFull=true){
+        if (checkIfSlotIsFull){
+            return (!this.isGrace && !this.timeslotIsFull && (this.status === TENTER_STATUS_CODES.AVAILABLE || this.status === TENTER_STATUS_CODES.PREFERRED));
+        } else {
+            return (!this.isGrace && (this.status === TENTER_STATUS_CODES.AVAILABLE || this.status === TENTER_STATUS_CODES.PREFERRED));
+        }
+		
 	}
 
 	/**
@@ -53,6 +59,26 @@ export class TenterSlot extends Slot{
 	getWeight() {
 		return this.preferredScore * this.fairnessScore * this.continuityScore * this.toughTimesScore * this.pickinessScore;
 	}
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getWeightWithoutContinuityScore(){
+        return this.preferredScore * this.preferredScore * this.fairnessScore * this.toughTimesScore * this.pickinessScore;
+    }
+
+    setTimeslotIsFull(){
+        this.timeslotIsFull = true;
+    }
+
+    /**
+     * 
+     * @returns {boolean}
+     */
+    getIsScheduled() {
+        return this.status === TENTER_STATUS_CODES.SCHEDULED;
+    }
 
 
 }
