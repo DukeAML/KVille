@@ -9,6 +9,7 @@ import { useContext, useState } from "react";
 import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
 import { getDefaultDisplayDateGivenTentType } from "../../../../common/src/frontendLogic/schedule/scheduleDates";
 import { CellColorsContext } from "./cellColorsContext";
+import { getDefaultAssignDateRangeEndDate, getDefaultAssignDateRangeStartDate } from "../../../../common/src/frontendLogic/schedule/assignTenters";
 
 
 const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
@@ -72,18 +73,19 @@ export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) 
 
 }
 
+const fetchScheduleFunc = (groupCode : string) : Promise<ScheduleAndStartDate> => {
+    if (groupCode === INVALID_GROUP_CODE){
+        throw new Error("");
+    }
+    return fetchGroupSchedule(groupCode);
+}
 
 
 export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
     const {cellColorsCoordinator} = useContext(CellColorsContext);
     return useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForScheduleFetch(groupCode), 
-        ()=> {
-            if (groupCode === INVALID_GROUP_CODE){
-                throw new Error("");
-            }
-            return fetchGroupSchedule(groupCode);
-        },
+        ()=> fetchScheduleFunc(groupCode),
         {
             onSuccess: (data) => {
                 cellColorsCoordinator.establishNames(data.getAllMembers().map((member) => member.username));
@@ -92,18 +94,35 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
     );
 }
 
+export const useFetchScheduleAndSetDefaultAssignTentersDate = (groupCode : string) => {
+    const [defaultDateHasBeenDate, setDefaultDateHasBeenSet] = useState<boolean>(false);
+    const [defaultAssignDateRangeStartDate, setDefaultAssignDateRangeStartDate] = useState<Date>(new Date(Date.now()));
+    const [defaultAssignDateRangeEndDate, setDefaultAssignDateRangeEndDate] = useState<Date>(new Date(Date.now()));
+
+    const {data, isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(
+        getQueryKeyNameForScheduleFetch(groupCode),
+        () => fetchScheduleFunc(groupCode),
+        {
+            onSuccess: (data) => {
+                if (!defaultDateHasBeenDate){
+                    setDefaultAssignDateRangeStartDate(getDefaultAssignDateRangeStartDate(data));
+                    setDefaultAssignDateRangeEndDate(getDefaultAssignDateRangeEndDate(data));
+                    setDefaultDateHasBeenSet(true);
+                }
+            }
+        }
+    )
+
+    return {data, isLoading, isError, defaultAssignDateRangeStartDate, defaultAssignDateRangeEndDate};
+}
+
 
 export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType : string) => {
     const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const [dateHasBeenSetAlready, setDateHasBeenSetAlready] = useState<boolean>(false);
     const {data, isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(
         getQueryKeyNameForScheduleFetch(groupCode),
-        () => {
-            if (groupCode === INVALID_GROUP_CODE){
-                throw new Error("");
-            }
-            return fetchGroupSchedule(groupCode);
-        },
+        () => fetchScheduleFunc(groupCode),
         {
             onSuccess: (data) => {
                 if (!dateHasBeenSetAlready){
