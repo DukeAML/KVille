@@ -5,7 +5,7 @@ import {Container} from "@material-ui/core";
 import { DatesRow } from "./datesRow";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
-import { ScheduleAndStartDate } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { useFetchScheduleAndSetDefaultAssignTentersDate, useMutationToAssignTentersAndUpdateSchedule, useQueryToFetchSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
 import { useRouter } from "next/router";
 import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";

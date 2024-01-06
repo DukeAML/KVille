@@ -32,7 +32,7 @@ export const GroupDisplay: React.FC<GroupDisplayInputInterface> = (
   };
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" style={{marginBottom : 4}}>
       <KvilleButton onClick={handleClick} text={props.group.groupName} />
     </Container>
   );

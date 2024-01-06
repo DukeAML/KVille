@@ -49,7 +49,7 @@ function assignNightShifts(people, tenterSlotsGrid) {
     prioritizeContinuityForNightSlots(tenterSlotsGrid);
     while (eligibleNightSlots.length > 0){
         prioritizeFairness(people, eligibleNightSlots);
-        prioritizeToughTimes(eligibleNightSlots, scheduleLength); //only need to update the time slots that were part of the last person chosen
+        prioritizeToughTimes(eligibleNightSlots, scheduleLength); //could be optimized by only updating the time slots that were part of the last shift created
         eligibleNightSlots.sort((a, b) => (b.getWeight() - a.getWeight()));
         let choosingResult = pickTenterFillSlotAndReturnRemainingSlots(people, eligibleNightSlots, tenterSlotsGrid);
         eligibleNightSlots = choosingResult.remainingSlots;
@@ -66,8 +66,8 @@ function assignDayShifts(people, tenterSlotsGrid){
     let scheduleLength = tenterSlotsGrid[0].length;
     while (slots.length > 0){
         prioritizeFairness(people, slots);
-        prioritizeDaytimeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
-        prioritizeToughTimes(slots, scheduleLength); //only need to update the time slots that were part of the last person chosen
+        prioritizeDaytimeContinuity(slots, tenterSlotsGrid); //this takes up half the time of the algo and could definitely be optimized. 
+        prioritizeToughTimes(slots, scheduleLength); //could also be optimized for speed
         slots.sort( (a, b) => (b.getWeight() - a.getWeight()));
         let {remainingSlots, chosenPersonIndex, chosenTimeIndex} = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
         remainingSlots = tryToEliminateStraySlotAtEdgesOfShift(tenterSlotsGrid, people, remainingSlots, chosenPersonIndex, chosenTimeIndex);

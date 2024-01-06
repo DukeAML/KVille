@@ -45,8 +45,8 @@ export default function Schedule() {
                     <TenterSwapContext.Provider value={{isSwappingTenter, setIsSwappingTenter, timeSlotClickedOn, setTimeSlotClickedOn, tenterToReplace, setTenterToReplace,
                                                         newTenter, setNewTenter, startReplacementDate, setStartReplacementDate, endReplacementDate, setEndReplacementDate}}>
                         
-                        <Container maxWidth="md">
-                            <Typography align="left">
+                        <Container maxWidth="lg">
+                            <Typography align="left" variant="h6">
                             Here is your schedule. It shows who is supposed to be in the tent at each time. 
                             Click the "Fill in Schedule" dropdown below to get started with using our algorithm to auto-fill the schedule.
                             To manually change who is assigned at a specific time slot, click on the corresponding box in the grid to replace them with someone else at that time. 

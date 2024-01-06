@@ -1,6 +1,7 @@
 import {getDatePlusNumShifts} from "../../src/calendarAndDates/datesUtils";
 
 
+export const DISCRETIONARY = "Discretionary";
 export class GracePeriod{
     
     //this class should go in another file. It's here bc of weird Jest issues probably due to circular imports
@@ -27,6 +28,30 @@ export class GracePeriod{
             return false;
         }
     } 
+
+    /**
+     * 
+     * @param {Date} slotStartDate 
+     * @returns {number}
+     */
+    overlapWithSlotInHours(slotStartDate){
+        let slotEndDate = getDatePlusNumShifts(slotStartDate, 1);
+        if (slotStartDate > this.endDate){
+            return 0;
+        } else if (slotEndDate < this.startDate){
+            return 0;
+        } else if (this.includesSlotStartDate(slotStartDate)){
+            return 0.5;
+        } else {
+            let msDiff = 0;
+            if (slotStartDate < this.startDate){
+                msDiff = slotEndDate.getTime() - this.startDate.getTime();
+            } else {
+                msDiff = this.endDate.getTime() - slotStartDate.getTime();
+            }
+            return (msDiff / (1000 * 60 * 60));
+        }
+    }
 }
 
 const graceWeek = new GracePeriod(new Date(2024, 1, 12, 12, 0), new Date(2024, 1, 18, 12, 0), "Grace Week");
@@ -92,7 +117,8 @@ const wbbAwayGameGracePeriods = wbbAwayGameStartTimes.map((startTime) => {
 })
 
 const discretionaryGracePeriods = [
-
+    new GracePeriod(new Date(2024, 0, 21, 20, 0), new Date(2024, 0, 21, 21, 0), DISCRETIONARY),
+    new GracePeriod(new Date(2024, 0, 23, 3, 27), new Date(2024, 0, 23, 5, 1, 23), DISCRETIONARY)
 ];
 
 /**

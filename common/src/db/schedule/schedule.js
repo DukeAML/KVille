@@ -1,4 +1,4 @@
-import { ScheduleAndStartDate } from "./scheduleAndStartDate.js";
+import { ScheduleData } from "./scheduleAndStartDate.js";
 import { firestore } from "../firebase_config.js";
 import { getDateRoundedTo30MinSlot } from "../../calendarAndDates/datesUtils.js";
 import { getGroupMembersByGroupCode } from "../groupExistenceAndMembership/groupMembership.js";
@@ -53,7 +53,7 @@ async function getUsernames(userIDs) {
 /**
  * 
  * @param {string} groupCode 
- * @returns {Promise<ScheduleAndStartDate>} object containing the schedule as an array of strings, and the start Date of the schedule
+ * @returns {Promise<ScheduleData>} object containing the schedule as an array of strings, and the start Date of the schedule
  */
 export async function fetchGroupSchedule(groupCode) {
     const groupRef = firestore.collection('groups').doc(groupCode);
@@ -73,7 +73,7 @@ export async function fetchGroupSchedule(groupCode) {
             }
             schedule.push(ids);
         })
-        return new ScheduleAndStartDate(schedule, roundedDate, IDToNameMap);
+        return new ScheduleData(schedule, roundedDate, IDToNameMap);
     } else {
         throw new Error(FETCH_SCHEDULE_ERROR_CODES.GROUP_DOES_NOT_EXIST);
     }
@@ -82,8 +82,8 @@ export async function fetchGroupSchedule(groupCode) {
 /**
  * 
  * @param {string} groupCode 
- * @param {ScheduleAndStartDate} newSchedule 
- * @returns {Promise<ScheduleAndStartDate>}
+ * @param {ScheduleData} newSchedule 
+ * @returns {Promise<ScheduleData>}
  */
 export async function setGroupScheduleInDB(groupCode, newSchedule) {
     const groupRef = firestore.collection('groups').doc(groupCode);

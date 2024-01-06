@@ -29,7 +29,7 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
     
                         );
                     } else {
-                        return <DateChanger text={"Date Shown"} date={dateBeingShown} setDate={setDateBeingShown} includeHours={false} key={index}/>
+                        return <DateChanger text={"Date Shown"} date={dateBeingShown} setDate={setDateBeingShown} includeHours={false} key={index} />
                     }
                     
                 })}

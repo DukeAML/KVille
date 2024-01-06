@@ -4,7 +4,7 @@ import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { Typography, Container, Button, Modal, Dialog} from "@mui/material";
 import React, { useContext,  useState } from "react";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
-import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { SwapTentersTimeRangePickers } from "./timeRangePickers";
 import { NewTenterPicker } from "./newTenterPicker";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
@@ -30,7 +30,7 @@ export const TenterSwapper: React.FC = () => {
         return;
       }
       setErrorMsg("");
-      let newSchedule = new ScheduleAndStartDate({...schedule}.schedule, {...schedule}.startDate, {...schedule}.IDToNameMap);
+      let newSchedule = new ScheduleData({...schedule}.schedule, {...schedule}.startDate, {...schedule}.IDToNameMap);
       const startdate = schedule?.startDate as Date;
       const startIndex = getNumSlotsBetweenDates(startdate, startReplacementDate);
       const endIndex = getNumSlotsBetweenDates(startdate, endReplacementDate);

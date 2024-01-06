@@ -5,11 +5,10 @@ import { GRACE } from "../slots/tenterSlot";
 
 
 
-
 /**
  * 
  * @param {Date} slotStartDate 
- * @returns {{isGrace : boolean, reason : string}}
+ * @returns {{isGrace : boolean, reason : string, overlapInHours : number}}
  */
 export const isGrace = (slotStartDate, includeDiscretionary=false) => {
     let gracePeriods = getGracePeriods2024(includeDiscretionary);
@@ -19,11 +18,17 @@ export const isGrace = (slotStartDate, includeDiscretionary=false) => {
 
     for (let i = 0; i < gracePeriods.length ; i += 1){
         let gracePeriod = gracePeriods[i];
-        if (gracePeriod.includesSlotStartDate(slotStartDate)){
-            return {isGrace : true, reason : gracePeriod.reason}
+        if (includeDiscretionary){
+            if (gracePeriod.overlapWithSlotInHours(slotStartDate) > 0){
+                return {isGrace : true, reason : gracePeriod.reason, overlapInHours : gracePeriod.overlapWithSlotInHours(slotStartDate)}
+            }
+        } else {
+            if (gracePeriod.includesSlotStartDate(slotStartDate)){
+                return {isGrace : true, reason : gracePeriod.reason, overlapInHours : gracePeriod.overlapWithSlotInHours(slotStartDate)}
+            }
         }
     }
-    return {isGrace : false, reason : ""}
+    return {isGrace : false, reason : "", overlapInHours : 0}
 
 }
 
