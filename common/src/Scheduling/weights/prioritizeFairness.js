@@ -12,7 +12,7 @@ export function prioritizeFairness(people, slots){
         var currentSlot = slots[slotIndex];
         let currentPerson = people[currentSlot.personIndex];
         let zScore = (getTotalScheduled(currentPerson) - mean) / std;
-        let score = Math.exp(PREFERRED_WEIGHT_FACTOR, zScore);
+        let score = Math.pow(PREFERRED_WEIGHT_FACTOR, -1 * zScore);
         if (getTotalScheduled(currentPerson) < (min + 0.01)){
             score *= 2;
         }
@@ -43,7 +43,8 @@ export function prioritizeNighttimeFairness(people, nightSlots){
         var currentSlot = nightSlots[slotIndex];
         let currentPerson = people[currentSlot.personIndex];
         let zScore = (currentPerson.nightScheduled - mean) / std;
-        let score = Math.exp(PREFERRED_WEIGHT_FACTOR, zScore);
+        let score = Math.pow(PREFERRED_WEIGHT_FACTOR, -1 * zScore);
+
         if (currentPerson.nightScheduled < (min + 0.01)){
             score *= 2;
         }
@@ -77,7 +78,7 @@ function getDistributionAnalysis(data) {
     }
     std /= data.length;
     std = Math.sqrt(std);
-    return {min, max, mean, stdDev: std};
+    return {min, max, mean, std};
 }
 
 

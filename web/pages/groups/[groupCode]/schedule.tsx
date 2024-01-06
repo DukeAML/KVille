@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { ScheduleOptions } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
-import {getDefaultDisplayDateGivenTentType, getDefaultDisplayDateRangeStartDateWithoutSchedule} from "../../../../common/src/frontendLogic/schedule/scheduleDates";
 import { OneDaySchedule } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
 import { Typography, Stack, Container } from "@mui/material";
 import { CellColorsCoordinator } from "@/components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
 import { CellColorsContext } from "@/lib/pageSpecific/schedule/cellColorsContext";
 import { DateBeingShownContext } from "@/lib/pageSpecific/schedule/dateBeingShownContext";
-import { useFetchScheduleAndSetDisplayDate, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useFetchScheduleAndSetDisplayDate } from "@/lib/pageSpecific/schedule/scheduleHooks";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { useGroupCode } from "@/lib/shared/useGroupCode";
 import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
@@ -66,7 +65,6 @@ export default function Schedule() {
         );
     }
     
-    //console.log(scheduleAndStartDate);
     return (
         <PermissionRequiredPageContainer title="Schedule" groupSpecificPage={true}>
            {body}

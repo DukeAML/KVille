@@ -6,10 +6,11 @@ import {fillEmptySpots} from "./finalTouches/fillEmptySpots.js";
 import {fillGrace} from "./finalTouches/fillGrace.js";
 import {reorganizeGrid} from "./finalTouches/reorganizeGrid.js";
 import { prioritizeFairness } from "./weights/prioritizeFairness.js";
-import { prioritizeContinuity, prioritizeContinuityForNightSlots} from "./weights/prioritizeContinuity.js";
+import { prioritizeDaytimeContinuity, prioritizeContinuityForNightSlots} from "./weights/prioritizeContinuity.js";
 import { prioritizeToughTimes } from "./weights/prioritizeToughTimes.js";
 import { prioritizePickiness } from "./weights/prioritizePickiness.js";
 import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSlots/pickTenterAndFillSlot.js";
+import {tryToEliminateStraySlotAtEdgesOfShift} from "./pickTenterAndFillSlots/tryToeliminateStraySlotAtEdgesOfShift.js";
 
 
 
@@ -27,12 +28,11 @@ export function scheduleAlgorithm(people, tenterSlotsGrid){
     assignDayShifts(people, tenterSlotsGrid);
 
     var scheduleArr = formatTo1DSchedule(people, tenterSlotsGrid);
-    ensureFairness(scheduleArr, people, tenterSlotsGrid);
+    //ensureFairness(scheduleArr, people, tenterSlotsGrid);
     fillGrace(scheduleArr);
     fillEmptySpots(scheduleArr);
-    for (var c = 0; c < 2; c++){
-        scheduleArr = cleanStraySlots(scheduleArr, people, tenterSlotsGrid);
-    }
+    scheduleArr = cleanStraySlots(scheduleArr, people, tenterSlotsGrid);
+    
     
     reorganizeGrid(scheduleArr);
     return scheduleArr;
@@ -50,7 +50,6 @@ function assignNightShifts(people, tenterSlotsGrid) {
     while (eligibleNightSlots.length > 0){
         prioritizeFairness(people, eligibleNightSlots);
         prioritizeToughTimes(eligibleNightSlots, scheduleLength); //only need to update the time slots that were part of the last person chosen
-        //also want to prioritize ppl who didn't put down many slots as being available
         eligibleNightSlots.sort((a, b) => (b.getWeight() - a.getWeight()));
         let choosingResult = pickTenterFillSlotAndReturnRemainingSlots(people, eligibleNightSlots, tenterSlotsGrid);
         eligibleNightSlots = choosingResult.remainingSlots;
@@ -58,23 +57,25 @@ function assignNightShifts(people, tenterSlotsGrid) {
 }
 
 /**
- * Scheduling Algo
+ * 
  * @param {Array<Person>} people 
  * @param {Array<Array<import("./slots/tenterSlot").TenterSlot>>} tenterSlotsGrid
  */
 function assignDayShifts(people, tenterSlotsGrid){
     let slots = getEligibleTenterSlots(tenterSlotsGrid, ((slot) => !slot.isNight));
     let scheduleLength = tenterSlotsGrid[0].length;
-    //setBaseWeights
     while (slots.length > 0){
         prioritizeFairness(people, slots);
-        prioritizeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
+        prioritizeDaytimeContinuity(slots, tenterSlotsGrid); //only need to do this for person who was last chosen. nothing will change for the others
         prioritizeToughTimes(slots, scheduleLength); //only need to update the time slots that were part of the last person chosen
         slots.sort( (a, b) => (b.getWeight() - a.getWeight()));
-        slots = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid).remainingSlots;
+        let {remainingSlots, chosenPersonIndex, chosenTimeIndex} = pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid);
+        remainingSlots = tryToEliminateStraySlotAtEdgesOfShift(tenterSlotsGrid, people, remainingSlots, chosenPersonIndex, chosenTimeIndex);
+        slots = remainingSlots;
     }
 
 }
+
 
 /**
  * 

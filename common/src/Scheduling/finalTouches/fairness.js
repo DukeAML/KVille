@@ -137,7 +137,7 @@ function maxHourRatio(people){
             minHours = hours;
         }
     }
-    return (1 + (maxHours - minHours)/maxHours);
+    return (1 + ((maxHours - minHours)/maxHours));
 }
 
 /**

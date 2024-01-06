@@ -10,7 +10,7 @@ import { assignTenterToDaytimeShiftAndReturnRemainingSlots } from "./fillDaytime
  * 
  */
 export function pickTenterFillSlotAndReturnRemainingSlots(people, slots, tenterSlotsGrid){
-    var chosenTenterSlot = slots.shift(); //remove first element and return it
+    var chosenTenterSlot = slots[0];
     let remainingSlots = slots;
     if (chosenTenterSlot.isNight){
         return {
@@ -40,7 +40,7 @@ export function getNumberScheduledAtChosenTime(tenterSlotsGrid, chosenTimeIndex)
     var personIndex = 0;
     var numberScheduledAtChosenTime = 0;
     while (personIndex < tenterSlotsGrid.length) {
-        if (tenterSlotsGrid[personIndex][chosenTimeIndex].status == TENTER_STATUS_CODES.SCHEDULED){
+        if (tenterSlotsGrid[personIndex][chosenTimeIndex].getIsScheduled()){
             numberScheduledAtChosenTime = numberScheduledAtChosenTime + 1;
         }
         personIndex += 1;
@@ -73,7 +73,11 @@ export function assignTenterToOneSlotAndReturnRemainingSlots(chosenTenterSlot, p
     var peopleNeeded = chosenTenterSlot.calculatePeopleNeeded();
     if (numberScheduledAtChosenTime >= peopleNeeded){
         remainingSlots = remainingSlots.filter((s) => (s.timeIndex != chosenTimeIndex));
+        for (let personIndex = 0; personIndex < tenterSlotsGrid.length; personIndex += 1) {
+            tenterSlotsGrid[personIndex][chosenTimeIndex].setTimeslotIsFull();
+        }
     }
+    
     return remainingSlots;
 }
 

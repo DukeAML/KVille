@@ -11,6 +11,8 @@ import { EMPTY, GRACE } from "../slots/tenterSlot";
 */
 export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
     var newGrid = [...scheduleArr];
+    let strayCount = 0;
+    let hadToExtendCount = 0;
 
     //for now, I am avoiding the annoying edge cases at the beginning and end
     for (var timeIndex = 1; timeIndex < scheduleArr.length - 1; timeIndex++){
@@ -26,6 +28,7 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
             
 
             if (tenterIsInStraySlotAndShouldBeReplaced(tenter, newGrid, timeIndex)){
+                strayCount += 1;
                 //try to schedule someone from above into the current slot
                 if (findTenterAboveToEdit(tenterSlotsGrid, timeIndex) != null){
                     var indexAbove = findTenterAboveToEdit(tenterSlotsGrid, timeIndex);
@@ -39,9 +42,10 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
                     swapScheduledTenters(people, tenterSlotsGrid, newGrid, tenterIndexInGrid, indexBelow, timeIndex);
                     break;
                 }
+                hadToExtendCount += 1;
 
                 //if that hasn't worked, try to schedule stray tenter in the above time slot
-                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].getIsEligibleForAssignment()) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
+                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].getIsEligibleForAssignment(false)) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
                     if (findTenterAboveToEdit(tenterSlotsGrid, timeIndex) != null){
                         var indexToRemove = findTenterAboveToEdit(tenterSlotsGrid, timeIndex);
                         swapScheduledTenters(people, tenterSlotsGrid, newGrid, indexToRemove, tenterIndexInGrid, timeIndex-1);
@@ -50,7 +54,7 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
                 }
 
                 //if that doesn't work, try to schedule stray tenter in the below slot
-                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex+1].getIsEligibleForAssignment()) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
+                if ((tenterSlotsGrid[tenterIndexInGrid][timeIndex+1].getIsEligibleForAssignment(false)) && !(tenterSlotsGrid[tenterIndexInGrid][timeIndex-1].isNight)){
                     if (findTenterBelowToEdit(tenterSlotsGrid, timeIndex) != null){
                         var indexToRmv = findTenterBelowToEdit(tenterSlotsGrid, timeIndex);
                         swapScheduledTenters(people, tenterSlotsGrid, newGrid, indexToRmv, tenterIndexInGrid, timeIndex+1);
@@ -62,7 +66,7 @@ export function cleanStraySlots(scheduleArr, people, tenterSlotsGrid){
             }
 
         }
-    }
+    }   
 
     return newGrid;
 }
@@ -127,7 +131,7 @@ function findTenterAboveToEdit(tenterSlotsGrid, timeslot){
         return null;
     }
     for (var personIndex = 0; personIndex < tenterSlotsGrid.length; personIndex++){
-        if ((tenterSlotsGrid[personIndex][timeslot-1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment())){
+        if ((tenterSlotsGrid[personIndex][timeslot-1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment(false))){
             return personIndex;
         }
     }
@@ -148,7 +152,7 @@ function findTenterBelowToEdit(tenterSlotsGrid, timeslot){
         return null;
     }
     for (var personIndex = 0; personIndex < tenterSlotsGrid.length; personIndex++){
-        if ((tenterSlotsGrid[personIndex][timeslot+1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment())){
+        if ((tenterSlotsGrid[personIndex][timeslot+1].status == TENTER_STATUS_CODES.SCHEDULED) && (tenterSlotsGrid[personIndex][timeslot].getIsEligibleForAssignment(false))){
             return personIndex;
         }
     }
