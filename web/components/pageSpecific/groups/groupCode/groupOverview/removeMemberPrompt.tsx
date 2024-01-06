@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverviewHooks";
+import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverview/groupOverviewHooks";
 import { Typography} from "@mui/material";
 import {Button} from "@material-ui/core";
 import { useGroupCode } from "@/lib/shared/useGroupCode";

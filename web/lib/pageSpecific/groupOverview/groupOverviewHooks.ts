@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation} from "react-query";
 import { useState } from "react";
-import { removeMemberFromGroupByUsername, REMOVE_USER_ERRORS } from "../../../common/src/db/groupExistenceAndMembership/removeMemberFromGroup";
-import { getQueryKeyNameForScheduleFetch, useQueryToFetchSchedule } from "./schedule/scheduleHooks";
+import { removeMemberFromGroupByUsername, REMOVE_USER_ERRORS } from "../../../../common/src/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { getQueryKeyNameForScheduleFetch, useQueryToFetchSchedule } from "../schedule/scheduleHooks";
 
 interface HoursPerPersonInterface {
     dayHoursPerPerson : {

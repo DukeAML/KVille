@@ -1,10 +1,10 @@
 import { getDatePlusNumShifts, getCurrentDate } from "../../calendarAndDates/datesUtils";
 import { EMPTY } from "../../scheduling/slots/tenterSlot";
 import { getScheduleDates } from "../../scheduling/rules/scheduleDates";
-import { ScheduleAndStartDate } from "../../db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "../../db/schedule/scheduleAndStartDate";
 /**
  * 
- * @param {ScheduleAndStartDate} schedule 
+ * @param {ScheduleData} schedule 
  * @param {Date} groupScheduleStartDate 
  * @returns {Date}
  */
@@ -30,7 +30,7 @@ export const getDefaultAssignDateRangeStartDate = (schedule) => {
 
 /**
  * 
- * @param {ScheduleAndStartDate} schedule 
+ * @param {ScheduleData} schedule 
  * @returns {Date}
  */
 export const getDefaultAssignDateRangeEndDate = (schedule) => {

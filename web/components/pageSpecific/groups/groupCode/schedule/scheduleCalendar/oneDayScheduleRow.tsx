@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ScheduleAndStartDate } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
 import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
 import { Stack } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
@@ -31,7 +31,7 @@ export const OneDayScheduleRow : React.FC<OneDayScheduleRowProps> = (props : One
 
 
 interface RowGivenDataProps {
-    scheduleAndStartDate : ScheduleAndStartDate;
+    scheduleAndStartDate : ScheduleData;
     rowStartDate : Date;
 }
 

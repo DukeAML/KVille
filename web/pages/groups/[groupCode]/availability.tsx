@@ -59,7 +59,7 @@ export default function Availability(){
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
                 <Container>
-                    <Typography align="center" style={{marginBottom : 16}}>
+                    <Typography align="center" style={{marginBottom : 16}} variant="h6">
                         Fill in your availability here - the grid below works kind of like a when2meet. 
                         Click on a cell to begin toggling your status - click on any cell to finish toggling. 
                         All cells in between the two will be switched to the new status. 

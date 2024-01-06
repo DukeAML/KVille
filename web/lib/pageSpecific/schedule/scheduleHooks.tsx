@@ -2,19 +2,20 @@ import { useMutation,  UseQueryResult } from "react-query";
 import { setGroupScheduleInDB } from "../../../../common/src/db/schedule/schedule";
 import { useQueryClient, useQuery, QueryClient } from "react-query";
 import {fetchGroupSchedule} from "../../../../common/src/db/schedule/schedule";
-import {ScheduleAndStartDate} from '../../../../common/src/db/schedule/scheduleAndStartDate';
+import {ScheduleData} from '../../../../common/src/db/schedule/scheduleAndStartDate';
 import { INVALID_GROUP_CODE } from "../../../../common/src/db/groupExistenceAndMembership/GroupCode";
 import { assignTentersAndGetNewFullSchedule } from "../../../../common/src/scheduling/externalInterface/createGroupSchedule";
 import { useContext, useState } from "react";
 import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
 import { getDefaultDisplayDateGivenTentType } from "../../../../common/src/frontendLogic/schedule/scheduleDates";
 import { CellColorsContext } from "./cellColorsContext";
+import { getDefaultAssignDateRangeEndDate, getDefaultAssignDateRangeStartDate } from "../../../../common/src/frontendLogic/schedule/assignTenters";
 
 
-const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleAndStartDate, groupCode : string, queryClient : QueryClient) => {
+const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleData, groupCode : string, queryClient : QueryClient) => {
 
     let queryKeyName = getQueryKeyNameForScheduleFetch(groupCode);
-    let oldData : ScheduleAndStartDate | undefined = queryClient.getQueryData(queryKeyName);
+    let oldData : ScheduleData | undefined = queryClient.getQueryData(queryKeyName);
     if (oldData === undefined) {
         queryClient.invalidateQueries(queryKeyName);
     } else {
@@ -29,8 +30,8 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
     const queryClient = useQueryClient();
     return useMutation(
         {
-            mutationFn : (newSchedule : ScheduleAndStartDate) => setGroupScheduleInDB(groupCode, newSchedule),
-            onSuccess : (newSchedule : ScheduleAndStartDate) => {
+            mutationFn : (newSchedule : ScheduleData) => setGroupScheduleInDB(groupCode, newSchedule),
+            onSuccess : (newSchedule : ScheduleData) => {
                 onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient);
             }
         }
@@ -39,9 +40,9 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
 }
 
 
-const assignAndUpdateMutationFn = async (groupCode : string, startDate : Date, endDate : Date, tentType : string, oldSchedule : ScheduleAndStartDate) => {
+const assignAndUpdateMutationFn = async (groupCode : string, startDate : Date, endDate : Date, tentType : string, oldSchedule : ScheduleData) => {
     const newSchedule = await assignTentersAndGetNewFullSchedule(groupCode, tentType, startDate, endDate, oldSchedule);
-    let newSchedObj = new ScheduleAndStartDate(newSchedule, oldSchedule.startDate, oldSchedule.IDToNameMap);
+    let newSchedObj = new ScheduleData(newSchedule, oldSchedule.startDate, oldSchedule.IDToNameMap);
     return await setGroupScheduleInDB(groupCode, newSchedObj);
 
 }
@@ -49,7 +50,7 @@ const assignAndUpdateMutationFn = async (groupCode : string, startDate : Date, e
 interface useMutationToAssignTentersAndUpdateScheduleData {
     startDate : Date;
     endDate : Date;
-    oldSchedule : ScheduleAndStartDate;
+    oldSchedule : ScheduleData;
     tentType : string;
 
 }
@@ -59,7 +60,7 @@ export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) 
     const {mutate, isError, isLoading} = useMutation (
         {
             mutationFn : (mutationData : useMutationToAssignTentersAndUpdateScheduleData) => assignAndUpdateMutationFn(groupCode, mutationData.startDate, mutationData.endDate, mutationData.tentType, mutationData.oldSchedule),
-            onSuccess : (newSchedule : ScheduleAndStartDate) => {
+            onSuccess : (newSchedule : ScheduleData) => {
                 onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient);
                 setSuccessMsg("Successfully filled in the schedule!");
                 setTimeout(() => {
@@ -72,18 +73,19 @@ export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) 
 
 }
 
+const fetchScheduleFunc = (groupCode : string) : Promise<ScheduleData> => {
+    if (groupCode === INVALID_GROUP_CODE){
+        throw new Error("");
+    }
+    return fetchGroupSchedule(groupCode);
+}
 
 
-export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleAndStartDate> => {
+export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<ScheduleData> => {
     const {cellColorsCoordinator} = useContext(CellColorsContext);
-    return useQuery<ScheduleAndStartDate, Error>(
+    return useQuery<ScheduleData, Error>(
         getQueryKeyNameForScheduleFetch(groupCode), 
-        ()=> {
-            if (groupCode === INVALID_GROUP_CODE){
-                throw new Error("");
-            }
-            return fetchGroupSchedule(groupCode);
-        },
+        ()=> fetchScheduleFunc(groupCode),
         {
             onSuccess: (data) => {
                 cellColorsCoordinator.establishNames(data.getAllMembers().map((member) => member.username));
@@ -92,18 +94,35 @@ export const useQueryToFetchSchedule = (groupCode : string) : UseQueryResult<Sch
     );
 }
 
+export const useFetchScheduleAndSetDefaultAssignTentersDate = (groupCode : string) => {
+    const [defaultDateHasBeenDate, setDefaultDateHasBeenSet] = useState<boolean>(false);
+    const [defaultAssignDateRangeStartDate, setDefaultAssignDateRangeStartDate] = useState<Date>(new Date(Date.now()));
+    const [defaultAssignDateRangeEndDate, setDefaultAssignDateRangeEndDate] = useState<Date>(new Date(Date.now()));
+
+    const {data, isLoading, isError} = useQuery<ScheduleData, Error>(
+        getQueryKeyNameForScheduleFetch(groupCode),
+        () => fetchScheduleFunc(groupCode),
+        {
+            onSuccess: (data) => {
+                if (!defaultDateHasBeenDate){
+                    setDefaultAssignDateRangeStartDate(getDefaultAssignDateRangeStartDate(data));
+                    setDefaultAssignDateRangeEndDate(getDefaultAssignDateRangeEndDate(data));
+                    setDefaultDateHasBeenSet(true);
+                }
+            }
+        }
+    )
+
+    return {data, isLoading, isError, defaultAssignDateRangeStartDate, defaultAssignDateRangeEndDate};
+}
+
 
 export const useFetchScheduleAndSetDisplayDate = (groupCode : string, tentType : string) => {
     const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const [dateHasBeenSetAlready, setDateHasBeenSetAlready] = useState<boolean>(false);
-    const {data, isLoading, isError} = useQuery<ScheduleAndStartDate, Error>(
+    const {data, isLoading, isError} = useQuery<ScheduleData, Error>(
         getQueryKeyNameForScheduleFetch(groupCode),
-        () => {
-            if (groupCode === INVALID_GROUP_CODE){
-                throw new Error("");
-            }
-            return fetchGroupSchedule(groupCode);
-        },
+        () => fetchScheduleFunc(groupCode),
         {
             onSuccess: (data) => {
                 if (!dateHasBeenSetAlready){
@@ -124,7 +143,7 @@ export const getQueryKeyNameForScheduleFetch = (groupCode : string)  =>  {
     return "getGroupSchedule" + groupCode;
 }
 
-export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleAndStartDate | undefined => {
+export const useGetQueryDataForSchedule = (groupCode : string ) : ScheduleData | undefined => {
     let queryClient = useQueryClient();
     return queryClient.getQueryData(getQueryKeyNameForScheduleFetch(groupCode));
 }

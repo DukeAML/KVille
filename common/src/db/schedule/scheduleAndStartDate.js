@@ -2,9 +2,9 @@
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "../../calendarAndDates/datesUtils.js";
 import { isNight } from "../../scheduling/rules/nightData.js";
 import { EMPTY, GRACE } from "../../scheduling/slots/tenterSlot.js";
-import { checkIfNameIsForGracePeriod } from "../../scheduling/rules/gracePeriods.js";
-
-export class ScheduleAndStartDate{
+import { checkIfNameIsForGracePeriod, isGrace } from "../../scheduling/rules/gracePeriods.js";
+import { DISCRETIONARY } from "../../../data/2024/gracePeriods.js";
+export class ScheduleData{
     /**
      * Generic slot object
      * @param {Array<Array<String>>} schedule should be an array of arrays of names
@@ -24,9 +24,15 @@ export class ScheduleAndStartDate{
         } else {
             map[key] += 0.5;
         }
-
     }
 
+    decrementVal(map, key, val){
+        if (typeof map[key] =='undefined'){
+            return;
+        } else {
+            map[key] -= val;
+        }
+    }
     /**
      * 
      * @param {number} timeIndex 
@@ -57,6 +63,19 @@ export class ScheduleAndStartDate{
         return this.schedule[timeIndex];
     }
 
+    /**
+     * 
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}} 
+     */
+    getEmptyHoursPerPersonMaps(){
+        let dayHoursPerPerson = {};
+        let nightHoursPerPerson = {};
+        this.IDToNameMap.forEach((username, id) => {
+            dayHoursPerPerson[username] = 0;
+            nightHoursPerPerson[username] = 0;
+        });
+        return {dayHoursPerPerson, nightHoursPerPerson}
+    }
 
     /**
      * 
@@ -65,13 +84,7 @@ export class ScheduleAndStartDate{
      * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}} each object here maps usernames to hours, not ids to hours
      */
     getHoursPerPersonInDateRange(dateRangeStart, dateRangeEnd){
-        let dayHoursPerPerson = {};
-        let nightHoursPerPerson = {};
-        this.IDToNameMap.forEach((username, id) => {
-            dayHoursPerPerson[username] = 0;
-            nightHoursPerPerson[username] = 0;
-        });
-        
+        let {dayHoursPerPerson, nightHoursPerPerson} = this.getEmptyHoursPerPersonMaps();
         let startDateIndex = Math.max(0, getNumSlotsBetweenDates(this.startDate, dateRangeStart));
         let endDateIndex = Math.min(this.schedule.length, getNumSlotsBetweenDates(this.startDate, dateRangeEnd));
         for (let timeIndex = startDateIndex; timeIndex < endDateIndex; timeIndex += 1){
@@ -83,8 +96,44 @@ export class ScheduleAndStartDate{
                 } else {
                     this.incrementVal(dayHoursPerPerson, person);
                 }
-
             })
+        }
+
+        return {dayHoursPerPerson, nightHoursPerPerson};
+    }
+
+    /**
+     * 
+     * @param {Date} dateRangeStart 
+     * @param {Date} dateRangeEnd 
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}} each object here maps usernames to hours, not ids to hours
+     */
+    getHoursPerPersonInDateRangeAccountingForDiscretionaryGrace(dateRangeStart, dateRangeEnd){
+        let {dayHoursPerPerson, nightHoursPerPerson} = this.getEmptyHoursPerPersonMaps();
+        let startDateIndex = Math.max(0, getNumSlotsBetweenDates(this.startDate, dateRangeStart));
+        let endDateIndex = Math.min(this.schedule.length, getNumSlotsBetweenDates(this.startDate, dateRangeEnd));
+        for (let timeIndex = startDateIndex; timeIndex < endDateIndex; timeIndex += 1){
+            let currDate = getDatePlusNumShifts(this.startDate, timeIndex);
+            let peopleInSlot = this.getNamesAtTimeIndex(timeIndex);
+            peopleInSlot.forEach((person) => {
+                if (isNight(currDate)){
+                    this.incrementVal(nightHoursPerPerson, person);
+                } else {
+                    this.incrementVal(dayHoursPerPerson, person);
+                }
+            })
+
+            let {isGrace : thisIsGrace, reason, overlapInHours} = isGrace(currDate, true);
+            if (thisIsGrace && reason === DISCRETIONARY){
+                peopleInSlot.forEach((person) => {
+                    if (isNight(currDate)){
+                        this.decrementVal(nightHoursPerPerson, person, overlapInHours);
+                    } else {
+                        this.decrementVal(dayHoursPerPerson, person, overlapInHours);
+                    }
+                    
+                })
+            }
         }
 
         return {dayHoursPerPerson, nightHoursPerPerson};
@@ -95,7 +144,13 @@ export class ScheduleAndStartDate{
      */
     getHoursPerPersonWholeSchedule() {
         return this.getHoursPerPersonInDateRange(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length));
+    }
 
+    /**
+     * @returns {{dayHoursPerPerson : {[key : string] : number}, nightHoursPerPerson : {[key : string] : number}}}
+     */
+    getHoursPerPersonWholeScheduleAccountingForDiscretionaryGrace() {
+        return this.getHoursPerPersonInDateRangeAccountingForDiscretionaryGrace(this.startDate, getDatePlusNumShifts(this.startDate, this.schedule.length));
     }
 
     swapTenterAtIndexByNames(timeIndex, tenterToReplaceName, newTenterName){

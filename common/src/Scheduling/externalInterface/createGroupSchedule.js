@@ -1,7 +1,7 @@
 import { firestore } from '../../db/firebase_config.js';
 import {Person} from '../person.js';
 
-import { ScheduleAndStartDate } from '../../db/schedule/scheduleAndStartDate.js';
+import { ScheduleData } from '../../db/schedule/scheduleAndStartDate.js';
 import { getNumSlotsBetweenDates } from '../../calendarAndDates/datesUtils.js';
 import {scheduleAlgorithm} from '../algorithm.js';
 import { EMPTY, GRACE } from '../slots/tenterSlot.js';
@@ -16,7 +16,7 @@ import { scheduledSlotsArrToStringArrArr } from './algoOutputCleansing.js';
  * @param {String} tentType a string like TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, or TENTING_COLORS.WHITE. I set it to TENTING_COLORS.WHITE if it is not TENTING_COLORS.BLACK or TENTING_COLORS.BLUE
  * @param {Date} startDate 30 minute granularity
  * @param {Date} endDate this method will assign tenters from the startDate to the endDate - both should have 30 minute granularity
- * @param {ScheduleAndStartDate} oldSchedule
+ * @param {ScheduleData} oldSchedule
  * @returns {Promise<String[][]>} groupScheduleArr, an array of array of strings representing the tenters assigned to EACH SLOT IN THE RANGE, NOT THE FULL SCHEDULE
  */
 export async function createGroupSchedule(groupCode, tentType, startDate, endDate, oldSchedule){
@@ -76,7 +76,7 @@ export async function createGroupSchedule(groupCode, tentType, startDate, endDat
  * @param {string} tentType 
  * @param {Date} dateRangeStart 
  * @param {Date} dateRangeEnd 
- * @param {ScheduleAndStartDate} oldSchedule
+ * @param {ScheduleData} oldSchedule
  * @returns {Promise<string[][]>}
  */
 export async function assignTentersAndGetNewFullSchedule(groupCode, tentType, dateRangeStart , dateRangeEnd, oldSchedule ){

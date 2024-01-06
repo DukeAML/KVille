@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { Typography, Container, Button, List, ListItem, Switch, FormControlLabel } from "@mui/material";
+import { Typography, Container, Button, List, ListItem, Switch, FormControlLabel, Stack } from "@mui/material";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
 import { KvilleButton } from "@/components/shared/utils/button";
@@ -22,12 +22,14 @@ export const AvailabilityOptions : React.FC = () => {
                 : 
                 <Typography style={{marginBottom : 8}}>You are now setting basic availability slots. Our algorithm could assign you to any slot you mark as available, but you can press the button below to mark your preferred timeslots. Our algorithm will prioritize assigning you to your preferred slots moreso than your standard available slots </Typography>
             }
-            <Button disabled={settingPreferred} variant="contained" onClick={() => setSettingPreferred(true)}>
-                Set Preferred Times
-            </Button>
-            <Button disabled={!settingPreferred} variant="contained" onClick={() => setSettingPreferred(false)}>
-                Set Standard Availability Times
-            </Button>
+            <Stack direction="column" gap={1}>
+                <Button disabled={settingPreferred} variant="contained" onClick={() => setSettingPreferred(true)} style={{maxWidth : "fit-content"}} >
+                    Set Preferred Times
+                </Button>
+                <Button disabled={!settingPreferred} variant="contained" onClick={() => setSettingPreferred(false)} style={{maxWidth : "fit-content"}}>
+                    Set Standard Availability Times
+                </Button>
+            </Stack>
         </Container>
     }
 
@@ -65,7 +67,7 @@ export const AvailabilityOptions : React.FC = () => {
     }
     
     return (
-        <Container maxWidth="xs">
+        <Container maxWidth="sm">
             <KvilleAccordion elements={[changeTimesOption, changeSettingPreferredOption, colorCodesOption]}/>
         </Container>
     );
