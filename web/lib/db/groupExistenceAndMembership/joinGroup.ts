@@ -5,6 +5,8 @@ import { GroupDescription } from "./groupMembership";
 import { getGroupMembersByGroupCode } from "./groupMembership";
 import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
 import { getTentingStartDate } from "@/lib/calendarAndDatesUtils/tentingDates";
+import { AvailabilityStatus } from "../availability";
+import { NewGroupData } from "./createGroup";
 
 export const JOIN_GROUP_ERROR_CODES = {
     GROUP_DOES_NOT_EXIST : "Group does not exist",
@@ -17,13 +19,7 @@ export const joinGroupValidationSchema = Yup.object({
 });
 
 
-
-/**
- * 
- * @param {String} tentType 
- * @returns {{availability : boolean[], availabilityStartDate : Date}}
- */
-export function getDefaultGroupMemberData(tentType, year=CURRENT_YEAR) {
+export function getDefaultGroupMemberData(tentType : string, year=CURRENT_YEAR) : AvailabilityStatus {
     let availabilityStartDate = getTentingStartDate(tentType, year);
     let endDate = getScheduleDates(year).endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
@@ -33,12 +29,7 @@ export function getDefaultGroupMemberData(tentType, year=CURRENT_YEAR) {
 
 
 
-/**
- * 
- * @param {String} groupCode
- * @returns {Promise<boolean>} exists 
- */
-export async function checkIfGroupExistsByGroupCode(groupCode) {
+export async function checkIfGroupExistsByGroupCode(groupCode : string) : Promise<boolean> {
     const groupRef = firestore.collection('groups').doc(groupCode);
     let groupExists = await groupRef.get().then((groupSnapshot) => {
         if (groupSnapshot.exists) {
@@ -50,13 +41,13 @@ export async function checkIfGroupExistsByGroupCode(groupCode) {
     return groupExists;
 }
 
-/**
- * 
- * @param {String} groupCode  
- * @param {String} userID
- * @returns {Promise<{canJoinGroup : Boolean, errorMessage : String}>}
- */
-async function checkIfItIsPossibleToJoinGroup(groupCode, userID){
+
+
+interface PossibleToJoinGroup{
+    canJoinGroup : boolean;
+    errorMessage : string;
+}
+async function checkIfItIsPossibleToJoinGroup(groupCode : string, userID : string) : Promise<PossibleToJoinGroup> {
     let groupExists = await checkIfGroupExistsByGroupCode(groupCode);
     if (!groupExists) {
         return {canJoinGroup : false, errorMessage : JOIN_GROUP_ERROR_CODES.GROUP_DOES_NOT_EXIST};
@@ -74,12 +65,14 @@ async function checkIfItIsPossibleToJoinGroup(groupCode, userID){
     return {canJoinGroup : true, errorMessage : "You can join this group"};
 }
 
-/**
- * 
- * @param {*} groupRef 
- * @returns {Promise<{groupName : string, tentType : string, creator : string, groupScheduleStartDate : Date }>}
- */
-async function getGroupDataForGroupRef(groupRef) {
+
+interface GroupDataForGroupRef{
+    groupName : string;
+    tentType : string;
+    creator : string;
+    groupScheduleStartDate : Date;
+}
+async function getGroupDataForGroupRef(groupRef) : Promise<GroupDataForGroupRef> {
     let groupName = '';
     let tentType = '';
     let creator = '';
@@ -94,13 +87,8 @@ async function getGroupDataForGroupRef(groupRef) {
 }
 
 
-/**
- * 
- * @param {String} groupCode
- * @param {String} userID
- * @returns {Promise<GroupDescription>}
- */
-export async function tryToJoinGroup(groupCode, userID) {
+
+export async function tryToJoinGroup(groupCode : string, userID : string) : Promise<GroupDescription> {
     const groupRef = firestore.collection('groups').doc(groupCode);
     let {canJoinGroup, errorMessage} = await checkIfItIsPossibleToJoinGroup(groupCode, userID);
     if (!canJoinGroup){

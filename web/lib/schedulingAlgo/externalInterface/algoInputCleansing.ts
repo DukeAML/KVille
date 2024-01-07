@@ -1,12 +1,7 @@
 import { Slot } from "../slots/slot";
 import { TenterSlot, TENTER_STATUS_CODES } from "../slots/tenterSlot";
 import { isNight } from "../rules/nightData";
-
-
-interface AvailabilityStatus{
-    available : boolean;
-    preferred : boolean;
-}
+import { AvailabilityStatus } from "@/lib/db/availability";
 
 interface NumFreeDayAndNight{
     numFreeDaySlots : number;

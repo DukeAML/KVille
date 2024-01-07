@@ -62,7 +62,7 @@ export function getDefaultSchedule(tentType : string, year : number) : string[]{
  * {String} creator
  */
 
-interface NewGroupData{
+export interface NewGroupData{
     name : string;
     tentType : string;
     groupSchedule : string[];

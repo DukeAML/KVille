@@ -9,19 +9,14 @@ export const REGISTER_ERROR_CODES = {
 
 export const EMAIL_SUFFIX = "@gmail.com";
 
-/**
- * @param {String} username
- * @param {String} password
- * @returns {Promise<string>} newUserID
- */
-export async function tryToRegister(username, password){
+
+export async function tryToRegister(username : string, password : string) : Promise<string> {
     let email = username + EMAIL_SUFFIX;
     let DEFAULT_USER_ID = '';
     let newUserID = DEFAULT_USER_ID;
 
     try {
         await firestore.runTransaction(async (transaction) => { //TODO: make sure both operations either succeed or fail, this is insufficient currently
-            
             const usernameIsTaken = await checkUsernameIsTaken(username).catch((error) => {
                 throw new Error(REGISTER_ERROR_CODES.DEFAULT);
             });
@@ -49,20 +44,16 @@ export async function tryToRegister(username, password){
     } 
     if (newUserID != DEFAULT_USER_ID){
         return newUserID;
+    } else {
+        throw new Error(REGISTER_ERROR_CODES.DEFAULT);
     }
 
 }
 
-/**
- * 
- * @param {String} username 
- * @returns {Promise<boolean>} usernameIsTaken
- */
-async function checkUsernameIsTaken(username) {
+
+async function checkUsernameIsTaken(username : string) : Promise<boolean> {
     const usernameQuerySnapshot = await firestore.collection('users').where('username', '==', username).get();
-
     return !usernameQuerySnapshot.empty;
-
 }
 
 
@@ -70,6 +61,7 @@ export const authValidationSchema = Yup.object({
     username: Yup.string()
         .matches(/^[a-zA-Z0-9._%+-]+$/, 'Invalid username format') // Allow alphanumeric characters, dots, underscores, percent signs, plus signs, and hyphens
         .required('Required')
+        .min(1)
         .max(20)
         .test(
         'is-gmail-username',
@@ -79,7 +71,7 @@ export const authValidationSchema = Yup.object({
     password: Yup.string().required('Required').min(6),
 });
 
-function validateEmail(email) {
+function validateEmail(email : string) : boolean {
     const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return emailRegex.test(email);
 }

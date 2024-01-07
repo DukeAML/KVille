@@ -22,30 +22,27 @@ export const GET_GROUP_MEMBERS_ERRORS = {
 	GROUP_DOES_NOT_EXIST: "Group does not exist",
 };
 
-/**
- * @param {String} userID
- * @returns {Promise<GroupDescription[]>}
- */
-export async function fetchGroups(userID) {
-  let allGroups = await fetchAllGroups();
-  let usersGroups = [];
-  for (let groupIndex = 0; groupIndex < allGroups.length; groupIndex +=1 ){
-    let currentGroup = allGroups[groupIndex];
-    for (let idIndex = 0; idIndex < currentGroup.memberIDs.length ; idIndex += 1){
-      if (currentGroup.memberIDs[idIndex] === userID){
-        usersGroups.push(currentGroup.groupDescription);
-      }
-    }
-  }
-  return usersGroups;
-  
 
+export async function fetchGroups(userID : string) : Promise<GroupDescription[]> {
+	let allGroups = await fetchAllGroups();
+	let usersGroups = [];
+	for (let groupIndex = 0; groupIndex < allGroups.length; groupIndex +=1 ){
+		let currentGroup = allGroups[groupIndex];
+		for (let idIndex = 0; idIndex < currentGroup.memberIDs.length ; idIndex += 1){
+			if (currentGroup.memberIDs[idIndex] === userID){
+				usersGroups.push(currentGroup.groupDescription);
+			}
+		}
+	}
+	return usersGroups;
 }
 
-/**
- * @returns {Promise<{ groupDescription : GroupDescription, memberIDs: String[] }[]>}
- */
-async function fetchAllGroups() {
+
+interface GroupDescriptionWithMembers{
+	groupDescription : GroupDescription;
+	memberIDs : string[];
+}
+async function fetchAllGroups() : Promise<GroupDescriptionWithMembers[]> {
   return new Promise((resolve, reject) => {
     firestore.collection('groups').get()
       .then((querySnapshot) => {
@@ -81,14 +78,7 @@ async function fetchAllGroups() {
 
 
 
-
-/**
- * 
- * @param {String} groupCode
- * @returns {Promise<GroupDescription>} 
- */
-export async function fetchGroupData(groupCode){
-
+export async function fetchGroupData(groupCode : string) : Promise<GroupDescription> {
   const description = await firestore
       .collection("groups")
       .doc(groupCode)
@@ -96,21 +86,16 @@ export async function fetchGroupData(groupCode){
       .then((groupSnapshot) => {
         let groupData = groupSnapshot.data();
         return new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator)
-    
       })
-
   return description;
 
 }
 
 
-
-/**
- *
- * @param {String} groupCode
- * @returns {Promise<{userID : String}[]>} userIDs
- */
-export async function getGroupMembersByGroupCode(groupCode) {
+interface GroupMemberUserID{
+	userID : string;
+}
+export async function getGroupMembersByGroupCode(groupCode : string) : Promise<GroupMemberUserID[]> {
   const groupRef = firestore
     .collection("groups")
     .doc(groupCode)

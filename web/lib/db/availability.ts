@@ -7,6 +7,11 @@ export const AVAILABILITY_ERROR_CODES = {
     UPDATE_ERROR: "Error Setting Availability"
 }
 
+export interface AvailabilityStatus{
+    available : boolean;
+    preferred : boolean;
+}
+
 export class AvailabilitySlot {
     startDate : Date;
     available : boolean;

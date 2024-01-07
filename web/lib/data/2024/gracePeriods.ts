@@ -3,25 +3,20 @@ import {getDatePlusNumShifts} from "@/lib/calendarAndDatesUtils/datesUtils";
 
 export const DISCRETIONARY = "Discretionary";
 export class GracePeriod{
-    
     //this class should go in another file. It's here bc of weird Jest issues probably due to circular imports
-    /**
-     * @param {Date} startDate 
-     * @param {Date} endDate 
-     * @param {string} reason
-     */
-    constructor(startDate, endDate, reason=""){
+  
+    startDate : Date;
+    endDate : Date;
+    reason : string;
+
+    constructor(startDate : Date, endDate : Date, reason=""){
         this.startDate = startDate;
         this.endDate = endDate;
         this.reason = reason;
     }
 
-    /**
-     * 
-     * @param {Date} slotStartDate 
-     * @returns {boolean} true iff a slot starting at the specified start date is encompassed by this grace period
-     */
-    includesSlotStartDate (slotStartDate)  {
+    
+    includesSlotStartDate (slotStartDate : Date) : boolean  {
         if (slotStartDate >= this.startDate && slotStartDate < this.endDate){
             return true;
         } else {
@@ -29,12 +24,8 @@ export class GracePeriod{
         }
     } 
 
-    /**
-     * 
-     * @param {Date} slotStartDate 
-     * @returns {number}
-     */
-    overlapWithSlotInHours(slotStartDate){
+
+    overlapWithSlotInHours(slotStartDate : Date) : number{
         let slotEndDate = getDatePlusNumShifts(slotStartDate, 1);
         if (slotStartDate > this.endDate){
             return 0;
@@ -121,11 +112,8 @@ const discretionaryGracePeriods = [
     new GracePeriod(new Date(2024, 0, 23, 3, 27), new Date(2024, 0, 23, 5, 1, 23), DISCRETIONARY)
 ];
 
-/**
- * @param {boolean} includeDiscretionary
- * @returns {Array<GracePeriod>}
- */
-export const getGracePeriods2024 = (includeDiscretionary=false) => {
+
+export const getGracePeriods2024 = (includeDiscretionary=false) : GracePeriod[] => {
     if (includeDiscretionary){
         return [graceWeek, ...mbbHomeGameGracePeriods, ...mbbAwayGameGracePeriods, ...wbbHomeGameGracePeriods, ...wbbAwayGameGracePeriods, ...discretionaryGracePeriods];
     } else {
@@ -134,12 +122,12 @@ export const getGracePeriods2024 = (includeDiscretionary=false) => {
 }
 
 
-/**
- * 
- * @param {Date} slotStartDate 
- * @returns {{isGrace : boolean, reason : string}}
- */
-export const isGrace2024 = (slotStartDate) => {
+
+interface IsGrace2024{
+    isGrace : boolean;
+    reason : string;
+}
+export const isGrace2024 = (slotStartDate : Date) : IsGrace2024 => {
     let gracePeriods = getGracePeriods2024(true);
     for (let i = 0; i < gracePeriods.length ; i += 1){
         let gracePeriod = gracePeriods[i];

@@ -1,11 +1,8 @@
 export const SATURDAY = 6;
 export const SUNDAY = 0;
 
-/**
- * @param {Date} date
- * @returns {boolean} true iff this date corresponds to the start of a night shift slot
- */
-export const isNight2024 = (date) => {
+
+export const isNight2024 = (date : Date) : boolean => {
     let hour = date.getHours();
     let minutes = date.getMinutes();
     hour = hour + minutes/60;
