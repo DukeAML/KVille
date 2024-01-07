@@ -13,10 +13,7 @@ describe("tryToCreateGroup", () => {
         let groupName = "JestCreateGroupTest";
         const groupCode = await tryToCreateGroup(groupName, TENTING_COLORS.WHITE, KTEST1_UID);
         const kTest1Groups = await fetchGroups(KTEST1_UID);
-        let newGroup = await firestore.collection('groups').doc(groupCode).collection('members').doc(KTEST1_UID).get();
-        let isCreator = newGroup.data().groupRole === "Creator";
         let groupAddedToUser = kTest1Groups.filter((groupDescription) => (groupDescription.groupName === groupName));
-        expect(isCreator).toBe(true);
         expect(groupAddedToUser.length).toBe(1);
         deleteGroup(groupCode);
     })

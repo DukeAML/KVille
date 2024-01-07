@@ -3,13 +3,7 @@ import { getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
 import { getTentingStartDate } from "@/lib/calendarAndDatesUtils/tentingDates";
 
 
-/**
- * 
- * @param {string} tentType 
- * @param {number}  year
- * @returns {Date} displayStartDate
- */
-export const getInitialAvailabilityDisplayStartDate = (tentType, year) => {
+export const getInitialAvailabilityDisplayStartDate = (tentType : string, year : number) : Date => {
     //TODO: use context to get tentType and specify the start date more closely
     //use current day, if in tenting range. Else, use first day of tenting
     const currDate = getCurrentDate();
@@ -23,13 +17,8 @@ export const getInitialAvailabilityDisplayStartDate = (tentType, year) => {
     }
 }
 
-/**
- * 
- * @param {string} tentType 
- * @param {number} year
- * @returns {Date} displayEndDate
- */
-export const getInitialAvailabilityDisplayEndDate = (tentType, year) => {
+
+export const getInitialAvailabilityDisplayEndDate = (tentType : string, year : number) : Date => {
     let startDate = getInitialAvailabilityDisplayStartDate(tentType, year);
     let tentingEndDate = getScheduleDates(year).endOfTenting;
     let startDatePlusWeek = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);

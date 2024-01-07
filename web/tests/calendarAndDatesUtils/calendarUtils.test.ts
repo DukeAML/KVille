@@ -1,7 +1,8 @@
 
-const {getCalendarColumnTitles} = require("@/lib/calendarAndDatesUtils/calendarUtils");
+import { getCalendarColumnTitles } from "../../lib/calendarAndDatesUtils/calendarUtils";
 const Monday = new Date(2023, 7, 21, 0, 0);
 const Wednesday = new Date(2023, 7, 23, 0, 0);
+
 describe('getCalendarColumnTitles', () => {
     it('getCalendarColumnTitles With 1 Day', () => {
         const result = getCalendarColumnTitles(Monday, Monday);

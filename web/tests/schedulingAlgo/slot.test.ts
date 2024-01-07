@@ -14,7 +14,7 @@ describe("isNight", () => {
      * @param {Date} date 
      * @param {boolean} expected 
      */
-    const runNightTest = (date, expected) => {
+    const runNightTest = (date : Date, expected : boolean) => {
         const slot = new Slot(date, TENTING_COLORS.BLACK);
         expect(isNight(date)).toBe(expected);
         expect(slot.isNight).toBe(expected);
@@ -67,7 +67,7 @@ describe("isNight", () => {
 });
 
 describe("checkGrace", () => {
-    const runGraceTest = (date, expected) => {
+    const runGraceTest = (date : Date, expected : boolean) => {
         const slot = new Slot(date, TENTING_COLORS.BLACK);
         expect(isGrace(date, false).isGrace).toBe(expected);
         expect(slot.isGrace).toBe(expected);

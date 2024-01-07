@@ -1,4 +1,4 @@
-import { getDatePlusNumShifts, getDateRoundedTo30MinSlot, getDayAbbreviation, getNumDaysBetweenDates, getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
+import { getDatePlusNumShifts, getDateRoundedTo30MinSlot, getDayAbbreviation, getNumDaysBetweenDates, getNumSlotsBetweenDates } from "../../lib/calendarAndDatesUtils/datesUtils";
 
 let startOfMonday = new Date(2023, 7, 21, 0, 0);
 describe('getNumSlotsBetweenDates', () => {

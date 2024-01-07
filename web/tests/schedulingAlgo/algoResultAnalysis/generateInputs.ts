@@ -5,16 +5,7 @@ import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 import { examples } from "./exampleAvailability";
 
 
-/** 
- * @param {Date} startDate 
- * @param {int} numDays
- * @param {String} tentType
- * @param {double} pct_avail //how many slots should be assigned out of total
- * @param {double} pct_pref
- * @param {int} numPeople //how many ppl we need info for, for tenterSlotsGrid[index][...]
- * @returns {{people : Array<Person>, tenterSlotsGrid : Array<Array<TenterSlot>>}}
- */
-export function generateInput(startDate, numDays, tentType, pct_avail, pct_pref, numPeople=12){
+export function generateInput(startDate : Date, numDays : number, tentType : string, pct_avail : number, pct_pref : number, numPeople=12) : {people : Person[], tenterSlotsGrid : TenterSlot[][]} {
     let tenterSlotsGrid = [];
     let people = [];
     for (let i =0; i < numPeople; i += 1){
@@ -27,17 +18,8 @@ export function generateInput(startDate, numDays, tentType, pct_avail, pct_pref,
     return {people, tenterSlotsGrid};
 }
 
-/**
- * 
- * @param {number} personNumber 
- * @param {Date} startDate 
- * @param {number} numDays 
- * @param {String} tentType 
- * @param {number} pct_avail 
- * @param {number} pct_pref
- * @returns {{person : Person, slots : Array<TenterSlot>}} 
- */
-function generateInputForOnePerson(personNumber, startDate, numDays, tentType, pct_avail, pct_pref){
+
+function generateInputForOnePerson(personNumber : number, startDate : Date, numDays : number, tentType : string, pct_avail : number, pct_pref : number) : {person : Person, slots : TenterSlot[]} {
     let slots = [];
     let id = personNumber.toString();
     for (let i =0; i < numDays; i +=1 ){

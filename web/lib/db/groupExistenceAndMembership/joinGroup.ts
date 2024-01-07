@@ -19,7 +19,7 @@ export const joinGroupValidationSchema = Yup.object({
 });
 
 
-export function getDefaultGroupMemberData(tentType : string, year=CURRENT_YEAR) : AvailabilityStatus {
+export function getDefaultGroupMemberData(tentType : string, year=CURRENT_YEAR) : {availability : AvailabilityStatus[], availabilityStartDate : Date} {
     let availabilityStartDate = getTentingStartDate(tentType, year);
     let endDate = getScheduleDates(year).endOfTenting;
     let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);

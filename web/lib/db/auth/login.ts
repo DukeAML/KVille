@@ -1,4 +1,4 @@
-import { auth } from "@/lib/db/firebase_config";
+import { auth } from "../firebase_config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { EMAIL_SUFFIX } from "./register";
 

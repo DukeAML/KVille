@@ -3,25 +3,20 @@ import { TENTER_STATUS_CODES } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { Person } from "@/lib/schedulingAlgo/person";
 import { TenterSlot } from "@/lib/schedulingAlgo/slots/tenterSlot";
 export class DistributionAnalysis {
+    min : number;
+    max : number;
+    mean : number;
+    stdDev : number;
 
-	/**
-	 * @param {number} min is the minimum
-	 * @param {number} max is the maximum... profound
-	 * @param {number} mean 
-	 * @param {number} stdDev 
-	 */
-	constructor(min, max, mean, stdDev){
+
+	constructor(min : number, max : number, mean : number, stdDev : number){
         this.min = min;
         this.max = max;
         this.mean = mean;
         this.stdDev = stdDev;
 	}
 
-    /**
-     * @param {String} caption
-     * @returns {String} analysis
-     */
-	printAnalysis(caption){
+	printAnalysis(caption : string) : string{
 		return caption + "\n" + "Minimum: "+this.min+", Maximum: "+this.max+", Mean: "+this.mean.toFixed(2)+", Standard Deviation: "+this.stdDev.toFixed((2)) + "\n";
 	}
 
@@ -29,7 +24,14 @@ export class DistributionAnalysis {
 }
 
 export class AlgoAnalysis {
-	
+	dayHoursAnalysis : DistributionAnalysis;
+    nightHoursAnalysis : DistributionAnalysis;
+    totalHoursAnalysis : DistributionAnalysis;
+    runtimeMS : number;
+    aoutwPerPerson : number[];
+    woutaPerPerson : number[];
+    woutaAnalysis : DistributionAnalysis;
+    aoutwAnalysis : DistributionAnalysis;
 
 	/**
 	 * 
@@ -38,7 +40,7 @@ export class AlgoAnalysis {
 	 * @param {Array<Array<TenterSlot>>} tenterSlotsGrid
 	 * @param {number} runtimeMS 
 	 */
-	constructor(people, scheduledSlots, tenterSlotsGrid, runtimeMS){
+	constructor(people : Person[], scheduledSlots : ScheduledSlot[], tenterSlotsGrid : TenterSlot[][], runtimeMS : number){
 		this.dayHoursAnalysis = getDistributionAnalysis(people.map((person) => person.dayScheduled / 2));
         this.nightHoursAnalysis = getDistributionAnalysis(people.map((person) => person.nightScheduled / 2));
         this.totalHoursAnalysis = getDistributionAnalysis(people.map((person) => (person.dayScheduled + person.nightScheduled) / 2));
@@ -57,11 +59,7 @@ export class AlgoAnalysis {
 
 	}
 
-    /**
-     *  @param {string} caption
-     *  @returns {string} analysis
-     */
-	printAnalysis(caption){
+	printAnalysis(caption : string) : string{
         let analysis = caption + "\n";
         analysis += "runtime in ms: " + this.runtimeMS + "\n";
         analysis += this.dayHoursAnalysis.printAnalysis("day hours analysis");
@@ -76,12 +74,8 @@ export class AlgoAnalysis {
 
 
 
-/**
- * 
- * @param {Array<number>} data 
- * @returns {DistributionAnalysis} analysis
- */
-function getDistributionAnalysis(data) {
+
+function getDistributionAnalysis(data : number[]) : DistributionAnalysis {
     let mean = 0;
     let min = data[0];
     let max = data[0];
@@ -103,11 +97,8 @@ function getDistributionAnalysis(data) {
 }
 
 
-/**
- * @param {Array<ScheduledSlot>} finalSchedule2// is this the right type? final schedule
- * @param {Array<TenterSlot>} pref//person's original preferred schedule(an object variable)
- */
-export function getSatisfaction(finalSchedule2, pref){
+
+export function getSatisfaction(finalSchedule2 : ScheduledSlot[], pref : TenterSlot[]) : {aoutw : number, wouta : number} {
     let numassigned = 0;//how many timeslots person is assigned
     let numpref = 0;//how many timeslots the person wanted
     let numboth = 0;//how many timeslots were wanted and assigned

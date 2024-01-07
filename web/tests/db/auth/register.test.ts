@@ -1,6 +1,6 @@
-import { firestore, auth } from "@/lib/db/firebase_config";
-import { deleteLoggedInUser } from "@/lib/db/auth/deleteUser";
-import { REGISTER_ERROR_CODES, tryToRegister } from "@/lib/db/auth/register";
+import { firestore, auth } from "../../../lib/db/firebase_config";
+import { deleteLoggedInUser } from "../../../lib/db/auth/deleteUser";
+import { REGISTER_ERROR_CODES, tryToRegister } from "../../../lib/db/auth/register";
 import { KTEST1_USERNAME } from "../testUserCredentials";
 
 describe("tryToRegister", () => {

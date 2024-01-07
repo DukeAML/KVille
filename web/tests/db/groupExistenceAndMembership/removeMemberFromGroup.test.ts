@@ -1,5 +1,5 @@
-import { FETCH_GROUPS_ERRORS, fetchGroups, getGroupMembersByGroupCode, REMOVE_USER_ERRORS, GET_GROUP_MEMBERS_ERRORS, fetchGroupData } from "@/lib/db/groupExistenceAndMembership/groupMembership";
-import { removeMemberFromGroupByUsername, removeMemberFromGroupByID } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { fetchGroups, getGroupMembersByGroupCode } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { removeMemberFromGroupByUsername, removeMemberFromGroupByID, REMOVE_USER_ERRORS } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";
 import { tryToJoinGroup } from "@/lib/db/groupExistenceAndMembership/joinGroup";
 import { KTEST1_UID, KTEST1_USERNAME, KTEST5_UID, KTEST5_USERNAME, KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "../testUserCredentials";
 

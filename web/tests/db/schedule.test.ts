@@ -1,5 +1,5 @@
 import {fetchGroupSchedule, setGroupScheduleInDB, FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES} from "@/lib/db/schedule/schedule";
-import { ScheduleAndStartDate } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
 import { KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "./testUserCredentials";
 
 describe("fetchGroupSchedule", () => {
@@ -20,7 +20,7 @@ describe("fetchGroupSchedule", () => {
 
 describe("setGroupScheduleInDB", () => {
     it("throws error when groupCode is invalid", async () => {
-        const newSched = new ScheduleAndStartDate([], new Date(Date.now()), new Map());
+        const newSched = new ScheduleData([], new Date(Date.now()), new Map());
         await expect(setGroupScheduleInDB("qewurpqwueroiqweuiro", newSched)).rejects.toThrow(SET_SCHEDULE_ERROR_CODES.GROUP_DOES_NOT_EXIST);
 
     });
@@ -28,7 +28,7 @@ describe("setGroupScheduleInDB", () => {
     it("succeeds given good arguments", async () => {
         const oldSchedule = await fetchGroupSchedule(SMALLER_KTEST_GROUP_CODE);
         const {schedule, startDate, IDToNameMap} = {...oldSchedule};
-        const newSchedule = new ScheduleAndStartDate(schedule, startDate, IDToNameMap)
+        const newSchedule = new ScheduleData(schedule, startDate, IDToNameMap)
         let idToReplace = oldSchedule.getIDsAtTimeIndex(0)[0];
         newSchedule.swapTenterAtIndexByIDs(0, idToReplace, "TEST")
 

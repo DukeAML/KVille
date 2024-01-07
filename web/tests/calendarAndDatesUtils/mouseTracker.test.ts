@@ -1,8 +1,8 @@
-import { MouseTracker } from "../../src/frontendLogic/availability/mouseTracker";
+import { MouseTracker } from "../../lib/calendarAndDatesUtils/availability/mouseTracker";
 
 describe("mouse Tracker Tests", () => {
     let cells = new Array(48).fill(new Array(7).fill(false));
-    let changeAvailabilityAtRowsAndCols = (rowsAndCols, available) => {
+    let changeAvailabilityAtRowsAndCols = (rowsAndCols : {row : number, col : number}[], available : boolean) => {
         for (let i = 0; i < rowsAndCols.length; i += 1){
             let row = rowsAndCols[i].row;
             let col = rowsAndCols[i].col;

@@ -117,7 +117,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             {rowLabels.map((row, rowIndex) => (
                 <Grid item container spacing={0} key={row}>
                     {/* Row label */}
-                    <Grid item xs={2.5 } sm={1} key={row}>
+                    <Grid item xs={2.5 } sm={1} key={row + "label"}>
                         <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px", userSelect: "none"}}>{row}</Typography>
                     </Grid>
                     {/* Data cells */}
