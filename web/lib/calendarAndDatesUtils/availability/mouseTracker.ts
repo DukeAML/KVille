@@ -7,7 +7,7 @@ export class MouseTracker {
 	previousCol : number;
 	isDragging : boolean;
 	valueChangedToOnDragStart : boolean;
-	changeAvailabilityAtRowsAndCols : (rowsAndCols : {row : number, col : number}[], available : boolean) => void;
+	changeAvailabilityAtRowsAndCols : (rowsAndCols : {row : number, col : number}[], available : boolean, valueChangedToOnDragStart : boolean) => void;
 	updateAvailabilityInDB : () => void;
 	visitedRowsAndColsArr : {row : number, col : number}[];
 	visitedRowsAndColsSet : Set<string>
@@ -21,7 +21,7 @@ export class MouseTracker {
 		this.previousCol = 0;
 		this.isDragging = false;
 		this.valueChangedToOnDragStart = false;
-		this.changeAvailabilityAtRowsAndCols = (rowsAndCols, available) => {};
+		this.changeAvailabilityAtRowsAndCols = (rowsAndCols, available, b) => {};
 		this.updateAvailabilityInDB = () => {};
 		this.visitedRowsAndColsArr = [];
 		this.visitedRowsAndColsSet = new Set();
@@ -53,7 +53,7 @@ export class MouseTracker {
 			}
 		}
 
-		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue, this.valueChangedToOnDragStart);
 	}
 
 
@@ -76,7 +76,7 @@ export class MouseTracker {
 			}
 		}
 
-		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue);
+		this.changeAvailabilityAtRowsAndCols(rowsAndCols, newValue, this.valueChangedToOnDragStart);
 	}
 
 	ensureBoundingBoxIsCorrect(){
@@ -86,7 +86,7 @@ export class MouseTracker {
 				rowsAndCols.push({ row, col });
 			}
 		}
-		this.changeAvailabilityAtRowsAndCols(rowsAndCols, this.valueChangedToOnDragStart);
+		this.changeAvailabilityAtRowsAndCols(rowsAndCols, this.valueChangedToOnDragStart, this.valueChangedToOnDragStart);
 	}
 
 	getStrForRowCol(row : number, col : number) : string {
@@ -130,7 +130,7 @@ export class MouseTracker {
 			}
 				
 		});
-		this.changeAvailabilityAtRowsAndCols(rowsAndColsToRevert, !this.valueChangedToOnDragStart);
+		this.changeAvailabilityAtRowsAndCols(rowsAndColsToRevert, !this.valueChangedToOnDragStart, this.valueChangedToOnDragStart);
 	}
 	
   
@@ -166,7 +166,7 @@ export class MouseTracker {
 		this.currentCol = col;
 		this.isDragging = true;
 		this.valueChangedToOnDragStart = valueChangedToOnDragStart;
-		this.changeAvailabilityAtRowsAndCols([{row, col}], valueChangedToOnDragStart);
+		this.changeAvailabilityAtRowsAndCols([{row, col}], valueChangedToOnDragStart, valueChangedToOnDragStart);
 		this.visitedRowsAndColsArr = [{row, col}];
 		this.visitedRowsAndColsSet.add(this.getStrForRowCol(row, col));
 
@@ -196,7 +196,7 @@ export class MouseTracker {
   
 
 
-    setChangeAvailabilityAtRowsAndCols (newFunction :  (rowsAndCols : {row : number, col : number}[], available : boolean) => void) {
+    setChangeAvailabilityAtRowsAndCols (newFunction :  (rowsAndCols : {row : number, col : number}[], available : boolean, valueChangedToOnDragStart : boolean) => void) {
 		this.changeAvailabilityAtRowsAndCols = newFunction;
     }
   

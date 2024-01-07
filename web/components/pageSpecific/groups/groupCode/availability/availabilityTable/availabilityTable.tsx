@@ -27,6 +27,7 @@ interface AvailabilityTableProps{
 export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:AvailabilityTableProps) => {
     const {isNarrow, checkingIfNarrow} = useCheckIfScreenIsNarrow();
     const [availability, setAvailability] = useState<AvailabilitySlot[]>(props.originalAvailabilityArr);
+    const [edited, setEdited] = useState<boolean[]>(new Array(props.originalAvailabilityArr.length).fill(false));
     
     const [mouseTracker, setMouseTracker] = useState<MouseTracker>(new MouseTracker());
     const {calendarStartDate, calendarEndDate, settingPreferred, setSettingPreferred} = useContext(AvailabilityPageContext);
@@ -45,39 +46,43 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
         });
         queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
         setDBAvailability(groupCode, userID, newAvailabilitySlots);
+        console.log("back to falses");
+        setEdited(new Array(props.originalAvailabilityArr.length).fill(false));
     }
 
-    const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+    const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean, valueChangedToOnDragStart : boolean) => {
         let newAvailability = [...availability];
         for (let i = 0; i < rowsAndCols.length; i += 1){
             let row = rowsAndCols[i].row;
             let col = rowsAndCols[i].col;
             let index = rowColToIndex(row, col);
-            if (index >= 0 && index < newAvailability.length){
+            if (index >= 0 && index < newAvailability.length && !(valueChangedToOnDragStart == newAvailability[index].available && !edited[index])){
                 if (newValue == false){
                     newAvailability[index].available = false;
                     newAvailability[index].preferred = false;
                 } else {
                     newAvailability[index].available = true;
                 }
+                edited[index] = true;
             }
         }
         setAvailability(newAvailability);
     }
 
-    const changePreferredAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+    const changePreferredAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean, valueChangedToOnDragStart : boolean) => {
         let newAvailability = [...availability];
         for (let i = 0; i < rowsAndCols.length; i += 1){
             let row = rowsAndCols[i].row;
             let col = rowsAndCols[i].col;
             let index = rowColToIndex(row, col);
-            if (index >= 0 && index < newAvailability.length){
+            if (index >= 0 && index < newAvailability.length && !(valueChangedToOnDragStart == newAvailability[index].preferred && !edited[index])){
                 if (newValue == false){
                     newAvailability[index].preferred = false;
                 } else {
                     newAvailability[index].available = true;
                     newAvailability[index].preferred = true;
-                }  
+                } 
+                edited[index] = true;
             }
         }
         setAvailability(newAvailability);
@@ -112,7 +117,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     return (
         <Grid container spacing={0} direction="column" style={{marginTop : "20px", marginBottom : 20}}>
             <AvailabilityGridColumnTitles columnTitles={columnTitles}/>
-     
             {/* Row labels and data cells */}
             {rowLabels.map((row, rowIndex) => (
                 <Grid item container spacing={0} key={row}>
