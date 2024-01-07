@@ -20,7 +20,7 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
         return <NarrowDatesRow/>
     } else {
         return (
-            <div style={{display : "flex", marginTop: 20}}>
+            <div style={{display : "flex", marginTop: 20, marginBottom : 16}}>
                 {[-2, -1, 0, 1, 2].map((offset, index) => {
                     let date = getDatePlusNumShifts(dateBeingShown, 48 * offset);
                     if (offset != 0){
