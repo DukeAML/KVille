@@ -4,14 +4,14 @@ import { Typography } from "@material-ui/core";
 import {Container} from "@material-ui/core";
 import { DatesRow } from "./datesRow";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
-import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "../../../../../../common/src/frontendLogic/schedule/assignTenters";
-import { ScheduleData } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
-import { useFetchScheduleAndSetDefaultAssignTentersDate, useMutationToAssignTentersAndUpdateSchedule, useQueryToFetchSchedule } from "../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import {getDefaultAssignDateRangeStartDate, getDefaultAssignDateRangeEndDate, validateAssignTentersDateRange} from "@/lib/calendarAndDatesUtils/schedule/assignTenters";
+import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { useFetchScheduleAndSetDefaultAssignTentersDate, useMutationToAssignTentersAndUpdateSchedule, useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
 import { useRouter } from "next/router";
-import { INVALID_GROUP_CODE } from "../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
+import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
-import { getScheduleDates, CURRENT_YEAR } from "../../../../../../common/src/scheduling/rules/scheduleDates";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { getScheduleDates, CURRENT_YEAR } from "@/lib/schedulingAlgo/rules/scheduleDates";
+import { GroupContext } from "@/lib/context/groupContext";
 import { ErrorMessage } from "@/components/shared/utils/errorMessage";
 
 

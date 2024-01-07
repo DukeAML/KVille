@@ -3,8 +3,8 @@ import { Typography } from '@material-ui/core';
 import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
 import { KvilleGroupsNavBar } from '../navBars/groupsNavBar';
 import { BasePageContainer } from './basePageContainer';
-import { useQueryToFetchGroupData } from '@/lib/shared/fetchGroupData';
-import { useGroupCode } from '@/lib/shared/useGroupCode';
+import { useQueryToFetchGroupData } from '@/lib/hooks/fetchGroupData';
+import { useGroupCode } from '@/lib/hooks/useGroupCode';
 
 interface BasePageContainerForGroupsPageProps {
 	children: ReactNode;

@@ -4,17 +4,17 @@ import { ScheduleOptions } from "@/components/pageSpecific/groups/groupCode/sche
 import { OneDaySchedule } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
 import { Typography, Stack, Container } from "@mui/material";
 import { CellColorsCoordinator } from "@/components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
-import { CellColorsContext } from "@/lib/pageSpecific/schedule/cellColorsContext";
-import { DateBeingShownContext } from "@/lib/pageSpecific/schedule/dateBeingShownContext";
-import { useFetchScheduleAndSetDisplayDate } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { CellColorsContext } from "@/lib/context/schedule/cellColorsContext";
+import { DateBeingShownContext } from "@/lib/context/schedule/dateBeingShownContext";
+import { useFetchScheduleAndSetDisplayDate } from "@/lib/hooks/scheduleHooks";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
+import { TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
 import { TenterSwapper } from "@/components/pageSpecific/groups/groupCode/schedule/tenterSwapper/TenterSwapper";
-import { CURRENT_YEAR, getScheduleDates } from "../../../../common/src/scheduling/rules/scheduleDates";
-import { EMPTY } from "../../../../common/src/scheduling/slots/tenterSlot";
-import { getDatePlusNumShifts } from "../../../../common/src/calendarAndDates/datesUtils";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
+import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
+import { GroupContext } from "@/lib/context/groupContext";
 import { DatesRow } from "@/components/pageSpecific/groups/groupCode/schedule/datesRow";
 
 

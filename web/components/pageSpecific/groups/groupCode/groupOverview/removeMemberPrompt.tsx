@@ -1,8 +1,8 @@
 import React, {useContext} from "react";
-import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverview/groupOverviewHooks";
+import { useMutationToRemoveMember } from "@/lib/hooks/groupOverviewHooks";
 import { Typography} from "@mui/material";
 import {Button} from "@material-ui/core";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
 
 interface RemoveMemberPromptProps{

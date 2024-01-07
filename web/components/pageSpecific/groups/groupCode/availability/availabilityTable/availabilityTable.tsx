@@ -1,17 +1,17 @@
-import { AvailabilitySlot, setDBAvailability } from '../../../../../../../common/src/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../../common/src/calendarAndDates/calendarUtils';
-import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
+import { AvailabilitySlot, setDBAvailability } from '@/lib/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '@/lib/calendarAndDatesUtils/calendarUtils';
+import { getNumSlotsBetweenDates } from '@/lib/calendarAndDatesUtils/datesUtils';
 import { Grid, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
-import {MouseTracker} from '../../../../../../../common/src/frontendLogic/availability/mouseTracker';
+import {MouseTracker} from '@/lib/calendarAndDatesUtils/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
-import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
-import { UserContext } from '@/lib/shared/context/userContext';
+import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
+import { UserContext } from '@/lib/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { INVALID_GROUP_CODE } from '../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
-import { getQueryKeyNameForFetchAvailability } from '../../../../../../lib/pageSpecific/availability/availabilityHooks';
-import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { INVALID_GROUP_CODE } from '@/lib/db/groupExistenceAndMembership/GroupCode';
+import { getQueryKeyNameForFetchAvailability } from '@/lib/hooks/availabilityHooks';
+import { useCheckIfScreenIsNarrow } from '@/lib/hooks/windowProperties';
 import { AvailabilityGridColumnTitles } from './availabilityGridColumnTitles';
 
 interface RowAndCol {

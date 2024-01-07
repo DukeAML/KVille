@@ -1,6 +1,6 @@
 import React from "react";
 import { FormControl, Select, MenuItem, InputLabel } from "@material-ui/core";
-import { TENTING_COLORS } from "../../../../../common/src/scheduling/rules/phaseData";
+import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 
 interface SelectTentTypeProps {
     tentType : string;

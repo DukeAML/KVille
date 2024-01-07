@@ -1,12 +1,12 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { Container, Typography, Button } from "@mui/material";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import {
   fetchGroups,
   GroupDescription,
-} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+} from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { GroupDisplay } from "../../components/pageSpecific/groups/groupDisplay";
 import {
   KvilleLoadingContainer,

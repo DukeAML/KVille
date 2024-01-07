@@ -7,7 +7,7 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Container } from "@mui/material";
-import { getDateRoundedTo30MinSlot } from "../../../../common/src/calendarAndDates/datesUtils";
+import { getDateRoundedTo30MinSlot } from "@/lib/calendarAndDatesUtils/datesUtils";
 
 
 interface DateChangerProps {

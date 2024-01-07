@@ -1,12 +1,12 @@
 // LoginForm.tsx
 
 import React, { useState } from "react";
-import { authValidationSchema } from "../../common/src/db/auth/register";
+import { authValidationSchema } from "@/lib/db/auth/register";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
 import { useContext } from "react";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { useRouter } from "next/router";
-import { tryToLogin } from "../../common/src/db/auth/login";
+import { tryToLogin } from "@/lib/db/auth/login";
 import { KvilleForm } from "@/components/shared/utils/form";
 
 interface LoginFormValues {

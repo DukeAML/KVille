@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
 import { useRouter, NextRouter } from 'next/router';
-import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { useCheckIfScreenIsNarrow } from '@/lib/hooks/windowProperties';
 import { MobileNavBarDrawerAndMenuIcon } from './mobileNavBar';
 
 

@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
-import { DateBeingShownContext } from "../../../../../lib/pageSpecific/schedule/dateBeingShownContext";
-import { getDatePlusNumShifts, getDayAbbreviation } from "../../../../../../common/src/calendarAndDates/datesUtils";
+import { DateBeingShownContext } from "@/lib/context/schedule/dateBeingShownContext";
+import { getDatePlusNumShifts, getDayAbbreviation } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { KvilleButton } from "@/components/shared/utils/button";
 import { DateChanger } from "@/components/shared/dateRangeChanger/dateChanger";
-import { useCheckIfScreenIsNarrow } from "@/lib/shared/windowProperties";
+import { useCheckIfScreenIsNarrow } from "@/lib/hooks/windowProperties";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 

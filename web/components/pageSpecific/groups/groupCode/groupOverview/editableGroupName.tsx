@@ -2,9 +2,9 @@ import React, {useContext, useState} from 'react';
 import { FormControl, TextField, Typography } from '@material-ui/core';
 import {Button, IconButton} from '@material-ui/core';
 import {Edit} from '@mui/icons-material'
-import { useMutationToUpdateGroupData } from "@/lib/shared/fetchGroupData";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
-import { GroupContext } from '@/lib/shared/context/groupContext';
+import { useMutationToUpdateGroupData } from "@/lib/hooks/fetchGroupData";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
+import { GroupContext } from '@/lib/context/groupContext';
 
 
 interface ButtonInputInterface {

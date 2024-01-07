@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import { BasePageContainerWithNavBarAndTitle } from './basePageContainer';
 import { BasePageContainerForGroupsPage } from './groupsPageContainer';
 import { KvilleLoadingContainer } from '../utils/loading';
-import { getGroupMembersByGroupCode } from '../../../../common/src/db/groupExistenceAndMembership/groupMembership';
-import { useGroupCode } from '@/lib/shared/useGroupCode';
+import { getGroupMembersByGroupCode } from '@/lib/db/groupExistenceAndMembership/groupMembership';
+import { useGroupCode } from '@/lib/hooks/useGroupCode';
 
 interface PermissionRequiredPageContainerProps {
 	children: ReactNode;

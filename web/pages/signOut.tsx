@@ -2,7 +2,7 @@ import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageCon
 import { KvilleButton } from "@/components/shared/utils/button";
 import { Container, Typography } from "@mui/material";
 import {signOut} from "firebase/auth";
-import { auth } from "../../common/src/db/firebase_config";
+import { auth } from "@/lib/db/firebase_config";
 import { useRouter } from "next/router";
 import React, {useState} from "react"
 

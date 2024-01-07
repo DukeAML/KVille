@@ -1,10 +1,10 @@
-import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
+import { TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import React, { useContext} from "react";
-import {  getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import {  getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { Select, MenuItem, FormControl, InputLabel } from "@material-ui/core";
-import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
+import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 
 export const NewTenterPicker : React.FC = () => {
     const {tenterToReplace, timeSlotClickedOn, newTenter, setNewTenter} = useContext(TenterSwapContext);

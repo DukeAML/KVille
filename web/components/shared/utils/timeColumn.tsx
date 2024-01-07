@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Paper, Typography } from '@mui/material';
-import { get48TimeLabels } from "../../../../common/src/calendarAndDates/calendarUtils";
+import { get48TimeLabels } from "@/lib/calendarAndDatesUtils/calendarUtils";
 export const TimeColumn : React.FC = () => {
     return (
         <Paper style={{marginTop : "20px"}}>

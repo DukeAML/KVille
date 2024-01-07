@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { Typography, Container, Link, Button, Stack } from '@mui/material'
 import { HoursTable } from "@/components/pageSpecific/groups/groupCode/groupOverview/hoursTable";
 import { EditableGroupName } from "@/components/pageSpecific/groups/groupCode/groupOverview/editableGroupName";
-import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
+import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { DiscretionaryGraceContext } from "@/lib/pageSpecific/groupOverview/discretionaryContext";
+import { DiscretionaryGraceContext } from "@/lib/context/discretionaryContext";
 
 const GroupHomePage : React.FC = () => {    
 
