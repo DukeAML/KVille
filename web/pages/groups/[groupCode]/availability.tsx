@@ -58,7 +58,7 @@ export default function Availability(){
         <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
-                <Container>
+                <Container >
                     <Typography align="center" style={{marginBottom : 16}} variant="h6">
                         Fill in your availability here - the grid below works kind of like a when2meet. 
                         Click on a cell to begin toggling your status - click on any cell to finish toggling. 

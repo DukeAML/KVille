@@ -1,5 +1,5 @@
-import { getGracePeriods2023 } from "@/lib/data/2023/gracePeriods";
-import { getGracePeriods2024 } from "@/lib/data/2024/gracePeriods";
+import { getGracePeriods2023 } from "../../data/2023/gracePeriods";
+import { getGracePeriods2024 } from "../../data/2024/gracePeriods";
 import { GRACE } from "../slots/tenterSlot";
 
 

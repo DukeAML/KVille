@@ -1,5 +1,5 @@
-import { isNight2024 } from "@/lib/data/2024/nightData";
-import { isNight2023 } from "@/lib/data/2023/nightData";
+import { isNight2024 } from "../../data/2024/nightData";
+import { isNight2023 } from "../../data/2023/nightData";
 export const nightData = {nightStartHour: 2, nightEndHour: 7}
 
 

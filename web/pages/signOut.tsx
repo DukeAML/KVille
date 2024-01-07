@@ -1,6 +1,6 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { KvilleButton } from "@/components/shared/utils/button";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Button, Stack } from "@mui/material";
 import {signOut} from "firebase/auth";
 import { auth } from "@/lib/db/firebase_config";
 import { useRouter } from "next/router";
@@ -21,10 +21,12 @@ const HomePage : React.FC = () => {
 	return (
 		<BasePageContainerWithNavBarAndTitle title="Sign Out">
 			<Container maxWidth="sm">
-                <Typography variant="h5" align="center">
-                    Are you sure you want to sign out?
-                </Typography>
-                <KvilleButton text="Yes, sign me out" onClick={signUserOut} />
+                <Stack>
+                    <Typography variant="h6" align="center" style={{marginBottom : 16}}>
+                        Are you sure you want to sign out?
+                    </Typography>
+                    <Button variant="contained" color="primary" onClick={signUserOut} >Yes, sign me out</Button>
+                </Stack>
                 {error ? 
                     <Typography align="center" color="red" >
                         An unknown error occurred

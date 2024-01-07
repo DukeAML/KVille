@@ -66,7 +66,7 @@ export const DescriptionsToOptions = (optionDescriptions : OptionDescription[], 
             <div>
                 {optionDescriptions.map((description, index) => {
                     return (
-                        <Button color="inherit" onClick={() => router.push(description.route)} key={description.route}>{description.text}</Button>
+                        <Button color="inherit" onClick={() => router.push(description.route)} key={description.route} style={{textTransform : "none"}}>{description.text}</Button>
                     )
                 })}
             </div>

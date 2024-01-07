@@ -2,13 +2,13 @@ import { getDayAbbreviation } from "./datesUtils";
 import { getNumDaysBetweenDates } from "./datesUtils";
 
 
-export const getCalendarColumnTitles = (startDate : Date, endDate : Date, narrow = false) : string[] =>{
+export const getCalendarColumnTitles = (startDate : Date, endDate : Date, screenIsNarrow = false) : string[] =>{
     let numDays = getNumDaysBetweenDates(startDate, endDate);
-
+    let shouldBeNarrow = screenIsNarrow || numDays > 15;
     let titles= [];
     for (let i = 0; i < numDays; i++){
         let newDate = new Date(startDate.getTime() + i*24*60*60*1000);
-        titles.push(getDayAbbreviation(newDate, narrow));
+        titles.push(getDayAbbreviation(newDate, shouldBeNarrow));
     }
     return titles;
 }

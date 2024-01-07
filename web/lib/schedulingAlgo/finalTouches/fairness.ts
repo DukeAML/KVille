@@ -114,7 +114,7 @@ function maxHourRatio(people : Person[]) : number{
 
 
 function hoursRank(p1 : Person, p2 : Person) : number {
-    return (p1.dayScheduled + p1.nightScheduled - p2.dayScheduled - p2.nightScheduled);
+    return (p2.dayScheduled + p2.nightScheduled - p1.dayScheduled - p1.nightScheduled);
 }
 
 

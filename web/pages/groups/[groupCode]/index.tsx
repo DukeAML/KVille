@@ -23,11 +23,20 @@ const GroupHomePage : React.FC = () => {
                     <Typography align="left" style={{marginTop : 16, marginBottom : 16}} variant="h6">
                         Here are your group members, along with how many hours they are scheduled for. Other people can join your group through the <Link href="/groups/joinGroup">Join Group page</Link>, with the following group code: {groupCode}
                     </Typography>
-                    <Container maxWidth="md" style={{marginBottom : 24}}>
+                    
+
+                </Container>
+                {(isLoading || !schedule) ? (
+                    // Display the loading container while data is being loaded
+                    <KvilleLoadingContainer />
+                ) : 
+                    <Stack direction="column" gap={1}>
+                    <HoursTable schedule={schedule}/>
+                    <Container maxWidth="md" style={{marginTop : 24, marginBottom : 24}}>
                         <KvilleAccordion elements={
                             [
                                 {
-                                    summaryText : "Discretionary Grace",
+                                    summaryText : "Hours Adjusted for Discretionary Grace Periods",
                                     detail : 
                                         <Container>
                                             <Typography style={{marginBottom : 8}}>
@@ -51,12 +60,8 @@ const GroupHomePage : React.FC = () => {
                             ]
                         }/>
                     </Container>
-
-                </Container>
-                {(isLoading || !schedule) ? (
-                    // Display the loading container while data is being loaded
-                    <KvilleLoadingContainer />
-                ) : <HoursTable schedule={schedule}/>}
+                    </Stack>}
+                
             </DiscretionaryGraceContext.Provider>
         </PermissionRequiredPageContainer>
     );

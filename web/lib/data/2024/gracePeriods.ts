@@ -1,4 +1,4 @@
-import {getDatePlusNumShifts} from "@/lib/calendarAndDatesUtils/datesUtils";
+import {getDatePlusNumShifts} from "../../calendarAndDatesUtils/datesUtils";
 
 
 export const DISCRETIONARY = "Discretionary";
@@ -107,9 +107,8 @@ const wbbAwayGameGracePeriods = wbbAwayGameStartTimes.map((startTime) => {
     return new GracePeriod(getDatePlusNumShifts(startTime, -2), getDatePlusNumShifts(startTime, 2 + GAME_LENGTH_IN_SHIFTS), "WBB Away Game");
 })
 
-const discretionaryGracePeriods = [
-    new GracePeriod(new Date(2024, 0, 21, 20, 0), new Date(2024, 0, 21, 21, 0), DISCRETIONARY),
-    new GracePeriod(new Date(2024, 0, 23, 3, 27), new Date(2024, 0, 23, 5, 1, 23), DISCRETIONARY)
+const discretionaryGracePeriods : GracePeriod[] = [
+    
 ];
 
 

@@ -1,18 +1,18 @@
 import { ensureFairness } from "./finalTouches/fairness";
-import {TENTER_STATUS_CODES} from "@/lib/schedulingAlgo/slots/tenterSlot";
-import {ScheduledSlot} from "@/lib/schedulingAlgo/slots/scheduledSlot";
+import {TENTER_STATUS_CODES} from "./slots/tenterSlot";
+import {ScheduledSlot} from "./slots/scheduledSlot";
 import {cleanStraySlots} from "./finalTouches/cleanStraySlots";
 import {fillEmptySpots} from "./finalTouches/fillEmptySpots";
 import {fillGrace} from "./finalTouches/fillGrace";
 import {reorganizeGrid} from "./finalTouches/reorganizeGrid";
-import {prioritizeFairness } from "./weights/prioritizeFairness";
+import {prioritizeFairness, prioritizeNighttimeFairness } from "./weights/prioritizeFairness";
 import { prioritizeDaytimeContinuity, prioritizeContinuityForNightSlots} from "./weights/prioritizeContinuity";
 import {prioritizeToughTimes} from "./weights/prioritizeToughTimes";
 import {prioritizePickiness} from "./weights/prioritizePickiness";
 import { pickTenterFillSlotAndReturnRemainingSlots } from "./pickTenterAndFillSlots/pickTenterAndFillSlot";
 import {tryToEliminateStraySlotAtEdgesOfShift} from "./pickTenterAndFillSlots/tryToeliminateStraySlotAtEdgesOfShift";
 import { Person } from "./person";
-import { TenterSlot } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { TenterSlot } from "./slots/tenterSlot";
 
 
 
@@ -38,7 +38,7 @@ function assignNightShifts(people : Person[], tenterSlotsGrid : TenterSlot[][]) 
     let scheduleLength = tenterSlotsGrid[0].length;
     prioritizeContinuityForNightSlots(tenterSlotsGrid);
     while (eligibleNightSlots.length > 0){
-        prioritizeFairness(people, eligibleNightSlots);
+        prioritizeNighttimeFairness(people, eligibleNightSlots);
         prioritizeToughTimes(eligibleNightSlots, scheduleLength); //could be optimized by only updating the time slots that were part of the last shift created
         eligibleNightSlots.sort((a, b) => b.getWeight() - a.getWeight());
         let choosingResult = pickTenterFillSlotAndReturnRemainingSlots(people, eligibleNightSlots, tenterSlotsGrid);

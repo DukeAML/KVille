@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { ScheduleOptions } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleOptions";
 import { OneDaySchedule } from "@/components/pageSpecific/groups/groupCode/schedule/scheduleCalendar/oneDaySchedule";
-import { Typography, Stack, Container } from "@mui/material";
+import { Typography, Container } from "@mui/material";
 import { CellColorsCoordinator } from "@/components/pageSpecific/groups/groupCode/schedule/cellColorsCoordinator";
 import { CellColorsContext } from "@/lib/context/schedule/cellColorsContext";
 import { DateBeingShownContext } from "@/lib/context/schedule/dateBeingShownContext";
@@ -21,7 +21,6 @@ import { DatesRow } from "@/components/pageSpecific/groups/groupCode/schedule/da
 
 export default function Schedule() {
     const cellColorCoordinator = useRef<CellColorsCoordinator>(new CellColorsCoordinator()).current;
-    //const [dateBeingShown, setDateBeingShown] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const {groupDescription} = useContext(GroupContext);
     const groupCode = useGroupCode();
     
@@ -31,8 +30,6 @@ export default function Schedule() {
     const [newTenter, setNewTenter] = useState<string>(EMPTY);
     const [startReplacementDate, setStartReplacementDate] = useState<Date>(getScheduleDates(CURRENT_YEAR).startOfBlack);
     const [endReplacementDate, setEndReplacementDate] = useState<Date>(getDatePlusNumShifts(getScheduleDates(CURRENT_YEAR).startOfBlack, 1));
-
-    //const {data : scheduleAndStartDate, isLoading, isError, refetch} = useQueryToFetchSchedule(groupCode);
     const {dateBeingShown, setDateBeingShown, data : scheduleAndStartDate, isLoading, isError} = useFetchScheduleAndSetDisplayDate(groupCode, groupDescription.tentType);
 
     let body = null;
@@ -46,7 +43,7 @@ export default function Schedule() {
                                                         newTenter, setNewTenter, startReplacementDate, setStartReplacementDate, endReplacementDate, setEndReplacementDate}}>
                         
                         <Container maxWidth="lg">
-                            <Typography align="left" variant="h6">
+                            <Typography align="left" variant="h6" style={{marginBottom : 16}}>
                             Here is your schedule. It shows who is supposed to be in the tent at each time. 
                             Click the "Fill in Schedule" dropdown below to get started with using our algorithm to auto-fill the schedule.
                             To manually change who is assigned at a specific time slot, click on the corresponding box in the grid to replace them with someone else at that time. 

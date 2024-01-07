@@ -1,6 +1,6 @@
 import { EMPTY, GRACE } from "../slots/tenterSlot";
 import { isGrace, scheduleNameForGracePeriod } from "../rules/gracePeriods";
-
+import { ScheduledSlot } from "../slots/scheduledSlot";
 
 export function fillGrace(scheduleArr : ScheduledSlot[]){
     for (var timeIndex = 0; timeIndex < scheduleArr.length; timeIndex++){

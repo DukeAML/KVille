@@ -5,7 +5,7 @@ import { KvilleButton } from "@/components/shared/utils/button";
 import { DateChanger } from "@/components/shared/dateRangeChanger/dateChanger";
 import { useCheckIfScreenIsNarrow } from "@/lib/hooks/windowProperties";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
-import { Stack } from "@mui/material";
+import { Stack, Button, Typography } from "@mui/material";
 
 interface DatesRowProps {
 
@@ -25,7 +25,9 @@ export const DatesRow : React.FC<DatesRowProps> = (props : DatesRowProps) => {
                     let date = getDatePlusNumShifts(dateBeingShown, 48 * offset);
                     if (offset != 0){
                         return (
-                            <KvilleButton onClick={() => {setDateBeingShown(date)}} text={getDayAbbreviation(date)} key={index}/>
+                            <Button fullWidth onClick={() => {setDateBeingShown(date)}} color="primary" variant="outlined" key={index} style={{textTransform : "none", marginLeft : 4, marginRight : 4}}>
+                                <Typography >{getDayAbbreviation(date)}</Typography>
+                            </Button>
     
                         );
                     } else {

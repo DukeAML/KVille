@@ -1,4 +1,4 @@
-import { PREFERRED_WEIGHT_FACTOR, TenterSlot } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { PREFERRED_WEIGHT_FACTOR, TenterSlot } from "../slots/tenterSlot";
 import { Person } from "../person";
 
 export function prioritizeFairness(people : Person[], slots : TenterSlot[]){
@@ -6,7 +6,7 @@ export function prioritizeFairness(people : Person[], slots : TenterSlot[]){
     for (var slotIndex = 0; slotIndex < slots.length; slotIndex++){
         var currentSlot = slots[slotIndex];
         let currentPerson = people[currentSlot.personIndex];
-        let zScore = (getTotalScheduled(currentPerson) - mean) / std;
+        let zScore = (getTotalScheduled(currentPerson) - mean) / (std + 0.000001);
         let score = Math.pow(PREFERRED_WEIGHT_FACTOR, -1 * zScore);
         if (getTotalScheduled(currentPerson) < (min + 0.01)){
             score *= 2;
@@ -29,7 +29,7 @@ export function prioritizeNighttimeFairness(people : Person[], nightSlots : Tent
     for (var slotIndex = 0; slotIndex < nightSlots.length; slotIndex++){
         var currentSlot = nightSlots[slotIndex];
         let currentPerson = people[currentSlot.personIndex];
-        let zScore = (currentPerson.nightScheduled - mean) / std;
+        let zScore = (currentPerson.nightScheduled - mean) / (std + 0.000001);
         let score = Math.pow(PREFERRED_WEIGHT_FACTOR, -1 * zScore);
 
         if (currentPerson.nightScheduled < (min + 0.01)){

@@ -64,7 +64,11 @@ export const getDayAbbreviation = (date : Date, narrow = false) : string => {
     let month = date.getMonth() + 1;
     let monthDay = date.getDate();
     if (narrow){
-        return month.toString() + "/\n" + monthDay.toString();
+        if (monthDay < 10){
+            return month.toString() + "/" + monthDay.toString();
+        } else {
+            return month.toString() + "/\n" + monthDay.toString();
+        }
     }
     return (dayStr + " " + month.toString() + "/" + monthDay.toString());
   }

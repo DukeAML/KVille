@@ -1,6 +1,6 @@
 import { olsonParams } from "../../data/olsonParams";
-import { TENTER_STATUS_CODES, TenterSlot } from "@/lib/schedulingAlgo/slots/tenterSlot";
-import { PREFERRED_WEIGHT_FACTOR } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { TENTER_STATUS_CODES, TenterSlot } from "../slots/tenterSlot";
+import { PREFERRED_WEIGHT_FACTOR } from "../slots/tenterSlot";
 
 
 function gridLimits(row : number, rowLength : number) : boolean[]{

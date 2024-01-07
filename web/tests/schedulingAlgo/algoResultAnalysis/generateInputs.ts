@@ -1,7 +1,7 @@
-import { Person } from "@/lib/schedulingAlgo/person";
-import { TenterSlot, TENTER_STATUS_CODES } from "@/lib/schedulingAlgo/slots/tenterSlot";
-import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
-import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
+import { Person } from "../../../lib/schedulingAlgo/person";
+import { TenterSlot, TENTER_STATUS_CODES } from "../../../lib/schedulingAlgo/slots/tenterSlot";
+import { getDatePlusNumShifts } from "../../../lib/calendarAndDatesUtils/datesUtils";
+import { TENTING_COLORS } from "../../../lib/schedulingAlgo/rules/phaseData";
 import { examples } from "./exampleAvailability";
 
 

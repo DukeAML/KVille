@@ -1,5 +1,5 @@
-import { phaseData2023 } from "@/lib/data/2023/phaseData"
-import { phaseData2024 } from "@/lib/data/2024/phaseData";
+import { phaseData2023 } from "../../data/2023/phaseData"
+import { phaseData2024 } from "../../data/2024/phaseData";
 
 
 

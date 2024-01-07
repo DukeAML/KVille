@@ -11,6 +11,7 @@ interface RemainingSlotsAndChosenIndicesInterface{
 }
 export function pickTenterFillSlotAndReturnRemainingSlots(people : Person[], slots : TenterSlot[], tenterSlotsGrid : TenterSlot[][]) : RemainingSlotsAndChosenIndicesInterface{
     var chosenTenterSlot = slots[0];
+    //console.log("cont : " + chosenTenterSlot.continuityScore + ", fair: " + chosenTenterSlot.fairnessScore + "picky: " + chosenTenterSlot.pickinessScore + " total: " + chosenTenterSlot.getWeight());
     let remainingSlots = slots;
     if (chosenTenterSlot.isNight){
         return {

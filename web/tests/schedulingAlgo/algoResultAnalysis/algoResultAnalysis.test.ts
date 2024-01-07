@@ -1,8 +1,8 @@
-import { scheduleAlgorithm} from "@/lib/schedulingAlgo/algorithm";
-import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
+import { scheduleAlgorithm} from "../../../lib/schedulingAlgo/algorithm";
+import { TENTING_COLORS } from "../../../lib/schedulingAlgo/rules/phaseData";
 import { AlgoAnalysis} from "./analysis";
 import { generateInput } from "./generateInputs";
-import { getScheduleDates, CURRENT_YEAR } from "@/lib/schedulingAlgo/rules/scheduleDates";
+import { getScheduleDates, CURRENT_YEAR } from "../../../lib/schedulingAlgo/rules/scheduleDates";
 
 let scheduleDates = getScheduleDates(CURRENT_YEAR);
 

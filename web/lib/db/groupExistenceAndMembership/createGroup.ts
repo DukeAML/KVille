@@ -18,13 +18,14 @@ export const CREATE_GROUP_ERROR_CODES = {
 }
 
 export const createGroupValidationSchema = Yup.object({
-    groupName: Yup.string().required('Required'),
+    groupName: Yup.string().required('Required').min(1).max(20),
     tentType : Yup.string().required().oneOf([TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, TENTING_COLORS.WHITE]) 
 });
 
 
-async function checkIfGroupExistsByGroupName(groupName : string) : Promise<boolean> {
+async function getGroupExistsByGroupName(groupName : string) : Promise<boolean> {
     let queryResults = await firestore.collection('groups').where('name', '==', groupName).get();
+    console.log(queryResults.empty);
     if (queryResults.empty){
         return false;
     } else {
@@ -81,8 +82,7 @@ function getDefaultNewGroupData(groupName : string, tentType : string, creator :
 
 
 export async function tryToCreateGroup(groupName : string, tentType : string, userID : string) : Promise<string> {
-    //check if there is already a group with this name!
-    if (await checkIfGroupExistsByGroupName(groupName)){
+    if (await getGroupExistsByGroupName(groupName)){
         throw new Error(CREATE_GROUP_ERROR_CODES.GROUP_NAME_TAKEN);
     }
     let groupCode = await generateGroupCode(GROUP_CODE_LENGTH);

@@ -1,3 +1,5 @@
+import { VisitedRowsAndColsTracker } from "./visitedRowsAndColsTracker";
+
 export class MouseTracker {
 	currentRow : number;
 	currentCol : number;
@@ -9,8 +11,7 @@ export class MouseTracker {
 	valueChangedToOnDragStart : boolean;
 	changeAvailabilityAtRowsAndCols : (rowsAndCols : {row : number, col : number}[], available : boolean, valueChangedToOnDragStart : boolean) => void;
 	updateAvailabilityInDB : () => void;
-	visitedRowsAndColsArr : {row : number, col : number}[];
-	visitedRowsAndColsSet : Set<string>
+	visitedRowsAndColsTracker : VisitedRowsAndColsTracker;
 
     constructor () {
 		this.currentRow = 0; 
@@ -23,8 +24,7 @@ export class MouseTracker {
 		this.valueChangedToOnDragStart = false;
 		this.changeAvailabilityAtRowsAndCols = (rowsAndCols, available, b) => {};
 		this.updateAvailabilityInDB = () => {};
-		this.visitedRowsAndColsArr = [];
-		this.visitedRowsAndColsSet = new Set();
+		this.visitedRowsAndColsTracker = new VisitedRowsAndColsTracker();
     }
   
 	colMovedCloser() : boolean {
@@ -89,30 +89,14 @@ export class MouseTracker {
 		this.changeAvailabilityAtRowsAndCols(rowsAndCols, this.valueChangedToOnDragStart, this.valueChangedToOnDragStart);
 	}
 
-	getStrForRowCol(row : number, col : number) : string {
-		return "r" + row + "c" + col;
-	}
-	checkIfRowColHasBeenVisited(row : number, col : number) : boolean{
-		return this.visitedRowsAndColsSet.has(this.getStrForRowCol(row, col));
-	}
-
-	addRowColToVisitedList(row : number, col : number) {
-		if (!this.checkIfRowColHasBeenVisited(row, col)){
-			this.visitedRowsAndColsArr.push({row, col});
-			this.visitedRowsAndColsSet.add(this.getStrForRowCol(row, col));
-		}
-	}
-
-	getAllVisitedRowCols() : {row : number, col : number}[] {
-		return this.visitedRowsAndColsArr;
-	}
+	
 
 	
 	updateVisitedRowsAndCols(){
 		for (let row = Math.min(this.startRow, this.currentRow); row <= Math.max(this.startRow, this.currentRow); row += 1){
 			for (let col = Math.min(this.startCol, this.currentCol); col <= Math.max(this.startCol, this.currentCol); col += 1){
-				if (!this.checkIfRowColHasBeenVisited(row, col)){
-					this.addRowColToVisitedList(row, col);
+				if (!this.visitedRowsAndColsTracker.checkIfRowColHasBeenVisited(row, col)){
+					this.visitedRowsAndColsTracker.addRowColToVisitedList(row, col);
 				}
 			}
 		}
@@ -120,7 +104,7 @@ export class MouseTracker {
 
 	revertVisitedRowColsOutsideBoundingBox(){
 		let rowsAndColsToRevert : {row : number, col : number}[]= []
-		let rowsAndCols = this.getAllVisitedRowCols();
+		let rowsAndCols = this.visitedRowsAndColsTracker.getAllVisitedRowCols();
 		console.log(rowsAndCols);
 		rowsAndCols.map(({row, col}, index) => {
 			if (row <= Math.max(this.startRow, this.currentRow) && row >= Math.min(this.startRow, this.currentRow) && col <= Math.max(this.startCol, this.currentCol) && col >= Math.min(this.startCol, this.currentCol)){
@@ -167,22 +151,19 @@ export class MouseTracker {
 		this.isDragging = true;
 		this.valueChangedToOnDragStart = valueChangedToOnDragStart;
 		this.changeAvailabilityAtRowsAndCols([{row, col}], valueChangedToOnDragStart, valueChangedToOnDragStart);
-		this.visitedRowsAndColsArr = [{row, col}];
-		this.visitedRowsAndColsSet.add(this.getStrForRowCol(row, col));
-
+		this.visitedRowsAndColsTracker.clear();
+		this.visitedRowsAndColsTracker.addRowColToVisitedList(row, col);
     }
 
     alertMouseUpOutOfBounds(){
 		this.isDragging = false;
-		this.visitedRowsAndColsArr = [];
-		this.visitedRowsAndColsSet.clear();
+		this.visitedRowsAndColsTracker.clear();
     }
 
     alertEndOfDragAtRowCol(row : number, col : number ){
 		this.alertMovementToRowCol(row, col);
 		this.isDragging = false;
-		this.visitedRowsAndColsArr = [];
-		this.visitedRowsAndColsSet.clear();
+		this.visitedRowsAndColsTracker.clear();
     }
 
     alertMouseDownAtRowColWithValueChangedTo(row : number, col : number, valueChangedToOnDragStart : boolean ) {

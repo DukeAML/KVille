@@ -26,7 +26,6 @@ export async function createGroupSchedule(groupCode : string, tentType : string,
 	let nightHoursPerPersonInRange = inRangeHours.nightHoursPerPerson;
 	let dayHoursPerPersonEntire = fullScheduleHours.dayHoursPerPerson;
 	let nightHoursPerPersonEntire = fullScheduleHours.nightHoursPerPerson;
-
 	await firestore
 		.collection('groups') 
 		.doc(groupCode)
@@ -34,25 +33,26 @@ export async function createGroupSchedule(groupCode : string, tentType : string,
 		.get()
 		.then((groupMembers) => {
 			groupMembers.forEach((tenterInGroup) => {
-				var name = tenterInGroup.data().name;
 				var id = tenterInGroup.id;
-				var fullAvailability = tenterInGroup.data().availability;
-				var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
-				var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
-				var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
-				var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
-				var availabilityInRangeStartDate = startDate;
+				if (oldSchedule.IDToNameMap.has(id)){
+					var name = oldSchedule.IDToNameMap.get(id);
+					var fullAvailability = tenterInGroup.data().availability;
+					var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
+					var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
+					var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
+					var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
+					var availabilityInRangeStartDate = startDate;
 
-				var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
-				tenterSlotsGrid.push(user_slots); 
+					var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
+					tenterSlotsGrid.push(user_slots); 
 
-				var {numFreeDaySlots, numFreeNightSlots} = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
-				var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
-					dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
-				people.push(person);
+					var {numFreeDaySlots, numFreeNightSlots} = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
+					var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
+						dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
+					people.push(person);
+				}
 			});
 		});
-
 	var newScheduleInRange = scheduleAlgorithm(people, tenterSlotsGrid);
 	return scheduledSlotsArrToStringArrArr(newScheduleInRange);
 }

@@ -19,7 +19,7 @@ interface CreateGroupFormValues {
 }
 
 const initialValues : CreateGroupFormValues = {
-    groupName : ' ',
+    groupName : '',
     tentType : TENTING_COLORS.BLUE
 }
 

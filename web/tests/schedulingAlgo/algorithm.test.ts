@@ -1,10 +1,10 @@
-import { scheduleAlgorithm} from "@/lib/schedulingAlgo/algorithm";
-import { Person } from "@/lib/schedulingAlgo/person";
-import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { scheduleAlgorithm} from "../../lib/schedulingAlgo/algorithm";
+import { Person } from "../../lib/schedulingAlgo/person";
+import { TenterSlot, TENTER_STATUS_CODES, EMPTY } from "../../lib/schedulingAlgo/slots/tenterSlot";
 
-import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
-import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
-import { getScheduleDates, CURRENT_YEAR } from "@/lib/schedulingAlgo/rules/scheduleDates";
+import { getDatePlusNumShifts } from "../../lib/calendarAndDatesUtils/datesUtils";
+import { TENTING_COLORS } from "../../lib/schedulingAlgo/rules/phaseData";
+import { getScheduleDates, CURRENT_YEAR } from "../../lib/schedulingAlgo/rules/scheduleDates";
 describe("schedule", () => {
     it("fills out schedule in basic case", () => {
         const p1 = new Person("p1", "p1", 38, 10, 0, 0);

@@ -59,7 +59,7 @@ async function checkUsernameIsTaken(username : string) : Promise<boolean> {
 
 export const authValidationSchema = Yup.object({
     username: Yup.string()
-        .matches(/^[a-zA-Z0-9._%+-]+$/, 'Invalid username format') // Allow alphanumeric characters, dots, underscores, percent signs, plus signs, and hyphens
+        .matches(/^[a-zA-Z0-9._%+-]+$/, 'Username must be a valid email prefix') // Allow alphanumeric characters, dots, underscores, percent signs, plus signs, and hyphens
         .required('Required')
         .min(1)
         .max(20)

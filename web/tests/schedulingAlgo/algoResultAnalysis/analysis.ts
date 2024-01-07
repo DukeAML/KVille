@@ -1,7 +1,7 @@
-import { ScheduledSlot } from "@/lib/schedulingAlgo/slots/scheduledSlot";
-import { TENTER_STATUS_CODES } from "@/lib/schedulingAlgo/slots/tenterSlot";
-import { Person } from "@/lib/schedulingAlgo/person";
-import { TenterSlot } from "@/lib/schedulingAlgo/slots/tenterSlot";
+import { ScheduledSlot } from "../../../lib/schedulingAlgo/slots/scheduledSlot";
+import { TENTER_STATUS_CODES } from "../../../lib/schedulingAlgo/slots/tenterSlot";
+import { Person } from "../../../lib/schedulingAlgo/person";
+import { TenterSlot } from "../../../lib/schedulingAlgo/slots/tenterSlot";
 export class DistributionAnalysis {
     min : number;
     max : number;
