@@ -20,8 +20,7 @@ const onSuccessfulDBScheduleUpdate = (newSchedule : ScheduleData, groupCode : st
         queryClient.invalidateQueries(queryKeyName);
     } else {
         queryClient.setQueryData(queryKeyName, newSchedule);
-        //queryClient.refetchQueries(queryKeyName);
-        queryClient.invalidateQueries(queryKeyName);
+        //queryClient.invalidateQueries(queryKeyName);
     }
 
 }
