@@ -1,5 +1,4 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
-import { KvilleButton } from "@/components/shared/utils/button";
 import { Container, Typography, Button, Stack } from "@mui/material";
 import {signOut} from "firebase/auth";
 import { auth } from "@/lib/db/firebase_config";
