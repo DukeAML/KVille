@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import { firestore, auth } from "../firebase_config";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { getErrorMessage } from '../errorHandling';
 
 export const REGISTER_ERROR_CODES = {
     USERNAME_TAKEN : "Username is taken",
@@ -35,12 +36,13 @@ export async function tryToRegister(username : string, password : string) : Prom
             }
             transaction.set(newUserDocRef, newUserData);
         })
-    } catch (error : Error) {
-        let errorMessage = REGISTER_ERROR_CODES.DEFAULT;
-        if (error.message === REGISTER_ERROR_CODES.USERNAME_TAKEN){
-            errorMessage = REGISTER_ERROR_CODES.USERNAME_TAKEN;
+    } catch (error ) {
+        let errMsg = getErrorMessage(error);
+        errMsg = REGISTER_ERROR_CODES.DEFAULT;
+        if (errMsg === REGISTER_ERROR_CODES.USERNAME_TAKEN){
+            errMsg = REGISTER_ERROR_CODES.USERNAME_TAKEN;
         }
-        throw new Error(errorMessage);
+        throw new Error(errMsg);
     } 
     if (newUserID != DEFAULT_USER_ID){
         return newUserID;

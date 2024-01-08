@@ -16,7 +16,7 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
     const {dateBeingShown} = useContext(DateBeingShownContext);
     const groupCode = useGroupCode();
     const {data : schedule, isLoading} = useQueryToFetchSchedule(groupCode);
-    const [maxWidth, setMaxWidth] = useState<string>("md")
+    const [maxWidth, setMaxWidth] = useState<"xs" | "md" | "sm">("md")
     useEffect(() => {
         if (!isLoading && schedule){
             let maxPpl = schedule.getMaxNumPplOnDay(dateBeingShown);

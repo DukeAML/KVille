@@ -51,10 +51,13 @@ export async function removeMemberFromGroupByID(userID : string, groupCode : str
   
     const groupRef = firestore.collection("groups").doc(groupCode);
     const groupDoc = await groupRef.get();
-
-    if (groupDoc.data().creator === userID){
-		throw new Error (REMOVE_USER_ERRORS.CANNOT_REMOVE_CREATOR);
+    let groupData = groupDoc.data();
+    if (groupData !== undefined){
+      if (groupData.creator === userID){
+        throw new Error (REMOVE_USER_ERRORS.CANNOT_REMOVE_CREATOR);
+      }
     }
+
     let newGroupData = {...groupDoc.data()};
     newGroupData.groupSchedule = replaceUserWithEmptyInGroupSchedule(newGroupData.groupSchedule, userID);
   

@@ -36,20 +36,22 @@ export async function createGroupSchedule(groupCode : string, tentType : string,
 				var id = tenterInGroup.id;
 				if (oldSchedule.IDToNameMap.has(id)){
 					var name = oldSchedule.IDToNameMap.get(id);
-					var fullAvailability = tenterInGroup.data().availability;
-					var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
-					var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
-					var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
-					var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
-					var availabilityInRangeStartDate = startDate;
+					if (name !== undefined){
+						var fullAvailability = tenterInGroup.data().availability;
+						var fullAvailabilityStartDate = tenterInGroup.data().availabilityStartDate.toDate();
+						var numSlotsInRange = getNumSlotsBetweenDates(startDate, endDate);
+						var rangeStartOffset = getNumSlotsBetweenDates(fullAvailabilityStartDate, startDate);
+						var availabilityInRange = fullAvailability.slice(rangeStartOffset, rangeStartOffset+numSlotsInRange);
+						var availabilityInRangeStartDate = startDate;
 
-					var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
-					tenterSlotsGrid.push(user_slots); 
+						var user_slots = availabilitiesToSlots(id, availabilityInRange, availabilityInRangeStartDate, tentType, people.length)
+						tenterSlotsGrid.push(user_slots); 
 
-					var {numFreeDaySlots, numFreeNightSlots} = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
-					var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
-						dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
-					people.push(person);
+						var {numFreeDaySlots, numFreeNightSlots} = dayNightFree(availabilityInRange, availabilityInRangeStartDate);
+						var person = new Person(id, name, numFreeDaySlots, numFreeNightSlots, 
+							dayHoursPerPersonEntire[name] - dayHoursPerPersonInRange[name], nightHoursPerPersonEntire[name] - nightHoursPerPersonInRange[name]);
+						people.push(person);
+					}
 				}
 			});
 		});

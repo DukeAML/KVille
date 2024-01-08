@@ -40,7 +40,7 @@ const GroupHomePage : React.FC = () => {
                                     detail : 
                                         <Container>
                                             <Typography style={{marginBottom : 8}}>
-                                                Click the button below to show everyone's hours when accounting for discretionary grace. A discretionary grace period 
+                                                Click the button below to show the hours data when accounting for discretionary grace. A discretionary grace period 
                                                 is any grace period not known before the start of tenting season. Examples include grace for when it is too cold
                                                 at night and grace after a tent check, but not the grace periods known of before the start of tenting - i.e. grace week
                                                 and the periods before and after each basketball game. Please note that our tracking of these discretionary grace periods

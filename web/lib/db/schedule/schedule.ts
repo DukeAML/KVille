@@ -4,7 +4,7 @@ import { getDateRoundedTo30MinSlot } from "@/lib/calendarAndDatesUtils/datesUtil
 import { getGroupMembersByGroupCode } from "../groupExistenceAndMembership/groupMembership";
 import { GRACE } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { checkIfNameIsForGracePeriod } from "@/lib/schedulingAlgo/rules/gracePeriods";
-
+import firebase from 'firebase/compat/app';
 
 export const FETCH_SCHEDULE_ERROR_CODES = {
     GROUP_DOES_NOT_EXIST : "Group does not exist"
@@ -25,7 +25,7 @@ export interface UsernameAndIDs{
 }
 async function getUsernames(userIDs : string[]) : Promise<UsernameAndIDs[]> {
     return new Promise((resolve, reject) => {
-        const userPromises = [];
+        const userPromises : Promise<firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>>[] = [];
     
         userIDs.forEach((userID) => {
             const userPromise = firestore.collection('users').doc(userID).get();
@@ -34,11 +34,11 @@ async function getUsernames(userIDs : string[]) : Promise<UsernameAndIDs[]> {
     
         Promise.all(userPromises)
             .then((userSnapshots) => {
-                const usernames = [];
+                const usernames : UsernameAndIDs[] = [];
                 userSnapshots.forEach((userSnapshot) => {
-                    if (userSnapshot.exists) {
-                        const userData = userSnapshot.data();
-                        const username = userData.username;
+                    let userData = userSnapshot.data();
+                    if (userData !== undefined) {
+                        const username : string = userData.username;
                         usernames.push({ userID: userSnapshot.id, username });
                     }
                 });
@@ -67,11 +67,12 @@ export async function fetchGroupSchedule(groupCode : string) : Promise<ScheduleD
     const groupMembers = await getUsernames(groupMemberIDs.map((member) => member.userID));
     const IDToNameMap = new Map();
     groupMembers.forEach((member) => IDToNameMap.set(member.userID, member.username));
-    if (group.exists){
-        let origDate = group.data().groupScheduleStartDate.toDate();
+    let groupData = group.data();
+    if (groupData !== undefined){
+        let origDate = groupData.groupScheduleStartDate.toDate();
         let roundedDate = getDateRoundedTo30MinSlot(origDate);
-        let schedule = [];
-        group.data().groupSchedule.map((idsAtIndex) => {
+        let schedule : string[][]= [];
+        groupData.groupSchedule.map((idsAtIndex : string) => {
             let ids = idsAtIndex.split(" ");
             if (checkIfNameIsForGracePeriod(idsAtIndex)){
                 ids = [idsAtIndex];

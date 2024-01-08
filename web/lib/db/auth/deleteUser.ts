@@ -7,9 +7,12 @@ import { deleteUser } from "firebase/auth";
  */
 export async function deleteLoggedInUser() {
     //TODO: ensure that either both operations go through, or neither
-    const id = auth.currentUser.uid;
-    deleteUser(auth.currentUser);
-    firestore.collection("users").doc(id).delete();
+    if (auth && auth.currentUser){
+        const id = auth.currentUser.uid;
+        deleteUser(auth.currentUser);
+        firestore.collection("users").doc(id).delete();
+    }
+
 
 
 }

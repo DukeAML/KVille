@@ -45,7 +45,7 @@ export default function Schedule() {
                         <Container maxWidth="lg">
                             <Typography align="left" variant="h6" style={{marginBottom : 16}}>
                             Here is your schedule. It shows who is supposed to be in the tent at each time. 
-                            Click the "Fill in Schedule" dropdown below to get started with using our algorithm to auto-fill the schedule.
+                            Click the dropdown below to get started with using our algorithm to auto-fill the schedule.
                             To manually change who is assigned at a specific time slot, click on the corresponding box in the grid to replace them with someone else at that time. 
                             </Typography>
                         </Container>
