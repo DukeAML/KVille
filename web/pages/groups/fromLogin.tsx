@@ -3,13 +3,13 @@ import GroupPage from "./index";
 import {
   GroupDescription,
   fetchGroups,
-} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+} from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { useContext } from "react";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { useRouter } from "next/router";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { GroupContext } from "@/lib/context/groupContext";
 
 export default function GroupPageFromLogin() {
   const router = useRouter();

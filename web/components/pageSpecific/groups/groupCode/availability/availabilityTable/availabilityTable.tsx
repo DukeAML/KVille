@@ -1,17 +1,17 @@
-import { AvailabilitySlot, setDBAvailability } from '../../../../../../../common/src/db/availability';
-import {getCalendarColumnTitles, get48TimeLabels} from '../../../../../../../common/src/calendarAndDates/calendarUtils';
-import { getNumSlotsBetweenDates } from '@/../common/src/calendarAndDates/datesUtils';
+import { AvailabilitySlot, setDBAvailability } from '@/lib/db/availability';
+import {getCalendarColumnTitles, get48TimeLabels} from '@/lib/calendarAndDatesUtils/calendarUtils';
+import { getNumSlotsBetweenDates } from '@/lib/calendarAndDatesUtils/datesUtils';
 import { Grid, Typography } from '@mui/material';
 import { AvailabilityCell } from './availabilityCell';
-import {MouseTracker} from '../../../../../../../common/src/frontendLogic/availability/mouseTracker';
+import {MouseTracker} from '@/lib/calendarAndDatesUtils/availability/mouseTracker';
 import { useEffect, useState, useContext } from 'react';
-import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
-import { UserContext } from '@/lib/shared/context/userContext';
+import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
+import { UserContext } from '@/lib/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { INVALID_GROUP_CODE } from '../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode';
-import { getQueryKeyNameForFetchAvailability } from '../../../../../../lib/pageSpecific/availability/availabilityHooks';
-import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { INVALID_GROUP_CODE } from '@/lib/db/groupExistenceAndMembership/GroupCode';
+import { getQueryKeyNameForFetchAvailability } from '@/lib/hooks/availabilityHooks';
+import { useCheckIfScreenIsNarrow } from '@/lib/hooks/windowProperties';
 import { AvailabilityGridColumnTitles } from './availabilityGridColumnTitles';
 
 interface RowAndCol {
@@ -27,6 +27,7 @@ interface AvailabilityTableProps{
 export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:AvailabilityTableProps) => {
     const {isNarrow, checkingIfNarrow} = useCheckIfScreenIsNarrow();
     const [availability, setAvailability] = useState<AvailabilitySlot[]>(props.originalAvailabilityArr);
+    const [edited, setEdited] = useState<boolean[]>(new Array(props.originalAvailabilityArr.length).fill(false));
     
     const [mouseTracker, setMouseTracker] = useState<MouseTracker>(new MouseTracker());
     const {calendarStartDate, calendarEndDate, settingPreferred, setSettingPreferred} = useContext(AvailabilityPageContext);
@@ -45,39 +46,43 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
         });
         queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
         setDBAvailability(groupCode, userID, newAvailabilitySlots);
+        console.log("back to falses");
+        setEdited(new Array(props.originalAvailabilityArr.length).fill(false));
     }
 
-    const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+    const changeBasicAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean, valueChangedToOnDragStart : boolean) => {
         let newAvailability = [...availability];
         for (let i = 0; i < rowsAndCols.length; i += 1){
             let row = rowsAndCols[i].row;
             let col = rowsAndCols[i].col;
             let index = rowColToIndex(row, col);
-            if (index >= 0 && index < newAvailability.length){
+            if (index >= 0 && index < newAvailability.length && !(valueChangedToOnDragStart == newAvailability[index].available && !edited[index])){
                 if (newValue == false){
                     newAvailability[index].available = false;
                     newAvailability[index].preferred = false;
                 } else {
                     newAvailability[index].available = true;
                 }
+                edited[index] = true;
             }
         }
         setAvailability(newAvailability);
     }
 
-    const changePreferredAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean) => {
+    const changePreferredAvailabilityAtRowsAndCols = (rowsAndCols : RowAndCol[], newValue : boolean, valueChangedToOnDragStart : boolean) => {
         let newAvailability = [...availability];
         for (let i = 0; i < rowsAndCols.length; i += 1){
             let row = rowsAndCols[i].row;
             let col = rowsAndCols[i].col;
             let index = rowColToIndex(row, col);
-            if (index >= 0 && index < newAvailability.length){
+            if (index >= 0 && index < newAvailability.length && !(valueChangedToOnDragStart == newAvailability[index].preferred && !edited[index])){
                 if (newValue == false){
                     newAvailability[index].preferred = false;
                 } else {
                     newAvailability[index].available = true;
                     newAvailability[index].preferred = true;
-                }  
+                } 
+                edited[index] = true;
             }
         }
         setAvailability(newAvailability);
@@ -112,12 +117,11 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
     return (
         <Grid container spacing={0} direction="column" style={{marginTop : "20px", marginBottom : 20}}>
             <AvailabilityGridColumnTitles columnTitles={columnTitles}/>
-     
             {/* Row labels and data cells */}
             {rowLabels.map((row, rowIndex) => (
                 <Grid item container spacing={0} key={row}>
                     {/* Row label */}
-                    <Grid item xs={2.5 } sm={1} key={row}>
+                    <Grid item xs={2.5 } sm={1} key={row + "label"}>
                         <Typography style={{marginTop : '-12px', color : (rowIndex % 2 == 0 ? "inherit" : "transparent"), textAlign : "right", marginRight : "6px", userSelect: "none"}}>{row}</Typography>
                     </Grid>
                     {/* Data cells */}

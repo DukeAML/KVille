@@ -1,9 +1,9 @@
 import { KvilleNavBarGivenOptionDescriptions, OptionDescription, DescriptionsToOptions } from "./navBar";
 import React, { useContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { GroupContext } from "@/lib/context/groupContext";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import { useCheckIfScreenIsNarrow } from "@/lib/shared/windowProperties";
+import { useCheckIfScreenIsNarrow } from "@/lib/hooks/windowProperties";
 
 
 export const KvilleGroupsNavBar : React.FC = () => {

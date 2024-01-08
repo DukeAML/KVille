@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { Grid, Paper, makeStyles, Theme, Typography } from '@material-ui/core';
-import { MouseTracker } from '../../../../../../../common/src/frontendLogic/availability/mouseTracker';
-import { AvailabilitySlot } from '../../../../../../../common/src/db/availability';
-import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
+import { MouseTracker } from '@/lib/calendarAndDatesUtils/availability/mouseTracker';
+import { AvailabilitySlot } from '@/lib/db/availability';
+import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
 const useStyles = makeStyles((theme:Theme) => ({
     gridCell: {
         padding: theme.spacing(1),

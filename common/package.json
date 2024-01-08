@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "code shared between web and mobile",
-  "main": "index.js",
+  "main": "index,
   "author": "Keith Cressman",
   "license": "MIT",
   "dependencies": {

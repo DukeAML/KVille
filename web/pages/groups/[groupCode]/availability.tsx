@@ -1,21 +1,21 @@
-import { UserContext } from "@/lib/shared/context/userContext";
-import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
+import { UserContext } from "@/lib/context/userContext";
+import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
 import { useContext, useState, useEffect } from "react";
 import {useQuery} from 'react-query';
-import {fetchAvailability, AvailabilitySlot} from "../../../../common/src/db/availability";
+import {fetchAvailability, AvailabilitySlot} from "@/lib/db/availability";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
 import { Container } from "@material-ui/core";
 import { AvailabilityTable } from "@/components/pageSpecific/groups/groupCode/availability/availabilityTable/availabilityTable";
-import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/../common/src/frontendLogic/availability/availabilityDates";
+import { getInitialAvailabilityDisplayEndDate, getInitialAvailabilityDisplayStartDate } from "@/lib/calendarAndDatesUtils/availability/availabilityDates";
 import { AvailabilityOptions } from "@/components/pageSpecific/groups/groupCode/availability/availabilityOptions/availabilityOptions";
-import { getQueryKeyNameForFetchAvailability } from "@/lib/pageSpecific/availability/availabilityHooks";
-import { TENTING_COLORS } from "../../../../common/src/scheduling/rules/phaseData";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { getQueryKeyNameForFetchAvailability } from "@/lib/hooks/availabilityHooks";
+import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import { Typography } from "@mui/material";
-import { GroupContext } from "@/lib/shared/context/groupContext";
-import { CURRENT_YEAR } from "../../../../common/src/scheduling/rules/scheduleDates";
+import { GroupContext } from "@/lib/context/groupContext";
+import { CURRENT_YEAR } from "@/lib/schedulingAlgo/rules/scheduleDates";
 
 export default function Availability(){
     const { userID} = useContext(UserContext); 
@@ -58,7 +58,7 @@ export default function Availability(){
         <PermissionRequiredPageContainer title="Availability" groupSpecificPage={true}>
             {isLoading ? 
                 <KvilleLoadingContainer/> : 
-                <Container>
+                <Container >
                     <Typography align="center" style={{marginBottom : 16}} variant="h6">
                         Fill in your availability here - the grid below works kind of like a when2meet. 
                         Click on a cell to begin toggling your status - click on any cell to finish toggling. 

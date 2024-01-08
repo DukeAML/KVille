@@ -1,12 +1,13 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { UserContext } from "@/lib/shared/context/userContext";
-import { Container, Typography, Button } from "@mui/material";
+import { UserContext } from "@/lib/context/userContext";
+import { Container, Typography} from "@mui/material";
+import { Button } from "@material-ui/core";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import {
   fetchGroups,
   GroupDescription,
-} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+} from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { GroupDisplay } from "../../components/pageSpecific/groups/groupDisplay";
 import {
   KvilleLoadingContainer,
@@ -29,24 +30,28 @@ export default function GroupPage() {
 	let body = null;
 	if (isLoading) {
 		body = <KvilleLoadingContainer />;
-	} else {
+	} else if (groups) {
 		body = (
 		<Container maxWidth="sm">
-			<Typography variant="h6" align="center">
-				Select your Group or Join/Create one to Continue.
+			<Typography variant="h6" align="center" style={{marginBottom : 16}}>
+				{groups.length > 0 ? "Select your Group or Join/Create one to Continue." : "You are not a member of a group yet. Join or create one to continue"}
 			</Typography>
 			{groups?.map((group, index) => {
 				return <GroupDisplay group={group} key={index} />;
 			})}
-			<Stack direction="column" alignItems="center" gap={1}>
+			<Stack direction="column" alignItems="center" gap={1} style={{marginTop : 16}}>
 				<Button
 					onClick={() => router.push("/groups/joinGroup")}
-					variant="outlined"
-				>Join A Group</Button>
+					variant="contained"
+					color="primary"
+					style={{textTransform : "none"}}
+				>Join a Group</Button>
 				<Button
 					onClick={() => router.push("/groups/createGroup")}
-					variant="outlined"
-				>Create A Group</Button>
+					variant="contained"
+					color="primary"
+					style={{textTransform : "none"}}
+				>Create a Group</Button>
 			</Stack>
 		</Container>
 		);

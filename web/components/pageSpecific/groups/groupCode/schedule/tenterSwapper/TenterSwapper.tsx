@@ -1,10 +1,10 @@
-import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { INVALID_NEW_TENTER, TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { useMutationToUpdateSchedule, useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
+import { INVALID_NEW_TENTER, TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import { Typography, Container, Button, Modal, Dialog} from "@mui/material";
 import React, { useContext,  useState } from "react";
-import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
-import { ScheduleData } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
+import { getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
+import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
 import { SwapTentersTimeRangePickers } from "./timeRangePickers";
 import { NewTenterPicker } from "./newTenterPicker";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";

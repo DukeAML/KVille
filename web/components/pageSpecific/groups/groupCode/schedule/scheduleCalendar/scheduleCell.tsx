@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import { Typography } from "@mui/material";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
+import { TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
 import { TableCell } from "@material-ui/core";
 import { ROW_PADDING_AND_MARGIN } from "./oneDayScheduleRow";
 

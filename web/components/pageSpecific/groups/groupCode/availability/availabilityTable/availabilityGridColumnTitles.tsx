@@ -1,4 +1,4 @@
-import { useCheckIfScreenIsNarrow } from "@/lib/shared/windowProperties"
+import { useCheckIfScreenIsNarrow } from "@/lib/hooks/windowProperties"
 import { Grid, Typography } from "@mui/material"
 
 interface AvailabilityGridColumnTitlesProps{

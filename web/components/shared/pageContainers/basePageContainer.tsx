@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect} from 'react';
-import { UserContext } from '@/lib/shared/context/userContext';
+import { UserContext } from '@/lib/context/userContext';
 import {
   Container,
   Typography,
@@ -9,9 +9,9 @@ import {
 
 import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
 import { KvilleLoggedOutNavBar } from '../navBars/loggedOutNavBar';
-import { auth } from '../../../../common/src/db/firebase_config';
+import { auth } from '@/lib/db/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
-import { INVALID_USER_ID } from '../../../../common/src/db/auth/login';
+import { INVALID_USER_ID } from '@/lib/db/auth/login';
 
 
 

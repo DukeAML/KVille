@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
 import { useContext } from "react";
-import { AvailabilityPageContext } from "@/lib/pageSpecific/availability/AvailabilityPageContextType";
+import { AvailabilityPageContext } from "@/lib/context/AvailabilityPageContextType";
 import { Container } from "@mui/material";
 import { ErrorMessage } from "@/components/shared/utils/errorMessage";
-import { getDatePlusNumShifts } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
 
 export const AvailabilityDatesRangeChanger : React.FC = () => {
     const {calendarStartDate, calendarEndDate, setCalendarStartDate, setCalendarEndDate } = useContext(AvailabilityPageContext);

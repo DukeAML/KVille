@@ -1,18 +1,18 @@
 import React from "react";
 
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
-import { useMutationToRemoveMember } from "@/lib/pageSpecific/groupOverview/groupOverviewHooks";
-import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { EMPTY } from "../../../../../../common/src/scheduling/slots/tenterSlot";
+import { useMutationToRemoveMember } from "@/lib/hooks/groupOverviewHooks";
+import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
+import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { Container, Dialog, DialogActions, DialogTitle, Typography} from "@mui/material";
 import {Button} from "@material-ui/core";
 import {useContext} from 'react';
-import {GroupContext} from '@/lib/shared/context/groupContext';
-import {UserContext} from '@/lib/shared/context/userContext';
+import {GroupContext} from '@/lib/context/groupContext';
+import {UserContext} from '@/lib/context/userContext';
 import { RemoveMemberPrompt } from "./removeMemberPrompt";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
-import { ScheduleData } from "../../../../../../common/src/db/schedule/scheduleAndStartDate";
-import { DiscretionaryGraceContext } from "@/lib/pageSpecific/groupOverview/discretionaryContext";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
+import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { DiscretionaryGraceContext } from "@/lib/context/discretionaryContext";
 
 interface HoursTableProps {
     schedule : ScheduleData;

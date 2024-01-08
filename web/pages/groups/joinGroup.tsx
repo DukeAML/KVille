@@ -1,13 +1,13 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { Container, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
-import { joinGroupValidationSchema, tryToJoinGroup } from '../../../common/src/db/groupExistenceAndMembership/joinGroup';
+import { joinGroupValidationSchema, tryToJoinGroup } from '@/lib/db/groupExistenceAndMembership/joinGroup';
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { GroupContext } from "@/lib/context/groupContext";
 
 interface JoinGroupFormValues {
     groupCode : string;

@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
 import { Typography, Container, Button, List, ListItem, Switch, FormControlLabel, Stack } from "@mui/material";
 import { DateRangeChanger } from "@/components/shared/dateRangeChanger/dateRangeChanger";
-import { AvailabilityPageContext } from '@/lib/pageSpecific/availability/AvailabilityPageContextType';
+import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
 import { KvilleButton } from "@/components/shared/utils/button";
 import { AvailabilityDatesRangeChanger } from "./availabilityDatesRangeChanger";
 

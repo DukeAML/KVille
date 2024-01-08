@@ -1,16 +1,16 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { Container, Typography, Link } from "@mui/material";
 import { useContext, useState } from "react";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { createGroupValidationSchema, tryToCreateGroup } from "../../../common/src/db/groupExistenceAndMembership/createGroup";
+import { createGroupValidationSchema, tryToCreateGroup } from "@/lib/db/groupExistenceAndMembership/createGroup";
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
-import { GroupContext } from "@/lib/shared/context/groupContext";
-import { GroupDescription } from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
-import { TENTING_COLORS } from "../../../common/src/scheduling/rules/phaseData";
+import { GroupContext } from "@/lib/context/groupContext";
+import { GroupDescription } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 import { SelectTentType } from "@/components/pageSpecific/groups/createGroup/selectTentType";
 
 interface CreateGroupFormValues {
@@ -19,7 +19,7 @@ interface CreateGroupFormValues {
 }
 
 const initialValues : CreateGroupFormValues = {
-    groupName : ' ',
+    groupName : '',
     tentType : TENTING_COLORS.BLUE
 }
 

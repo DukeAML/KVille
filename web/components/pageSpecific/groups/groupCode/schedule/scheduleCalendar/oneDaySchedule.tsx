@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import { Container, Stack, Typography } from "@mui/material";
 import { OneDayScheduleRow } from "./oneDayScheduleRow";
-import { getDatePlusNumShifts } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { useContext } from "react";
-import { DateBeingShownContext } from "../../../../../../lib/pageSpecific/schedule/dateBeingShownContext";
+import { DateBeingShownContext } from "@/lib/context/schedule/dateBeingShownContext";
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
-import { useQueryToFetchSchedule } from "@/lib/pageSpecific/schedule/scheduleHooks";
-import { useGroupCode } from "@/lib/shared/useGroupCode";
+import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
+import { useGroupCode } from "@/lib/hooks/useGroupCode";
 
 
 interface OneDayScheduleProps {

@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
-import { ScheduleData } from "../../../../../../../common/src/db/schedule/scheduleAndStartDate";
-import { getNumSlotsBetweenDates } from "../../../../../../../common/src/calendarAndDates/datesUtils";
+import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { Stack } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
-import { useQueryToFetchSchedule } from "../../../../../../lib/pageSpecific/schedule/scheduleHooks";
+import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
 import { useRouter } from "next/dist/client/router";
-import { INVALID_GROUP_CODE } from "../../../../../../../common/src/db/groupExistenceAndMembership/GroupCode";
-import { EMPTY } from "../../../../../../../common/src/scheduling/slots/tenterSlot";
+import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
+import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { Typography } from "@material-ui/core";
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
 import { CellColorsCoordinator, OUT_OF_BOUNDS_NAME } from "../cellColorsCoordinator";
-import { CellColorsContext } from "@/lib/pageSpecific/schedule/cellColorsContext";
+import { CellColorsContext } from "@/lib/context/schedule/cellColorsContext";
 interface OneDayScheduleRowProps {
     rowStartDate : Date;
 }
