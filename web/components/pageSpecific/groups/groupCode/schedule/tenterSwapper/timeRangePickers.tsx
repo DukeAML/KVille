@@ -54,7 +54,7 @@ export const SwapTentersTimeRangePickers : React.FC = () => {
     return (
         <>
             <FormControl fullWidth>
-                <InputLabel id="start-time-label">Start Time</InputLabel>
+                <InputLabel id="start-time-label">From</InputLabel>
                 <Select
                 labelId="start-time-label"
                 id="start-time-select"
@@ -75,7 +75,7 @@ export const SwapTentersTimeRangePickers : React.FC = () => {
                 </Select>
             </FormControl>
             <FormControl fullWidth>
-                <InputLabel id="end-time-label">End Time</InputLabel>
+                <InputLabel id="end-time-label">Until</InputLabel>
                 <Select
                 labelId="end-time-label"
                 id="end-time-picker"
