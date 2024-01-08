@@ -15,6 +15,7 @@ import {
 import { KvilleButton } from "@/components/shared/utils/button";
 import { useRouter } from "@/../next/router";
 import Stack from "@mui/material/Stack";
+import { ErrorMessage } from "@/components/shared/utils/errorMessage";
 
 export default function GroupPage() {
 	const { userID, isLoggedIn } = useContext(UserContext);
@@ -30,6 +31,8 @@ export default function GroupPage() {
 	let body = null;
 	if (isLoading) {
 		body = <KvilleLoadingContainer />;
+	} else if (isError) {
+		body=<Container><ErrorMessage msg="An error occurred"/></Container>
 	} else if (groups) {
 		body = (
 		<Container maxWidth="sm">

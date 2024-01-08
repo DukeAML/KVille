@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
 import { GroupContext } from "@/lib/context/groupContext";
+import { Container } from "@mui/material";
 
 export default function GroupPageFromLogin() {
   const router = useRouter();
@@ -31,8 +32,14 @@ export default function GroupPageFromLogin() {
         <KvilleLoadingContainer />
       </BasePageContainerWithNavBarAndTitle>
     );
-  }
-  if (!isLoading && !isError && groups) {
+  } else if (isError) {
+    return (
+      <BasePageContainerWithNavBarAndTitle title="An error occurred">
+        
+      </BasePageContainerWithNavBarAndTitle>
+    )
+
+  } else if (groups) {
     if (groups.length == 1) {
       setGroupDescription(groups[0]);
       router.push("/groups/" + groups[0].groupCode);
