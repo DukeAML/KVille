@@ -47,7 +47,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </ThemeProvider>
         </GroupContext.Provider>
       </UserContext.Provider>
-      <ReactQueryDevtools/>
     </QueryClientProvider>
   );
 }

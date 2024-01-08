@@ -15,7 +15,7 @@ export const AvailabilityOptions : React.FC = () => {
     }
 
     let changeSettingPreferredOption = {
-        summaryText : "Set Preferred Timeslots",
+        summaryText : "Set Most Preferred Timeslots",
         detail : <Container>
             {settingPreferred ? 
                 <Typography style={{marginBottom : 8}}>You are now setting your preferred availability slots. Our algorithm will specifically try to put you in the slots you mark as preferred.</Typography> 
