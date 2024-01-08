@@ -8,7 +8,7 @@ const HomePage : React.FC = () => {
 	return (
 		<BasePageContainerWithNavBarAndTitle title="Welcome to the Tent Shift Scheduling Helper!">
 			<Container maxWidth="md">
-				<Typography variant="h5" align="center" style={{marginBottom : 16}}>
+				<Typography variant="h6" align="center" style={{marginBottom : 24, marginTop: 24}}>
 					Not sure how to figure out who will be in your tent at each time? Spending too much time trying to figure it out? 
 					Try our tool to automatically create a fair schedule based on everyone&apos;s availability and preferences! 
 					Follow the instructions below
@@ -24,11 +24,10 @@ const HomePage : React.FC = () => {
 					<Container>
 						<Typography>
 							Once logged in, go to the <Link href="/groups/createGroup" >Create Group page</Link>.
-							After creating the group, it will take you to a group overview page (example screenshot below), which will display the group members 
-							and how many hours each is scheduled for. Note the &quot;group code&quot; on this page. It will also be at the end of the URL. 
+							After creating the group, it will take you to a group overview page (example screenshot below). Note the &quot;group code&quot; on this page. It will also be at the end of the URL. 
 							Other people will need this group code to join your group. 
 						</Typography>
-						<Image src="/../public/Hours_pic.png" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
+						<Image src="/Hours_pic.png" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
 					</Container>
 				},
 				{
@@ -47,7 +46,7 @@ const HomePage : React.FC = () => {
 							Once logged in, go the My Groups Page, select your group, and then go the availability page (screenshot below). 
 							You can fill in when you are generally available and also indicate the timeslots for which you would most prefer to be scheduled
 						</Typography>
-						<Image src="/../public/Availability_pic.png" alt="Availability Page" width="600" height="600"/>
+						<Image src="/Availability_pic.png" alt="Availability Page" width="600" height="600"/>
 					</Container>
 				},
 				{
@@ -60,9 +59,9 @@ const HomePage : React.FC = () => {
 							You can run the algorithm as many times as you want, for whatever time ranges you want. 
 							Once completed, you can also swap who is assigned to individual time slots. 
 						</Typography>
-						<Image src="/../public/Schedule_pic.png" alt="Schedule Page" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
-						<Image src="/../public/Assign_pic.png" alt="Create Schedule" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
-						<Image src="/../public/Swap_pic.png" alt="Swap Tenters" width="600" height="600"/>
+						<Image src="/Schedule_pic.png" alt="Schedule Page" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/Assign_pic.png" alt="Create Schedule" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/Swap_pic.png" alt="Swap Tenters" width="600" height="600"/>
 					</Container>
 				}
 				]}/>
