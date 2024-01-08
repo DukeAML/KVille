@@ -46,7 +46,6 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
         });
         queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
         setDBAvailability(groupCode, userID, newAvailabilitySlots);
-        console.log("back to falses");
         setEdited(new Array(props.originalAvailabilityArr.length).fill(false));
     }
 

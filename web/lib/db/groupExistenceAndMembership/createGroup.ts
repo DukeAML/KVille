@@ -25,7 +25,6 @@ export const createGroupValidationSchema = Yup.object({
 
 async function getGroupExistsByGroupName(groupName : string) : Promise<boolean> {
     let queryResults = await firestore.collection('groups').where('name', '==', groupName).get();
-    console.log(queryResults.empty);
     if (queryResults.empty){
         return false;
     } else {
