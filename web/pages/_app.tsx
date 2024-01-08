@@ -20,6 +20,7 @@ import {
  
 import {  auth } from '@/lib/db/firebase_config';
 import { isBrowser } from "@/lib/hooks/windowProperties";
+import Head from 'next/head';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [userID, setUserID] = useState(INVALID_USER_ID);
@@ -39,14 +40,20 @@ export default function App({ Component, pageProps }: AppProps) {
 
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={{userID, isLoggedIn, triedToLogIn, setUserID, setIsLoggedIn, setTriedToLogIn}}>
-        <GroupContext.Provider value={{groupDescription, setGroupDescription}}>
-          <ThemeProvider theme={theme}>
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </GroupContext.Provider>
-      </UserContext.Provider>
-    </QueryClientProvider>
+    <>
+      <Head>
+          <link rel="icon" href="/tent.ico" />
+          {/* Other head elements */}
+      </Head>
+      <QueryClientProvider client={queryClient}>
+        <UserContext.Provider value={{userID, isLoggedIn, triedToLogIn, setUserID, setIsLoggedIn, setTriedToLogIn}}>
+          <GroupContext.Provider value={{groupDescription, setGroupDescription}}>
+            <ThemeProvider theme={theme}>
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </GroupContext.Provider>
+        </UserContext.Provider>
+      </QueryClientProvider>
+    </>
   );
 }
