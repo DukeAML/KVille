@@ -13,13 +13,13 @@ import { getAuth} from 'firebase/auth';
  */
 const initializeFirebase = () => {
 	const firebaseConfig = {
-		apiKey: "AIzaSyDHG7w0mFtObImLCcJoZuaLrcbjZPISGJ0",
-		authDomain: "shift-scheduler-prod-81457.firebaseapp.com",
-		projectId: "shift-scheduler-prod-81457",
-		storageBucket: "shift-scheduler-prod-81457.appspot.com",
-		messagingSenderId: "447120219257",
-		appId: "1:447120219257:web:9b7e768576507b4aa048a8",
-		measurementId: "G-P03HY49GNB"
+		apiKey: process.env.NEXT_PUBLIC_apiKey,
+		authDomain: process.env.NEXT_PUBLIC_authDomain,
+		projectId: process.env.NEXT_PUBLIC_projectId,
+		storageBucket: process.env.NEXT_PUBLIC_storageBucket,
+		messagingSenderId: process.env.NEXT_PUBLIC_messagingSenderId,
+		appId: process.env.NEXT_PUBLIC_appId,
+		measurementId: process.env.NEXT_PUBLIC_measurementId
 	};
 
 	if (firebase.apps.length === 0) {
