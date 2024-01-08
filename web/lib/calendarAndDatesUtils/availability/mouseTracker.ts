@@ -105,7 +105,6 @@ export class MouseTracker {
 	revertVisitedRowColsOutsideBoundingBox(){
 		let rowsAndColsToRevert : {row : number, col : number}[]= []
 		let rowsAndCols = this.visitedRowsAndColsTracker.getAllVisitedRowCols();
-		console.log(rowsAndCols);
 		rowsAndCols.map(({row, col}, index) => {
 			if (row <= Math.max(this.startRow, this.currentRow) && row >= Math.min(this.startRow, this.currentRow) && col <= Math.max(this.startCol, this.currentCol) && col >= Math.min(this.startCol, this.currentCol)){
 				return;

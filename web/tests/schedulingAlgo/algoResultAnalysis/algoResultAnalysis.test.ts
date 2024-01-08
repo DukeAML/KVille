@@ -26,7 +26,6 @@ describe("result tests", () => {
 
 
         })
-        console.log(analysis);
         
         
 
