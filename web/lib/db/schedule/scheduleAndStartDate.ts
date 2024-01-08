@@ -24,7 +24,7 @@ export class ScheduleData{
     }
 
     //helper method
-    incrementVal(map, key : string){
+    incrementVal(map : {[key : string] : number}, key : string){
         if (typeof map[key] == 'undefined'){
             map[key] = 0.5;
         } else {
@@ -32,7 +32,7 @@ export class ScheduleData{
         }
     }
 
-    decrementVal(map, key : string, val : number){
+    decrementVal(map : {[key : string] : number}, key : string, val : number){
         if (typeof map[key] =='undefined'){
             return;
         } else {
@@ -48,8 +48,9 @@ export class ScheduleData{
             return [ids.join(" ")];
         }
         ids.forEach((id) => {
-            if (this.IDToNameMap.has(id)){
-                names.push(this.IDToNameMap.get(id));
+            let name = this.IDToNameMap.get(id);
+            if (name !== undefined){
+                names.push(name);
             } else {
                 names.push(id);
             }
@@ -62,8 +63,8 @@ export class ScheduleData{
     }
 
     getEmptyHoursPerPersonMaps() : DayNightHoursPerPersonMapInterface{
-        let dayHoursPerPerson = {};
-        let nightHoursPerPerson = {};
+        let dayHoursPerPerson : {[key : string] : number}= {};
+        let nightHoursPerPerson : {[key : string] : number} = {};
         this.IDToNameMap.forEach((username, id) => {
             dayHoursPerPerson[username] = 0;
             nightHoursPerPerson[username] = 0;

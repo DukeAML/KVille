@@ -33,13 +33,18 @@ export async function fetchAvailability(groupCode : string, userID : string) : P
         throw new Error(AVAILABILITY_ERROR_CODES.FETCH_ERROR);
     } else {
         let data = [];
-        let availabilityDB = user.data().availability;
-        let startDate = getDateRoundedTo30MinSlot( user.data().availabilityStartDate.toDate());
+        let userData = user.data();
+        if (userData !== undefined){
+            let availabilityDB = userData.availability;
+            let startDate = getDateRoundedTo30MinSlot( userData.availabilityStartDate.toDate());
 
-        for (let timeIndex = 0; timeIndex < availabilityDB.length; timeIndex += 1){
-            data.push(new AvailabilitySlot(new Date(startDate.getTime() + timeIndex * 30 * 60000), availabilityDB[timeIndex].available, availabilityDB[timeIndex].preferred));
+            for (let timeIndex = 0; timeIndex < availabilityDB.length; timeIndex += 1){
+                data.push(new AvailabilitySlot(new Date(startDate.getTime() + timeIndex * 30 * 60000), availabilityDB[timeIndex].available, availabilityDB[timeIndex].preferred));
+            }
+            return data;
+        } else {
+            return [];
         }
-        return data;
     }
 
     

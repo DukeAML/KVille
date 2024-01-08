@@ -7,6 +7,8 @@ import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/sched
 import { getTentingStartDate } from "@/lib/calendarAndDatesUtils/tentingDates";
 import { AvailabilityStatus } from "../availability";
 import { NewGroupData } from "./createGroup";
+import firebase from "firebase/compat/app";
+import { getErrorMessage } from "../errorHandling";
 
 export const JOIN_GROUP_ERROR_CODES = {
     GROUP_DOES_NOT_EXIST : "Group does not exist",
@@ -72,16 +74,19 @@ interface GroupDataForGroupRef{
     creator : string;
     groupScheduleStartDate : Date;
 }
-async function getGroupDataForGroupRef(groupRef) : Promise<GroupDataForGroupRef> {
+async function getGroupDataForGroupRef(groupRef : firebase.firestore.DocumentReference<firebase.firestore.DocumentData>) : Promise<GroupDataForGroupRef> {
     let groupName = '';
     let tentType = '';
     let creator = '';
     let groupScheduleStartDate = new Date(getScheduleDates(CURRENT_YEAR).startOfBlack);
     await groupRef.get().then((groupSnapshot) => {
-        groupName = groupSnapshot.data().name;
-        tentType = groupSnapshot.data().tentType;
-        creator = groupSnapshot.data().creator;
-        groupScheduleStartDate = groupSnapshot.data().groupScheduleStartDate.toDate();
+        let groupData = groupSnapshot.data();
+        if (groupData !== undefined){
+            groupName = groupData.name;
+            tentType = groupData.tentType;
+            creator = groupData.creator;
+            groupScheduleStartDate = groupData.groupScheduleStartDate.toDate();
+        }
     })
     return {groupName, tentType, creator, groupScheduleStartDate};
 }
@@ -101,7 +106,7 @@ export async function tryToJoinGroup(groupCode : string, userID : string) : Prom
             transaction.set(newMemberRef,  getDefaultGroupMemberData(tentType, groupScheduleStartDate.getFullYear()));
         })
     } catch (error) {
-        throw new Error(error.message);
+        throw new Error(getErrorMessage(error));
     } 
     return new GroupDescription(groupCode, groupName, tentType, creator);
 

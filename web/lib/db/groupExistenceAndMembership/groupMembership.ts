@@ -1,4 +1,5 @@
 import { firestore } from "../firebase_config";
+import firebase from 'firebase/compat/app';
 
 export class GroupDescription {
 
@@ -46,7 +47,7 @@ async function fetchAllGroups() : Promise<GroupDescriptionWithMembers[]> {
   return new Promise((resolve, reject) => {
     firestore.collection('groups').get()
       .then((querySnapshot) => {
-        const groupPromises = [];
+        const groupPromises : Promise<firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>>[] = [];
 
         querySnapshot.forEach((groupDoc) => {
           const membersRef = groupDoc.ref.collection('members').get();
@@ -55,7 +56,7 @@ async function fetchAllGroups() : Promise<GroupDescriptionWithMembers[]> {
 
         Promise.all(groupPromises)
           .then((groupSnapshots) => {
-            const groupsData = [];
+            const groupsData : GroupDescriptionWithMembers[] = [];
 
             groupSnapshots.forEach((membersQuerySnapshot, index) => {
               const groupCode = querySnapshot.docs[index].id;
@@ -85,7 +86,12 @@ export async function fetchGroupData(groupCode : string) : Promise<GroupDescript
       .get()
       .then((groupSnapshot) => {
         let groupData = groupSnapshot.data();
-        return new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator)
+        if (groupData !== undefined){
+          return new GroupDescription(groupCode, groupData.name, groupData.tentType, groupData.creator)
+        } else {
+          throw new Error("Error")
+        }
+        
       })
   return description;
 

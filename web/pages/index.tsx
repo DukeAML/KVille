@@ -10,7 +10,7 @@ const HomePage : React.FC = () => {
 			<Container maxWidth="md">
 				<Typography variant="h5" align="center" style={{marginBottom : 16}}>
 					Not sure how to figure out who will be in your tent at each time? Spending too much time trying to figure it out? 
-					Try our tool to automatically create a fair schedule based on everyone's availability and preferences! 
+					Try our tool to automatically create a fair schedule based on everyone&apos;s availability and preferences! 
 					Follow the instructions below
 				</Typography>
 				<KvilleAccordion elements={[
@@ -25,7 +25,7 @@ const HomePage : React.FC = () => {
 						<Typography>
 							Once logged in, go to the <Link href="/groups/createGroup" >Create Group page</Link>.
 							After creating the group, it will take you to a group overview page (example screenshot below), which will display the group members 
-							and how many hours each is scheduled for. Note the "group code" on this page. It will also be at the end of the URL. 
+							and how many hours each is scheduled for. Note the &quot;group code&quot; on this page. It will also be at the end of the URL. 
 							Other people will need this group code to join your group. 
 						</Typography>
 						<Image src="/../public/Hours_pic.png" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
