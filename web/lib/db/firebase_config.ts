@@ -13,14 +13,13 @@ import { getAuth} from 'firebase/auth';
  */
 const initializeFirebase = () => {
 	const firebaseConfig = {
-		apiKey: "AIzaSyDEFvAO5nl5XlW7WcGcDCrFGo4QEZFuWq0",
-		authDomain: "duke-tenting-app-cc15b.firebaseapp.com",
-		databaseURL: "https://duke-tenting-app-cc15b-default-rtdb.firebaseio.com",
-		projectId: "duke-tenting-app-cc15b",
-		storageBucket: "duke-tenting-app-cc15b.appspot.com",
-		messagingSenderId: "391061238630",
-		appId: "1:391061238630:web:85fbc00e4babf43cdc8ea7",
-		measurementId: "G-6QNGDGFLHZ",
+		apiKey: "AIzaSyDHG7w0mFtObImLCcJoZuaLrcbjZPISGJ0",
+		authDomain: "shift-scheduler-prod-81457.firebaseapp.com",
+		projectId: "shift-scheduler-prod-81457",
+		storageBucket: "shift-scheduler-prod-81457.appspot.com",
+		messagingSenderId: "447120219257",
+		appId: "1:447120219257:web:9b7e768576507b4aa048a8",
+		measurementId: "G-P03HY49GNB"
 	};
 
 	if (firebase.apps.length === 0) {
