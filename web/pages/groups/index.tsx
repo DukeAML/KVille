@@ -1,12 +1,13 @@
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
-import { UserContext } from "@/lib/shared/context/userContext";
-import { Container, Typography } from "@material-ui/core";
+import { UserContext } from "@/lib/context/userContext";
+import { Container, Typography} from "@mui/material";
+import { Button } from "@material-ui/core";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import {
   fetchGroups,
   GroupDescription,
-} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+} from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { GroupDisplay } from "../../components/pageSpecific/groups/groupDisplay";
 import {
   KvilleLoadingContainer,
@@ -17,7 +18,6 @@ import Stack from "@mui/material/Stack";
 
 export default function GroupPage() {
 	const { userID, isLoggedIn } = useContext(UserContext);
-	console.log("rendering groups home page and my userID is " + userID);
 	const {
 		data: groups,
 		isLoading,
@@ -25,37 +25,40 @@ export default function GroupPage() {
 	} = useQuery<GroupDescription[], Error>(["fetchAllGroups" + userID], () =>
 		fetchGroups(userID)
 	);
-	console.log(groups);
 	const router = useRouter();
 
 	let body = null;
 	if (isLoading) {
 		body = <KvilleLoadingContainer />;
-	} else {
+	} else if (groups) {
 		body = (
 		<Container maxWidth="sm">
-			<Typography variant="h6" align="center">
-			Select your Group or Join/Create one to Continue.
+			<Typography variant="h6" align="center" style={{marginBottom : 16}}>
+				{groups.length > 0 ? "Select your Group or Join/Create one to Continue." : "You are not a member of a group yet. Join or create one to continue"}
 			</Typography>
 			{groups?.map((group, index) => {
-			return <GroupDisplay group={group} key={index} />;
+				return <GroupDisplay group={group} key={index} />;
 			})}
-			<Stack direction="row" alignItems="center" gap={1}>
-			<KvilleButton
-				onClick={() => router.push("/groups/joinGroup")}
-				text="Join Group"
-			></KvilleButton>
-			<KvilleButton
-				onClick={() => router.push("/groups/createGroup")}
-				text="Create Group"
-			></KvilleButton>
+			<Stack direction="column" alignItems="center" gap={1} style={{marginTop : 16}}>
+				<Button
+					onClick={() => router.push("/groups/joinGroup")}
+					variant="contained"
+					color="primary"
+					style={{textTransform : "none"}}
+				>Join a Group</Button>
+				<Button
+					onClick={() => router.push("/groups/createGroup")}
+					variant="contained"
+					color="primary"
+					style={{textTransform : "none"}}
+				>Create a Group</Button>
 			</Stack>
 		</Container>
 		);
 	}
 	return (
 		<PermissionRequiredPageContainer title="My Groups" groupSpecificPage={false}>
-		{body}
+			{body}
 		</PermissionRequiredPageContainer>
 	);
 }

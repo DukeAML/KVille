@@ -1,39 +1,40 @@
-import React, {useContext, useState, useEffect} from "react";
-import { Grid, Paper, Typography } from "@mui/material";
-import { CellColorsContext } from "../../../../../../lib/pageSpecific/schedule/cellColorsContext";
-import { TenterSwapContext } from "@/lib/pageSpecific/schedule/tenterSwapContext";
-import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";
+import React, {useContext} from "react";
+import { Typography } from "@mui/material";
+import { TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
+import { TableCell } from "@material-ui/core";
+import { ROW_PADDING_AND_MARGIN } from "./oneDayScheduleRow";
+
 
 interface ScheduleCellProps {
     name : string;
     startDate : Date;
+    inBounds : boolean;
+    color : string;
 }
 
 export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellProps) => {
-    const {cellColorsCoordinator} = useContext(CellColorsContext);
     const {isSwappingTenter, setIsSwappingTenter, setTenterToReplace, setTimeSlotClickedOn} = useContext(TenterSwapContext)
-    const [color, setColor] = useState<string>("white")
     const handleClick = () => {
-        setIsSwappingTenter(true);
-        setTenterToReplace(props.name);
-        setTimeSlotClickedOn(props.startDate);
+        if (props.inBounds){
+            setIsSwappingTenter(true);
+            setTenterToReplace(props.name);
+            setTimeSlotClickedOn(props.startDate);
+        }  
     }
 
-    useEffect(() => {
-        setColor(cellColorsCoordinator.getColorForName(props.name));
-    }, [props.name]);
-
-    
     return (
         <TableCell style={{
-            height : "100%", 
-            backgroundColor : color, 
+            backgroundColor : props.color, 
             cursor : "grab",
             borderLeft : "1px solid black",
             borderRight : "1px solid black",
             borderTop : (props.startDate.getMinutes() == 0) ? "2px solid black " : "2px dashed black",
+            margin : ROW_PADDING_AND_MARGIN,
+            padding : ROW_PADDING_AND_MARGIN,
+            height : 20
         }} onClick={handleClick}>
-            <Typography align="center" >{props.name}</Typography>
+            <Typography noWrap align="center" style={{ margin : 0, padding : 0}} >{props.name}</Typography>
+    
             
         </TableCell>
     )

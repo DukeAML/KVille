@@ -3,20 +3,19 @@ import GroupPage from "./index";
 import {
   GroupDescription,
   fetchGroups,
-} from "../../../common/src/db/groupExistenceAndMembership/groupMembership";
+} from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { useContext } from "react";
-import { UserContext } from "@/lib/shared/context/userContext";
+import { UserContext } from "@/lib/context/userContext";
 import { useRouter } from "next/router";
 import { KvilleLoadingContainer } from "@/components/shared/utils/loading";
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer";
-import { GroupContext } from "@/lib/shared/context/groupContext";
+import { GroupContext } from "@/lib/context/groupContext";
 
 export default function GroupPageFromLogin() {
-  //console.log("hi");
   const router = useRouter();
-  const { groupDescription, setGroupDescription } = useContext(GroupContext);
+  const { setGroupDescription } = useContext(GroupContext);
 
-  const { userID, isLoggedIn } = useContext(UserContext);
+  const { userID } = useContext(UserContext);
 
   const {
     data: groups,
@@ -29,7 +28,7 @@ export default function GroupPageFromLogin() {
   if (isLoading) {
     return (
       <BasePageContainerWithNavBarAndTitle title="">
-        <KvilleLoadingContainer />;
+        <KvilleLoadingContainer />
       </BasePageContainerWithNavBarAndTitle>
     );
   }
@@ -39,7 +38,7 @@ export default function GroupPageFromLogin() {
       router.push("/groups/" + groups[0].groupCode);
       return (
         <BasePageContainerWithNavBarAndTitle title="">
-          <KvilleLoadingContainer />;
+          <KvilleLoadingContainer />
         </BasePageContainerWithNavBarAndTitle>
       );
     }

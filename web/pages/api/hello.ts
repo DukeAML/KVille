@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { auth } from '../../../common/src/db/firebase_config'
+import { auth } from '@/lib/db/firebase_config'
 
 type Data = {
   name: string,

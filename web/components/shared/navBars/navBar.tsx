@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import { AppBar, Toolbar, Typography, Button, PropTypes } from '@material-ui/core';
 import { useRouter, NextRouter } from 'next/router';
-import { useCheckIfScreenIsNarrow } from '@/lib/shared/windowProperties';
+import { useCheckIfScreenIsNarrow } from '@/lib/hooks/windowProperties';
 import { MobileNavBarDrawerAndMenuIcon } from './mobileNavBar';
 
 
@@ -66,7 +66,7 @@ export const DescriptionsToOptions = (optionDescriptions : OptionDescription[], 
             <div>
                 {optionDescriptions.map((description, index) => {
                     return (
-                        <Button color="inherit" onClick={() => router.push(description.route)} key={description.route}>{description.text}</Button>
+                        <Button color="inherit" onClick={() => router.push(description.route)} key={description.route} style={{textTransform : "none"}}>{description.text}</Button>
                     )
                 })}
             </div>

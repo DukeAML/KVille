@@ -1,27 +1,39 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { Container, Typography } from "@mui/material";
-import React from "react"
+import { Container, Typography, Link } from "@mui/material";
+import React from "react";
+import Image from "next/image";
 
 const HomePage : React.FC = () => {
 	return (
-		<BasePageContainerWithNavBarAndTitle title="Welcome to the Shift Scheduling Helper!">
+		<BasePageContainerWithNavBarAndTitle title="Welcome to the Tent Shift Scheduling Helper!">
 			<Container maxWidth="md">
 				<Typography variant="h5" align="center" style={{marginBottom : 16}}>
-					To use our tool, follow the instructions below.
+					Not sure how to figure out who will be in your tent at each time? Spending too much time trying to figure it out? 
+					Try our tool to automatically create a fair schedule based on everyone's availability and preferences! 
+					Follow the instructions below
 				</Typography>
 				<KvilleAccordion elements={[
 				{
 					summaryText : "1) Everyone in your group will need to register",
-					detail : <Typography>Go to the Regsiter page in the Navbar</Typography>
+					detail : <Typography>Go to the <Link href="/register">Register page</Link> </Typography>
 				},
 				{
 					summaryText : "2) Someone from the group will need to create a group on this site",
-					detail : <Typography>Once logged in, go to the Create Group page (a link to it will appear in the Nav bar once you're logged in)</Typography>
+					detail : 
+					<Container>
+						<Typography>
+							Once logged in, go to the <Link href="/groups/createGroup" >Create Group page</Link>.
+							After creating the group, it will take you to a group overview page (example screenshot below), which will display the group members 
+							and how many hours each is scheduled for. Note the "group code" on this page. It will also be at the end of the URL. 
+							Other people will need this group code to join your group. 
+						</Typography>
+						<Image src="/../public/Hours_pic.png" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
+					</Container>
 				},
 				{
 					summaryText : "3) Everyone else can then join the group",
-					detail : <Typography>Once logged in, go to the Join Group page (a link to it will appear in the Nav bar once you're logged in). You will need the group code from whoever created the group</Typography>
+					detail : <Typography>Once logged in, go to the <Link href="/groups/joinGroup">Join Group page</Link>. You will need the group code from whoever created the group</Typography>
 				},
 				{
 					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts.",
@@ -29,11 +41,29 @@ const HomePage : React.FC = () => {
 				},
 				{
 					summaryText : "5) Then, everyone in the group should fill in their availability on the Availability Page",
-					detail : <Typography>Once logged in, go the My Groups Page, select your group, and then go the availability page. You can fill in when you are generally available and also indicate the timeslots for which you would most prefer to be scheduled</Typography>
+					detail : 
+					<Container>
+						<Typography>
+							Once logged in, go the My Groups Page, select your group, and then go the availability page (screenshot below). 
+							You can fill in when you are generally available and also indicate the timeslots for which you would most prefer to be scheduled
+						</Typography>
+						<Image src="/../public/Availability_pic.png" alt="Availability Page" width="600" height="600"/>
+					</Container>
 				},
 				{
 					summaryText : "6) Finally, run our algorithm to assign people to their shifts",
-					detail : <Typography>On the Schedule page, press the Assign Tenters dropdown. Before submitting, make sure everyone has filled in their availability! You can run the algorithm as many times as you want, for whatever time ranges you want. Once completed, you can also swap who is assigned to individual time slots. </Typography>
+					detail : 
+					<Container>
+						<Typography>
+							On the Schedule page (screenshots below), press the Assign Tenters dropdown. 
+							Before submitting, make sure everyone has filled in their availability! 
+							You can run the algorithm as many times as you want, for whatever time ranges you want. 
+							Once completed, you can also swap who is assigned to individual time slots. 
+						</Typography>
+						<Image src="/../public/Schedule_pic.png" alt="Schedule Page" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/../public/Assign_pic.png" alt="Create Schedule" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/../public/Swap_pic.png" alt="Swap Tenters" width="600" height="600"/>
+					</Container>
 				}
 				]}/>
 				<Typography variant="h6" align="center" style={{marginTop : 20}}>

@@ -9,7 +9,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: 4,
 		fontFamily: '"TT Norms", Helvetica, Arial, "Lucida Grande", sans-serif',
 		fontWeight : "bold"
 	},

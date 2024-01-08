@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container } from "@material-ui/core";
-import {Grid} from "@material-ui/core";
+import { Container, Grid, Button } from "@mui/material";
 import { DateChanger } from "./dateChanger";
 import { KvilleButton } from "../utils/button";
 interface DateRangeChangerProps {
@@ -29,7 +28,9 @@ export const DateRangeChanger : React.FC<DateRangeChangerProps> = (props : DateR
                     <DateChanger text={"end"} includeHours={props.includeHours} date ={newEndDate} setDate={setNewEndDate}/>
                 </Grid>
             </Grid>
-            <KvilleButton onClick={() => {props.submitNewDateRange(newStartDate, newEndDate);}} text={"Submit"}/>
+            <Button onClick={() => {props.submitNewDateRange(newStartDate, newEndDate);}}  variant="contained" style={{margin : 8, maxWidth : "fit-content"}}>
+                Submit
+            </Button>
         </Container>
     )
 }
