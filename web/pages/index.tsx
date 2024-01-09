@@ -9,8 +9,8 @@ const HomePage : React.FC = () => {
 		<BasePageContainerWithNavBarAndTitle title="Welcome to the Tent Shift Scheduling Helper!">
 			<Container maxWidth="md">
 				<Typography variant="h6" align="center" style={{marginBottom : 24, marginTop: 24}}>
-					Not sure how to figure out who will be in your tent at each time? Spending too much time trying to figure it out? 
-					Try our tool to automatically create a fair schedule based on everyone&apos;s availability and preferences! 
+					Not sure how to choose who will be in your tent at each time? Spending too much time trying to figure it out? 
+					Use our tool to automatically create a fair schedule based on everyone&apos;s availability and preferences! 
 					Follow the instructions below
 				</Typography>
 				<KvilleAccordion elements={[
