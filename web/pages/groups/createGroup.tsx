@@ -53,7 +53,7 @@ export default function CreateGroupPage() {
                     <KvilleForm 
                         validationSchema={createGroupValidationSchema} 
                         initialValues={initialValues}
-                        textFields={[{name : "groupName", type : "string"}]}
+                        textFields={[{name : "groupName", type : "string", label: "Group Name"}]}
                         extraStuff={<SelectTentType tentType={tentType} setTentType={setTentType}/>}
                         errorMessage={errorMessage}
                         handleSubmit={handleSubmit}

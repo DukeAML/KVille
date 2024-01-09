@@ -45,8 +45,8 @@ const LoginPage: React.FC = () => {
 			initialValues={initialValues}
 			validationSchema={authValidationSchema}
 			textFields={[
-				{ name: "username", type: "username" },
-				{ name: "password", type: "password" },
+				{ name: "username", type: "username", label: "Username" },
+				{ name: "password", type: "password", label: "Password" },
 			]}
 			errorMessage={errorMessage}
 		/>

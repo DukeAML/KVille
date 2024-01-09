@@ -42,7 +42,7 @@ export default function JoinGroupPage() {
                 <KvilleForm 
                     validationSchema={joinGroupValidationSchema} 
                     initialValues={initialValues}
-                    textFields={[{name : "groupCode", type : "string"}]}
+                    textFields={[{name : "groupCode", type : "string", label: "Group Code"}]}
                     errorMessage={errorMessage}
                     handleSubmit={handleSubmit}
                 />

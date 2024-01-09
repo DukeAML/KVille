@@ -47,7 +47,7 @@ const RegisterForm: React.FC = () => {
 				handleSubmit={handleSubmit} 
 				initialValues={initialValues} 
 				validationSchema={authValidationSchema} 
-				textFields={[{name : "username", type : "username" }, {name : "password", type : "password"}]}
+				textFields={[{name : "username", type : "username", label: "Username"}, {name : "password", type : "password", label: "Password"}]}
 				errorMessage={errorMessage}/>
 
 			

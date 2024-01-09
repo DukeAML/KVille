@@ -19,6 +19,7 @@ interface KvilleFormProps<FormValuesInterface> {
 interface TextFieldProps {
     name : string;
     type : string;
+    label : string;
 }
 
 interface SelectFieldProps {
@@ -53,7 +54,7 @@ export const KvilleForm: React.FC<KvilleFormProps<any>> = (props:KvilleFormProps
                                     <Field
                                         as={TextField}
                                         type={fieldProps.type}
-                                        label={fieldProps.name}
+                                        label={fieldProps.label}
                                         name={fieldProps.name}
                                         variant="outlined"
                                         fullWidth
