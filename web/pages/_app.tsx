@@ -42,6 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+          <title>Tent Shift Schedule</title>
           <link rel="icon" href="/tent.ico" />
           {/* Other head elements */}
       </Head>
