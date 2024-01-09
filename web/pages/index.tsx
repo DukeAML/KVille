@@ -54,7 +54,7 @@ const HomePage : React.FC = () => {
 					detail : 
 					<Container>
 						<Typography>
-							On the Schedule page (screenshots below), press the Assign Tenters dropdown. 
+							On the Schedule page (screenshots below), press the &quot;Fill in Schedule&quot; dropdown. 
 							Before submitting, make sure everyone has filled in their availability! 
 							You can run the algorithm as many times as you want, for whatever time ranges you want. 
 							Once completed, you can also swap who is assigned to individual time slots. 
