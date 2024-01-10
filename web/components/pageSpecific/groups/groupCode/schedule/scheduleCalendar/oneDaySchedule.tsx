@@ -37,7 +37,7 @@ export const OneDaySchedule : React.FC<OneDayScheduleProps> = (props : OneDaySch
             <TableContainer >
                 <Table>
                     <TableBody>
-                        {new Array(48).fill("").map((_, index) => <OneDayScheduleRow rowStartDate={getDatePlusNumShifts(dateBeingShown, index)} key={"row" + index.toString()}/>)}
+                        {new Array(48).fill("").map((_, index) => <OneDayScheduleRow rowStartDate={getDatePlusNumShifts(dateBeingShown, index)} key={"row" + getDatePlusNumShifts(dateBeingShown, index).toLocaleString()}/>)}
                     </TableBody>
                 </Table>
             </TableContainer>

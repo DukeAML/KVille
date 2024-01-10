@@ -2,7 +2,7 @@ import {Slot} from "./slot";
 
 
 export const EMPTY = "empty";
-export const GRACE = "Grace Period";
+export const GRACE = "Grace";
 export const TENTER_STATUS_CODES = {
     AVAILABLE : "Available",
     UNAVAILABLE : "Unavailable",

@@ -36,14 +36,15 @@ const GroupHomePage : React.FC = () => {
                         <KvilleAccordion elements={
                             [
                                 {
-                                    summaryText : "Hours Adjusted for Discretionary Grace Periods",
+                                    summaryText : "Hours Adjusted for Grace Periods",
                                     detail : 
                                         <Container>
                                             <Typography style={{marginBottom : 8}}>
-                                                Click the button below to show the hours data when accounting for discretionary grace. A discretionary grace period 
-                                                is any grace period not known before the start of tenting season. Examples include grace for when it is too cold
-                                                at night and grace after a tent check, but not the grace periods known of before the start of tenting - i.e. grace week
-                                                and the periods before and after each basketball game. Please note that our tracking of these discretionary grace periods
+                                                When the line monitors call a tent check and there&apos;s grace for the next hour, the people who are assigned to be in the
+                                                tent at that time won&apos;t have to show up for their scheduled shift. This also happens when grace is called for bad weather. 
+                                                By pressing the button below, you can see how much time everyone has
+                                                actually spent in the time compared to how much time they were scheduled for.
+                                                Please note that our tracking of these discretionary grace periods
                                                 is not guaranteed to be 100% accurate or up to date. Our scheduling algorithm also does not account for discretionary grace 
                                                 periods when balancing the fairness. They are supposed to come as a relief, not something you feel obligated to make up for
                                             </Typography>

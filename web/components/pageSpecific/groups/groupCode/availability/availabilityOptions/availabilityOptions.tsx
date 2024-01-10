@@ -57,7 +57,7 @@ export const AvailabilityOptions : React.FC = () => {
                     {colorblindModeIsOn ? "\"u\" (\"for \"unavailable\")" : "Red"} represents when you are unavailable. Our scheduling algorithm will not assign to you a time when you are unavailable
                 </ListItem>
                 <ListItem sx={{ display: 'list-item' }}>
-                    {colorblindModeIsOn ? "\"p\" (\"for \"preferred\")" : "Gold"} is for the timeslots you most want to be in. Our scheduling algorithm will make it a priority to assign you to these times when possible. 
+                    {colorblindModeIsOn ? "\"p\" (\"for \"preferred\")" : "Gold"} is for the timeslots you most want to be in. Our scheduling algorithm will make it a priority to assign you to these times when possible. Check the &quot;Set Most Preferred Timeslots&quot; dropdown above for more details
                 </ListItem>
                 <ListItem sx={{display : 'list-item'}}>
                     {colorblindModeIsOn ? "\"x\" (for out of bounds)" : "Gray"} is for timeslots which fall outside of the time period where your group has to be in the tent

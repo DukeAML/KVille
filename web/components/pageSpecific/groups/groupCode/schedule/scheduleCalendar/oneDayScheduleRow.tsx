@@ -60,8 +60,9 @@ const dateToTextLabel = (date : Date) : string => {
 
 }
 
-export const ROW_PADDING_AND_MARGIN = 4;
-
+export const ROW_PADDING_AND_MARGIN = 1;
+export const ROW_TEXT_FONT_SIZE = 11;
+export const ROW_HEIGHT = 16;
 const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) => {
     let scheduleIndex = getNumSlotsBetweenDates(props.scheduleAndStartDate.startDate, props.rowStartDate);
     let {cellColorsCoordinator} = useContext(CellColorsContext);
@@ -77,9 +78,9 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
         names = [EMPTY];
     }
 
-    let timeLabelTopMargin = "-30px";
+    let timeLabelTopMargin = "-19px";
     if (props.rowStartDate.getHours() == 0 && props.rowStartDate.getMinutes() == 0){
-        timeLabelTopMargin = "-23px";
+        timeLabelTopMargin = "-13px";
     }
     return (
 
@@ -87,8 +88,8 @@ const RowGivenData : React.FC<RowGivenDataProps> = (props : RowGivenDataProps) =
         <TableRow style={{height : 20, marginTop : ROW_PADDING_AND_MARGIN, paddingTop : ROW_PADDING_AND_MARGIN, marginLeft : 0, paddingLeft : 0}}>
             <TableCell style={{position : "sticky", left : 0, backgroundColor : "white", maxWidth:"fit-content", width: "1%", opacity : "100%", margin : ROW_PADDING_AND_MARGIN,
             padding : ROW_PADDING_AND_MARGIN,
-            height : 20}}>
-                <Typography noWrap style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit", opacity : "100%", backgroundColor : "inherit", marginRight : 4, marginLeft : 4}}>
+            height : ROW_HEIGHT}}>
+                <Typography noWrap style={{marginTop: timeLabelTopMargin, textAlign : "right", color : "inherit", opacity : "100%", backgroundColor : "inherit", marginRight : 4, marginLeft : 4, fontSize : ROW_TEXT_FONT_SIZE}}>
                     {dateToTextLabel(props.rowStartDate)}
                 </Typography>
             </TableCell>
