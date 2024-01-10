@@ -31,8 +31,7 @@ export async function tryToRegister(username : string, password : string) : Prom
             const newUserDocRef = firestore.collection('users').doc(newUserID);
             const newUserData = {
                 email : email,
-                username : username,
-                groups : []
+                username : username
             }
             transaction.set(newUserDocRef, newUserData);
         })
