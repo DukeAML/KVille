@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const HomePage : React.FC = () => {
 	return (
-		<BasePageContainerWithNavBarAndTitle title="Welcome to the Tent Shift Scheduling Helper!">
+		<BasePageContainerWithNavBarAndTitle title="Welcome to the Tent Shift Schedule Helper!">
 			<Container maxWidth="md">
 				<Typography variant="h6" align="center" style={{marginBottom : 24, marginTop: 24}}>
 					Not sure how to choose who will be in your tent at each time? Spending too much time trying to figure it out? 
