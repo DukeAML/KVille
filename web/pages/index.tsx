@@ -36,14 +36,14 @@ const HomePage : React.FC = () => {
 				},
 				{
 					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts.",
-					detail : <Typography>Do this on your own. Often, groups assign members to shifts one week at a time.</Typography>
+					detail : <Typography>Do this on your own. Often, groups assign members to shifts one week at a time</Typography>
 				},
 				{
 					summaryText : "5) Then, everyone in the group should fill in their availability on the Availability Page",
 					detail : 
 					<Container>
 						<Typography>
-							Once logged in, go the My Groups Page, select your group, and then go the availability page (screenshot below). 
+							Once logged in, go the <Link href="/groups">My Groups page</Link>, select your group, and then go the availability page (screenshot below). 
 							You can fill in when you are generally available and also indicate the timeslots for which you would most prefer to be scheduled
 						</Typography>
 						<Image src="/Availability_pic.jpg" alt="Availability Page" width="600" height="600"/>
