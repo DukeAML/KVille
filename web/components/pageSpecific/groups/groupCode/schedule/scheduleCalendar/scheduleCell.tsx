@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import { Typography } from "@mui/material";
 import { TenterSwapContext } from "@/lib/context/schedule/tenterSwapContext";
 import { TableCell } from "@material-ui/core";
@@ -24,6 +24,10 @@ export const ScheduleCell : React.FC<ScheduleCellProps> = (props : ScheduleCellP
     }
 
     const [text, setText] = useState<string>(checkIfNameIsForGracePeriod(props.name) ? "Grace Period..." : props.name);
+    
+    useEffect(() => {
+        setText(checkIfNameIsForGracePeriod(props.name) ? "Grace Period..." : props.name);
+    }, [props.name]);
 
 
 

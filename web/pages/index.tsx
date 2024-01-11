@@ -1,6 +1,6 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { KvilleAccordion } from "@/components/shared/utils/accordion";
-import { Container, Typography, Link } from "@mui/material";
+import { Container, Typography, Link} from "@mui/material";
 import React from "react";
 import Image from "next/image";
 
@@ -27,7 +27,7 @@ const HomePage : React.FC = () => {
 							After creating the group, it will take you to a group overview page (example screenshot below). Note the &quot;group code&quot; on this page. It will also be at the end of the URL. 
 							Other people will need this group code to join your group. 
 						</Typography>
-						<Image src="/Hours_pic.png" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
+						<Image src="/Hours_pic.jpg" alt="Hours" width="600" height="600" style={{marginTop: 24}}/>
 					</Container>
 				},
 				{
@@ -46,7 +46,7 @@ const HomePage : React.FC = () => {
 							Once logged in, go the My Groups Page, select your group, and then go the availability page (screenshot below). 
 							You can fill in when you are generally available and also indicate the timeslots for which you would most prefer to be scheduled
 						</Typography>
-						<Image src="/Availability_pic.png" alt="Availability Page" width="600" height="600"/>
+						<Image src="/Availability_pic.jpg" alt="Availability Page" width="600" height="600"/>
 					</Container>
 				},
 				{
@@ -59,9 +59,9 @@ const HomePage : React.FC = () => {
 							You can run the algorithm as many times as you want, for whatever time ranges you want. 
 							Once completed, you can also swap who is assigned to individual time slots. 
 						</Typography>
-						<Image src="/Schedule_pic.png" alt="Schedule Page" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
-						<Image src="/Assign_pic.png" alt="Create Schedule" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
-						<Image src="/Swap_pic.png" alt="Swap Tenters" width="600" height="600"/>
+						<Image src="/Schedule_pic.jpg" alt="Schedule Page" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/Assign_pic.jpg" alt="Create Schedule" width="600" height="600" style={{marginBottom : 24, marginTop : 8}}/>
+						<Image src="/Swap_pic.jpg" alt="Swap Tenters" width="600" height="600"/>
 					</Container>
 				}
 				]}/>
