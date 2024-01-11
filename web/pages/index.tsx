@@ -35,7 +35,7 @@ const HomePage : React.FC = () => {
 					detail : <Typography>Once logged in, go to the <Link href="/groups/joinGroup">Join Group page</Link>. You will need the group code from whoever created the group</Typography>
 				},
 				{
-					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts.",
+					summaryText : "4) Decide upon a range of dates/times for which you want to assign people to tenting shifts",
 					detail : <Typography>Do this on your own. Often, groups assign members to shifts one week at a time</Typography>
 				},
 				{
