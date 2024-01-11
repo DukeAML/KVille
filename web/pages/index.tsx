@@ -39,7 +39,7 @@ const HomePage : React.FC = () => {
 					detail : <Typography>Do this on your own. Often, groups assign members to shifts one week at a time</Typography>
 				},
 				{
-					summaryText : "5) Then, everyone in the group should fill in their availability on the Availability Page",
+					summaryText : "5) Then, everyone in the group should fill in their availability",
 					detail : 
 					<Container>
 						<Typography>
