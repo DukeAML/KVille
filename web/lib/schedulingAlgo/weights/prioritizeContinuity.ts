@@ -24,7 +24,7 @@ export function prioritizeContinuityForNightSlots(tenterSlotsGrid : TenterSlot[]
                     }
                     futureIndex += 1;
                 }
-                timeIndex += 40;
+                //timeIndex += 40;
 
             } else {
                 continue;
@@ -39,6 +39,7 @@ function deprioritizeAllSlotsInNightShiftForTenter(slotsForThisTenter : TenterSl
     let currentSlot = slotsForThisTenter[startTimeIndex];
     let currentTimeIndex = startTimeIndex;
     while (currentTimeIndex < slotsForThisTenter.length && currentSlot.isNight){
+        currentSlot = slotsForThisTenter[currentTimeIndex] 
         currentSlot.continuityScore = 0.0000001;
         currentTimeIndex += 1; 
     }
