@@ -1,5 +1,6 @@
 
-import { fetchAvailability, AVAILABILITY_ERROR_CODES, setDBAvailability } from "@/lib/db/availability";
+import { fetchAvailability, setDBAvailability } from "@/lib/db/availability";
+import { AVAILABILITY_ERROR_CODES } from "@/lib/controllers/availabilityController";
 import { KTEST1_UID, KTEST_GROUP_CODE } from "./testUserCredentials";
 
 describe("fetchAvailability", () => {

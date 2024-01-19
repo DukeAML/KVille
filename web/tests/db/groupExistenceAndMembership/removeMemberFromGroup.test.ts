@@ -1,5 +1,6 @@
 import { fetchGroups, getGroupMembersByGroupCode } from "@/lib/db/groupExistenceAndMembership/groupMembership";
-import { removeMemberFromGroupByUsername, removeMemberFromGroupByID, REMOVE_USER_ERRORS } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { removeMemberFromGroupByUsername, removeMemberFromGroupByID } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";
+import { REMOVE_USER_ERRORS } from "@/lib/controllers/groupMembershipAndExistence/removeMemberController";
 import { tryToJoinGroup } from "@/lib/db/groupExistenceAndMembership/joinGroup";
 import { KTEST1_UID, KTEST1_USERNAME, KTEST5_UID, KTEST5_USERNAME, KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "../testUserCredentials";
 

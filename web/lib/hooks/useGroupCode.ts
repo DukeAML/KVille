@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
+import { INVALID_GROUP_CODE } from "../controllers/groupMembershipAndExistence/groupCodeController";
 
 export const useGroupCode = () : string => {
     const router = useRouter();

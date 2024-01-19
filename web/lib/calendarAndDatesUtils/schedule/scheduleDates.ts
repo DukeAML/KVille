@@ -1,7 +1,7 @@
 import { getCurrentDate, getDatePlusNumShifts } from "../../calendarAndDatesUtils/datesUtils";
 import { getScheduleDates, CURRENT_YEAR } from "../../schedulingAlgo/rules/scheduleDates";
 import { TENTING_COLORS } from "../../schedulingAlgo/rules/phaseData";
-import { ScheduleData } from "../../db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 
 
 

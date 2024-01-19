@@ -1,5 +1,6 @@
 import { KTEST1_UID, KTEST5_UID, KTEST13_UID, KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "../testUserCredentials";
-import { tryToJoinGroup, JOIN_GROUP_ERROR_CODES } from "@/lib/db/groupExistenceAndMembership/joinGroup";
+import { tryToJoinGroup } from "@/lib/db/groupExistenceAndMembership/joinGroup";
+import { JOIN_GROUP_ERROR_CODES } from "@/lib/controllers/groupMembershipAndExistence/joinGroupController";
 import { getGroupMembersByGroupCode } from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { fetchGroups } from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { removeMemberFromGroupByID } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";

@@ -1,35 +1,11 @@
-import * as Yup from "yup";
 import { firestore} from "@/lib/db/firebase_config";
-import { getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
-import { GroupDescription } from "./groupMembership";
+import { GroupDescription } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { getGroupMembersByGroupCode } from "./groupMembership";
 import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
-import { getTentingStartDate } from "@/lib/calendarAndDatesUtils/tentingDates";
-import { AvailabilityStatus } from "../availability";
 import { NewGroupData } from "./createGroup";
 import firebase from "firebase/compat/app";
 import { getErrorMessage } from "../errorHandling";
-
-export const JOIN_GROUP_ERROR_CODES = {
-    GROUP_DOES_NOT_EXIST : "Group does not exist",
-    GROUP_IS_FULL : "Group is full already",
-    ALREADY_IN : "You've already joined this group"
-}
-
-export const joinGroupValidationSchema = Yup.object({
-    groupCode: Yup.string().required('Required')
-});
-
-
-export function getDefaultGroupMemberData(tentType : string, year=CURRENT_YEAR) : {availability : AvailabilityStatus[], availabilityStartDate : Date} {
-    let availabilityStartDate = getTentingStartDate(tentType, year);
-    let endDate = getScheduleDates(year).endOfTenting;
-    let numSlots = getNumSlotsBetweenDates(availabilityStartDate, endDate);
-    let availability = new Array(numSlots).fill({available : false, preferred : false});
-    return {availability, availabilityStartDate};
-}
-
-
+import { JOIN_GROUP_ERROR_CODES, getDefaultGroupMemberData } from "@/lib/controllers/groupMembershipAndExistence/joinGroupController";
 
 export async function checkIfGroupExistsByGroupCode(groupCode : string) : Promise<boolean> {
     const groupRef = firestore.collection('groups').doc(groupCode);
@@ -111,3 +87,5 @@ export async function tryToJoinGroup(groupCode : string, userID : string) : Prom
     return new GroupDescription(groupCode, groupName, tentType, creator);
 
 }
+
+

@@ -1,27 +1,13 @@
-import * as Yup from "yup";
 import { firestore} from "@/lib/db/firebase_config";
-import { getDefaultGroupMemberData } from "./joinGroup";
+import { getDefaultGroupMemberData } from "@/lib/controllers/groupMembershipAndExistence/joinGroupController";
 import {generateGroupCode} from "./GroupCode";
-import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 import { getTentingStartDate } from "@/lib/calendarAndDatesUtils/tentingDates";
 import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
 import { getDatePlusNumShifts, getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { Slot } from "@/lib/schedulingAlgo/slots/slot";
 import { isGrace, scheduleNameForGracePeriod } from "@/lib/schedulingAlgo/rules/gracePeriods";
-
-const GROUP_CODE_LENGTH = 8;
-
-export const CREATE_GROUP_ERROR_CODES = {
-    CREATE_GROUP_FAILURE : "Failed to Create Group",
-    GROUP_NAME_TAKEN : "Group Name is Already Taken"
-}
-
-export const createGroupValidationSchema = Yup.object({
-    groupName: Yup.string().required('Required').min(1).max(20),
-    tentType : Yup.string().required().oneOf([TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, TENTING_COLORS.WHITE]) 
-});
-
+import { CREATE_GROUP_ERROR_CODES, GROUP_CODE_LENGTH } from "@/lib/controllers/groupMembershipAndExistence/createGroupController";
 
 async function getGroupExistsByGroupName(groupName : string) : Promise<boolean> {
     let queryResults = await firestore.collection('groups').where('name', '==', groupName).get();
@@ -100,8 +86,5 @@ export async function tryToCreateGroup(groupName : string, tentType : string, us
     return groupCode;
     
 }
-
-
-
 
 

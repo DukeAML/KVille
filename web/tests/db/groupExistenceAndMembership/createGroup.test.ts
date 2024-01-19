@@ -1,4 +1,5 @@
-import { tryToCreateGroup, CREATE_GROUP_ERROR_CODES } from "@/lib/db/groupExistenceAndMembership/createGroup";
+import { tryToCreateGroup } from "@/lib/db/groupExistenceAndMembership/createGroup";
+import { CREATE_GROUP_ERROR_CODES } from "@/lib/controllers/groupMembershipAndExistence/createGroupController";
 import { KTEST1_UID, KTEST_GROUP_NAME } from "../testUserCredentials";
 import { fetchGroups } from "@/lib/db/groupExistenceAndMembership/groupMembership";
 import { firestore } from "@/lib/db/firebase_config";

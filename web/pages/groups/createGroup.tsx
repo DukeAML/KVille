@@ -6,10 +6,11 @@ import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
-import { createGroupValidationSchema, tryToCreateGroup } from "@/lib/db/groupExistenceAndMembership/createGroup";
+import { tryToCreateGroupThroughAPI } from "@/lib/controllers/groupMembershipAndExistence/createGroupController";
+import { createGroupValidationSchema } from "@/lib/controllers/groupMembershipAndExistence/createGroupController";
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/context/groupContext";
-import { GroupDescription } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { GroupDescription } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 import { SelectTentType } from "@/components/pageSpecific/groups/createGroup/selectTentType";
 
@@ -34,7 +35,7 @@ export default function CreateGroupPage() {
     const [errorMessage, setErrorMessage] = useState<string>(NO_ERROR_MESSAGE);
     const handleSubmit = (values : CreateGroupFormValues) => {
         
-        tryToCreateGroup(values.groupName, tentType, userID).
+        tryToCreateGroupThroughAPI(values.groupName, tentType).
             then((groupCode) => {
                 queryClient.invalidateQueries({queryKey : ['fetchAllGroups']})
                 setGroupDescription(new GroupDescription(groupCode, values.groupName, tentType, userID));

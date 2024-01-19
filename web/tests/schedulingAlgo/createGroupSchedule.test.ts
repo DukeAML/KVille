@@ -1,7 +1,7 @@
 import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
 import { createGroupSchedule } from "@/lib/schedulingAlgo/externalInterface/createGroupSchedule";
 import {KTEST_GROUP_CODE} from "../db/testUserCredentials";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { getCurrentDate } from "@/lib/calendarAndDatesUtils/datesUtils";
 describe("createGroupSchedule", () => {
 

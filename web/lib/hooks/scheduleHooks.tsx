@@ -1,9 +1,9 @@
 import { useMutation,  UseQueryResult } from "react-query";
-import { setGroupScheduleInDB } from "../db/schedule/schedule";
+import { setGroupScheduleInDBThroughAPI } from "../controllers/scheduleController";
+import { fetchGroupScheduleThroughAPI } from "../controllers/scheduleController";
 import { useQueryClient, useQuery, QueryClient } from "react-query";
-import {fetchGroupSchedule} from "../db/schedule/schedule";
-import {ScheduleData} from '../db/schedule/scheduleAndStartDate';
-import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
+import { ScheduleData } from "../controllers/scheduleData";
+import { INVALID_GROUP_CODE } from "../controllers/groupMembershipAndExistence/groupCodeController";
 import { assignTentersAndGetNewFullSchedule } from "../schedulingAlgo/externalInterface/createGroupSchedule";
 import { useContext, useState } from "react";
 import { CURRENT_YEAR, getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
@@ -29,7 +29,7 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
     const queryClient = useQueryClient();
     return useMutation(
         {
-            mutationFn : (newSchedule : ScheduleData) => setGroupScheduleInDB(groupCode, newSchedule),
+            mutationFn : (newSchedule : ScheduleData) => setGroupScheduleInDBThroughAPI(groupCode, newSchedule),
             onSuccess : (newSchedule : ScheduleData) => {
                 onSuccessfulDBScheduleUpdate(newSchedule, groupCode, queryClient);
             }
@@ -42,7 +42,7 @@ export const useMutationToUpdateSchedule = (groupCode : string) => {
 const assignAndUpdateMutationFn = async (groupCode : string, startDate : Date, endDate : Date, tentType : string, oldSchedule : ScheduleData) => {
     const newSchedule = await assignTentersAndGetNewFullSchedule(groupCode, tentType, startDate, endDate, oldSchedule);
     let newSchedObj = new ScheduleData(newSchedule, oldSchedule.startDate, oldSchedule.IDToNameMap);
-    return await setGroupScheduleInDB(groupCode, newSchedObj);
+    return await setGroupScheduleInDBThroughAPI(groupCode, newSchedObj);
 
 }
 
@@ -72,11 +72,12 @@ export const useMutationToAssignTentersAndUpdateSchedule = (groupCode : string) 
 
 }
 
-const fetchScheduleFunc = (groupCode : string) : Promise<ScheduleData> => {
+const fetchScheduleFunc = async (groupCode : string) : Promise<ScheduleData> => {
     if (groupCode === INVALID_GROUP_CODE){
         throw new Error("");
     }
-    return fetchGroupSchedule(groupCode);
+
+    return fetchGroupScheduleThroughAPI(groupCode);
 }
 
 

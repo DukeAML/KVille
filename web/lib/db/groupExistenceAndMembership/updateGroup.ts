@@ -1,18 +1,6 @@
-import * as Yup from "yup";
 import { firestore} from "../firebase_config";
 
-import { TENTING_COLORS } from "@/lib/schedulingAlgo/rules/phaseData";
-
-
-export const UPDATE_GROUP_ERROR_CODES = {
-    UPDATE_GROUP_FAILURE : "Unknown Error",
-    GROUP_NAME_TAKEN : "Group Name is Already Taken"
-}
-
-export const createGroupValidationSchema = Yup.object({
-    groupName: Yup.string().required('Required'),
-    tentType : Yup.string().required().oneOf([TENTING_COLORS.BLUE, TENTING_COLORS.BLACK, TENTING_COLORS.WHITE]) 
-});
+import { UPDATE_GROUP_ERROR_CODES } from "@/lib/controllers/groupMembershipAndExistence/updateGroupController";
 
 
 async function checkIfGroupExistsByGroupName(groupName : string) : Promise<boolean> {
@@ -25,7 +13,7 @@ async function checkIfGroupExistsByGroupName(groupName : string) : Promise<boole
 }
 
 
-export async function updateName(newGroupName : string, groupCode : string) : Promise<string> {
+export async function updateGroupName(newGroupName : string, groupCode : string) : Promise<string> {
     //check if there is already a group with this name!
     if (await checkIfGroupExistsByGroupName(newGroupName)){
         throw new Error(UPDATE_GROUP_ERROR_CODES.GROUP_NAME_TAKEN);
@@ -40,3 +28,4 @@ export async function updateName(newGroupName : string, groupCode : string) : Pr
         throw new Error(UPDATE_GROUP_ERROR_CODES.UPDATE_GROUP_FAILURE);
     }
 }
+

@@ -1,9 +1,10 @@
 import { useQuery, UseQueryResult, UseMutationResult, useMutation, useQueryClient } from "react-query";
 import {useContext} from "react";
-import { GroupDescription, fetchGroupData } from "@/lib/db/groupExistenceAndMembership/groupMembership";
-import {updateName} from "@/lib/db/groupExistenceAndMembership/updateGroup"; 
+import { fetchGroupDataThroughAPI } from "../controllers/groupMembershipAndExistence/groupMembershipController";
+import { GroupDescription } from "../controllers/groupMembershipAndExistence/groupMembershipController";
+import { updateGroupNameThroughAPI } from "../controllers/groupMembershipAndExistence/updateGroupController";
 import { GroupContext } from "../context/groupContext";
-import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
+import { INVALID_GROUP_CODE } from "../controllers/groupMembershipAndExistence/groupCodeController";
 
 
 export const useQueryToFetchGroupData = (groupCode : string) : UseQueryResult<GroupDescription> => {
@@ -12,7 +13,7 @@ export const useQueryToFetchGroupData = (groupCode : string) : UseQueryResult<Gr
         "fetchingGroupDataFor"+groupCode, 
         ()=> {
             if (groupDescription.groupCode === INVALID_GROUP_CODE){
-                return fetchGroupData(groupCode);
+                return fetchGroupDataThroughAPI(groupCode);
             } else {
                 return groupDescription;
             }
@@ -33,7 +34,7 @@ export const useMutationToUpdateGroupData = (groupCode : string, cleanupFunction
     return useMutation<string, Error, string, unknown>(
         ["updating group name", groupCode], 
         async (name : string) => {
-            return await updateName(name, groupCode);
+            return await updateGroupNameThroughAPI(name, groupCode);
         },
         {
             onSuccess : (data : string) => {

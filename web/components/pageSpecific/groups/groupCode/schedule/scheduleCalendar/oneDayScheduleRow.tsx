@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
-import { Stack } from "@mui/material";
 import { ScheduleCell } from "./scheduleCell";
 import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks";
 import { useRouter } from "next/dist/client/router";
-import { INVALID_GROUP_CODE } from "@/lib/db/groupExistenceAndMembership/GroupCode";
+import { INVALID_GROUP_CODE } from "@/lib/controllers/groupMembershipAndExistence/groupCodeController";
 import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { Typography } from "@material-ui/core";
 import { Table, TableBody,TableCell,TableContainer,TableHead,TableRow } from "@material-ui/core";

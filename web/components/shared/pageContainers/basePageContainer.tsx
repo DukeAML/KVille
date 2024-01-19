@@ -5,10 +5,9 @@ import { Container, Typography } from '@mui/material';
 
 import { KvilleLoggedInNavBar } from '../navBars/loggedInNavBar';
 import { KvilleLoggedOutNavBar } from '../navBars/loggedOutNavBar';
-import { auth } from '@/lib/db/firebase_config';
-import { onAuthStateChanged } from 'firebase/auth';
-import { INVALID_USER_ID } from '@/lib/db/auth/login';
 import Footer from '../utils/footer';
+import {useSession} from "next-auth/react";
+import { INVALID_USER_ID } from '@/lib/controllers/auth/loginControllers';
 
 interface BasePageContainerProps {
     children: ReactNode;
@@ -18,22 +17,21 @@ interface BasePageContainerProps {
 export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
 	const {setUserID, setIsLoggedIn, setTriedToLogIn} = useContext(UserContext);
 
+	const {data} = useSession();
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			if (auth.currentUser){
-				const id = auth.currentUser.uid;
-				setUserID(id);
-				setIsLoggedIn(true);
-			} else {
-				setUserID(INVALID_USER_ID);
-				setIsLoggedIn(false);
-			}
+		console.log("user is " );
+		console.log(data?.user);
+		if (data && data.user && data.user.id !== INVALID_USER_ID){
+			setUserID(data.user.id);
+			setIsLoggedIn(true);
 			setTriedToLogIn(true);
-			
-		})
+		} else {
+			setIsLoggedIn(false);
+			setTriedToLogIn(false);
+			setUserID(INVALID_USER_ID);
+		}
+	}, [data]);
 
-		return () => unsubscribe();
-	});
 	
 	return (
 		<div
@@ -68,6 +66,7 @@ interface BasePageContainerWithNavBarAndTitleProps {
 
 export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWithNavBarAndTitleProps> = (props:BasePageContainerWithNavBarAndTitleProps) => {
 	const {isLoggedIn} = useContext(UserContext);
+	console.log(isLoggedIn);
 	return (
 		<BasePageContainer>
 			
