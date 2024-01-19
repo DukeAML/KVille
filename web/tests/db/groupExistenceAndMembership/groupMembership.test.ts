@@ -1,4 +1,5 @@
-import { fetchGroups, getGroupMembersByGroupCode,  GET_GROUP_MEMBERS_ERRORS, fetchGroupData } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { fetchGroups, getGroupMembersByGroupCode,  fetchGroupData } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { GET_GROUP_MEMBERS_ERRORS } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { KTEST1_UID, KTEST_GROUP_CODE } from "../testUserCredentials";
 
 describe("fetchGroups", () => {

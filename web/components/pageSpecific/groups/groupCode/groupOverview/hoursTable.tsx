@@ -11,7 +11,7 @@ import {GroupContext} from '@/lib/context/groupContext';
 import {UserContext} from '@/lib/context/userContext';
 import { RemoveMemberPrompt } from "./removeMemberPrompt";
 import { useGroupCode } from "@/lib/hooks/useGroupCode";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { DiscretionaryGraceContext } from "@/lib/context/discretionaryContext";
 
 interface HoursTableProps {

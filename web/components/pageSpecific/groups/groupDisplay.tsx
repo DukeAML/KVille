@@ -1,6 +1,6 @@
 import React from "react";
 
-import { GroupDescription } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { GroupDescription } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { useContext } from "react";
 import {Container, Button, Typography, Box} from "@mui/material";
 import { GroupContext } from "@/lib/context/groupContext";

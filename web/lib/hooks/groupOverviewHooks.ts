@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation} from "react-query";
 import { useState } from "react";
-import { removeMemberFromGroupByUsername, REMOVE_USER_ERRORS } from "@/lib/db/groupExistenceAndMembership/removeMemberFromGroup";
-import { getQueryKeyNameForScheduleFetch, useQueryToFetchSchedule } from "./scheduleHooks";
+import { removeMemberFromGroupByUsernameThroughAPI } from "../controllers/groupMembershipAndExistence/removeMemberController";
+import { getQueryKeyNameForScheduleFetch } from "./scheduleHooks";
 
 interface HoursPerPersonInterface {
     dayHoursPerPerson : {
@@ -14,7 +14,7 @@ interface HoursPerPersonInterface {
 
 
 const removeMemberMutationFn = async (usernameOfMemberToRemove : string, groupCode : string) => {
-    await removeMemberFromGroupByUsername(usernameOfMemberToRemove, groupCode);
+    await removeMemberFromGroupByUsernameThroughAPI(usernameOfMemberToRemove, groupCode);
     return groupCode;
 }
 

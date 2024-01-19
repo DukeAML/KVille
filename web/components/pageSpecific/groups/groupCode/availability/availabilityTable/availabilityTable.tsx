@@ -1,4 +1,5 @@
-import { AvailabilitySlot, setDBAvailability } from '@/lib/db/availability';
+import { setDBAvailabilityThroughAPI } from "@/lib/controllers/availabilityController";
+import { AvailabilitySlot } from "@/lib/controllers/availabilityController";
 import {getCalendarColumnTitles, get48TimeLabels} from '@/lib/calendarAndDatesUtils/calendarUtils';
 import { getNumSlotsBetweenDates } from '@/lib/calendarAndDatesUtils/datesUtils';
 import { Grid, Typography } from '@mui/material';
@@ -9,7 +10,7 @@ import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextTy
 import { UserContext } from '@/lib/context/userContext';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import { INVALID_GROUP_CODE } from '@/lib/db/groupExistenceAndMembership/GroupCode';
+import { INVALID_GROUP_CODE } from "@/lib/controllers/groupMembershipAndExistence/groupCodeController";
 import { getQueryKeyNameForFetchAvailability } from '@/lib/hooks/availabilityHooks';
 import { useCheckIfScreenIsNarrow } from '@/lib/hooks/windowProperties';
 import { AvailabilityGridColumnTitles } from './availabilityGridColumnTitles';
@@ -45,7 +46,7 @@ export const AvailabilityTable: React.FC<AvailabilityTableProps> = (props:Availa
             return new AvailabilitySlot(slot.startDate, slot.available, slot.preferred);
         });
         queryClient.setQueryData(getQueryKeyNameForFetchAvailability(groupCode, userID), newAvailabilitySlots);
-        setDBAvailability(groupCode, userID, newAvailabilitySlots);
+        setDBAvailabilityThroughAPI(groupCode, newAvailabilitySlots);
         setEdited(new Array(props.originalAvailabilityArr.length).fill(false));
     }
 

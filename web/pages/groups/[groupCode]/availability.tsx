@@ -2,7 +2,8 @@ import { UserContext } from "@/lib/context/userContext";
 import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
 import { useContext, useState, useEffect } from "react";
 import {useQuery} from 'react-query';
-import {fetchAvailability, AvailabilitySlot} from "@/lib/db/availability";
+import { fetchAvailabilityThroughAPI } from "@/lib/controllers/availabilityController";
+import { AvailabilitySlot } from "@/lib/controllers/availabilityController";
 import { PermissionRequiredPageContainer } from "@/components/shared/pageContainers/permissionRequiredPageContainer";
 import { KvilleLoadingContainer} from "@/components/shared/utils/loading";
 
@@ -25,7 +26,7 @@ export default function Availability(){
     const [calendarDateHasBeenSet, setCalendarDateHasBeenSet] = useState<boolean>(false);
 
     const {data, isLoading, isError} = useQuery<AvailabilitySlot[], Error>([getQueryKeyNameForFetchAvailability(groupCode, userID)], 
-        ()=> fetchAvailability(groupCode, userID),
+        ()=> fetchAvailabilityThroughAPI(groupCode),
         {
             onSuccess : (data) => {
                 if (!calendarDateHasBeenSet){

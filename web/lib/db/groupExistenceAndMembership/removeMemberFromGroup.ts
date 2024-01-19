@@ -1,21 +1,11 @@
 import { firestore } from "@/lib/db/firebase_config";
 import {EMPTY} from "@/lib/schedulingAlgo/slots/tenterSlot";
-
-export const REMOVE_USER_ERRORS = {
-    USER_DOES_NOT_EXIST: "User does not exist",
-    USER_NOT_IN_GROUP: "User is not in group",
-    GROUP_DOES_NOT_EXIST: "Group does not exist",
-    CANNOT_REMOVE_CREATOR : "Cannot remove group creator",
-    DEFAULT: "Error removing user",
-};
-
-
+import { REMOVE_USER_ERRORS } from "@/lib/controllers/groupMembershipAndExistence/removeMemberController";
 
 export async function removeMemberFromGroupByUsername(username : string, groupCode : string) {
     const userID = await findUserIDForMemberInGroupWithGivenUsername(username, groupCode);
     removeMemberFromGroupByID(userID, groupCode);
 }
-
 
 async function findUserIDForMemberInGroupWithGivenUsername(username : string, groupCode : string) :  Promise<string> {
     try {

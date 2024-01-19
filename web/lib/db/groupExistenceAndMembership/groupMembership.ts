@@ -1,28 +1,6 @@
+import { GroupDescription, GET_GROUP_MEMBERS_ERRORS } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { firestore } from "../firebase_config";
 import firebase from 'firebase/compat/app';
-
-export class GroupDescription {
-
-	groupCode : string;
-	groupName : string;
-	tentType : string;
-	creator : string;
-
-	constructor(groupCode : string, groupName : string, tentType : string, creator="") {
-		this.groupCode = groupCode;
-		this.groupName = groupName;
-		this.tentType = tentType;
-		this.creator = creator;
-	}
-}
-
-export const FETCH_GROUPS_ERRORS = {};
-
-
-export const GET_GROUP_MEMBERS_ERRORS = {
-	GROUP_DOES_NOT_EXIST: "Group does not exist",
-};
-
 
 export async function fetchGroups(userID : string) : Promise<GroupDescription[]> {
 	let allGroups = await fetchAllGroups();
@@ -37,7 +15,6 @@ export async function fetchGroups(userID : string) : Promise<GroupDescription[]>
 	}
 	return usersGroups;
 }
-
 
 interface GroupDescriptionWithMembers{
 	groupDescription : GroupDescription;
@@ -94,11 +71,9 @@ export async function fetchGroupData(groupCode : string) : Promise<GroupDescript
         
       })
   return description;
-
 }
 
-
-interface GroupMemberUserID{
+export interface GroupMemberUserID{
 	userID : string;
 }
 export async function getGroupMembersByGroupCode(groupCode : string) : Promise<GroupMemberUserID[]> {
@@ -113,4 +88,13 @@ export async function getGroupMembersByGroupCode(groupCode : string) : Promise<G
   return memberDocs.docs.map((doc) => {
     return { userID: doc.id};
   });
+}
+
+export async function checkIfMemberIsInGroup(groupCode : string, userID : string) : boolean {
+  const groupMembers = await getGroupMembersByGroupCode(groupCode);
+  if (!groupMembers.map((member) => member.userID).includes(userID)){
+    return false;
+  } else {
+    return true;
+  }
 }

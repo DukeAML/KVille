@@ -1,29 +1,7 @@
 import { firestore } from "./firebase_config";
 
 import { getDateRoundedTo30MinSlot} from "../calendarAndDatesUtils/datesUtils";
-
-export const AVAILABILITY_ERROR_CODES = {
-    FETCH_ERROR : "Error Fetching Availability",
-    UPDATE_ERROR: "Error Setting Availability"
-}
-
-export interface AvailabilityStatus{
-    available : boolean;
-    preferred : boolean;
-}
-
-export class AvailabilitySlot {
-    startDate : Date;
-    available : boolean;
-    preferred : boolean;
-
-    constructor(startDate : Date, available : boolean, preferred=false){
-        this.startDate = startDate;
-        this.available = available;
-        this.preferred = preferred;
-    }
-}
-
+import { AvailabilitySlot, AVAILABILITY_ERROR_CODES } from "../controllers/availabilityController";
 
 export async function fetchAvailability(groupCode : string, userID : string) : Promise<AvailabilitySlot[]> {
     const db = firestore;
@@ -46,12 +24,7 @@ export async function fetchAvailability(groupCode : string, userID : string) : P
             return [];
         }
     }
-
-    
-
 }
-
-
 
 export const setDBAvailability = async (groupCode : string, userId : string, newAvailability : AvailabilitySlot[]) => {
     const db = firestore;
@@ -80,8 +53,5 @@ export const setDBAvailability = async (groupCode : string, userId : string, new
     }
 
 }
-
-
-
 
 

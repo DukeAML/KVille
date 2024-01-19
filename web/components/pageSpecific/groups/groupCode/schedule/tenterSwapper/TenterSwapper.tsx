@@ -4,7 +4,7 @@ import { useGroupCode } from "@/lib/hooks/useGroupCode";
 import { Typography, Container, Button, Modal, Dialog} from "@mui/material";
 import React, { useContext,  useState } from "react";
 import { getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { SwapTentersTimeRangePickers } from "./timeRangePickers";
 import { NewTenterPicker } from "./newTenterPicker";
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";

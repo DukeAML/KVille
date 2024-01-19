@@ -1,13 +1,14 @@
 // RegisterForm.tsx
 
 import React, {useState} from 'react';
-import { authValidationSchema } from '@/lib/db/auth/register';
+import { registerThroughAPI } from "@/lib/controllers/auth/registerController";
+import { authValidationSchema } from '@/lib/controllers/auth/registerController';
 import { BasePageContainerWithNavBarAndTitle } from '@/components/shared/pageContainers/basePageContainer';
 import { useContext } from 'react';
 import { UserContext } from '@/lib/context/userContext';
 import {useRouter} from 'next/router';
-import { tryToRegister } from '@/lib/db/auth/register';
 import { KvilleForm } from '@/components/shared/utils/form';
+import {signIn} from "next-auth/react";
 
 interface RegisterFormValues {
 	username : string;
@@ -24,16 +25,18 @@ const initialValues: RegisterFormValues = {
 
 const RegisterForm: React.FC = () => {
 
-	const {setIsLoggedIn, setUserID, userID}= useContext(UserContext);
+	const {setIsLoggedIn, setUserID, userID, setTriedToLogIn}= useContext(UserContext);
 	const [errorMessage, setErrorMessage] = useState("");
 	const router = useRouter();
 	const handleSubmit = (values: RegisterFormValues) => {
 		// Handle login logic here (e.g., API call to authenticate the user)
-		tryToRegister(values.username, values.password)
-		.then((id) => {
+		registerThroughAPI(values.username, values.password)
+		.then(async (id) => {
+			await signIn("credentials", {username : values.username, password : values.password, redirect : false})
 			setIsLoggedIn(true);
-			router.push("/groups");
+			setTriedToLogIn(true);
 			setUserID(id);
+			router.push("/groups");
 		})
 		.catch((error) => {
 			setErrorMessage(error.message);

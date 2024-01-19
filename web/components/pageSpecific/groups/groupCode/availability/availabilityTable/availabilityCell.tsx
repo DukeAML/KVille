@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Grid, Paper, makeStyles, Theme, Typography } from '@material-ui/core';
 import { MouseTracker } from '@/lib/calendarAndDatesUtils/availability/mouseTracker';
-import { AvailabilitySlot } from '@/lib/db/availability';
+import { AvailabilitySlot } from "@/lib/controllers/availabilityController";
 import { AvailabilityPageContext } from '@/lib/context/AvailabilityPageContextType';
 const useStyles = makeStyles((theme:Theme) => ({
     gridCell: {

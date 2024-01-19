@@ -1,7 +1,7 @@
 import { getDatePlusNumShifts, getCurrentDate } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { getScheduleDates } from "@/lib/schedulingAlgo/rules/scheduleDates";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 
 
 export const getDefaultAssignDateRangeStartDate = (schedule : ScheduleData) : Date => {

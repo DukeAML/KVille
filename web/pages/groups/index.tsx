@@ -6,8 +6,9 @@ import { useContext } from "react";
 import { useQuery } from "react-query";
 import {
   fetchGroups,
-  GroupDescription,
 } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { fetchGroupsThroughAPI } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
+import { GroupDescription } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { GroupDisplay } from "../../components/pageSpecific/groups/groupDisplay";
 import {
   KvilleLoadingContainer,
@@ -24,7 +25,7 @@ export default function GroupPage() {
 		isLoading,
 		isError,
 	} = useQuery<GroupDescription[], Error>(["fetchAllGroups" + userID], () =>
-		fetchGroups(userID)
+		fetchGroupsThroughAPI()
 	);
 	const router = useRouter();
 

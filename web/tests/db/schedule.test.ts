@@ -1,5 +1,6 @@
-import {fetchGroupSchedule, setGroupScheduleInDB, FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES} from "@/lib/db/schedule/schedule";
-import { ScheduleData } from "@/lib/db/schedule/scheduleAndStartDate";
+import {fetchGroupSchedule, setGroupScheduleInDB} from "@/lib/db/schedule/schedule";
+import { FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES } from "@/lib/controllers/scheduleController";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { KTEST_GROUP_CODE, SMALLER_KTEST_GROUP_CODE } from "./testUserCredentials";
 
 describe("fetchGroupSchedule", () => {

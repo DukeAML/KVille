@@ -1,7 +1,6 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
 import { Container, Typography, Button, Stack } from "@mui/material";
-import {signOut} from "firebase/auth";
-import { auth } from "@/lib/db/firebase_config";
+import {signOut} from "next-auth/react";
 import { useRouter } from "next/router";
 import React, {useState} from "react"
 
@@ -10,7 +9,7 @@ const HomePage : React.FC = () => {
     const [error, setError] = useState<boolean>(false);
     const signUserOut = async () => {
         try{
-            await signOut(auth);
+            await signOut({redirect : false});
             router.push("/login");            
         } catch {
             setError(true);

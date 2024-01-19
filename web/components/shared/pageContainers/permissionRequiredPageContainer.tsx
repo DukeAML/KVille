@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { BasePageContainerWithNavBarAndTitle } from './basePageContainer';
 import { BasePageContainerForGroupsPage } from './groupsPageContainer';
 import { KvilleLoadingContainer } from '../utils/loading';
-import { getGroupMembersByGroupCode } from '@/lib/db/groupExistenceAndMembership/groupMembership';
+import { getGroupMembersByGroupCodeThroughAPI } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { useGroupCode } from '@/lib/hooks/useGroupCode';
 
 interface PermissionRequiredPageContainerProps {
@@ -20,16 +20,10 @@ export const PermissionRequiredPageContainer: React.FC<PermissionRequiredPageCon
 
     const {userID, isLoggedIn, triedToLogIn} = useContext(UserContext);
     let groupCode = useGroupCode();
-    const {data: members, isLoading, isError} = useQuery('fetchGroupMembers' + groupCode, () => getGroupMembersByGroupCode(groupCode));
+    const {data: members, isLoading, isError} = useQuery('fetchGroupMembers' + groupCode, () => getGroupMembersByGroupCodeThroughAPI(groupCode));
 
-    if (!triedToLogIn) {
-        return (
-            <BasePageContainerWithNavBarAndTitle title={"Loading"}>
-                <KvilleLoadingContainer/>
-            </BasePageContainerWithNavBarAndTitle>
-        )
-    }
-    else if (triedToLogIn && !isLoggedIn) {
+
+    if (!isLoggedIn) {
         return (
             <BasePageContainerWithNavBarAndTitle title={"You must be logged in to view this page."}>
             </BasePageContainerWithNavBarAndTitle>

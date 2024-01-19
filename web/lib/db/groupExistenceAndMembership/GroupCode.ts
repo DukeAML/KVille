@@ -1,7 +1,6 @@
 
 import { checkIfGroupExistsByGroupCode } from "./joinGroup";
 const GROUP_CODE_LENGTH = 8;
-export const INVALID_GROUP_CODE = "";
 export async function generateGroupCode(digits : number) : Promise<string> {
 	let groupCode = generateUUID(digits);
 

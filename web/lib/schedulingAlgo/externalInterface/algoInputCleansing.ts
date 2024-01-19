@@ -1,7 +1,7 @@
 import { Slot } from "../slots/slot";
 import { TenterSlot, TENTER_STATUS_CODES } from "../slots/tenterSlot";
 import { isNight } from "../rules/nightData";
-import { AvailabilityStatus } from "@/lib/db/availability";
+import { AvailabilityStatus } from "@/lib/controllers/availabilityController";
 
 interface NumFreeDayAndNight{
     numFreeDaySlots : number;

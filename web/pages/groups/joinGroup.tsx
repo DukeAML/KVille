@@ -5,7 +5,9 @@ import { useContext, useState } from "react";
 import { KvilleForm } from "@/components/shared/utils/form";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
-import { joinGroupValidationSchema, tryToJoinGroup } from '@/lib/db/groupExistenceAndMembership/joinGroup';
+import { tryToJoinGroup } from '@/lib/db/groupExistenceAndMembership/joinGroup';
+import { tryToJoinGroupThroughAPI } from "@/lib/controllers/groupMembershipAndExistence/joinGroupController";
+import { joinGroupValidationSchema } from "@/lib/controllers/groupMembershipAndExistence/joinGroupController";
 import { NO_ERROR_MESSAGE } from "@/components/shared/utils/form";
 import { GroupContext } from "@/lib/context/groupContext";
 
@@ -24,7 +26,7 @@ export default function JoinGroupPage() {
     const {groupDescription, setGroupDescription} = useContext(GroupContext)
     const [errorMessage, setErrorMessage] = useState<string>(NO_ERROR_MESSAGE);
     const handleSubmit = (values : JoinGroupFormValues) => {
-        tryToJoinGroup(values.groupCode, userID)
+        tryToJoinGroupThroughAPI(values.groupCode, userID)
             .then((groupDescription) => {   
                 queryClient.invalidateQueries({queryKey : ['fetchAllGroups']})
                 setGroupDescription(groupDescription);

@@ -1,28 +1,12 @@
-import { ScheduleData } from "./scheduleAndStartDate";
+import { ScheduleData } from "@/lib/controllers/scheduleData";
 import { firestore } from "@/lib/db/firebase_config";
 import { getDateRoundedTo30MinSlot } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { getGroupMembersByGroupCode } from "../groupExistenceAndMembership/groupMembership";
-import { GRACE } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { checkIfNameIsForGracePeriod } from "@/lib/schedulingAlgo/rules/gracePeriods";
 import firebase from 'firebase/compat/app';
+import { UsernameAndIDs, FETCH_SCHEDULE_ERROR_CODES, SET_SCHEDULE_ERROR_CODES } from "@/lib/controllers/scheduleController";
 
-export const FETCH_SCHEDULE_ERROR_CODES = {
-    GROUP_DOES_NOT_EXIST : "Group does not exist"
-};
 
-export const SET_SCHEDULE_ERROR_CODES = {
-    GROUP_DOES_NOT_EXIST : "Group does not exist"
-};
-
-/**
- * @param {String[]} userIDs
- * @returns {Promise<{ userID: String, username: String }[]>}
- */
-
-export interface UsernameAndIDs{
-    userID : string;
-    username : string;
-}
 async function getUsernames(userIDs : string[]) : Promise<UsernameAndIDs[]> {
     return new Promise((resolve, reject) => {
         const userPromises : Promise<firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>>[] = [];
@@ -103,3 +87,4 @@ export async function setGroupScheduleInDB(groupCode : string, newSchedule : Sch
         throw new Error(SET_SCHEDULE_ERROR_CODES.GROUP_DOES_NOT_EXIST);
     }
 }
+

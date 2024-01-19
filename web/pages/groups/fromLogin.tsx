@@ -1,9 +1,10 @@
 import { useQuery } from "react-query";
 import GroupPage from "./index";
 import {
-  GroupDescription,
   fetchGroups,
 } from "@/lib/db/groupExistenceAndMembership/groupMembership";
+import { fetchGroupsThroughAPI } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
+import { GroupDescription } from "@/lib/controllers/groupMembershipAndExistence/groupMembershipController";
 import { useContext } from "react";
 import { UserContext } from "@/lib/context/userContext";
 import { useRouter } from "next/router";
@@ -23,7 +24,7 @@ export default function GroupPageFromLogin() {
     isLoading,
     isError,
   } = useQuery<GroupDescription[], Error>(["fetchAllGroups" + userID], () =>
-    fetchGroups(userID)
+    fetchGroupsThroughAPI()
   );
 
   if (isLoading) {

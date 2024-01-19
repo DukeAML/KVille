@@ -1,4 +1,4 @@
-import {LOGIN_ERROR_CODES, tryToLogin} from "../../../lib/db/auth/login";
+import { LOGIN_ERROR_CODES, tryToLogin } from "@/lib/controllers/auth/loginControllers";
 
 import { auth } from "../../../lib/db/firebase_config";
 import { signOut } from "firebase/auth";
