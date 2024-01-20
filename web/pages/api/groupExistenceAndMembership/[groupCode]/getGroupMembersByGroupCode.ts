@@ -7,7 +7,6 @@ import { INVALID_GROUP_CODE } from "@/lib/controllers/groupMembershipAndExistenc
 
 
 export default async function getGroupMembersByGroupCodeAPI(req: NextApiRequest, res: NextApiResponse) {
-    console.log("in the api");
     try {
         const session = await getServerSession(req, res, authOptions);
         if (!session || !session.user ){
@@ -15,8 +14,6 @@ export default async function getGroupMembersByGroupCodeAPI(req: NextApiRequest,
             throw new Error("You must be logged in to do this");
         } else {
             const groupCode : string = req.query.groupCode? req.query.groupCode.toString() : INVALID_GROUP_CODE;
-            console.log("the group code is " + groupCode);
-            console.log(req.query);
             const members = await getGroupMembersByGroupCode(groupCode);
             res.status(200).json({members});
         }

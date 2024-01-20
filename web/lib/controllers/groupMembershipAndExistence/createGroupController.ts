@@ -21,8 +21,6 @@ export const createGroupValidationSchema = Yup.object({
         },
     });
     let resJson = await apiResponse.json();
-    console.log(resJson);
-    console.log(apiResponse.status);
     if (apiResponse.status < 300) {
 
         return resJson.groupCode;

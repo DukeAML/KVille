@@ -11,6 +11,12 @@ import { EmitFlags } from "typescript";
 import { EMAIL_SUFFIX } from "@/lib/controllers/auth/registerController";
 
 
+interface MyUser extends AdapterUser{
+
+    id : string;
+    name : string;
+    email : string;
+}
 
 
 export const authOptions = {
@@ -30,13 +36,10 @@ export const authOptions = {
                 // Add logic here to look up the user from the credentials supplied
                 const username = credentials ? credentials.username : "a";
                 const password = credentials ? credentials.password : "asdfasdf";
-                console.log("trying to authorize with " + username + ", " + password);
                 try {
                     const userID = await tryToLogin(username, password);
-                    console.log(userID + " is the user id");
                     return {id : userID, name : username, email : username + EMAIL_SUFFIX}
                 } catch {
-                    console.log("error occurred")
                     return null;
                 }
             }
@@ -57,15 +60,16 @@ export const authOptions = {
     },
 
     callbacks: {
-        async jwt({token, user}) {
+        async jwt({ token, user} : {token : any, user : any}) {
             if (user) {
               token.id = user.id;
-              token.name = user.name;
+              token.name = user.id;
+              token.email = user.name;
             }
             return token;
           },
 
-        async session({session, token}) {
+        async session({session, token, user} : {session : any, token : any, user : any}) {
           session.user = token;
           return session;
         },

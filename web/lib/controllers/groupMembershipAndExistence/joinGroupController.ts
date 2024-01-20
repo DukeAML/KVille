@@ -32,9 +32,6 @@ export function getDefaultGroupMemberData(tentType: string, year = CURRENT_YEAR)
         },
     });
     let resJson = await apiResponse.json();
-
-    console.log(resJson);
-    console.log(apiResponse.status);
     if (apiResponse.status < 300) {
         return new GroupDescription(resJson.groupCode, resJson.groupName, resJson.tentType, resJson.creator);
     } else {

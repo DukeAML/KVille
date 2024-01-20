@@ -1,12 +1,15 @@
 import { BasePageContainerWithNavBarAndTitle } from "@/components/shared/pageContainers/basePageContainer"
+import { UserContext } from "@/lib/context/userContext";
 import { Container, Typography, Button, Stack } from "@mui/material";
 import {signOut} from "next-auth/react";
 import { useRouter } from "next/router";
 import React, {useState} from "react"
+import { useContext } from "react";
 
 const HomePage : React.FC = () => {
     const router = useRouter();
     const [error, setError] = useState<boolean>(false);
+    const {} = useContext(UserContext)
     const signUserOut = async () => {
         try{
             await signOut({redirect : false});
