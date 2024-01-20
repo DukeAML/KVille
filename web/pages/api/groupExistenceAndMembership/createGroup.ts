@@ -14,10 +14,7 @@ export default async function createGroupAPI(req: NextApiRequest, res: NextApiRe
         } else {
             const {groupName, tentType} = req.body;
             const userID = session.user.id;
-            console.log(userID);
-            console.log(groupName);
             const groupCode = await tryToCreateGroup(groupName, tentType, userID);
-            console.log(groupCode);
             res.status(200).json({groupCode});
         }
         

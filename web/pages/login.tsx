@@ -23,7 +23,6 @@ const LoginPage: React.FC = () => {
 	const handleSubmit = (values: LoginFormValues) => {
 		// Handle login logic here (e.g., API call to authenticate the user)
 		signIn("credentials", {username : values.username, password : values.password, redirect : false}).then((d) => {
-			console.log(d);
 			if (!d || (d && d.status > 300) ){
 				setErrorMessage("Wrong username/password");
 			} else {

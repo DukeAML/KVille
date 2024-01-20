@@ -7,7 +7,6 @@ import { removeMemberFromGroupByUsername } from '@/lib/db/groupExistenceAndMembe
 
 
 export default async function removeMemberFromGroupByUsernameAPI(req: NextApiRequest, res: NextApiResponse) {
-    console.log("in the api");
     try {
         const session = await getServerSession(req, res, authOptions);
         if (!session || !session.user ){

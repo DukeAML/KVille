@@ -14,15 +14,24 @@ interface BasePageContainerProps {
 };
 
 
+interface sessionDataType {
+	user : UserType;
+}
+interface UserType{
+	name : string;
+	email : string;
+	id : string;
+
+}
 export const BasePageContainer: React.FC<BasePageContainerProps> = (props:BasePageContainerProps) => {
 	const {setUserID, setIsLoggedIn, setTriedToLogIn} = useContext(UserContext);
 
 	const {data} = useSession();
+
+
 	useEffect(() => {
-		console.log("user is " );
-		console.log(data?.user);
-		if (data && data.user && data.user.id !== INVALID_USER_ID){
-			setUserID(data.user.id);
+		if (data && data.user && data.user.name && data.user.name !== INVALID_USER_ID){
+			setUserID(data.user.name);
 			setIsLoggedIn(true);
 			setTriedToLogIn(true);
 		} else {
@@ -66,7 +75,6 @@ interface BasePageContainerWithNavBarAndTitleProps {
 
 export const BasePageContainerWithNavBarAndTitle: React.FC<BasePageContainerWithNavBarAndTitleProps> = (props:BasePageContainerWithNavBarAndTitleProps) => {
 	const {isLoggedIn} = useContext(UserContext);
-	console.log(isLoggedIn);
 	return (
 		<BasePageContainer>
 			

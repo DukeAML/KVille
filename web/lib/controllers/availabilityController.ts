@@ -1,5 +1,3 @@
-import { AvailabilitySlot, AvailabilitySlot, JSONToAvailabilitySlots } from "./availabilityController";
-
 export const AVAILABILITY_ERROR_CODES = {
     FETCH_ERROR: "Error Fetching Availability",
     UPDATE_ERROR: "Error Setting Availability"
@@ -30,7 +28,6 @@ export async function setDBAvailabilityThroughAPI(groupCode: string, newAvailabi
         },
     });
     let resJson = await apiResponse.json();
-    console.log(resJson);
     if (apiResponse.status < 300) {
     } else {
         throw new Error("An error occurred");

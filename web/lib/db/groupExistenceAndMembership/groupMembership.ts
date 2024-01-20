@@ -90,7 +90,7 @@ export async function getGroupMembersByGroupCode(groupCode : string) : Promise<G
   });
 }
 
-export async function checkIfMemberIsInGroup(groupCode : string, userID : string) : boolean {
+export async function checkIfMemberIsInGroup(groupCode : string, userID : string) : Promise<boolean> {
   const groupMembers = await getGroupMembersByGroupCode(groupCode);
   if (!groupMembers.map((member) => member.userID).includes(userID)){
     return false;

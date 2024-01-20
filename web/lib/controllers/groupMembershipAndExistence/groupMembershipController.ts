@@ -31,10 +31,10 @@ export async function fetchGroupsThroughAPI(): Promise<GroupDescription[]> {
   });
   let resJson = await apiResponse.json();
 
-  console.log(resJson);
-  console.log(apiResponse.status);
+  
   if (apiResponse.status < 300) {
-    return resJson.groups.map((group) => new GroupDescription(group.groupCode, group.groupName, group.tentType, group.creator));
+    let groups : {groupCode : string, groupName : string, tentType : string, creator : string}[] = resJson.groups;
+    return groups.map((group) => new GroupDescription(group.groupCode, group.groupName, group.tentType, group.creator));
   } else {
     throw new Error("An error occurred");
   }
@@ -48,8 +48,6 @@ export async function fetchGroupDataThroughAPI(groupCode: string): Promise<Group
   });
   let resJson = await apiResponse.json();
 
-  console.log(resJson);
-  console.log(apiResponse.status);
   if (apiResponse.status < 300) {
     return new GroupDescription(resJson.groupCode, resJson.groupName, resJson.tentType, resJson.creator);
   } else {
@@ -58,7 +56,6 @@ export async function fetchGroupDataThroughAPI(groupCode: string): Promise<Group
 }
 
 export async function getGroupMembersByGroupCodeThroughAPI(groupCode: string): Promise<GroupMemberUserID[]> {
-  console.log("trying to find group members through api");
   const apiResponse = await fetch("/api/groupExistenceAndMembership/" + groupCode + "/getGroupMembersByGroupCode", {
     method: "GET",
     headers: {
@@ -67,8 +64,6 @@ export async function getGroupMembersByGroupCodeThroughAPI(groupCode: string): P
   });
   let resJson = await apiResponse.json();
 
-  console.log(resJson);
-  console.log(apiResponse.status);
   if (apiResponse.status < 300) {
     return resJson.members;
   } else {

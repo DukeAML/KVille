@@ -26,7 +26,6 @@ export interface UsernameAndIDs {
         },
     });
     let resJson = await apiResponse.json();
-    console.log(resJson);
     if (apiResponse.status < 300) {
         return JSONToScheduleData(resJson);
     } else {
@@ -63,7 +62,6 @@ export async function setGroupScheduleInDBThroughAPI(groupCode: string, newSched
         },
     });
     let resJson = await apiResponse.json();
-    console.log(resJson);
     if (apiResponse.status < 300) {
         return JSONToScheduleData(resJson);
     } else {
