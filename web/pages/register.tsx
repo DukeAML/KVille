@@ -45,7 +45,6 @@ const RegisterForm: React.FC = () => {
 		registerThroughAPI(values.username, values.password)
 		.then(async (id) => {
 			setErrorMessage("");
-			console.log(id);
 			setLoggingIn(true);
 			delay10S().then(async () => {
 				await signIn("credentials", {username : values.username, password : values.password, redirect : false})
