@@ -39,7 +39,7 @@ export const authOptions = {
                 try {
                     const userID = await tryToLogin(username, password);
                     return {id : userID, name : username, email : username + EMAIL_SUFFIX}
-                } catch {
+                } catch(error) {
                     return null;
                 }
             }
