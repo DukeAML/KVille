@@ -6,7 +6,7 @@ import { tryToRegister } from '@/lib/db/auth/register';
 export default async function registerAPI(req: NextApiRequest, res: NextApiResponse) {
     try {
         const {username, password} = req.body;
-        let newUserID = tryToRegister(username, password);
+        let newUserID = await tryToRegister(username, password);
         res.status(200).json({userID : newUserID});
         
     } catch (error) {
