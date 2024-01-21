@@ -36,10 +36,14 @@ export const authOptions = {
                 // Add logic here to look up the user from the credentials supplied
                 const username = credentials ? credentials.username : "a";
                 const password = credentials ? credentials.password : "asdfasdf";
+                console.log("trying to log in with " + username + ", " + password);
                 try {
                     const userID = await tryToLogin(username, password);
+                    console.log(userID);
                     return {id : userID, name : username, email : username + EMAIL_SUFFIX}
-                } catch {
+                } catch(error) {
+                    console.log("an error occurred");
+                    console.log(error);
                     return null;
                 }
             }
