@@ -24,13 +24,13 @@ const initialValues: RegisterFormValues = {
 };
 
 
-const delay10S = () => {
+const delayBriefly = () => {
 	return new Promise((resolve, reject) => {
 	  // Simulate an asynchronous operation
 	  setTimeout(() => {
 		// Resolve the promise after 10 seconds
 		resolve('Operation completed');
-	  }, 2000);
+	  }, 1);
 	});
   };
 
@@ -44,8 +44,9 @@ const RegisterForm: React.FC = () => {
 		// Handle login logic here (e.g., API call to authenticate the user)
 		registerThroughAPI(values.username, values.password)
 		.then(async (id) => {
+			setErrorMessage("");
 			setLoggingIn(true);
-			delay10S().then(async () => {
+			delayBriefly().then(async () => {
 				await signIn("credentials", {username : values.username, password : values.password, redirect : false})
 				setIsLoggedIn(true);
 				setTriedToLogIn(true);
