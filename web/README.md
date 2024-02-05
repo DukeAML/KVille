@@ -1,6 +1,7 @@
 # Web Version
 
-* This is the web frontend for tenting, built with Next.js and MaterialUI. 
+* This is the code for tent-shift-schedule.com, built with NextJS
+* As NextJS is a full stack framework, the backend code is in here too. API routes are defined in the pages/api folder
 
 ## To get started, first install all packages using the command "yarn". 
 * For this to work, you will need to have node and yarn installed first. 
