@@ -45,7 +45,7 @@ export async function tryToRegister(username : string, password : string) : Prom
 
 }
 
-async function checkUsernameIsTaken(username : string) : Promise<boolean> {
+export async function checkUsernameIsTaken(username : string) : Promise<boolean> {
     const usernameQuerySnapshot = await firestore.collection('users').where('username', '==', username).get();
     return !usernameQuerySnapshot.empty;
 }
