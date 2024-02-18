@@ -36,3 +36,20 @@ export const get48TimeLabels = () : string[] => {
     return times;
 }
 
+export const getTimeLabel = (hourIndex : number) : string => {
+    let half = "am";
+    if (hourIndex >= 24){
+        half = "pm";
+    }
+    let hour = Math.floor((hourIndex % 24) / 2).toString();
+    let needs30Minutes= (hourIndex%2) == 1;
+    if ((hourIndex % 24) <= 1){
+        hour = "12";
+    }
+    if (needs30Minutes){
+        return (hour + ":30" + half);
+    } else {
+        return (hour + ":00" + half);
+    }
+        
+}

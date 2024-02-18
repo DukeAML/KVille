@@ -2,9 +2,12 @@ import React from 'react';
 import * as XLSX from 'xlsx';
 import { useGroupCode } from "@/lib/hooks/useGroupCode"
 import { useQueryToFetchSchedule } from "@/lib/hooks/scheduleHooks"
-import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils"
+import { getDatePlusNumShifts, getDayAbbreviation, getNumSlotsBetweenDates } from "@/lib/calendarAndDatesUtils/datesUtils"
+import { ScheduleData } from '@/lib/controllers/scheduleData';
+import { getTimeLabel } from '@/lib/calendarAndDatesUtils/calendarUtils';
+import { Button } from '@mui/material';
 
-const ExportToExcel = ({ data }) => {
+const ExportToExcel = ({ data  } : {data : any}) => {
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -12,41 +15,67 @@ const ExportToExcel = ({ data }) => {
     XLSX.writeFile(wb, `test.xlsx`);
   };
   return (
-    <button onClick={exportToExcel}>
+    <Button variant="contained" color="primary" onClick={exportToExcel}>
       Export to Excel
-    </button>
+    </Button>
   );
 };
-// Example usage in your component
+
+type OneRowData = { [key: string]: any};
+type DataRows = OneRowData[];
+
+const getDataFormattedForExcel = (scheduleData : ScheduleData) : DataRows => {
+  let scheduleStartDate = scheduleData.startDate;
+  let startDateAtMidnight = new Date(scheduleStartDate.getFullYear(), scheduleStartDate.getMonth(), scheduleStartDate.getDate(), 0, 0);
+  let initialHoursOffset = getNumSlotsBetweenDates(startDateAtMidnight, scheduleStartDate);
+  let dataRows : DataRows = [];
+  for (let hoursIndex = 0; hoursIndex < 48; hoursIndex += 1){
+    let scheduleTimeIndex = hoursIndex - initialHoursOffset;
+    let dayIndex = 0;
+    let newRow : OneRowData  = {}
+    while (scheduleTimeIndex < scheduleData.schedule.length){
+      let date = getDatePlusNumShifts(scheduleStartDate, scheduleTimeIndex);
+      if (dayIndex % 7 === 0){
+        let colTitle = "Week " + (Math.floor(dayIndex / 7) + 1).toString();
+        let paddingColumn = "";
+        for (let paddingIncrementer = 0; paddingIncrementer < (dayIndex / 7); paddingIncrementer += 1){
+          paddingColumn = paddingColumn + " ";
+        }
+        if (dayIndex > 0){
+          newRow[paddingColumn] = "";
+        }
+        
+        newRow[colTitle] = getTimeLabel(hoursIndex);
+      }
+      let dayLabel = getDayAbbreviation(date);
+      let names = "N/A";
+      if (scheduleTimeIndex < scheduleData.schedule.length && scheduleTimeIndex >= 0){
+        console.log(scheduleTimeIndex);
+        newRow[dayLabel] = scheduleData.getNamesAtTimeIndex(scheduleTimeIndex).join(", ");
+      } else {
+        newRow[dayLabel] = "N/A";
+      }
+      
+      dayIndex += 1;
+      scheduleTimeIndex += 48;
+
+    }
+    dataRows.push(newRow);
+
+  }
+  return dataRows;
+}
 export const SaveSchedule : React.FC = () => {
     const groupCode = useGroupCode();
     const {data} = useQueryToFetchSchedule(groupCode);
-    if (data) {
-        const startDate = data.startDate;
-        let i = 0;
-        let weekNo = 1;
-        let headerRow = {}; // needs to be fixed
-
-        while (i <= Math.ceil(data.schedule.length / 48)) {
-            if (i % 7 == 0) {
-                let weekTitle = `Week ${weekNo} Times`;
-                //headerRow[weekTitle] = [];
-            }
-            let currentDate = getDatePlusNumShifts(startDate, i*48);
-            console.log(currentDate.toDateString());
-            let week = {header1: "startTimes"}
-            i++;
-        }
-        /*for (let i = 0; i < 5; i++) {
-            let names = data.getNamesAtTimeIndex(i);
-            console.log(getDatePlusNumShifts(startDate, i));
-            console.log(names);
-        }*/
-        console.log(headerRow);
+    if (data){
+      let rowsData = getDataFormattedForExcel(data);
+      return (
+        <div>
+          <ExportToExcel data={rowsData}/>
+        </div>
+      );
+    } else {
+      return null;
     }
-  return (
-    <div>
-      <ExportToExcel data={data}/>
-    </div>
-  );
 };
