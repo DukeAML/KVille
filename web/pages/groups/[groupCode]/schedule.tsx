@@ -16,6 +16,7 @@ import { EMPTY } from "@/lib/schedulingAlgo/slots/tenterSlot";
 import { getDatePlusNumShifts } from "@/lib/calendarAndDatesUtils/datesUtils";
 import { GroupContext } from "@/lib/context/groupContext";
 import { DatesRow } from "@/components/pageSpecific/groups/groupCode/schedule/datesRow";
+import { SaveSchedule } from "@/components/pageSpecific/groups/groupCode/schedule/saveSchedule";
 
 
 
@@ -48,7 +49,9 @@ export default function Schedule() {
                             Click the dropdown below to get started with using our algorithm to auto-fill the schedule.
                             To manually change who is assigned at a specific time slot, click on the corresponding box in the grid to replace them with someone else at that time. 
                             </Typography>
+                            <SaveSchedule/>
                         </Container>
+
                 
                         <ScheduleOptions/>
 
