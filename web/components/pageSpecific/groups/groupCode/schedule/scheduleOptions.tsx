@@ -11,6 +11,7 @@ import { INVALID_GROUP_CODE } from "@/lib/controllers/groupMembershipAndExistenc
 import { KvilleLoadingCircle } from "@/components/shared/utils/loading";
 import { GroupContext } from "@/lib/context/groupContext";
 import { ErrorMessage } from "@/components/shared/utils/errorMessage";
+import { DatesWarnings } from "./datesWarnings";
 
 
 
@@ -60,6 +61,7 @@ export const ScheduleOptions : React.FC = () => {
             <Container maxWidth="sm">
                 <KvilleAccordion elements={[assignTentersOption]} />
             </Container>
+            <DatesWarnings/>
             <DatesRow/>
         </Container>
     );

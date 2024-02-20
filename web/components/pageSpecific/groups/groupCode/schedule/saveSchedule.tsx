@@ -12,7 +12,7 @@ const ExportToExcel = ({ data  } : {data : any}) => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "sheet1");
-    XLSX.writeFile(wb, `test.xlsx`);
+    XLSX.writeFile(wb, `Tent_Shift_Schedule.xlsx`);
   };
   return (
     <Button variant="contained" color="primary" onClick={exportToExcel}>
@@ -50,7 +50,6 @@ const getDataFormattedForExcel = (scheduleData : ScheduleData) : DataRows => {
       let dayLabel = getDayAbbreviation(date);
       let names = "N/A";
       if (scheduleTimeIndex < scheduleData.schedule.length && scheduleTimeIndex >= 0){
-        console.log(scheduleTimeIndex);
         newRow[dayLabel] = scheduleData.getNamesAtTimeIndex(scheduleTimeIndex).join(", ");
       } else {
         newRow[dayLabel] = "N/A";
